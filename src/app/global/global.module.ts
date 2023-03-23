@@ -29,6 +29,7 @@ import { CloneScreenComponent } from './components_shared/screen_components/clon
 import { ColorPickerModule } from 'ngx-color-picker';
 import { ConfirmTemplateModalComponent } from './components_shared/template_components/confirm-template-modal/confirm-template-modal.component';
 import { ConfirmationModalComponent } from './components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { ContentComponent } from './pages_shared/single-playlist-v2/components/content/content.component';
 import { ContentScheduleCardComponent } from './components_shared/playlist_components/content-schedule-cards/content-schedule-card.component';
 import { ContentsTabComponent } from './components_shared/reports_components/contents-tab/contents-tab.component';
 import { CreateAdvertiserComponent } from './pages_shared/create-advertiser/create-advertiser.component';
@@ -171,6 +172,7 @@ import { SingleContentComponent } from './pages_shared/single-content/single-con
 import { SingleDealerComponent } from './pages_shared/single-dealer/single-dealer.component';
 import { SingleDealerSidebarComponent } from './components_purpose-built/single-dealer-sidebar/single-dealer-sidebar.component';
 import { SinglePlaylistComponent } from './pages_shared/single-playlist/single-playlist.component';
+import { SinglePlaylistV2Component } from './pages_shared/single-playlist-v2/single-playlist-v2.component';
 import { SingleScreenComponent } from './pages_shared/single-screen/single-screen.component';
 import { SingleTemplateComponent } from './pages_shared/single-template/single-template.component';
 import { SingleUserComponent } from './pages_shared/single-user/single-user.component';
