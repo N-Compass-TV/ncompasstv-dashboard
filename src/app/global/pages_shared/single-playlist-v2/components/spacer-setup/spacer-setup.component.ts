@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material';
+import { Subject } from 'rxjs';
 import { API_HOST, API_LICENSE } from 'src/app/global/models';
 
 const DUMMY_AVAILABLE_CATEGORIES = [
@@ -40,6 +41,7 @@ export class SpacerSetupComponent implements OnInit {
 		spacerDescription: ['', Validators.required],
 		spacerAlgoFields: this._form_builder.array([])
 	});
+	toggleAll: Subject<void> = new Subject<void>();
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA)

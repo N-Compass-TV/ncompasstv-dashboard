@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
-import { Subscription } from 'rxjs/internal/Subscription';
 import { API_HOST, API_LICENSE_PROPS } from 'src/app/global/models';
 
 interface HostLicenses {
@@ -17,6 +16,7 @@ export class PlayLocationComponent implements OnInit {
 	@Input() host_licenses: HostLicenses[];
 	@Input() toggle_all: Observable<void>;
 	@Input() toggle_all_add_content: Observable<void>;
+	@Input() toggle_all_spacer: Observable<void>;
 	@Input() whitelisted_hosts: string[] = [];
 	@Input() whitelisted_licenses: string[] = [];
 	@Output() toggle: EventEmitter<string[]> = new EventEmitter();
@@ -30,6 +30,7 @@ export class PlayLocationComponent implements OnInit {
 	ngOnInit() {
 		if (this.toggle_all) this.toggle_all.subscribe((e: any) => this.onAllToggled(e));
 		if (this.toggle_all_add_content) this.toggle_all_add_content.subscribe((e: any) => this.onAllToggled(e));
+		if (this.toggle_all_spacer) this.toggle_all_spacer.subscribe((e: any) => this.onAllToggled(e));
 	}
 
 	private onAllToggled(e, inAddContent: boolean = false) {
