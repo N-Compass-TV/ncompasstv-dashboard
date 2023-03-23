@@ -219,6 +219,8 @@ import {
 	MatButtonToggleModule
 } from '@angular/material';
 import { NewDealerAdminComponent } from './components_shared/user_components/user-forms/new-dealer-admin/new-dealer-admin.component';
+import { SinglePlaylistV2Component } from './pages_shared/single-playlist-v2/single-playlist-v2.component';
+import { ContentComponent } from './pages_shared/single-playlist-v2/components/content/content.component';
 
 const ngComponents = [
 	AddCardComponent,
@@ -429,7 +431,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES, NewDealerAdminComponent],
+	declarations: [ngComponents, DIRECTIVES, NewDealerAdminComponent, SinglePlaylistV2Component, PlaylistContentComponent, ContentComponent],
 	entryComponents: [
 		AddCardComponent,
 		AssignLicenseModalComponent,

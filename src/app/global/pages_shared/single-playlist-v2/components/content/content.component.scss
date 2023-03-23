@@ -1,0 +1,21 @@
+.playlistv2-content {
+	position: relative;
+
+	.playlistv2-content__header {
+		background: rgba(#000, 0.9);
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+	}
+
+	.playlistv2-content__thumbnail {
+		background: #404040;
+		height: 80px;
+		img {
+			height: 100%;
+			object-fit: contain;
+			width: 100%;
+		}
+	}
+}
