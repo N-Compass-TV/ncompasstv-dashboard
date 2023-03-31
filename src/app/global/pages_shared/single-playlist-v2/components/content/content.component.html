@@ -1,11 +1,19 @@
 <div class="playlistv2-content box-shadow">
-	<section class="playlistv2-content__header d-flex align-items-center px-2" [matTooltip]="content.fileName | nohandle">
+	<section class="playlistv2-content__header d-flex align-items-center px-2" [matTooltip]="content.fileName || content.title | nohandle">
 		<div class="content-filename-wrapper flex-even">
-			<span class="font-weight-bold text-primary xsm-text">{{ content.fileName | nohandle | slice : 0 : 10 }}</span>
+			<span
+				class="xsm-text text-primary fas mr-1"
+				[ngClass]="{
+					'fa-image': content.fileType | isimage,
+					'fa-video': content.fileType | isvideo,
+					'fa-rss': content.fileType | isFeed
+				}">
+			</span>
+			<span class="font-weight-bold text-primary xsm-text">{{ content.fileName || content.title | nohandle | slice : 0 : 8 }}</span>
 		</div>
 
 		<div class="checkbox-selector pt-1">
-			<input type="checkbox" />
+			<input type="checkbox" (change)="content_selected.emit()" />
 		</div>
 	</section>
 
@@ -16,21 +24,15 @@
 	<section class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white">
 		<div class="indicators flex-even">
 			<span class="xsm-text mr-2">{{ index }}</span>
-			<span
-				class="xsm-text fas"
-				[ngClass]="{
-					'fa-image': content.fileType | isimage,
-					'fa-video': content.fileType | isvideo,
-					'fa-rss': content.fileType | isFeed
-				}">
-			</span>
 		</div>
 
 		<div>
 			<button
 				*ngFor="let c of playlistContentControls; let i = index"
 				class="naked-btn"
-				[ngClass]="i < playlistContentControls.length - 1 && 'mr-2'">
+				[ngClass]="i < playlistContentControls.length - 1 && 'mr-2'"
+				[matTooltip]="c.label"
+				(click)="control_click.emit({ playlistContentId: content.playlistContentId, action: c.action })">
 				<span class="xsm-text"><i class="{{ c.icon }} {{ c.colorClass }}"></i></span>
 			</button>
 		</div>

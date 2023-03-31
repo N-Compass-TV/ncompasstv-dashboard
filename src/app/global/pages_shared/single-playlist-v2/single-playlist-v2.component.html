@@ -15,7 +15,7 @@
 					<div class="playlist-content-management-wrapper pt-3">
 						<section class="playlist-content-management-controls mb-3">
 							<ng-container *ngFor="let c of playlistControls">
-								<button mat-button mat-raised-button class="theme-btn mr-2">
+								<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="c.disabled">
 									<i class="{{ c.icon }} mr-3 text-green"></i>
 									<small class="font-weight-bold">{{ c.label }}</small>
 								</button>
@@ -24,10 +24,14 @@
 
 						<section class="bg-white box-shadow p-4 playlist-content-management rounded">
 							<div class="bg-gray box-shadow p-3 playlist-contents rounded">
-								<div class="row no-gutters">
+								<div class="row no-gutters" #draggables id="draggables">
 									<div class="col-lg-1" *ngFor="let c of playlistContents; let i = index">
-										<div class="m-1">
-											<app-content [content]="c" [index]="i + 1"></app-content>
+										<div id="{{ 'drg_' + c.playlistContentId }}" [attr.data-id]="c.playlistContentId" class="m-1">
+											<app-content
+												[content]="c"
+												[index]="i + 1"
+												(content_selected)="contentSelected(c.playlistContentId)"
+												(control_click)="contentControlClicked($event)"></app-content>
 										</div>
 									</div>
 								</div>

@@ -1,5 +1,11 @@
 export const PlaylistContentControls = [
 	{
+		label: 'Fullscreen',
+		icon: 'fas fa-expand-arrows-alt',
+		colorClass: 'text-muted',
+		action: 'fullscreen'
+	},
+	{
 		label: 'Swap',
 		icon: 'fas fa-exchange-alt',
 		colorClass: 'info-text',
@@ -18,3 +24,10 @@ export const PlaylistContentControls = [
 		action: 'delete'
 	}
 ];
+
+export const PlaylistContentControlActions = {
+	delete: 'delete',
+	edit: 'edit',
+	fullscreen: 'fullscreen',
+	swap: 'swap'
+};

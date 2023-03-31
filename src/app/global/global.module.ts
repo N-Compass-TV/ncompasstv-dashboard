@@ -192,6 +192,7 @@ import { LocatorComponentComponent } from './components_purpose-built/locator-co
 import { WysiwygComponent } from './components_purpose-built/wysiwyg/wysiwyg.component';
 import { SinglePlaylistV2Component } from './pages_shared/single-playlist-v2/single-playlist-v2.component';
 import { ContentComponent } from './pages_shared/single-playlist-v2/components/content/content.component';
+import { ContentSettingsComponent } from './pages_shared/single-playlist-v2/components/content-settings/content-settings.component';
 
 // Material Theme Module
 import {
@@ -239,6 +240,7 @@ const ngComponents = [
 	ConfirmTemplateModalComponent,
 	ConfirmationModalComponent,
 	ContentComponent,
+	ContentSettingsComponent,
 	ContentScheduleCardComponent,
 	ContentsTabComponent,
 	CreateAdvertiserComponent,
@@ -450,6 +452,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		CloneScreenComponent,
 		ConfirmTemplateModalComponent,
 		ConfirmationModalComponent,
+		ContentSettingsComponent,
 		CreateFeedComponent,
 		DeleteDealerDialogComponent,
 		DeletePlaylistComponent,
