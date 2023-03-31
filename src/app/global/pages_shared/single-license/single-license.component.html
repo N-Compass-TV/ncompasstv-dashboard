@@ -267,36 +267,47 @@
 																	</h5>
 																</div>
 
+																<!-- CEC Status -->
+																<div class="flex-even">
+																	<span class="sm-text"> CEC Enabled </span>
+
+																	<h5 class="sm-text">
+																		{{ cec_status ? 'YES' : 'N/A' }}
+																	</h5>
+																</div>
+
 																<!-- Display Status -->
-																<ng-container *ngIf="hasAdminPrivileges">
-																	<div class="flex-even">
-																		<span class="sm-text"> Display Status </span>
+																<div class="flex-even">
+																	<span class="sm-text"> Display Status </span>
 
-																		<h5
-																			class="sm-text"
-																			*ngIf="display_status; else wait"
-																			[ngClass]="{ good: display_status === 1, bad: display_status === 2 }">
-																			{{ display_status === 1 ? 'ON' : 'OFF/UNKNOWN' }}
+																	<h5
+																		class="sm-text"
+																		*ngIf="!isCheckingDisplayStatus; else checkingDisplayStatus"
+																		[ngClass]="{ good: display_status === 1, bad: display_status !== 1 }">
+																		<ng-container [ngSwitch]="display_status">
+																			<ng-container *ngSwitchCase="1">ON</ng-container>
+																			<ng-container *ngSwitchCase="2">N/A</ng-container>
+																			<ng-container *ngSwitchDefault>OFF</ng-container>
+																		</ng-container>
+																	</h5>
+
+																	<ng-template #checkingDisplayStatus>
+																		<h5 class="sm-text text-gray">
+																			{{ pi_status ? 'Checking ...' : 'N/A' }}
 																		</h5>
+																	</ng-template>
+																</div>
 
-																		<ng-template #wait>
-																			<h5 class="sm-text text-gray">
-																				{{ pi_status ? 'Checking ...' : 'N/A' }}
-																			</h5>
-																		</ng-template>
-																	</div>
-
-																	<div class="flex-even">
-																		<span class="sm-text">Display ON/OFF</span>
-																		<br />
-																		<mat-slide-toggle
-																			[matTooltip]="getCECStatusTooltip(license_data.isCecEnabled)"
-																			(change)="monitorToggle($event)"
-																			[checked]="display_status === 1 ? 'checked' : 'false'"
-																			[disabled]="license_data.isCecEnabled === 0">
-																		</mat-slide-toggle>
-																	</div>
-																</ng-container>
+																<div class="flex-even">
+																	<span class="sm-text">Display ON/OFF</span>
+																	<br />
+																	<mat-slide-toggle
+																		[matTooltip]="getCECStatusTooltip(license_data.isCecEnabled)"
+																		(change)="monitorToggle($event)"
+																		[checked]="display_status === 1 ? 'checked' : 'false'"
+																		[disabled]="license_data.isCecEnabled === 0">
+																	</mat-slide-toggle>
+																</div>
 															</div>
 															<hr class="my-3" />
 															<div class="d-flex">
@@ -310,6 +321,17 @@
 																<div class="flex-even last-offline">
 																	<span class="sm-text">Last Disconnect</span>
 																	<h5 class="sm-text">{{ lastDisconnect }}</h5>
+																</div>
+
+																<!-- TV Brand -->
+																<div class="flex-even tv-brand">
+																	<span class="sm-text">TV Brand</span>
+																	<div class="d-flex align-items-center">
+																		<h5 class="sm-text">{{ tv_brand | titlecase }}</h5>
+																		<mat-icon class="clickable sm-text" (click)="openUpdateTvBrandDialog()">
+																			{{ is_editing_tv_brand ? 'save' : 'edit' }}
+																		</mat-icon>
+																	</div>
 																</div>
 															</div>
 															<hr class="my-3" />
@@ -340,6 +362,7 @@
 
 																			<!-- RESET ANYDESK ID BUTTON -->
 																			<button
+																				*ngIf="hasAdminPrivileges"
 																				class="card-button reset-anydesk-id"
 																				(click)="onResetAnydeskID()"
 																				title="Reset Anydesk ID">
@@ -379,7 +402,7 @@
 
 															<!-- Host Name -->
 															<div class="d-flex">
-																<div class="flex-even hostname">
+																<div class="flex-even hostname" *ngIf="hasAdminPrivileges">
 																	<span class="sm-text"> Dealer </span>
 																	<h5 class="mb-0 sm-text">
 																		<ng-container *ngIf="hasAdminPrivileges">
@@ -1028,6 +1051,38 @@
 								</div>
 							</mat-card>
 
+							<mat-card class="px-4 pb-0 mb-3">
+								<div class="d-flex align-items-center">
+									<div class="flex-even mb-3">
+										<h4>Enable FE-DCP Tool</h4>
+										<p class="sm-text">Enables DCP Monitoring Tool. Enter password to enable.</p>
+									</div>
+									<div *ngIf="fastEdgeSettingsSaving">
+										<mat-spinner [diameter]="20"></mat-spinner>
+									</div>
+								</div>
+
+								<div class="fast-edge-setting-form-wrapper">
+									<form [formGroup]="fastEdgeSettings">
+										<div class="d-flex">
+											<div class="flex-even">
+												<mat-form-field class="w-100" appearance="fill">
+													<mat-label>Enter Password*</mat-label>
+													<input matInput formControlName="password" type="password" />
+												</mat-form-field>
+											</div>
+											<div class="pt-3 ml-5 text-right">
+												<mat-slide-toggle
+													(change)="toggleFastEdgeTool($event)"
+													[disabled]="!fastEdgeSettings.valid"
+													[checked]="license_data.fastEdgeMonitoringTool == 1 ? true : false">
+												</mat-slide-toggle>
+											</div>
+										</div>
+									</form>
+								</div>
+							</mat-card>
+
 							<!-- Automatic TV Display ON/OFF -->
 							<!-- <mat-card class="p-4 mb-3">
 								<div class="d-flex align-items-center">
@@ -1118,6 +1173,46 @@
 						<app-installation-tab [license_id]="license_id"> </app-installation-tab>
 					</ng-template>
 				</mat-tab>
+
+				<!-- Settings For Dealers -->
+				<mat-tab label="Settings" *ngIf="!isCurrentUserAdmin && license_data">
+					<div class="row mt-4">
+						<div class="col-lg-6">
+							<mat-card class="px-4 pb-0 mb-3">
+								<div class="d-flex align-items-center">
+									<div class="flex-even mb-3">
+										<h4>Enable FE-DCP Tool</h4>
+										<p class="sm-text">Enables DCP Monitoring Tool. Enter password to enable.</p>
+									</div>
+									<div *ngIf="fastEdgeSettingsSaving">
+										<mat-spinner [diameter]="20"></mat-spinner>
+									</div>
+								</div>
+
+								<div class="fast-edge-setting-form-wrapper">
+									<form [formGroup]="fastEdgeSettings">
+										<div class="d-flex">
+											<div class="flex-even">
+												<mat-form-field class="w-100" appearance="fill">
+													<mat-label>Enter Password*</mat-label>
+													<input matInput formControlName="password" type="password" />
+												</mat-form-field>
+											</div>
+											<div class="pt-3 ml-5 text-right">
+												<mat-slide-toggle
+													(change)="toggleFastEdgeTool($event)"
+													[disabled]="!fastEdgeSettings.valid"
+													[checked]="license_data.fastEdgeMonitoringTool == 1 ? true : false">
+												</mat-slide-toggle>
+											</div>
+										</div>
+									</form>
+								</div>
+							</mat-card>
+						</div>
+					</div>
+				</mat-tab>
+				<!-- Settings For Dealers -->
 			</mat-tab-group>
 		</div>
 	</div>

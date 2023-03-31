@@ -16,9 +16,10 @@ export interface API_LICENSE_PROPS {
 	appVersion: string;
 	apps?: any;
 	bootDelay?: any;
+	businessName?: string;
 	category: string;
 	contentsUpdated: string;
-	d?: any;
+	d?: any; // you will be removed when I have the time
 	dateCreated: string;
 	dateUpdated: string;
 	dealerId: string;
@@ -35,6 +36,8 @@ export interface API_LICENSE_PROPS {
 	isActivated?: any;
 	isCecEnabled?: number;
 	isRegistered: number;
+	lastDisconnect?: string; // for export
+	lastPush?: string; // for export
 	licenseId: string;
 	licenseKey: string;
 	macAddress: string;
@@ -44,6 +47,7 @@ export interface API_LICENSE_PROPS {
 	password?: string;
 	piSocketId: string;
 	piStatus?: any;
+	piVersion?: string;
 	playerSocketId: any;
 	playerStatus: number;
 	rebootTime?: string;
@@ -55,29 +59,33 @@ export interface API_LICENSE_PROPS {
 	screenType: string;
 	screenshotSettings: number;
 	screenshotUrl: string;
+	server?: string;
 	serverVersion: string;
 	speedtestSettings: number;
 	status?: string;
 	storeHours: string;
 	tags?: { name: string; tagColor: string }[] | string[];
 	tagsToString?: string;
-	templateBackground: string;
-	templateBottom: string;
-	templateHorizontal: string;
-	templateHorizontalSmall: string;
-	templateId: string;
-	templateLowerLeft: string;
-	templateMain: string;
-	templateName: string;
-	templateUpperLeft: string;
-	templateVertical: string;
+	templateBackground?: string;
+	templateBottom?: string;
+	templateHorizontal?: string;
+	templateHorizontalSmall?: string;
+	templateId?: string;
+	templateLowerLeft?: string;
+	templateMain?: string;
+	templateName?: string;
+	templateUpperLeft?: string;
+	templateVertical?: string;
 	timeIn: string;
 	timeOut: string;
 	timezoneName: string;
 	totalStorage: string;
+	tvBrand?: string;
+	ui?: string;
 	uiVersion: string;
 	zone?: string;
 	tvDisplaySettings?: number;
+	fastEdgeMonitoringTool?: number;
 }
 
 interface screenInfo {

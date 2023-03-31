@@ -54,7 +54,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
-					this.assign_success = true
+					this.assign_success = true;
 					this._helper.onRefreshBannerData.next();
 				},
 				(error) => {
@@ -76,12 +76,12 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 	private async getAvailableLicenses() {
 		const dealerId = this._dialog_data.dealer_id;
 		let totalRequests: number;
-		let firstPageResult: { paging?: PAGING; message?: string };
+		let firstPageResult: { paging?: PAGING; message?: string; licenses?: API_LICENSE_PROPS[] };
 		let getLicenseRequests = [];
 		let merged = [];
 
 		try {
-			const firstPageRequest = this._license
+			const firstPageRequest = await this._license
 				.get_license_by_dealer_id(dealerId, 1, '', 'online', 15, '')
 				.map((response) => {
 					response.paging.entities = response.paging.entities.filter(
@@ -91,12 +91,12 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 				})
 				.toPromise();
 
-			firstPageResult = await firstPageRequest;
+			firstPageResult = firstPageRequest;
 		} catch (error) {
 			throw new Error(error);
 		}
 
-		if ('message' in firstPageResult) {
+		if ('message' in firstPageResult || firstPageResult.licenses.length === 0) {
 			this.no_available_licenses = true;
 			this.licenses_loaded = true;
 			return;

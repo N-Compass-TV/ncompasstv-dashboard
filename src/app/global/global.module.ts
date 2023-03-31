@@ -84,6 +84,7 @@ import { FillerFormComponent } from './components_shared/feed_components/filler-
 import { FillerDemoComponent } from './components_shared/feed_components/filler-demo/filler-demo.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
+import { GridViewLicenseComponent } from './components_shared/license_components/grid-view-license/grid-view-license.component';
 import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostViewComponent } from './components_shared/locator_components/host-view/host-view.component';
 import { HostsTabComponent } from './components_shared/reports_components/hosts-tab/hosts-tab.component';
@@ -111,6 +112,7 @@ import { MonthDayFormatDirective } from './directives/month-day-format/month-day
 import { NavbarComponent } from './components_shared/page_components/navbar/navbar.component';
 import { NewAdminComponent } from './components_shared/user_components/user-forms/new-admin/new-admin.component';
 import { NewAdvertiserComponent } from './components_shared/user_components/user-forms/new-advertiser/new-advertiser.component';
+import { NewDealerAdminComponent } from './components_shared/user_components/user-forms/new-dealer-admin/new-dealer-admin.component';
 import { NewDealerComponent } from './components_shared/user_components/user-forms/new-dealer/new-dealer.component';
 import { NewHostUserComponent } from './components_shared/user_components/user-forms/new-host-user/new-host-user.component';
 import { NewSubDealerComponent } from './components_shared/user_components/user-forms/new-sub-dealer/new-sub-dealer.component';
@@ -188,6 +190,8 @@ import { UserSettingComponent } from './pages_shared/profile-setting/user-settin
 import { ViewCardsComponent } from './pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
 import { LocatorComponentComponent } from './components_purpose-built/locator-component/locator-component.component';
 import { WysiwygComponent } from './components_purpose-built/wysiwyg/wysiwyg.component';
+import { SinglePlaylistV2Component } from './pages_shared/single-playlist-v2/single-playlist-v2.component';
+import { ContentComponent } from './pages_shared/single-playlist-v2/components/content/content.component';
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
@@ -196,6 +200,7 @@ import {
 	MatAutocompleteModule,
 	MatCardModule,
 	MatCheckboxModule,
+	MatChipsModule,
 	MatButtonModule,
 	MatMenuModule,
 	MatExpansionModule,
@@ -218,9 +223,6 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
-import { NewDealerAdminComponent } from './components_shared/user_components/user-forms/new-dealer-admin/new-dealer-admin.component';
-import { SinglePlaylistV2Component } from './pages_shared/single-playlist-v2/single-playlist-v2.component';
-import { ContentComponent } from './pages_shared/single-playlist-v2/components/content/content.component';
 
 const ngComponents = [
 	AddCardComponent,
@@ -238,6 +240,7 @@ const ngComponents = [
 	CloneScreenComponent,
 	ConfirmTemplateModalComponent,
 	ConfirmationModalComponent,
+	ContentComponent,
 	ContentScheduleCardComponent,
 	ContentsTabComponent,
 	CreateAdvertiserComponent,
@@ -296,6 +299,7 @@ const ngComponents = [
 	FilterLabelsComponent,
 	FooterComponent,
 	GenerateFeedComponent,
+	GridViewLicenseComponent,
 	HostCustomFieldsComponent,
 	HostViewComponent,
 	HostsTabComponent,
@@ -323,6 +327,7 @@ const ngComponents = [
 	NavbarComponent,
 	NewAdminComponent,
 	NewAdvertiserComponent,
+	NewDealerAdminComponent,
 	NewDealerComponent,
 	NewHostUserComponent,
 	NewSubDealerComponent,
@@ -339,6 +344,7 @@ const ngComponents = [
 	PaginationFieldComponent,
 	PaymentSettingComponent,
 	PlayWhereComponent,
+	PlaylistContentComponent,
 	PlaylistContentComponent,
 	PlaylistContentPanelComponent,
 	PlaylistContentSchedulingDialogComponent,
@@ -370,6 +376,7 @@ const ngComponents = [
 	SingleDealerComponent,
 	SingleDealerSidebarComponent,
 	SinglePlaylistComponent,
+	SinglePlaylistV2Component,
 	SingleScreenComponent,
 	SingleTemplateComponent,
 	SingleUserComponent,
@@ -406,6 +413,7 @@ const MaterialModules = [
 	MatButtonModule,
 	MatCardModule,
 	MatCheckboxModule,
+	MatChipsModule,
 	MatDialogModule,
 	MatDividerModule,
 	MatExpansionModule,
@@ -431,7 +439,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES, NewDealerAdminComponent, SinglePlaylistV2Component, PlaylistContentComponent, ContentComponent],
+	declarations: [ngComponents, DIRECTIVES],
 	entryComponents: [
 		AddCardComponent,
 		AssignLicenseModalComponent,

@@ -1,7 +1,7 @@
 import { TitleCasePipe } from '@angular/common';
 import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef, MatSlideToggleChange } from '@angular/material';
+import { MatDialog, MatDialogRef, MatSlideToggleChange, MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -49,6 +49,7 @@ import {
 	PlaylistContentSchedule,
 	TAG
 } from 'src/app/global/models';
+import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
 @Component({
 	selector: 'app-single-license',
@@ -68,6 +69,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	background_zone_selected = false;
 	businessName: string;
 	business_hours: { day: string; periods: string[]; selected: boolean }[] = [];
+	cec_status = false;
 	charts: any[] = [];
 	clear_screenshots = false;
 	content_per_zone: UI_CONTENT_PER_ZONE[] = [];
@@ -86,6 +88,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	display_status: number;
 	enable_edit_alias = false;
 	hasAdminPrivileges: boolean;
+	isCheckingElectronRunning = false;
 	has_background_zone = false;
 	has_host = false;
 	has_screen = false;
@@ -94,13 +97,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	host: API_HOST;
 	host_notes = '';
 	host_route: string;
+	hasLoadedLicenseData = false;
+	hasLoadedScreenData = false;
 	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A', date: 'N/A', status: 'N/A' };
+	isCheckingDisplayStatus = false;
 	isCurrentUserAdmin = this._auth.current_role === 'administrator';
 	isCurrentUserDealerAdmin = this._auth.current_role === 'dealeradmin';
 	isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
+	is_editing_tv_brand = false;
 	is_view_only = this.currentUser.roleInfo.permission === 'V';
-	hasLoadedLicenseData = false;
-	hasLoadedScreenData = false;
 	lastStartup = null;
 	lastDisconnect = null;
 	license_data: API_LICENSE_PROPS;
@@ -136,7 +141,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	thumb_no_socket: boolean = true;
 	terminal_value: string;
 	terminal_entered_scripts: string[] = [];
+	tv_brand: string = null;
 	saving_license_settings: boolean = false;
+	fastEdgeSettings: FormGroup;
+	fastEdgeSettingsSaving = false;
 
 	private contents_array: any = [];
 	private contents_backup: UI_CONTENT_PER_ZONE[] = [];
@@ -163,7 +171,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		private _screen: ScreenService,
 		private _tag: TagService,
 		private _template: TemplateService,
-		private _titleCasePipe: TitleCasePipe
+		private _titleCasePipe: TitleCasePipe,
+		private _snackBar: MatSnackBar
 	) {}
 
 	@HostListener('window:resize', [])
@@ -463,6 +472,20 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		dialog.componentInstance.page = 'single-license';
 	}
 
+	openUpdateTvBrandDialog() {
+		this.is_editing_tv_brand = !this.is_editing_tv_brand;
+		const config = { width: '550px', disableClose: true, autoFocus: false };
+		const dialog = this._dialog.open(UpdateTvBrandDialogComponent, config);
+		dialog.componentInstance.tvBrand = this.tv_brand;
+		dialog.componentInstance.licenseId = this.license_id;
+
+		dialog.afterClosed().subscribe((response: boolean | string) => {
+			this.is_editing_tv_brand = !this.is_editing_tv_brand;
+			if (!response) return;
+			this.tv_brand = response as string;
+		});
+	}
+
 	onRemoveContentFilter(data: string): void {
 		const filterToRemove = data.toLowerCase();
 		this.content_filters = this.content_filters.filter((filter) => filter.name !== filterToRemove);
@@ -731,6 +754,29 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.saveActivityLog(ACTIVITY_CODES.screenshot);
 	}
 
+	toggleFastEdgeTool(e: any) {
+		this.fastEdgeSettingsSaving = true;
+
+		const body = { licenseId: this.license_id, fastEdgeMonitoringTool: e.checked ? 1 : 0, ...this.fastEdgeSettings.value };
+
+		this._license
+			.set_fast_edge_tool_status(body)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					this.fastEdgeSettingsSaving = false;
+					this._snackBar.open(`DCP Tool ${e.checked ? 'Enabled' : 'Disabled'} for this license successfully!`, '', {
+						duration: 3000
+					});
+				},
+				(error) => {
+					this.fastEdgeSettingsSaving = false;
+					alert(`Failed saving DCP Tool changes, ${error.error}`);
+					throw new Error(error);
+				}
+			);
+	}
+
 	updateAndRestart(): void {
 		this.warningModal(
 			'Update System and Restart',
@@ -918,6 +964,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.has_host = true;
 		this.has_screen = true;
 		this.hasLoadedLicenseData = true;
+
+		// Setup Fastedge DCP Tool Form
+		this.fastEdgeSettings = new FormGroup({
+			password: new FormControl(null, [Validators.minLength(5), Validators.required])
+		});
 	}
 
 	private initializeSocketServer() {
@@ -947,12 +998,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	private emitInitialSocketEvents(): void {
 		this.socketEmitCheckElectronRunning();
-		this.socketEmitCheckCecStatus();
-		this.socketEmitGetAnydeskId();
 
-		setTimeout(() => {
-			if (!this.display_status) this.display_status = 2;
-		}, 60000);
+		if (this.pi_status) {
+			setTimeout(() => {
+				if (!this.display_status) this.display_status = 2;
+			}, 60000);
+		}
 	}
 
 	private filterContent(): void {
@@ -1568,15 +1619,16 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.lastStartup = this.setDefaultDateTimeFormat(data.timeIn, 'MMMM DD, YYYY, h:mm:ss A');
 		this.lastDisconnect = this.setDefaultDateTimeFormat(data.timeOut, 'MMMM DD, YYYY, h:mm:ss A');
 		this.tags = data.tags as { name: string; tagColor: string }[];
+		this.display_status = data.piStatus === 1 ? data.displayStatus : 0;
 		this.pi_status = data.piStatus === 1;
 		this.player_status = data.playerStatus === 1;
 		this.content_time_update = this.setDefaultDateTimeFormat(data.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD');
 		this.screen_type = data.screenType ? data.screenType : null;
 		this.apps = data.appVersion ? JSON.parse(data.appVersion) : null;
+		this.anydesk_id = data.anydeskId;
+		this.tv_brand = data.tvBrand ? data.tvBrand : '--';
+		this.cec_status = data.isCecEnabled === 1;
 		this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
-
-		if (data.anydeskId) this.anydesk_id = data.anydeskId;
-		else this.anydesk_status_text = '';
 
 		if (data.internetInfo) {
 			const download = JSON.parse(data.internetInfo).downloadMbps;
@@ -1679,6 +1731,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	private socketEmitCheckElectronRunning(): void {
 		this._socket.emit('D_is_electron_running', this.license_id);
+		this.isCheckingElectronRunning = true;
 	}
 
 	private socketEmitMonitorCheck(): void {
@@ -1735,6 +1788,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	private socketOnElctronRunning() {
 		this._socket.on('SS_electron_is_running', (id: string) => {
 			if (this.license_id !== id) return;
+			this.isCheckingElectronRunning = false;
 			this.pi_status = true;
 			this.player_status = true;
 		});
@@ -1772,12 +1826,16 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this._socket.on('SS_monitor_status_response', (data: { licenseId: string; monitorStatus: string }) => {
 			if (this.license_id !== data.licenseId) return;
 
-			const displayStatus = data && data.monitorStatus.includes('power status: on') ? 1 : 0;
-			this.display_status = displayStatus === 1 ? 1 : 2;
+			let displayStatus = 0;
+			if (data.monitorStatus && data.monitorStatus.includes('on')) displayStatus = 1;
+			if (data.monitorStatus && data.monitorStatus.includes('unknown')) displayStatus = 2;
+			this.display_status = displayStatus;
+
+			const statusForSubmission = displayStatus === 2 ? 0 : displayStatus;
 
 			const displayStatusData = {
 				licenseId: this.license_id,
-				displayStatus
+				displayStatus: statusForSubmission
 			};
 
 			this.updateDisplayStatus(displayStatusData);
@@ -2031,6 +2089,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		data = data.map((time) => Math.round(time));
 		chart.data.datasets[0].data = data;
 		chart.update();
+	}
+
+	private updateTvBrand(data: string) {
+		return this._license.update_tv_brand(this.license_id, data).pipe(takeUntil(this._unsubscribe));
 	}
 
 	private warningModal(message: string, data: string, return_msg: string, action: string): void {

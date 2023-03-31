@@ -64,10 +64,10 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Net Type', sortable: true, key: 'internetType', column: 'InternetType' },
 		{ name: 'Net Speed', sortable: true, key: 'internetSpeed', column: 'InternetSpeed' },
 		{ name: 'Anydesk', sortable: true, key: 'anydeskId', column: 'AnydeskId' },
-		{ name: 'Password', sortable: false, key: 'password' },
+		{ name: 'Password', sortable: false, key: 'password', hidden: true, no_show: true },
 		{ name: 'Display', sortable: true, key: 'displayStatus', column: 'DisplayStatus' },
 		{ name: 'Install Date', sortable: true, key: 'installDate', column: 'InstallDate' },
-		{ name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated' },
+		// { name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated' },
 		{ name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true }
 	];
 
@@ -272,18 +272,27 @@ export class LicensesComponent implements OnInit {
 				{ value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetSpeed ? i.internetSpeed : '--', link: null, editable: false, hidden: false },
-				{ value: i.anydeskId ? i.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
-				{
-					value: i.anydeskId ? this.splitKey(i.licenseId) : '--',
-					link: null,
-					editable: false,
-					hidden: false,
-					copy: true,
-					label: 'Anydesk Password'
-				},
+				{ 
+                    value: i.anydeskId ? i.anydeskId : '--', 
+                    link: null, 
+                    editable: false, 
+                    hidden: false, 
+                    copy: true, 
+                    label: 'Anydesk Id',
+                    anydesk: true,
+                    password: i.anydeskId ? this.splitKey(i.licenseId) : '--', 
+                },
+				// {
+				// 	value: i.anydeskId ? this.splitKey(i.licenseId) : '--',
+				// 	link: null,
+				// 	editable: false,
+				// 	hidden: false,
+				// 	copy: true,
+				// 	label: 'Anydesk Password'
+				// },
 				{ value: i.displayStatus == 1 ? 'ON' : 'N/A', link: null, editable: false, hidden: false },
 				{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
-				{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
+				// { value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
 				{ value: i.piStatus, link: null, editable: false, hidden: true },
 				{ value: i.playerStatus, link: null, editable: false, hidden: true },
 				{ value: i.isActivated, link: null, editable: false, hidden: true }
@@ -407,7 +416,7 @@ export class LicensesComponent implements OnInit {
 		item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
 		item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
 		item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy');
-		item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
+		// item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
 		item.internetType = this.getInternetType(item.internetType);
 		item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
 		item.isActivated = item.isActivated == 0 ? 'Inactive' : 'Active';
