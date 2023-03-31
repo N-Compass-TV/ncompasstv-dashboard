@@ -233,6 +233,7 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
+import { ContentSettingsComponent } from './pages_shared/single-playlist-v2/components/content-settings/content-settings.component';
 
 const ngComponents = [
 	AddCardComponent,
@@ -253,6 +254,8 @@ const ngComponents = [
 	CloneScreenComponent,
 	ConfirmTemplateModalComponent,
 	ConfirmationModalComponent,
+	ContentComponent,
+	ContentSettingsComponent,
 	ContentScheduleCardComponent,
 	ContentsTabComponent,
 	CreateAdvertiserComponent,
@@ -476,6 +479,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		ConfirmTemplateModalComponent,
 		ConfirmationModalComponent,
 		CreateEntryComponent,
+		ContentSettingsComponent,
 		CreateFeedComponent,
 		DeleteDealerDialogComponent,
 		DeleteFillerFeedsComponent,

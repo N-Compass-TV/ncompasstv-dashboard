@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { API_CONTENT } from 'src/app/global/models';
 import { PlaylistContentControls } from '../../constants/PlaylistContentControls';
 
@@ -10,6 +10,9 @@ import { PlaylistContentControls } from '../../constants/PlaylistContentControls
 export class ContentComponent implements OnInit {
 	@Input() content: API_CONTENT;
 	@Input() index: number;
+	@Output() control_click: EventEmitter<any> = new EventEmitter();
+	@Output() content_selected: EventEmitter<string> = new EventEmitter();
+	contentName: string;
 	playlistContentControls = PlaylistContentControls;
 
 	constructor() {}
