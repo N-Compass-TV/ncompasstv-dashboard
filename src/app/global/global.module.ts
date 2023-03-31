@@ -193,8 +193,6 @@ import { WysiwygComponent } from './components_purpose-built/wysiwyg/wysiwyg.com
 import { SinglePlaylistV2Component } from './pages_shared/single-playlist-v2/single-playlist-v2.component';
 import { ContentComponent } from './pages_shared/single-playlist-v2/components/content/content.component';
 
-// const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
-
 // Material Theme Module
 import {
 	MatAutocompleteModule,
