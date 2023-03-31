@@ -18,7 +18,7 @@
 	</section>
 
 	<section class="playlistv2-content__thumbnail">
-		<img [src]="content.thumbnail" [alt]="content.filename" />
+		<img [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
 	</section>
 
 	<section class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white">
