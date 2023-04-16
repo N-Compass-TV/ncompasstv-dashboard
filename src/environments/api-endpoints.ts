@@ -144,6 +144,7 @@ export const API_ENDPOINTS = {
 		api_get_users_total: 'user/gettotal',
 		api_generate_content_logs_report: 'contentplaysdaily/ExportPlayLogsPerHostsByContent',
 		api_google_map: 'googleapi/searchplaces?place=',
+		api_google_store_hours: 'googleapi/getstorehours?placeid=',
 		api_renewsocket: 'license/renewsocket',
 		api_search_dealer: 'dealer/searchdealer?search=',
 		api_search_dealer_with_host: 'dealer/getdealerswithhost?search=',
@@ -156,7 +157,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',

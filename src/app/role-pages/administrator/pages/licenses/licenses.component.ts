@@ -545,7 +545,7 @@ export class LicensesComponent implements OnInit {
 				}
 			);
 	}
-    
+
 	getTotalHours(data: { storeHours: any }) {
 		if (data.storeHours) {
 			data.storeHours = JSON.parse(data.storeHours);
