@@ -23,7 +23,7 @@
 						</section>
 
 						<section class="bg-white box-shadow p-4 playlist-content-management rounded">
-							<div class="bg-gray box-shadow p-3 playlist-contents rounded">
+							<div class="bg-gray box-shadow p-3 playlist-contents vh-64 rounded">
 								<div class="row no-gutters" #draggables id="draggables">
 									<div class="col-lg-1" *ngFor="let c of playlistContents; let i = index">
 										<div id="{{ 'drg_' + c.playlistContentId }}" [attr.data-id]="c.playlistContentId" class="m-1">

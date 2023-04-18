@@ -18,7 +18,7 @@
 	</section>
 
 	<section class="playlistv2-content__thumbnail">
-		<img [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
+		<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
 	</section>
 
 	<section class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white">
@@ -32,7 +32,7 @@
 				class="naked-btn"
 				[ngClass]="i < playlistContentControls.length - 1 && 'mr-2'"
 				[matTooltip]="c.label"
-				(click)="control_click.emit({ playlistContentId: content.playlistContentId, action: c.action })">
+				(click)="control_click.emit({ playlistContent: content, action: c.action })">
 				<span class="xsm-text"><i class="{{ c.icon }} {{ c.colorClass }}"></i></span>
 			</button>
 		</div>

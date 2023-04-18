@@ -6,6 +6,6 @@ import { BaseService } from 'src/app/global/services/base.service';
 })
 export class SinglePlaylistService extends BaseService {
 	getPlaylistData(playlistId) {
-		return this.getRequest(`playlists/getplaylistsbyid?playlistid=${playlistId}`);
+		return this.getRequest(`playlistsv2?playlistid=${playlistId}`);
 	}
 }

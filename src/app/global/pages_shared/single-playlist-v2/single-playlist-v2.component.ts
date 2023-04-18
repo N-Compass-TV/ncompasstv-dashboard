@@ -30,12 +30,16 @@ export class SinglePlaylistV2Component implements OnInit {
 		this.playlistRouteInit();
 	}
 
-	contentControlClicked(e: { playlistContentId: string; action: string }) {
+	contentControlClicked(e: { playlistContent: any; action: string }) {
 		switch (e.action) {
 			case pcActions.delete:
 				break;
 			case pcActions.edit:
-				this._dialog.open(ContentSettingsComponent);
+				this._dialog.open(ContentSettingsComponent, {
+					width: '1200px',
+					height: '700px',
+					data: e.playlistContent
+				});
 				break;
 			case pcActions.fullscreen:
 				break;
