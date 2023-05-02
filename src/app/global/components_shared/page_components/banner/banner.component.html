@@ -1,4 +1,4 @@
-<div class="theme-banner bg-dark-light">
+<div class="theme-banner bg-dark-light" [ngClass]="is_host_page && 'host-padding'">
 	<div class="theme-container">
 		<div class="d-flex align-items-center">
 			<div class="single-image mr-3">
@@ -17,9 +17,9 @@
 						<h5 class="text-white sm-text mb-1"><span class="font-italic">Dealer Alias: </span>{{ page_data.dealer.dealerIdAlias }}</h5>
 					</div>
 				</ng-container>
-				<ng-container *ngIf="page === 'single-host' && is_admin">
+				<ng-container *ngIf="page === 'single-host' && (is_admin || is_dealer_admin)">
 					<h4 class="d-inline-block sm-text mb-0 text-white">
-						<a class="text-white" [routerLink]="[dealer_url]">{{ business_name }}</a>
+						<a class="text-white" [routerLink]="[dealer_url]" target="_blank">{{ business_name }}</a>
 						<span class="mx-2">|</span>
 					</h4>
 				</ng-container>
@@ -112,13 +112,13 @@
 					</mat-card>
 				</div>
 			</ng-container>
-			<div class="flex-even text-right">
+			<div class="flex-even px-3">
 				<ng-container *ngIf="page === 'single-host'">
-					<div class="control-buttons">
+					<div class="control-buttons host-btn-container">
 						<button
 							mat-button
 							mat-raised-button
-							class="theme-btn mr-3"
+							class="theme-btn mb-2 host-btn"
 							[class.disabled]="!editable"
 							(click)="onAssignLicense()"
 							[disabled]="!editable"
@@ -129,7 +129,7 @@
 						<button
 							mat-button
 							mat-raised-button
-							class="theme-btn"
+							class="theme-btn host-btn"
 							[class.disabled]="!editable"
 							(click)="onCreateScreen(dealer.dealerId, host.hostId)"
 							[disabled]="!editable"

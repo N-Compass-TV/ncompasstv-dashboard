@@ -48,6 +48,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 		| { dealer: API_DEALER; user: API_USER_DATA }
 		| { host: API_HOST; dealer: API_DEALER }
 		| { advertiser: API_ADVERTISER; dealer: API_DEALER } = null;
+	@Input() is_host_page = false;
 	@Output() single_host_assign_license = new EventEmitter();
 	@Output() toggle_margin_top = new EventEmitter();
 	@Output() toggle_margin_top_notes = new EventEmitter();
@@ -63,6 +64,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 	host: API_HOST = null;
 
 	is_admin = this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator;
+	is_dealer_admin = this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealeradmin;
 	license_stats_label: any = [];
 	license_stats_array: any = [];
 	notes: string = '';
@@ -158,7 +160,6 @@ export class BannerComponent implements OnInit, OnDestroy {
 		}
 
 		config.data = data;
-
 		const dialogReference = this._dialog.open(dialog, config);
 
 		dialogReference.afterClosed().subscribe((response) => {
