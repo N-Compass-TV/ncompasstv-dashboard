@@ -1,5 +1,13 @@
 .content-settings {
+	height: 100%;
+	position: relative;
+
+	.save-cancel-button-wrapper {
+		position: absolute;
+		bottom: 0;
+	}
+
 	.playlist-content-preview {
-		height: 300px;
+		height: 290px;
 	}
 }

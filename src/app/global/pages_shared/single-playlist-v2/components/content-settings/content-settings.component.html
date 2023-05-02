@@ -1,7 +1,7 @@
-<div class="content-settings p-3">
+<div class="content-settings">
 	<div class="row mb-3">
 		<div class="col-lg-8">
-			<h3 class="mb-1 font-weight-bold">Playlist Content Option</h3>
+			<h3 class="m-0 font-weight-bold">Playlist Content Option</h3>
 			<p class="m-0">Set duration, whitelisting, and display mode</p>
 		</div>
 		<div class="col-lg-4"></div>
@@ -9,23 +9,21 @@
 	<div class="row">
 		<div class="col-lg-6">
 			<div class="playlist-content-preview mb-3">
-				<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
+				<img class="image-w-100 border" [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
 			</div>
 
-			<!-- Playlist Content Basic Info-->
-			<div class="row">
-				<!-- Playlist Content Basic Info-->
+			<!-- Playlist Content Basic Info -->
+			<div class="row mb-3">
+				<!-- Playlist Content Basic Info -->
 				<div class="col-lg-8">
 					<div class="playlist-content-basic-info">
-						<h3 class="m-0 font-weight-bold">{{ content.fileName || content.title | nohandle | slice : 0 : 30 }}</h3>
-						<p class="sm-text">
-							<span> F </span>
-						</p>
+						<h4 class="m-0 font-weight-bold">{{ content.fileName || content.title | nohandle | slice : 0 : 30 }}</h4>
+						<p class="sm-text">Uploaded {{ content.dateCreated | date : 'MMM d, y, h:mm:ss a' }}</p>
 					</div>
 				</div>
 				<div class="col-lg-4 text-right">
 					<span
-						class="text-primary fas mr-1 fa-2x"
+						class="text-primary fas mr-1"
 						[ngClass]="{
 							'fa-image': content.fileType | isimage,
 							'fa-video': content.fileType | isvideo,
@@ -34,7 +32,52 @@
 					</span>
 				</div>
 			</div>
+
+			<hr />
+
+			<!-- Settings: Duration -->
+			<div class="duration-form-wrapper border-bottom" *ngIf="!(content.fileType | isvideo)">
+				<mat-form-field class="full-width" appearance="fill">
+					<mat-label>Set duration, default is 20</mat-label>
+					<input formControlName="duration" matInput placeholder="Example: 20" type="number" />
+				</mat-form-field>
+			</div>
+
+			<!-- Settings: Frequency -->
+			<div class="frequency-set-wrapper border-bottom py-25 d-flex">
+				<div class="flex-even">
+					<strong class="sm-text">Set Frequency</strong>
+				</div>
+				<div>
+					<mat-radio-group aria-label="Select an option">
+						<mat-radio-button class="mr-3" value="2"><strong class="sm-text">2x</strong></mat-radio-button>
+						<mat-radio-button value="3"><strong class="sm-text">3x</strong></mat-radio-button>
+					</mat-radio-group>
+				</div>
+			</div>
+
+			<!-- Settings: Fullscreen -->
+			<div class="fullscreen-toggle-wrapper border-bottom py-25 d-flex">
+				<div class="flex-even">
+					<strong class="sm-text">Set to Fullscreen</strong>
+				</div>
+				<div>
+					<mat-slide-toggle></mat-slide-toggle>
+				</div>
+			</div>
 		</div>
 		<div class="col-lg-8"></div>
+	</div>
+
+	<!-- Save/Cancel Button -->
+	<div class="save-cancel-button-wrapper">
+		<button mat-button mat-raised-button class="theme-btn mr-2">
+			<i class="fas fa-save mr-3 text-green"></i>
+			<small class="font-weight-bold">Save</small>
+		</button>
+		<button mat-button mat-raised-button class="theme-btn">
+			<i class="fas fa-times mr-3 text-danger"></i>
+			<small class="font-weight-bold">Cancel</small>
+		</button>
 	</div>
 </div>
