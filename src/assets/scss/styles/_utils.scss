@@ -206,6 +206,10 @@
 	overflow: hidden !important;
 }
 
+.overflow-y-scroll {
+	overflow-y: scroll;
+}
+
 //Colors
 .text-white {
 	color: $light;
