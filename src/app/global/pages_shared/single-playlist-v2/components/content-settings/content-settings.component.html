@@ -2,7 +2,7 @@
 	<div class="row mb-3">
 		<div class="col-lg-8">
 			<h3 class="m-0 font-weight-bold">Playlist Content Option</h3>
-			<p class="m-0">Set duration, whitelisting, and display mode</p>
+			<p class="sm-text m-0">Set duration, whitelisting, and display mode</p>
 		</div>
 		<div class="col-lg-4"></div>
 	</div>
@@ -17,7 +17,7 @@
 				<!-- Playlist Content Basic Info -->
 				<div class="col-lg-8">
 					<div class="playlist-content-basic-info">
-						<h4 class="m-0 font-weight-bold">{{ content.fileName || content.title | nohandle | slice : 0 : 30 }}</h4>
+						<h5 class="m-0 font-weight-bold">{{ content.fileName || content.title | nohandle | slice : 0 : 50 }}</h5>
 						<p class="sm-text">Uploaded {{ content.dateCreated | date : 'MMM d, y, h:mm:ss a' }}</p>
 					</div>
 				</div>
@@ -32,8 +32,6 @@
 					</span>
 				</div>
 			</div>
-
-			<hr />
 
 			<!-- Settings: Duration -->
 			<div class="duration-form-wrapper border-bottom" *ngIf="!(content.fileType | isvideo)">

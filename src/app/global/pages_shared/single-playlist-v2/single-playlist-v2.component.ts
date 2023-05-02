@@ -37,7 +37,7 @@ export class SinglePlaylistV2Component implements OnInit {
 			case pcActions.edit:
 				this._dialog.open(ContentSettingsComponent, {
 					width: '1200px',
-					height: '750px',
+					height: '720px',
 					data: e.playlistContent
 				});
 				break;
