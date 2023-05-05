@@ -7,6 +7,7 @@
 		<div class="col-lg-4"></div>
 	</div>
 	<div class="row">
+		<!-- Info/Fullscreen/Duration/Frequency -->
 		<div class="col-lg-6">
 			<div class="playlist-content-preview mb-3">
 				<img class="image-w-100 border" [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
@@ -35,10 +36,12 @@
 
 			<!-- Settings: Duration -->
 			<div class="duration-form-wrapper border-bottom" *ngIf="!(content.fileType | isvideo)">
-				<mat-form-field class="full-width" appearance="fill">
-					<mat-label>Set duration, default is 20</mat-label>
-					<input formControlName="duration" matInput placeholder="Example: 20" type="number" />
-				</mat-form-field>
+				<form [formGroup]="durationForm">
+					<mat-form-field class="full-width" appearance="fill">
+						<mat-label>Set duration, default is 20</mat-label>
+						<input formControlName="duration" matInput placeholder="Example: 20" type="number" />
+					</mat-form-field>
+				</form>
 			</div>
 
 			<!-- Settings: Frequency -->
@@ -64,7 +67,24 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-lg-8"></div>
+		<!-- Info/Fullscreen/Duration/Frequency -->
+
+		<!-- Play Where/Content Schedule -->
+		<div class="col-lg-6">
+			<mat-tab-group mat-stretch-tabs>
+				<mat-tab label="Content Schedule">
+					<div class="mt-3">
+						<app-content-scheduler></app-content-scheduler>
+					</div>
+				</mat-tab>
+				<mat-tab label="Play Where">
+					<div class="mt-3">
+						<app-play-location></app-play-location>
+					</div>
+				</mat-tab>
+			</mat-tab-group>
+		</div>
+		<!-- Play Where/Content Schedule -->
 	</div>
 
 	<!-- Save/Cancel Button -->

@@ -1,0 +1,61 @@
+<div class="content-scheduler-form">
+	<form [formGroup]="schedulerForm">
+		<div class="mb-2">
+			<strong class="sm-text">Set Date Range</strong>
+		</div>
+		<div class="d-flex">
+			<div class="flex-even mr-2">
+				<mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
+					<mat-label class="md-text">Start Date</mat-label>
+					<input formControlName="startDate" matInput [matDatepicker]="datePickerStart" />
+					<mat-datepicker-toggle matSuffix [for]="datePickerStart"></mat-datepicker-toggle>
+					<mat-datepicker #datePickerStart></mat-datepicker>
+				</mat-form-field>
+			</div>
+
+			<div class="flex-even">
+				<mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
+					<mat-label class="md-text">End Date</mat-label>
+					<input formControlName="endDate" matInput [matDatepicker]="datePickerEnd" />
+					<mat-datepicker-toggle matSuffix [for]="datePickerEnd"></mat-datepicker-toggle>
+					<mat-datepicker #datePickerEnd></mat-datepicker>
+				</mat-form-field>
+			</div>
+		</div>
+		<!-- Date Range -->
+
+		<div class="day-list-wrapper border-top border-bottom d-flex pt-3">
+			<div class="flex-even">
+				<strong class="sm-text">Select Days</strong>
+			</div>
+			<ul class="day-list d-flex">
+				<li class="mr-3" *ngFor="let d of days">
+					<mat-checkbox formArrayName="days" [value]="d" (change)="onCheckboxChange($event)">
+						<strong class="xsm-text">{{ d.day }}</strong>
+					</mat-checkbox>
+				</li>
+			</ul>
+		</div>
+		<!-- Day Selection -->
+
+		<div class="d-flex pt-3">
+			<div class="flex-even mr-2">
+				<div class="start-time">
+					<div class="mb-2">
+						<strong class="sm-text mb-2">Start Time</strong>
+					</div>
+					<ngb-timepicker [spinners]="false" [meridian]="true" formControlName="playTimeStartData"></ngb-timepicker>
+				</div>
+			</div>
+			<div class="flex-even">
+				<div class="end-time">
+					<div class="mb-2">
+						<strong class="sm-text">End Time</strong>
+					</div>
+					<ngb-timepicker [spinners]="false" [meridian]="true" formControlName="playTimeEndData"></ngb-timepicker>
+				</div>
+			</div>
+		</div>
+		<!-- Start/End Time Range -->
+	</form>
+</div>
