@@ -1,5 +1,5 @@
-import { Component, Inject, Input, OnInit } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
@@ -8,9 +8,11 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 	styleUrls: ['./content-settings.component.scss']
 })
 export class ContentSettingsComponent implements OnInit {
-	duration: FormControl = new FormControl(20, [Validators.pattern('^[0-9]*$')]);
+	durationForm: FormGroup = this._formBuilder.group({
+		duration: ['']
+	});
 
-	constructor(@Inject(MAT_DIALOG_DATA) public content: any) {}
+	constructor(private _formBuilder: FormBuilder, @Inject(MAT_DIALOG_DATA) public content: any) {}
 
 	ngOnInit() {}
 }
