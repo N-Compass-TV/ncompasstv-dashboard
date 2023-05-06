@@ -2,7 +2,15 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { Sortable } from 'sortablejs';
-import { API_CONTENT, API_HOST, API_LICENSE_PROPS, API_SCREEN_OF_PLAYLIST, API_SINGLE_PLAYLIST, API_SINGLE_PLAYLIST_INFO } from '../../models';
+import {
+	API_CONTENT,
+	API_HOST,
+	API_LICENSE,
+	API_LICENSE_PROPS,
+	API_SCREEN_OF_PLAYLIST,
+	API_SINGLE_PLAYLIST,
+	API_SINGLE_PLAYLIST_INFO
+} from '../../models';
 import { ContentSettingsComponent } from './components/content-settings/content-settings.component';
 import { PlaylistPrimaryControlActions as pActions, PlaylistPrimaryControls, PlaylistContentControlActions as pcActions } from './constants';
 
@@ -20,6 +28,7 @@ export class SinglePlaylistV2Component implements OnInit {
 	licenses: API_LICENSE_PROPS[];
 	playlist: API_SINGLE_PLAYLIST_INFO;
 	playlistContents: API_CONTENT[];
+	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] };
 	screens: API_SCREEN_OF_PLAYLIST[];
 	selectedPlaylistContents = [];
 	playlistControls = PlaylistPrimaryControls;
@@ -38,7 +47,10 @@ export class SinglePlaylistV2Component implements OnInit {
 				this._dialog.open(ContentSettingsComponent, {
 					width: '1270px',
 					height: '720px',
-					data: e.playlistContent
+					data: {
+						playlistContent: e.playlistContent,
+						hostLicenses: this.playlistHostLicenses
+					}
 				});
 				break;
 			case pcActions.fullscreen:
@@ -89,6 +101,18 @@ export class SinglePlaylistV2Component implements OnInit {
 	playlistRouteInit() {
 		this._activatedRoute.paramMap.subscribe((data: any) => {
 			this.getPlaylistData(data.params.data);
+			this.getPlaylistHostLicenses(data.params.data);
+		});
+	}
+
+	getPlaylistHostLicenses(playlistId: string) {
+		this._playlist.getPlaylistHosts(playlistId).subscribe({
+			next: (res) => {
+				this.playlistHostLicenses = res;
+			},
+			error: (error) => {
+				throw Error(error);
+			}
 		});
 	}
 
