@@ -1,15 +1,15 @@
 <div class="play-location p-2 bg-light">
 	<mat-accordion>
-		<mat-expansion-panel hideToggle>
+		<mat-expansion-panel hideToggle *ngFor="let hl of hostLicenses">
 			<mat-expansion-panel-header>
 				<mat-slide-toggle (click)="$event.stopPropagation()">
-					<h5 class="mb-0 ml-2">Host Location Name</h5>
+					<h5 class="mb-0 ml-2">{{ hl.host.name }}</h5>
 				</mat-slide-toggle>
 			</mat-expansion-panel-header>
 
 			<div class="location-license-list border-top pt-3 w-100">
-				<mat-slide-toggle>
-					<h5 class="ml-2">License Key</h5>
+				<mat-slide-toggle *ngFor="let l of hl.licenses">
+					<h5 class="ml-2">{{ l.alias || l.licenseKey }}</h5>
 				</mat-slide-toggle>
 			</div>
 		</mat-expansion-panel>
