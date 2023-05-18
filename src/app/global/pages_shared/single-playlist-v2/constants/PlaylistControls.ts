@@ -17,6 +17,11 @@ export const PlaylistPrimaryControls = [
 		disabled: true
 	},
 	{
+		label: 'View Schedule',
+		action: 'view-schedule',
+		icon: 'fas fa-calendar'
+	},
+	{
 		label: 'Playlist Demo',
 		action: 'playlist-demo',
 		icon: 'fas fa-play'
