@@ -23,6 +23,75 @@
 						</section>
 
 						<section class="bg-white box-shadow p-4 playlist-content-management rounded">
+							<!-- To component or constants -->
+							<div class="filter-controls">
+								<div class="d-flex">
+									<div class="flex-even">
+										<div class="d-flex">
+											<!-- Filters -->
+											<div class="filters-and-search mr-4">
+												<div class="d-flex align-items-center filters-wrapper border rounded px-2">
+													<h6 class="floating-title">FILTERS</h6>
+													<div class="d-flex">
+														<div class="content-type-filter mr-3">
+															<button mat-button mat-raised-button class="theme-btn" [matMenuTriggerFor]="menu">
+																<i class="fas fa-image mr-3 text-green"></i>
+																<small class="font-weight-bold mr-2">Content Type</small>
+																<i class="fas fa-caret-down"></i>
+															</button>
+															<mat-menu #menu="matMenu">
+																<button mat-menu-item>Item 1</button>
+																<button mat-menu-item>Item 2</button>
+															</mat-menu>
+														</div>
+
+														<div class="content-schedule-filter">
+															<button mat-button mat-raised-button class="theme-btn" [matMenuTriggerFor]="menu">
+																<i class="fas fa-calendar-image mr-3 text-green"></i>
+																<small class="font-weight-bold mr-2">Content Status</small>
+																<i class="fas fa-caret-down"></i>
+															</button>
+															<mat-menu #menu="matMenu">
+																<button mat-menu-item>Item 1</button>
+																<button mat-menu-item>Item 2</button>
+															</mat-menu>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- Filters -->
+
+											<!-- Other Options -->
+											<div class="other-options mr-4">
+												<div class="d-flex align-items-center filters-wrapper border rounded px-2">
+													<h6 class="floating-title">VIEW OPTIONS</h6>
+													<div class="d-flex">
+														<button mat-button mat-raised-button class="theme-btn mr-3">
+															<i class="fas fa-list mr-3 text-green"></i>
+															<small class="font-weight-bold mr-1">List View</small>
+														</button>
+														<button mat-button mat-raised-button class="theme-btn">
+															<i class="fas fas fa-th mr-3 text-green"></i>
+															<small class="font-weight-bold mr-1">Grid View</small>
+														</button>
+													</div>
+												</div>
+											</div>
+											<!-- Other Options -->
+										</div>
+									</div>
+
+									<div class="flex-even">
+										<form>
+											<mat-form-field class="full-width" appearance="fill">
+												<mat-label>Search Playlist Content</mat-label>
+												<input matInput placeholder="Example: Pizza Ad" type="text" />
+											</mat-form-field>
+										</form>
+									</div>
+								</div>
+							</div>
+
 							<div class="bg-gray box-shadow p-3 playlist-contents vh-64 rounded overflow-y-scroll">
 								<div class="row no-gutters" #draggables id="draggables">
 									<div class="col-lg-1" *ngFor="let c of playlistContents; let i = index">
@@ -36,6 +105,7 @@
 									</div>
 								</div>
 							</div>
+							<!-- Playlist Content Collection -->
 						</section>
 					</div>
 				</mat-tab>
