@@ -304,6 +304,7 @@ breadcrumb {
 		margin-bottom: 3em;
 	}
 }
+
 .uppercase {
 	text-transform: uppercase;
 }
@@ -320,4 +321,14 @@ breadcrumb {
 
 .mat-tab-body-content {
 	overflow-x: hidden !important;
+}
+
+.sortable-drag {
+	height: 112px !important;
+	width: 121px !important;
+
+	div {
+		height: 100% !important;
+		width: 100% !important;
+	}
 }
