@@ -12,9 +12,16 @@ import {
 	API_SINGLE_PLAYLIST_INFO
 } from '../../models';
 import { ContentSettingsComponent } from './components/content-settings/content-settings.component';
-import { PlaylistPrimaryControlActions as pActions, PlaylistPrimaryControls, PlaylistContentControlActions as pcActions } from './constants';
+import {
+	PlaylistPrimaryControlActions as pActions,
+	PlaylistPrimaryControls,
+	PlaylistContentControlActions as pcActions,
+	PlaylistFiltersDropdown,
+	PlaylistViewOptions
+} from './constants';
 
 import { SinglePlaylistService } from './services/single-playlist.service';
+import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -23,15 +30,22 @@ import { SinglePlaylistService } from './services/single-playlist.service';
 })
 export class SinglePlaylistV2Component implements OnInit {
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
+	feedCount = 0;
 	hostLicenses: any;
 	hosts: API_HOST[];
+	imageCount = 0;
 	licenses: API_LICENSE_PROPS[];
 	playlist: API_SINGLE_PLAYLIST_INFO;
 	playlistContents: API_CONTENT[];
+	playlistControls = PlaylistPrimaryControls;
+	playlistFilters = PlaylistFiltersDropdown;
 	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] };
+	playlistViews = PlaylistViewOptions;
 	screens: API_SCREEN_OF_PLAYLIST[];
 	selectedPlaylistContents = [];
-	playlistControls = PlaylistPrimaryControls;
+	videoCount = 0;
+	playlistContentBreakdown = [];
+	contentStatusBreakdown = [];
 
 	constructor(private _activatedRoute: ActivatedRoute, private _dialog: MatDialog, private _playlist: SinglePlaylistService) {}
 
@@ -77,6 +91,32 @@ export class SinglePlaylistV2Component implements OnInit {
 		});
 	}
 
+	getAssetCount(): void {
+		const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
+		this.videoCount = this.playlistContents.filter((i) => fileTypes('video').includes(i.fileType.toLowerCase())).length;
+		this.imageCount = this.playlistContents.filter((i) => fileTypes('image').includes(i.fileType.toLowerCase())).length;
+		this.feedCount = this.playlistContents.filter((i) => fileTypes('feed').includes(i.fileType.toLowerCase())).length;
+		this.playlistContentBreakdown = [
+			{ label: 'Active Contents', active: 267, total: this.playlistContents.length },
+			{ label: 'Active Videos', active: 185, total: this.videoCount },
+			{ label: 'Active Images', active: 82, total: this.imageCount },
+			{ label: 'Active Feeds', active: 0, total: this.feedCount }
+		];
+	}
+
+	private getFileTypesByTypeName(data: string) {
+		switch (data) {
+			case 'image':
+				return IMAGE_TYPES;
+
+			case 'video':
+				return VIDEO_TYPES;
+
+			default:
+				return FEED_TYPES;
+		}
+	}
+
 	getPlaylistData(playlistId: string) {
 		this._playlist.getPlaylistData(playlistId).subscribe({
 			next: (data: API_SINGLE_PLAYLIST) => {
@@ -88,6 +128,9 @@ export class SinglePlaylistV2Component implements OnInit {
 				this.screens = data.screens;
 				this.hostLicenses = data.hostLicenses;
 				this.licenses = data.licenses;
+
+				/** Get Asset Count By Type */
+				this.getAssetCount();
 
 				/** Initialize SortableJS */
 				setTimeout(() => this.sortableJSInit(), 0);

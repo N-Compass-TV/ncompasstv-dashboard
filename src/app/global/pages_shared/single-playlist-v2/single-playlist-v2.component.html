@@ -13,17 +13,36 @@
 			<mat-tab-group>
 				<mat-tab label="Content Management">
 					<div class="playlist-content-management-wrapper pt-3">
-						<section class="playlist-content-management-controls mb-3">
-							<ng-container *ngFor="let c of playlistControls">
-								<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="c.disabled">
-									<i class="{{ c.icon }} mr-3 text-green"></i>
-									<small class="font-weight-bold">{{ c.label }}</small>
-								</button>
-							</ng-container>
+						<section class="playlist-content-management-controls d-flex mb-3">
+							<div class="playlist-stats d-flex">
+								<div
+									class="breakdown-item"
+									*ngFor="let p of playlistContentBreakdown; let i = index"
+									[ngClass]="i < playlistContentBreakdown.length - 1 && 'mr-4'">
+									<h5 class="font-weight-bold m-0">
+										<span class="text-green" *ngIf="p.active > 0">{{ p.active }}</span>
+										<span class="text-gray d-inline-block mx-1 xsm-text" *ngIf="p.active > 0">of</span>
+										{{ p.total }}
+									</h5>
+									<p class="xsm-text m-0">{{ p.label }}</p>
+								</div>
+							</div>
+							<div class="flex-even text-right">
+								<ng-container *ngFor="let c of playlistControls; let i = index">
+									<button
+										mat-button
+										mat-raised-button
+										class="theme-btn"
+										[ngClass]="i < playlistControls.length - 1 && 'mr-2'"
+										[disabled]="c.disabled">
+										<i class="{{ c.icon }} mr-3 text-green"></i>
+										<small class="font-weight-bold">{{ c.label }}</small>
+									</button>
+								</ng-container>
+							</div>
 						</section>
 
 						<section class="bg-white box-shadow p-4 playlist-content-management rounded">
-							<!-- To component or constants -->
 							<div class="filter-controls">
 								<div class="d-flex">
 									<div class="flex-even">
@@ -33,56 +52,45 @@
 												<div class="d-flex align-items-center filters-wrapper border rounded px-2">
 													<h6 class="floating-title">FILTERS</h6>
 													<div class="d-flex">
-														<div class="content-type-filter mr-3">
+														<div
+															class="content-filters"
+															*ngFor="let p of playlistFilters; let i = index"
+															[ngClass]="i == 0 && 'mr-3'">
 															<button mat-button mat-raised-button class="theme-btn" [matMenuTriggerFor]="menu">
-																<i class="fas fa-image mr-3 text-green"></i>
-																<small class="font-weight-bold mr-2">Content Type</small>
+																<i class="{{ p.icon }} mr-3 text-green"></i>
+																<small class="font-weight-bold mr-2">{{ p.label }}</small>
 																<i class="fas fa-caret-down"></i>
 															</button>
 															<mat-menu #menu="matMenu">
-																<button mat-menu-item>Item 1</button>
-																<button mat-menu-item>Item 2</button>
-															</mat-menu>
-														</div>
-
-														<div class="content-schedule-filter">
-															<button mat-button mat-raised-button class="theme-btn" [matMenuTriggerFor]="menu">
-																<i class="fas fa-calendar-image mr-3 text-green"></i>
-																<small class="font-weight-bold mr-2">Content Status</small>
-																<i class="fas fa-caret-down"></i>
-															</button>
-															<mat-menu #menu="matMenu">
-																<button mat-menu-item>Item 1</button>
-																<button mat-menu-item>Item 2</button>
+																<button mat-menu-item *ngFor="let i of p.items">{{ i.label }}</button>
 															</mat-menu>
 														</div>
 													</div>
 												</div>
 											</div>
-											<!-- Filters -->
 
-											<!-- Other Options -->
+											<!-- View Options -->
 											<div class="other-options mr-4">
 												<div class="d-flex align-items-center filters-wrapper border rounded px-2">
 													<h6 class="floating-title">VIEW OPTIONS</h6>
 													<div class="d-flex">
-														<button mat-button mat-raised-button class="theme-btn mr-3">
-															<i class="fas fa-list mr-3 text-green"></i>
-															<small class="font-weight-bold mr-1">List View</small>
-														</button>
-														<button mat-button mat-raised-button class="theme-btn">
-															<i class="fas fas fa-th mr-3 text-green"></i>
-															<small class="font-weight-bold mr-1">Grid View</small>
+														<button
+															mat-button
+															mat-raised-button
+															class="theme-btn"
+															*ngFor="let p of playlistViews; let i = index"
+															[ngClass]="i == 0 && 'mr-3'">
+															<i class="{{ p.icon }} mr-3 text-green"></i>
+															<small class="font-weight-bold mr-1">{{ p.label }}</small>
 														</button>
 													</div>
 												</div>
 											</div>
-											<!-- Other Options -->
 										</div>
 									</div>
 
-									<div class="flex-even">
-										<form>
+									<div class="search-form-wrapper">
+										<form class="search-form">
 											<mat-form-field class="full-width" appearance="fill">
 												<mat-label>Search Playlist Content</mat-label>
 												<input matInput placeholder="Example: Pizza Ad" type="text" />
@@ -105,7 +113,6 @@
 									</div>
 								</div>
 							</div>
-							<!-- Playlist Content Collection -->
 						</section>
 					</div>
 				</mat-tab>
