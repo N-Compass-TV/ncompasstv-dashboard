@@ -22,6 +22,7 @@ import {
 
 import { SinglePlaylistService } from './services/single-playlist.service';
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types';
+import { AddContentComponent } from './components/add-content/add-content.component';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -30,30 +31,34 @@ import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types
 })
 export class SinglePlaylistV2Component implements OnInit {
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
+	assets: API_CONTENT[] = [];
+	contentStatusBreakdown = [];
 	feedCount = 0;
 	hostLicenses: any;
 	hosts: API_HOST[];
 	imageCount = 0;
 	licenses: API_LICENSE_PROPS[];
 	playlist: API_SINGLE_PLAYLIST_INFO;
+	playlistContentBreakdown = [];
 	playlistContents: API_CONTENT[];
 	playlistControls = PlaylistPrimaryControls;
+	playlistDescription = 'Getting playlist data';
 	playlistFilters = PlaylistFiltersDropdown;
 	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] };
+	playlistName = 'Please wait';
 	playlistViews = PlaylistViewOptions;
 	screens: API_SCREEN_OF_PLAYLIST[];
 	selectedPlaylistContents = [];
 	videoCount = 0;
-	playlistContentBreakdown = [];
-	contentStatusBreakdown = [];
 
 	constructor(private _activatedRoute: ActivatedRoute, private _dialog: MatDialog, private _playlist: SinglePlaylistService) {}
 
 	ngOnInit() {
 		this.playlistRouteInit();
+		this.getAssets();
 	}
 
-	contentControlClicked(e: { playlistContent: any; action: string }) {
+	public contentControlClicked(e: { playlistContent: any; action: string }) {
 		switch (e.action) {
 			case pcActions.delete:
 				break;
@@ -76,12 +81,10 @@ export class SinglePlaylistV2Component implements OnInit {
 		}
 	}
 
-	contentSelected(playlistContentId: string) {
-		if (this.selectedPlaylistContents.includes(playlistContentId)) {
+	public contentSelected(playlistContentId: string) {
+		if (this.selectedPlaylistContents.includes(playlistContentId))
 			this.selectedPlaylistContents = this.selectedPlaylistContents.filter((p) => p !== playlistContentId);
-		} else {
-			this.selectedPlaylistContents.push(playlistContentId);
-		}
+		else this.selectedPlaylistContents.push(playlistContentId);
 
 		this.playlistControls = this.playlistControls.map((p) => {
 			/** Add Bulk Button Actions Here */
@@ -91,7 +94,19 @@ export class SinglePlaylistV2Component implements OnInit {
 		});
 	}
 
-	getAssetCount(): void {
+	private getAssets() {
+		this._playlist.getAvailableDealerAssets().subscribe({
+			next: (data: { contents: API_CONTENT[]; page: any }) => {
+				/** Implement paging */
+				this.assets = data.contents;
+			},
+			error: (error) => {
+				throw Error(error);
+			}
+		});
+	}
+
+	private getAssetCount(): void {
 		const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
 		this.videoCount = this.playlistContents.filter((i) => fileTypes('video').includes(i.fileType.toLowerCase())).length;
 		this.imageCount = this.playlistContents.filter((i) => fileTypes('image').includes(i.fileType.toLowerCase())).length;
@@ -117,12 +132,14 @@ export class SinglePlaylistV2Component implements OnInit {
 		}
 	}
 
-	getPlaylistData(playlistId: string) {
+	private getPlaylistData(playlistId: string) {
 		this._playlist.getPlaylistData(playlistId).subscribe({
 			next: (data: API_SINGLE_PLAYLIST) => {
 				/** This call should only return playlist related data like the ones below */
 				this.playlist = data.playlist;
 				this.playlistContents = data.playlistContents;
+				this.playlistName = this.playlist.playlistName;
+				this.playlistDescription = this.playlist.playlistDescription;
 
 				/** These data should be coming from another API call but since they're included ... */
 				this.screens = data.screens;
@@ -141,25 +158,39 @@ export class SinglePlaylistV2Component implements OnInit {
 		});
 	}
 
-	playlistRouteInit() {
-		this._activatedRoute.paramMap.subscribe((data: any) => {
-			this.getPlaylistData(data.params.data);
-			this.getPlaylistHostLicenses(data.params.data);
-		});
-	}
-
-	getPlaylistHostLicenses(playlistId: string) {
+	private getPlaylistHostLicenses(playlistId: string) {
 		this._playlist.getPlaylistHosts(playlistId).subscribe({
-			next: (res) => {
-				this.playlistHostLicenses = res;
-			},
+			next: (res) => (this.playlistHostLicenses = res),
 			error: (error) => {
 				throw Error(error);
 			}
 		});
 	}
 
-	sortableJSInit(): void {
+	public playlistControlClicked(e: { action: string }) {
+		switch (e.action) {
+			case pActions.addContent:
+				this.showAddContentDialog();
+				break;
+			default:
+				break;
+		}
+	}
+
+	private playlistRouteInit() {
+		this._activatedRoute.paramMap.subscribe((data: any) => {
+			this.getPlaylistData(data.params.data);
+			this.getPlaylistHostLicenses(data.params.data);
+		});
+	}
+
+	private showAddContentDialog() {
+		this._dialog.open(AddContentComponent, {
+			data: this.assets
+		});
+	}
+
+	private sortableJSInit(): void {
 		// Sortable.mount(new MultiDrag());
 
 		const onDeselect = (e) => {

@@ -12,6 +12,7 @@ import { AddFillerContentComponent } from './pages_shared/fillers/components/add
 import { AddFillerFeedsComponent } from './pages_shared/fillers/components/add-filler-content/components/add-filler-feeds/add-filler-feeds.component';
 import { AddFillerGroupComponent } from './pages_shared/fillers/components/add-filler-group/add-filler-group.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
+import { AddContentComponent } from './pages_shared/single-playlist-v2/components/add-content/add-content.component';
 import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AutocompleteFieldComponent } from './components_shared/page_components/autocomplete-field/autocomplete-field.component';
@@ -244,6 +245,7 @@ const ngComponents = [
 	AddFillerContentComponent,
 	AddFillerFeedsComponent,
 	AddFillerGroupComponent,
+	AddContentComponent,
 	AdvertiserViewComponent,
 	AssignLicenseModalComponent,
 	AutocompleteFieldComponent,
@@ -481,6 +483,8 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		AddFillerContentComponent,
 		AddFillerFeedsComponent,
 		AddFillerGroupComponent,
+		AddCardComponent,
+		AddContentComponent,
 		AssignLicenseModalComponent,
 		BulkEditBusinessHoursComponent,
 		BulkOptionsComponent,

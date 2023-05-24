@@ -10,6 +10,10 @@ export class SinglePlaylistService extends BaseService {
 		return this.postRequest('playlistsv2/addcontent', data);
 	}
 
+	getAvailableDealerAssets(dealerId: string = '136ce61b-8c69-4723-95f3-45600090cf8b', page: number = 1, pageSize: number = 60) {
+		return this.getRequest(`content/getbydealerid?dealerid=${dealerId}&page=${page}&pageSize=${pageSize}`);
+	}
+
 	createWhitelistRecord() {}
 
 	getPlaylistData(playlistId: string) {

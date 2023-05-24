@@ -16,7 +16,7 @@ export class ContentComponent implements OnInit {
 	@Output() control_click: EventEmitter<any> = new EventEmitter();
 	@Output() content_selected: EventEmitter<string> = new EventEmitter();
 	contentName: string;
-	fs_screenshot = `${environment.third_party.filestack_screenshot}`;
+	filestackScreenshot = `${environment.third_party.filestack_screenshot}`;
 	playlistContentControls = PlaylistContentControls;
 
 	constructor(private _isImage: IsimagePipe) {}
