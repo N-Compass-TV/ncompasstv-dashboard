@@ -9,6 +9,7 @@ import { environment } from '../../environments/environment';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { AddCardComponent } from './pages_shared/profile-setting/payment-setting/add-card/add-card.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
+import { AddContentComponent } from './pages_shared/single-playlist-v2/components/add-content/add-content.component';
 import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AutocompleteFieldComponent } from './components_shared/page_components/autocomplete-field/autocomplete-field.component';
@@ -229,6 +230,7 @@ import {
 
 const ngComponents = [
 	AddCardComponent,
+	AddContentComponent,
 	AdvertiserViewComponent,
 	AssignLicenseModalComponent,
 	AutocompleteFieldComponent,
@@ -453,9 +455,10 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES, ContentSchedulerFormComponent],
+	declarations: [ngComponents, DIRECTIVES, ContentSchedulerFormComponent, AddContentComponent],
 	entryComponents: [
 		AddCardComponent,
+		AddContentComponent,
 		AssignLicenseModalComponent,
 		BulkEditBusinessHoursComponent,
 		BulkOptionsComponent,

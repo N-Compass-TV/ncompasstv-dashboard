@@ -1,10 +1,10 @@
 <div class="theme-container single-playlist">
-	<div class="view" *ngIf="playlist as p; else spinner">
+	<div class="view">
 		<section class="title-section mb-4">
 			<div class="d-flex align-items-center">
 				<div class="flex-even">
-					<h1 class="page-title">{{ p.playlistName || 'Single Playlist' }}</h1>
-					<p class="sm-text mb-0">{{ p.playlistDescription || 'Nothing to show here at the moment' }}</p>
+					<h1 class="page-title">{{ playlistName }}</h1>
+					<p class="sm-text mb-0">{{ playlistDescription }}</p>
 				</div>
 			</div>
 		</section>
@@ -34,7 +34,8 @@
 										mat-raised-button
 										class="theme-btn"
 										[ngClass]="i < playlistControls.length - 1 && 'mr-2'"
-										[disabled]="c.disabled">
+										[disabled]="c.disabled"
+										(click)="playlistControlClicked(c)">
 										<i class="{{ c.icon }} mr-3 text-green"></i>
 										<small class="font-weight-bold">{{ c.label }}</small>
 									</button>
@@ -101,7 +102,7 @@
 							</div>
 
 							<div class="bg-gray box-shadow p-3 playlist-contents vh-64 rounded overflow-y-scroll">
-								<div class="row no-gutters" #draggables id="draggables">
+								<div class="row no-gutters" #draggables id="draggables" *ngIf="playlist as p; else spinner">
 									<div class="col-lg-1" *ngFor="let c of playlistContents; let i = index">
 										<div id="{{ 'drg_' + c.playlistContentId }}" [attr.data-id]="c.playlistContentId" class="m-1">
 											<app-content
