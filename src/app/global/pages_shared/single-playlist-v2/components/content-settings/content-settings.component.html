@@ -95,7 +95,7 @@
 					</div>
 				</mat-tab>
 				<mat-tab label="Play Where">
-					<div class="mt-3">
+					<div class="play-location-wrapper mt-3" *ngIf="contentData.hostLicense && contentData.hostLicenses.length">
 						<app-play-location [hostLicenses]="contentData.hostLicenses"></app-play-location>
 					</div>
 				</mat-tab>

@@ -18,15 +18,15 @@ export const PlaylistContentControls = [
 		action: 'edit'
 	},
 	{
-		label: 'Delete',
+		label: 'Remove',
 		icon: 'fas fa-times',
 		colorClass: 'text-danger',
-		action: 'delete'
+		action: 'remove'
 	}
 ];
 
 export const PlaylistContentControlActions = {
-	delete: 'delete',
+	remove: 'remove',
 	edit: 'edit',
 	fullscreen: 'fullscreen',
 	swap: 'swap'

@@ -3,7 +3,7 @@
 }
 
 .media-files-wrapper {
-	height: 500px;
+	height: 460px;
 	overflow-y: scroll;
 }
 
@@ -17,4 +17,11 @@
 	border: 1px solid #f0f0f0;
 	contain: content;
 	position: relative;
+}
+
+.play-location-wrapper {
+	border-top: 1px solid #f0f0f0;
+	border-bottom: 1px solid #f0f0f0;
+	height: 445px;
+	overflow-y: scroll;
 }

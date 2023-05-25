@@ -18,7 +18,5 @@ export class PlayLocationComponent implements OnInit {
 
 	constructor() {}
 
-	ngOnInit() {
-		console.log('hostLicenses', this.hostLicenses);
-	}
+	ngOnInit() {}
 }
