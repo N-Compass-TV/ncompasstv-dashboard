@@ -99,6 +99,14 @@ export class SinglePlaylistV2Component implements OnInit {
 			next: (data: { contents: API_CONTENT[]; page: any }) => {
 				/** Implement paging */
 				this.assets = data.contents;
+
+				/** Enable Add Content Button */
+				this.playlistControls = this.playlistControls.map((p) => {
+					/** Add Bulk Button Actions Here */
+					if (p.action == pActions.addContent)
+						return { ...p, icon: this.assets.length ? 'fas fa-plus' : 'fas fa-ban', disabled: this.assets.length < 1 };
+					return p;
+				});
 			},
 			error: (error) => {
 				throw Error(error);

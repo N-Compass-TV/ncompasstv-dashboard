@@ -19,7 +19,7 @@ export const PlaylistContentControls = [
 	},
 	{
 		label: 'Delete',
-		icon: 'fas fa-trash',
+		icon: 'fas fa-times',
 		colorClass: 'text-danger',
 		action: 'delete'
 	}

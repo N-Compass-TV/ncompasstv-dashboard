@@ -1,7 +1,10 @@
 .playlistv2-content {
 	position: relative;
-	width: 122px;
 	height: 112px;
+
+	&.default-width {
+		width: 122px;
+	}
 
 	.playlistv2-content__header {
 		background: rgba(#000, 0.9);
@@ -14,5 +17,18 @@
 	.playlistv2-content__thumbnail {
 		background: #404040;
 		height: 80px;
+
+		&.no-controls {
+			height: 112px;
+		}
+	}
+}
+
+.checkbox-selector {
+	margin-top: 1px;
+
+	input {
+		width: 16px;
+		height: 16px;
 	}
 }

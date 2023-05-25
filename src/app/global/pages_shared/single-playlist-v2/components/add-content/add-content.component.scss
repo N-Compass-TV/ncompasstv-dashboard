@@ -1,0 +1,20 @@
+.add-content-setup-wrapper {
+	width: 1200px;
+}
+
+.media-files-wrapper {
+	height: 500px;
+	overflow-y: scroll;
+}
+
+.selected-content-controls {
+	background: #fff;
+	height: 50px;
+	width: 100%;
+}
+
+.selected-contents {
+	border: 1px solid #f0f0f0;
+	contain: content;
+	position: relative;
+}

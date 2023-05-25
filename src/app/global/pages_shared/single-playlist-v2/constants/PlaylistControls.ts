@@ -2,7 +2,8 @@ export const PlaylistPrimaryControls = [
 	{
 		label: 'Add Content',
 		action: 'add-content',
-		icon: 'fas fa-plus'
+		icon: 'fas fa-spinner fa-spin',
+		disabled: true
 	},
 	{
 		label: 'Bulk Modify',
