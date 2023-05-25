@@ -13,17 +13,17 @@
 					<div class="search-form-wrapper"></div>
 				</div>
 
-				<div class="media-files-wrapper bg-gray rounded p-2 mb-4" *ngIf="_assets">
-					<ng-container *ngFor="let c of _assets; let i = index">
+				<div class="media-files-wrapper bg-gray rounded p-2 mb-4" *ngIf="assets">
+					<ng-container *ngFor="let c of assets; let i = index">
 						<!-- Allows devs to define desired number of columns per row via gridCount -->
 						<div class="row no-gutters mb-1" *ngIf="i % gridCount == 0">
 							<div class="col-lg" *ngFor="let col of [].constructor(gridCount); let count = index">
 								<div class="m-1">
 									<app-content
-										[content]="_assets[count + i]"
+										[content]="assets[count + i]"
 										[controls]="false"
 										[default_width]="false"
-										(content_selected)="contentSelected(_assets[count + i])">
+										(content_selected)="contentSelected(assets[count + i])">
 									</app-content>
 								</div>
 							</div>
@@ -50,11 +50,9 @@
 						<h3 class="m-0">Content Settings</h3>
 						<p class="sm-text">Setup your selected assets properties or do it later</p>
 					</div>
-
-					<div class="search-form-wrapper"></div>
 				</div>
 
-				<div class="row">
+				<div class="row mb-4">
 					<div class="col-lg-6">
 						<div class="selected-content-controls border shadow p-2 d-flex align-items-center">
 							<div class="flex-even">
@@ -74,7 +72,7 @@
 											[content]="c"
 											[index]="i + 1"
 											[controls]="true"
-											[enabled_controls]="['fullscreen', 'edit', 'delete']"
+											[enabled_controls]="['remove']"
 											(content_selected)="contentSelectedForSettings(c)">
 										</app-content>
 									</div>
@@ -85,6 +83,28 @@
 
 					<div class="col-lg-6">
 						<mat-tab-group mat-stretch-tabs>
+							<mat-tab label="Basics">
+								<div class="mt-3">
+									<!-- Need a checker if selected content for setup includes images/feeds -->
+									<div class="duration-form-wrapper border-bottom">
+										<form [formGroup]="durationForm">
+											<mat-form-field class="full-width" appearance="fill">
+												<mat-label> Set duration to selected non video assets. </mat-label>
+												<input formControlName="duration" matInput placeholder="Example: 20" type="number" />
+											</mat-form-field>
+										</form>
+									</div>
+
+									<div class="fullscreen-toggle-wrapper border-bottom py-25 d-flex mb-3">
+										<div class="flex-even">
+											<strong class="sm-text">Set to Fullscreen</strong>
+										</div>
+										<div class="pr-2">
+											<mat-slide-toggle></mat-slide-toggle>
+										</div>
+									</div>
+								</div>
+							</mat-tab>
 							<mat-tab label="Content Schedule">
 								<div class="mt-3">
 									<app-content-scheduler></app-content-scheduler>
@@ -92,11 +112,20 @@
 							</mat-tab>
 							<mat-tab label="Play Where">
 								<div class="mt-3">
-									<!-- <app-play-location [hostLicenses]="contentData.hostLicenses"></app-play-location> -->
+									<div class="play-location-wrapper">
+										<app-play-location [hostLicenses]="playlistHostLicenses"></app-play-location>
+									</div>
 								</div>
 							</mat-tab>
 						</mat-tab-group>
 					</div>
+				</div>
+
+				<div class="add-content-controls">
+					<button mat-button mat-raised-button class="theme-btn" matStepperNext>
+						<i class="fas fa-long-arrow-alt-right mr-3 text-green"></i>
+						<small class="font-weight-bold">Next</small>
+					</button>
 				</div>
 			</div>
 		</mat-step>

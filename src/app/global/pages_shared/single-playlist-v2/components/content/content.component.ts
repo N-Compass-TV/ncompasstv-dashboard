@@ -14,7 +14,7 @@ export class ContentComponent implements OnInit {
 	@Input() content: API_CONTENT;
 	@Input() index: number;
 	@Input() controls = true;
-	@Input() enabled_controls = ['fullscreen', 'swap', 'edit', 'delete'];
+	@Input() enabled_controls = ['fullscreen', 'swap', 'edit', 'remove'];
 	@Input() default_width = true;
 	@Output() control_click: EventEmitter<any> = new EventEmitter();
 	@Output() content_selected: EventEmitter<string> = new EventEmitter();

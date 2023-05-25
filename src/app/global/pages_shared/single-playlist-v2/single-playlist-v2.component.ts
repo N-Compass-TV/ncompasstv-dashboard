@@ -55,12 +55,11 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	ngOnInit() {
 		this.playlistRouteInit();
-		this.getAssets();
 	}
 
 	public contentControlClicked(e: { playlistContent: any; action: string }) {
 		switch (e.action) {
-			case pcActions.delete:
+			case pcActions.remove:
 				break;
 			case pcActions.edit:
 				this._dialog.open(ContentSettingsComponent, {
@@ -154,6 +153,9 @@ export class SinglePlaylistV2Component implements OnInit {
 				this.hostLicenses = data.hostLicenses;
 				this.licenses = data.licenses;
 
+				/** Get Assets */
+				this.getAssets();
+
 				/** Get Asset Count By Type */
 				this.getAssetCount();
 
@@ -194,7 +196,10 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	private showAddContentDialog() {
 		this._dialog.open(AddContentComponent, {
-			data: this.assets
+			data: {
+				assets: this.assets,
+				hostLicenses: this.playlistHostLicenses
+			}
 		});
 	}
 
