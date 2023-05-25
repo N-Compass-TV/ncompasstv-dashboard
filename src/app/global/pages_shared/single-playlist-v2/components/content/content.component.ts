@@ -13,6 +13,9 @@ import { PlaylistContentControls } from '../../constants/PlaylistContentControls
 export class ContentComponent implements OnInit {
 	@Input() content: API_CONTENT;
 	@Input() index: number;
+	@Input() controls = true;
+	@Input() enabled_controls = ['fullscreen', 'swap', 'edit', 'delete'];
+	@Input() default_width = true;
 	@Output() control_click: EventEmitter<any> = new EventEmitter();
 	@Output() content_selected: EventEmitter<string> = new EventEmitter();
 	contentName: string;
@@ -26,6 +29,8 @@ export class ContentComponent implements OnInit {
 	}
 
 	prepareThumbnails() {
+		if (!this.content) return;
+
 		/** webm assets  */
 		if (this.content.fileType === 'webm')
 			this.content.thumbnail = `${this.content.url}${this.content.fileName.substr(0, this.content.fileName.lastIndexOf('.') + 1)}jpg`;
