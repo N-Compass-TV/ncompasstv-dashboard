@@ -11,12 +11,7 @@ import { SinglePlaylistService } from '../../services/single-playlist.service';
 	styleUrls: ['./content-settings.component.scss']
 })
 export class ContentSettingsComponent implements OnInit {
-	durationForm: FormGroup = this._formBuilder.group({
-		duration: ['']
-	});
-
 	constructor(
-		private _formBuilder: FormBuilder,
 		@Inject(MAT_DIALOG_DATA)
 		public contentData: { playlistContent: API_CONTENT; hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] } },
 		private _playlist: PlaylistService,

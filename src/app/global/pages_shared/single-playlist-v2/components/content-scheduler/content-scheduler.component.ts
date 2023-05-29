@@ -10,7 +10,7 @@ import { ContentSchedule } from '../../type/ContentSchedule';
 export class ContentSchedulerComponent implements OnInit {
 	content_schedule: EventEmitter<any> = new EventEmitter();
 	contentSchedule = CONTENT_SCHEDULE;
-	selectedContentSchedule: ContentSchedule;
+	selectedContentSchedule: ContentSchedule = this.contentSchedule[0];
 
 	constructor() {}
 

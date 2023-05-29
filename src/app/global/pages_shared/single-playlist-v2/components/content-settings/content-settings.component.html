@@ -51,38 +51,7 @@
 				</div>
 			</div>
 
-			<!-- Settings: Duration -->
-			<div class="duration-form-wrapper border-bottom" *ngIf="!(contentData.playlistContent.fileType | isvideo)">
-				<form [formGroup]="durationForm">
-					<mat-form-field class="full-width" appearance="fill">
-						<mat-label>Set duration, default is 20</mat-label>
-						<input formControlName="duration" matInput placeholder="Example: 20" type="number" />
-					</mat-form-field>
-				</form>
-			</div>
-
-			<!-- Settings: Frequency -->
-			<div class="frequency-set-wrapper border-bottom py-25 d-flex">
-				<div class="flex-even">
-					<strong class="sm-text">Set Frequency</strong>
-				</div>
-				<div>
-					<mat-radio-group aria-label="Select an option">
-						<mat-radio-button class="mr-3" value="2"><strong class="sm-text">2x</strong></mat-radio-button>
-						<mat-radio-button value="3"><strong class="sm-text">3x</strong></mat-radio-button>
-					</mat-radio-group>
-				</div>
-			</div>
-
-			<!-- Settings: Fullscreen -->
-			<div class="fullscreen-toggle-wrapper border-bottom py-25 d-flex">
-				<div class="flex-even">
-					<strong class="sm-text">Set to Fullscreen</strong>
-				</div>
-				<div>
-					<mat-slide-toggle></mat-slide-toggle>
-				</div>
-			</div>
+			<app-basic-settings [playlist_content]="contentData.playlistContent"></app-basic-settings>
 		</div>
 		<!-- Info/Fullscreen/Duration/Frequency -->
 
@@ -96,7 +65,7 @@
 				</mat-tab>
 				<mat-tab label="Play Where">
 					<div class="play-location-wrapper mt-3" *ngIf="contentData.hostLicense && contentData.hostLicenses.length">
-						<app-play-location [hostLicenses]="contentData.hostLicenses"></app-play-location>
+						<app-play-location [host_licenses]="contentData.hostLicenses"></app-play-location>
 					</div>
 				</mat-tab>
 			</mat-tab-group>

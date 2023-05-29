@@ -17,6 +17,7 @@ import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AutocompleteFieldComponent } from './components_shared/page_components/autocomplete-field/autocomplete-field.component';
 import { BannerComponent } from './components_shared/page_components/banner/banner.component';
+import { BasicSettingsComponent } from './pages_shared/single-playlist-v2/components/basic-settings/basic-settings.component';
 import { BreadcrumbsModule } from 'ng6-breadcrumbs';
 import { BulkEditBusinessHoursComponent } from './components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import { BulkOptionsComponent } from './components_shared/playlist_components/bulk-options/bulk-options.component';
@@ -250,6 +251,7 @@ const ngComponents = [
 	AssignLicenseModalComponent,
 	AutocompleteFieldComponent,
 	BannerComponent,
+	BasicSettingsComponent,
 	BulkEditBusinessHoursComponent,
 	BulkOptionsComponent,
 	BulkPlaywhereComponent,

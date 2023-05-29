@@ -1,6 +1,6 @@
 <div class="play-location p-2 bg-light">
 	<mat-accordion>
-		<mat-expansion-panel hideToggle *ngFor="let hl of hostLicenses">
+		<mat-expansion-panel hideToggle *ngFor="let hl of host_licenses">
 			<mat-expansion-panel-header>
 				<mat-slide-toggle (click)="$event.stopPropagation()">
 					<h5 class="mb-0 ml-2">{{ hl.host.name }}</h5>
