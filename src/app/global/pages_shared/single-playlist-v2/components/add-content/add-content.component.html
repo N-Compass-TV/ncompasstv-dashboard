@@ -82,27 +82,15 @@
 					</div>
 
 					<div class="col-lg-6">
-						<mat-tab-group mat-stretch-tabs>
+						<mat-tab-group mat-stretch-tabs *ngIf="selectedContentForSettings.length; else no_selected">
 							<mat-tab label="Basics">
 								<div class="mt-3">
 									<!-- Need a checker if selected content for setup includes images/feeds -->
-									<div class="duration-form-wrapper border-bottom">
-										<form [formGroup]="durationForm">
-											<mat-form-field class="full-width" appearance="fill">
-												<mat-label> Set duration to selected non video assets. </mat-label>
-												<input formControlName="duration" matInput placeholder="Example: 20" type="number" />
-											</mat-form-field>
-										</form>
-									</div>
-
-									<div class="fullscreen-toggle-wrapper border-bottom py-25 d-flex mb-3">
-										<div class="flex-even">
-											<strong class="sm-text">Set to Fullscreen</strong>
-										</div>
-										<div class="pr-2">
-											<mat-slide-toggle></mat-slide-toggle>
-										</div>
-									</div>
+									<app-basic-settings
+										[enable_position]="false"
+										[bulk_setting]="true"
+										[has_image_and_feed]="hasImageAndFeed"
+										(changed)="applyContentSettings($event)"></app-basic-settings>
 								</div>
 							</mat-tab>
 							<mat-tab label="Content Schedule">
@@ -113,11 +101,18 @@
 							<mat-tab label="Play Where">
 								<div class="mt-3">
 									<div class="play-location-wrapper">
-										<app-play-location [hostLicenses]="playlistHostLicenses"></app-play-location>
+										<app-play-location [host_licenses]="playlistHostLicenses"></app-play-location>
 									</div>
 								</div>
 							</mat-tab>
 						</mat-tab-group>
+
+						<ng-template #no_selected>
+							<div class="no-selected-content bg-gray text-center p-5">
+								<h3 class="font-weight-bold">Content Settings</h3>
+								<p>Select content from the left to get started.</p>
+							</div>
+						</ng-template>
 					</div>
 				</div>
 

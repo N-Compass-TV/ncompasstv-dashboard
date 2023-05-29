@@ -10,16 +10,14 @@ import { API_CONTENT, API_HOST, API_LICENSE } from 'src/app/global/models';
 })
 export class AddContentComponent implements OnInit {
 	assets: API_CONTENT[] = [];
-	durationForm: FormGroup = this._formBuilder.group({
-		duration: ['']
-	});
+	contentSettings = [];
 	gridCount = 8;
 	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[] = [];
 	selectedContents: API_CONTENT[] = [];
-	selectedContentForSettings: API_CONTENT;
+	selectedContentForSettings: API_CONTENT[] = [];
+	hasImageAndFeed: boolean;
 
 	constructor(
-		private _formBuilder: FormBuilder,
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: { assets: API_CONTENT[]; hostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[] }
 	) {
 		this.assets = [...this._dialog_data.assets];
@@ -28,10 +26,31 @@ export class AddContentComponent implements OnInit {
 
 	ngOnInit() {}
 
+	public applyContentSettings(settingData: any) {
+		this.selectedContentForSettings.forEach((c) => {
+			if (!this.contentSettings.filter((c) => c.contentId).length) {
+				this.contentSettings.push({ ...c, ...settingData });
+				return;
+			}
+
+			this.contentSettings.map((p) => {
+				if (p.contentId == c.contentId) return { ...p, ...settingData };
+			});
+		});
+
+		console.log(this.contentSettings);
+	}
+
 	public contentSelected(content: API_CONTENT) {
 		if (this.selectedContents.includes(content)) this.selectedContents = this.selectedContents.filter((p) => p !== content);
 		else this.selectedContents.push(content);
 	}
 
-	public contentSelectedForSettings(content: API_CONTENT) {}
+	public contentSelectedForSettings(content: API_CONTENT) {
+		if (this.selectedContentForSettings.includes(content))
+			this.selectedContentForSettings = this.selectedContentForSettings.filter((p) => p !== content);
+		else this.selectedContentForSettings.push(content);
+
+		this.hasImageAndFeed = this.selectedContentForSettings.filter((p) => p.fileType !== 'webm').length > 0;
+	}
 }

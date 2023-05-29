@@ -7,8 +7,8 @@ import { API_HOST, API_LICENSE_PROPS } from 'src/app/global/models';
 	styleUrls: ['./play-location.component.scss']
 })
 export class PlayLocationComponent implements OnInit {
-	@Input() hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] };
-	@Input() blacklistData: {
+	@Input() host_licenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] };
+	@Input() blacklist_data: {
 		blacklistedContentId: string;
 		contentId: string;
 		dateCreated: string;
