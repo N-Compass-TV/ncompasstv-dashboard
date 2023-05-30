@@ -52,12 +52,9 @@
 					</div>
 				</div>
 
-				<div class="row mb-4">
+				<div class="row mb-4" *ngIf="selectedContents.length; else no_selected">
 					<div class="col-lg-6">
 						<div class="selected-content-controls border shadow p-2 d-flex align-items-center">
-							<div class="flex-even">
-								<mat-slide-toggle><strong class="sm-text ml-1">Select All</strong></mat-slide-toggle>
-							</div>
 							<div class="selected-content-count">
 								<strong class="sm-text">
 									Count: <span class="ml-1">{{ selectedContents.length }}</span>
@@ -73,7 +70,7 @@
 											[index]="i + 1"
 											[controls]="true"
 											[enabled_controls]="['remove']"
-											(content_selected)="contentSelectedForSettings(c)">
+											[selectable]="false">
 										</app-content>
 									</div>
 								</div>
@@ -82,12 +79,13 @@
 					</div>
 
 					<div class="col-lg-6">
-						<mat-tab-group mat-stretch-tabs *ngIf="selectedContentForSettings.length; else no_selected">
+						<mat-tab-group mat-stretch-tabs>
 							<mat-tab label="Basics">
 								<div class="mt-3">
 									<!-- Need a checker if selected content for setup includes images/feeds -->
 									<app-basic-settings
-										[enable_position]="false"
+										[frequency]="false"
+										[position]="false"
 										[bulk_setting]="true"
 										[has_image_and_feed]="hasImageAndFeed"
 										(changed)="applyContentSettings($event)"></app-basic-settings>
@@ -106,22 +104,22 @@
 								</div>
 							</mat-tab>
 						</mat-tab-group>
-
-						<ng-template #no_selected>
-							<div class="no-selected-content bg-gray text-center p-5">
-								<h3 class="font-weight-bold">Content Settings</h3>
-								<p>Select content from the left to get started.</p>
-							</div>
-						</ng-template>
 					</div>
 				</div>
 
 				<div class="add-content-controls">
-					<button mat-button mat-raised-button class="theme-btn" matStepperNext>
+					<button mat-button mat-raised-button class="theme-btn" matStepperNext [disabled]="!selectedContents.length">
 						<i class="fas fa-long-arrow-alt-right mr-3 text-green"></i>
 						<small class="font-weight-bold">Next</small>
 					</button>
 				</div>
+
+				<ng-template #no_selected>
+					<div class="no-selected-content bg-gray text-center p-5 mb-4">
+						<h3 class="font-weight-bold">Content Settings</h3>
+						<p>Select content from previous step to get started.</p>
+					</div>
+				</ng-template>
 			</div>
 		</mat-step>
 		<!-- End: Step 2 -->

@@ -3,11 +3,12 @@
 		<div class="d-flex">
 			<div class="flex-even mr-2" *ngIf="has_image_and_feed || (!bulk_setting && !(playlist_content?.fileType | isvideo))">
 				<!-- Settings: Duration -->
-				<div class="duration-form-wrapper border-bottom">
+				<div class="duration-form-wrapper pb-2 border-bottom">
 					<mat-form-field class="full-width" appearance="fill">
 						<mat-label>Duration, default is 20</mat-label>
 						<input name="duration" formControlName="duration" matInput placeholder="Example: 20" type="number" />
 					</mat-form-field>
+					<p class="xsm-text form-desc">Applies to non video assets</p>
 				</div>
 			</div>
 
@@ -16,7 +17,7 @@
 				<div class="duration-form-wrapper border-bottom">
 					<mat-form-field class="full-width" appearance="fill">
 						<mat-label>Position #</mat-label>
-						<input name="duration" formControlName="seq" matInput placeholder="Example: 17" type="number" />
+						<input name="sequence" formControlName="seq" matInput placeholder="Example: 17" type="number" />
 					</mat-form-field>
 				</div>
 			</div>
@@ -41,7 +42,7 @@
 				<strong class="sm-text">Set to Fullscreen</strong>
 			</div>
 			<div class="fullscreen-toggle" [ngClass]="bulk_setting && 'pr-2'">
-				<mat-slide-toggle formControlName="isFullscreen"></mat-slide-toggle>
+				<mat-slide-toggle formControlName="isFullScreen"></mat-slide-toggle>
 			</div>
 		</div>
 	</form>

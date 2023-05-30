@@ -9,8 +9,8 @@ import { API_CONTENT } from 'src/app/global/models';
 })
 export class BasicSettingsComponent implements OnInit {
 	@Input() bulk_setting = false;
-	@Input() enable_frequency = true;
-	@Input() enable_position = true;
+	@Input() frequency = true;
+	@Input() position = true;
 	@Input() has_image_and_feed = false;
 	@Input() playlist_content: API_CONTENT;
 	@Output() changed: EventEmitter<any> = new EventEmitter();
@@ -19,14 +19,14 @@ export class BasicSettingsComponent implements OnInit {
 		seq: [''],
 		duration: [''],
 		frequency: [''],
-		isFullscreen: ['']
+		isFullScreen: ['']
 	});
 
 	constructor(private _formBuilder: FormBuilder) {}
 
 	ngOnInit() {
 		this.basicSettings.valueChanges.subscribe({
-			next: (res) => this.changed.emit({ ...res, isFullscreen: res.isFullscreen ? 1 : 0 })
+			next: (res) => this.changed.emit({ ...res, isFullScreen: res.isFullScreen ? 1 : 0 })
 		});
 	}
 }
