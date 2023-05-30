@@ -197,6 +197,7 @@ export class SinglePlaylistV2Component implements OnInit {
 	private showAddContentDialog() {
 		this._dialog.open(AddContentComponent, {
 			data: {
+				playlistId: this.playlist.playlistId,
 				assets: this.assets,
 				hostLicenses: this.playlistHostLicenses
 			}

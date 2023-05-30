@@ -1,11 +1,9 @@
-export interface NewPlaylistContent {
-	playlist: {
-		playlistId: string;
-	};
+export class AddPlaylistContent {
+	playlistId: string;
 	playlistContentsLicenses: {
 		contentId: string;
 		seq: number;
-		isFullscreen: number;
+		isFullScreen: number;
 		duration: number;
 		licenseIds: string[];
 	}[];

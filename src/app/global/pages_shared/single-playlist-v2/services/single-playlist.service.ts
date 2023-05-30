@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BaseService } from 'src/app/global/services/base.service';
-import { NewPlaylistContent } from '../interface/NewPlaylistContent';
+import { AddPlaylistContent } from '../class/AddPlaylistContent';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class SinglePlaylistService extends BaseService {
-	addContent(data: NewPlaylistContent) {
+	addContent(data: AddPlaylistContent) {
 		return this.postRequest('playlistsv2/addcontent', data);
 	}
 
