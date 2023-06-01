@@ -1,43 +1,101 @@
 <div class="playlistv2-content box-shadow" *ngIf="content" [ngClass]="default_width && 'default_width'">
-	<section class="playlistv2-content__header d-flex align-items-center px-2" [matTooltip]="content.fileName || content.title | nohandle">
-		<div class="content-filename-wrapper flex-even">
-			<span
-				class="xsm-text text-primary fas mr-1"
-				[ngClass]="{
-					'fa-image': content.fileType | isimage,
-					'fa-video': content.fileType | isvideo,
-					'fa-rss': content.fileType | isFeed
-				}">
-			</span>
+	<ng-container *ngIf="!is_list">
+		<section class="playlistv2-content__header d-flex align-items-center px-2" [matTooltip]="content.fileName || content.title | nohandle">
+			<div class="content-filename-wrapper flex-even">
+				<span
+					class="xsm-text text-primary fas mr-1"
+					[ngClass]="{
+						'fa-image': content.fileType | isimage,
+						'fa-video': content.fileType | isvideo,
+						'fa-rss': content.fileType | isFeed
+					}">
+				</span>
 
-			<span class="font-weight-bold text-primary xsm-text">{{ content.fileName || content.title | nohandle | slice : 0 : 8 }}</span>
+				<span class="font-weight-bold text-primary xsm-text">{{ content.fileName || content.title | nohandle | slice : 0 : 8 }}</span>
+			</div>
+
+			<div class="checkbox-selector pt-1">
+				<input type="checkbox" (change)="content_selected.emit()" />
+			</div>
+		</section>
+
+		<section class="playlistv2-content__thumbnail" [ngClass]="!controls && 'no-controls'">
+			<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
+		</section>
+
+		<section class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white" *ngIf="controls">
+			<div class="index flex-even">
+				<span class="xsm-text mr-2">{{ index }}</span>
+			</div>
+
+			<div class="playlist-content-controls">
+				<ng-container *ngFor="let c of playlistContentControls; let i = index">
+					<button
+						*ngIf="enabled_controls.includes(c.action)"
+						class="naked-btn"
+						[ngClass]="i < playlistContentControls.length - 1 && 'mr-2'"
+						[matTooltip]="c.label"
+						(click)="control_click.emit({ playlistContent: content, action: c.action })">
+						<span class="xsm-text"><i class="{{ c.icon }} {{ c.colorClass }}"></i></span>
+					</button>
+				</ng-container>
+			</div>
+		</section>
+	</ng-container>
+
+	<ng-container *ngIf="is_list">
+		<div class="playlistv2__content-list">
+			<div class="playlistv2__content-list-thumbnail">
+				<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
+			</div>
+			<div class="playlistv2__content-list-details">
+				<div class="upper__details">
+					<div class="upper__details-text">
+						<span class="upper__details-title">This is a title</span>
+						<span class="upper__details-date">Uploaded {{ dateCreated }} by Sheldon Lee Cooper</span>
+					</div>
+
+					<div class="checkbox-selector pt-1">
+						<input type="checkbox" (change)="content_selected.emit()" />
+					</div>
+				</div>
+
+				<div class="lower__details">
+					<div class="lower__details-left">
+						<div class="text-details">
+							<span
+								class="md-text text-primary fas mr-1"
+								[ngClass]="{
+									'fa-image': content.fileType | isimage,
+									'fa-video': content.fileType | isvideo,
+									'fa-rss': content.fileType | isFeed
+								}">
+							</span>
+
+							<span *ngIf="content.fileType | isimage"> image </span>
+							<span *ngIf="content.fileType | isvideo"> video </span>
+							<span *ngIf="content.fileType | isFeed"> feed </span>
+						</div>
+
+						<div class="time-details">
+							<span class="md-text"><i class="fas fa-clock"></i> {{ content.duration }}</span>
+						</div>
+					</div>
+
+					<div class="playlist-content-controls">
+						<ng-container *ngFor="let c of playlistContentControls; let i = index">
+							<button
+								*ngIf="enabled_controls.includes(c.action)"
+								class="naked-btn"
+								[ngClass]="i < playlistContentControls.length - 1 && 'mr-2'"
+								[matTooltip]="c.label"
+								(click)="control_click.emit({ playlistContent: content, action: c.action })">
+								<span class="md-text"><i class="{{ c.icon }} {{ c.colorClass }}"></i></span>
+							</button>
+						</ng-container>
+					</div>
+				</div>
+			</div>
 		</div>
-
-		<div class="checkbox-selector pt-1" *ngIf="selectable">
-			<input type="checkbox" (change)="content_selected.emit()" />
-		</div>
-	</section>
-
-	<section class="playlistv2-content__thumbnail" [ngClass]="!controls && 'no-controls'">
-		<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
-	</section>
-
-	<section class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white" *ngIf="controls">
-		<div class="index flex-even">
-			<span class="xsm-text mr-2">{{ index }}</span>
-		</div>
-
-		<div class="playlist-content-controls">
-			<ng-container *ngFor="let c of playlistContentControls; let i = index">
-				<button
-					*ngIf="enabled_controls.includes(c.action)"
-					class="naked-btn"
-					[ngClass]="i < playlistContentControls.length - 1 && 'mr-2'"
-					[matTooltip]="c.label"
-					(click)="control_click.emit({ playlistContent: content, action: c.action })">
-					<span class="xsm-text"><i class="{{ c.icon }} {{ c.colorClass }}"></i></span>
-				</button>
-			</ng-container>
-		</div>
-	</section>
+	</ng-container>
 </div>

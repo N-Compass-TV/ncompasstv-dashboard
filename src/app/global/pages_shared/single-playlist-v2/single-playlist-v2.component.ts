@@ -38,6 +38,7 @@ export class SinglePlaylistV2Component implements OnInit {
 	hosts: API_HOST[];
 	imageCount = 0;
 	licenses: API_LICENSE_PROPS[];
+	list_mode = false;
 	playlist: API_SINGLE_PLAYLIST_INFO;
 	playlistContentBreakdown = [];
 	playlistContents: API_CONTENT[];
@@ -55,6 +56,10 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	ngOnInit() {
 		this.playlistRouteInit();
+	}
+
+	onChangeViewOptions(label: string) {
+		this.list_mode = label === 'List View' ? !this.list_mode : false;
 	}
 
 	public contentControlClicked(e: { playlistContent: any; action: string }) {
