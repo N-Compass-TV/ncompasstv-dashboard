@@ -80,7 +80,7 @@
 															mat-raised-button
 															class="theme-btn"
 															*ngFor="let p of playlistViews; let i = index"
-															(click)="onChangeViewOptions(p.label)"
+															(click)="onChangeViewOptions(p.action)"
 															[ngClass]="i == 0 && 'mr-3'">
 															<i class="{{ p.icon }} mr-3 text-green"></i>
 															<small class="font-weight-bold mr-1">{{ p.label }}</small>
@@ -104,12 +104,12 @@
 
 							<div class="bg-gray box-shadow p-3 playlist-contents vh-64 rounded overflow-y-scroll">
 								<div class="row no-gutters" #draggables id="draggables" *ngIf="playlist as p; else spinner">
-									<div [ngClass]="list_mode ? 'col-lg-4' : 'col-lg-1'" *ngFor="let c of playlistContents; let i = index">
+									<div [ngClass]="detailedViewMode ? 'col-lg-4' : 'col-lg-1'" *ngFor="let c of playlistContents; let i = index">
 										<div id="{{ 'drg_' + c.playlistContentId }}" [attr.data-id]="c.playlistContentId" class="m-1">
 											<app-content
 												[content]="c"
 												[index]="i + 1"
-												[is_list]="list_mode"
+												[detailed_view_mode]="detailedViewMode"
 												(content_selected)="contentSelected(c.playlistContentId)"
 												(control_click)="contentControlClicked($event)"></app-content>
 										</div>

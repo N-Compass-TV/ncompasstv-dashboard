@@ -441,7 +441,10 @@ const ngComponents = [
 	WeatherFormComponent,
 	WysiwygComponent,
 	ZoneExpansionPanelComponent,
-	ZoneListComponent
+	ZoneListComponent,
+	ContentSchedulerFormComponent,
+	AddContentComponent,
+	BasicSettingsComponent
 ];
 
 const MaterialModules = [

@@ -1,5 +1,5 @@
 <div class="playlistv2-content box-shadow" *ngIf="content" [ngClass]="default_width && 'default_width'">
-	<ng-container *ngIf="!is_list">
+	<ng-container *ngIf="!detailed_view_mode; else detailed_view">
 		<section class="playlistv2-content__header d-flex align-items-center px-2" [matTooltip]="content.fileName || content.title | nohandle">
 			<div class="content-filename-wrapper flex-even">
 				<span
@@ -43,7 +43,7 @@
 		</section>
 	</ng-container>
 
-	<ng-container *ngIf="is_list">
+	<ng-template #detailed_view>
 		<div class="playlistv2__content-list">
 			<div class="playlistv2__content-list-thumbnail">
 				<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
@@ -52,7 +52,7 @@
 				<div class="upper__details">
 					<div class="upper__details-text">
 						<span class="upper__details-title">This is a title</span>
-						<span class="upper__details-date">Uploaded {{ dateCreated }} by Sheldon Lee Cooper</span>
+						<span class="upper__details-date">Uploaded {{ content.dateCreated | date : 'mediumDate' }} by Sheldon Lee Cooper</span>
 					</div>
 
 					<div class="checkbox-selector pt-1">
@@ -97,5 +97,5 @@
 				</div>
 			</div>
 		</div>
-	</ng-container>
+	</ng-template>
 </div>

@@ -99,7 +99,9 @@
 							<mat-tab label="Play Where">
 								<div class="mt-3">
 									<div class="play-location-wrapper">
-										<app-play-location [host_licenses]="playlistHostLicenses"></app-play-location>
+										<app-play-location
+											[host_licenses]="playlistHostLicenses"
+											(toggle)="licenseIdToggled($event)"></app-play-location>
 									</div>
 								</div>
 							</mat-tab>
