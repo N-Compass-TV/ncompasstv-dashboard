@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { API_HOST, API_LICENSE_PROPS } from 'src/app/global/models';
 
 interface HostLicenses {
@@ -13,6 +13,7 @@ interface HostLicenses {
 })
 export class PlayLocationComponent implements OnInit {
 	@Input() host_licenses: HostLicenses[];
+	@Output() toggle: EventEmitter<string[]> = new EventEmitter();
 	selectedHostIds = [];
 	selectedLicenseIds = [];
 
@@ -31,6 +32,7 @@ export class PlayLocationComponent implements OnInit {
 
 		console.log('toggleAllHostLicenses', this.selectedHostIds);
 		console.log('toggleHostLicense', this.selectedLicenseIds);
+		this.toggle.emit(this.selectedLicenseIds);
 	}
 
 	public toggleHostLicense(e, h: HostLicenses, licenseId: string) {
@@ -46,5 +48,6 @@ export class PlayLocationComponent implements OnInit {
 
 		console.log('toggleAllHostLicenses', this.selectedHostIds);
 		console.log('toggleHostLicense', this.selectedLicenseIds);
+		this.toggle.emit(this.selectedLicenseIds);
 	}
 }

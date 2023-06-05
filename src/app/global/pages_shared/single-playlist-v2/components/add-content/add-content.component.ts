@@ -48,4 +48,15 @@ export class AddContentComponent implements OnInit {
 
 		this.hasImageAndFeed = this.selectedContents.filter((p) => p.fileType !== 'webm').length > 0;
 	}
+
+	public licenseIdToggled(licenseIds: string[]) {
+		this.newContentsSettings.playlistContentsLicenses = this.newContentsSettings.playlistContentsLicenses.map((c, index) => {
+			return {
+				...c,
+				licenseIds: licenseIds
+			};
+		});
+
+		console.log(this.newContentsSettings);
+	}
 }

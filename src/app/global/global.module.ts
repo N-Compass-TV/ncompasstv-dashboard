@@ -418,7 +418,10 @@ const ngComponents = [
 	WeatherFormComponent,
 	WysiwygComponent,
 	ZoneExpansionPanelComponent,
-	ZoneListComponent
+	ZoneListComponent,
+	ContentSchedulerFormComponent,
+	AddContentComponent,
+	BasicSettingsComponent
 ];
 
 const MaterialModules = [
@@ -456,7 +459,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES, ContentSchedulerFormComponent, AddContentComponent, BasicSettingsComponent],
+	declarations: [ngComponents, DIRECTIVES],
 	entryComponents: [
 		AddCardComponent,
 		AddContentComponent,

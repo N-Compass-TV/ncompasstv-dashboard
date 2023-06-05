@@ -17,7 +17,8 @@ import {
 	PlaylistPrimaryControls,
 	PlaylistContentControlActions as pcActions,
 	PlaylistFiltersDropdown,
-	PlaylistViewOptions
+	PlaylistViewOptions,
+	PlaylistViewOptionActions
 } from './constants';
 
 import { SinglePlaylistService } from './services/single-playlist.service';
@@ -38,7 +39,7 @@ export class SinglePlaylistV2Component implements OnInit {
 	hosts: API_HOST[];
 	imageCount = 0;
 	licenses: API_LICENSE_PROPS[];
-	list_mode = false;
+	detailedViewMode = false;
 	playlist: API_SINGLE_PLAYLIST_INFO;
 	playlistContentBreakdown = [];
 	playlistContents: API_CONTENT[];
@@ -58,8 +59,8 @@ export class SinglePlaylistV2Component implements OnInit {
 		this.playlistRouteInit();
 	}
 
-	onChangeViewOptions(label: string) {
-		this.list_mode = label === 'List View' ? !this.list_mode : false;
+	public onChangeViewOptions(action: string) {
+		this.detailedViewMode = action === PlaylistViewOptionActions.detailedView ? true : false;
 	}
 
 	public contentControlClicked(e: { playlistContent: any; action: string }) {
