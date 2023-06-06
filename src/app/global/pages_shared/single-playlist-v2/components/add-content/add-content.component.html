@@ -32,9 +32,9 @@
 				</div>
 
 				<div class="add-content-controls">
-					<button mat-button mat-raised-button class="theme-btn" matStepperNext>
-						<i class="fas fa-plus mr-3 text-green"></i>
-						<small class="font-weight-bold">Add Assets</small>
+					<button mat-button mat-raised-button class="theme-btn" [disabled]="!selectedContents.length" matStepperNext>
+						<i class="fas fa-save mr-3 text-green"></i>
+						<small class="font-weight-bold">Next</small>
 					</button>
 				</div>
 			</div>
@@ -48,7 +48,7 @@
 				<div class="step-header d-flex mb-3">
 					<div class="title-desc">
 						<h3 class="m-0">Content Settings</h3>
-						<p class="sm-text">Setup your selected assets properties or do it later</p>
+						<p class="sm-text">Settings will apply to all selected assets</p>
 					</div>
 				</div>
 
@@ -69,6 +69,7 @@
 											[content]="c"
 											[index]="i + 1"
 											[controls]="true"
+											[selectable]="false"
 											[enabled_controls]="['remove']"
 											[selectable]="false">
 										</app-content>
@@ -85,7 +86,7 @@
 									<!-- Need a checker if selected content for setup includes images/feeds -->
 									<app-basic-settings
 										[frequency]="false"
-										[position]="false"
+										[sequence_setting]="false"
 										[bulk_setting]="true"
 										[has_image_and_feed]="hasImageAndFeed"
 										(changed)="applyContentSettings($event)"></app-basic-settings>
@@ -110,9 +111,14 @@
 				</div>
 
 				<div class="add-content-controls">
-					<button mat-button mat-raised-button class="theme-btn" matStepperNext [disabled]="!selectedContents.length">
+					<button
+						mat-button
+						mat-raised-button
+						class="theme-btn"
+						[disabled]="!selectedContents.length && !newContentsSettings"
+						[mat-dialog-close]="newContentsSettings">
 						<i class="fas fa-long-arrow-alt-right mr-3 text-green"></i>
-						<small class="font-weight-bold">Next</small>
+						<small class="font-weight-bold">Save</small>
 					</button>
 				</div>
 
@@ -125,11 +131,5 @@
 			</div>
 		</mat-step>
 		<!-- End: Step 2 -->
-
-		<!-- Begin: Step 4 -->
-		<mat-step>
-			<ng-template matStepLabel>Preview and Save</ng-template>
-		</mat-step>
-		<!-- End: Step 4 -->
 	</mat-horizontal-stepper>
 </div>

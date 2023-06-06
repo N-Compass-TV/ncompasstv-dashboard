@@ -10,7 +10,7 @@ import { API_CONTENT } from 'src/app/global/models';
 export class BasicSettingsComponent implements OnInit {
 	@Input() bulk_setting = false;
 	@Input() frequency = true;
-	@Input() position = true;
+	@Input() sequence_setting = true;
 	@Input() has_image_and_feed = false;
 	@Input() playlist_content: API_CONTENT;
 	@Output() changed: EventEmitter<any> = new EventEmitter();

@@ -30,12 +30,11 @@ export class AddContentComponent implements OnInit {
 	}
 
 	public applyContentSettings(settingsData: any) {
-		this.newContentsSettings.playlistContentsLicenses = this.selectedContents.map((c, index) => {
+		this.newContentsSettings.playlistContentsLicenses = this.newContentsSettings.playlistContentsLicenses.map((c, index) => {
 			return {
-				contentId: c.contentId,
+				...c,
 				...settingsData,
-				seq: index,
-				duration: c.fileType !== 'webm' ? settingsData.duration || 20 : c.duration
+				seq: index
 			};
 		});
 
@@ -46,17 +45,31 @@ export class AddContentComponent implements OnInit {
 		if (this.selectedContents.includes(content)) this.selectedContents = this.selectedContents.filter((p) => p !== content);
 		else this.selectedContents.push(content);
 
+		this.newContentsSettings.playlistContentsLicenses = this.selectedContents.map((c, index) => {
+			return {
+				contentId: c.contentId,
+				duration: c.fileType !== 'webm' ? c.duration || 20 : c.duration,
+				isFullScreen: 0,
+				licenseIds: [],
+				seq: index
+			};
+		});
+
 		this.hasImageAndFeed = this.selectedContents.filter((p) => p.fileType !== 'webm').length > 0;
 	}
 
 	public licenseIdToggled(licenseIds: string[]) {
+		console.log(licenseIds);
+
 		this.newContentsSettings.playlistContentsLicenses = this.newContentsSettings.playlistContentsLicenses.map((c, index) => {
+			if (!c.licenseIds) c.licenseIds = [];
+
 			return {
 				...c,
 				licenseIds: licenseIds
 			};
 		});
 
-		console.log(this.newContentsSettings);
+		console.log('=>', this.newContentsSettings);
 	}
 }
