@@ -12,13 +12,14 @@
 				</div>
 			</div>
 
-			<div class="flex-even" *ngIf="enable_position">
-				<!-- Order Position -->
-				<div class="duration-form-wrapper border-bottom">
+			<div class="flex-even" *ngIf="sequence_setting">
+				<!-- Sequence Position -->
+				<div class="duration-form-wrapper pb-2 border-bottom">
 					<mat-form-field class="full-width" appearance="fill">
 						<mat-label>Position #</mat-label>
 						<input name="sequence" formControlName="seq" matInput placeholder="Example: 17" type="number" />
 					</mat-form-field>
+					<p class="xsm-text form-desc">Move to specific position and push the rest</p>
 				</div>
 			</div>
 		</div>

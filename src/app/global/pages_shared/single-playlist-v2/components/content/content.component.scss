@@ -2,6 +2,15 @@
 	position: relative;
 	height: 112px;
 
+	.checkbox-selector {
+		margin-top: 1px;
+
+		input {
+			width: 16px;
+			height: 16px;
+		}
+	}
+
 	&.default-width {
 		width: 122px;
 	}
@@ -64,6 +73,13 @@
 				line-height: 16px;
 				color: #0a0a0a;
 			}
+
+			.checkbox-selector {
+				input {
+					width: 18px;
+					height: 18px;
+				}
+			}
 		}
 
 		.lower__details {
@@ -79,24 +95,15 @@
 						font-size: 13px;
 					}
 				}
-			}
 
-			span {
-				margin-right: 8px;
-			}
+				span {
+					margin-right: 10px;
+				}
 
-			i {
-				color: #8ec641;
+				i {
+					color: #8ec641;
+				}
 			}
 		}
-	}
-}
-
-.checkbox-selector {
-	margin-top: 1px;
-
-	input {
-		width: 16px;
-		height: 16px;
 	}
 }

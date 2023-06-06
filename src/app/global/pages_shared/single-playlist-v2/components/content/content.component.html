@@ -14,7 +14,7 @@
 				<span class="font-weight-bold text-primary xsm-text">{{ content.fileName || content.title | nohandle | slice : 0 : 8 }}</span>
 			</div>
 
-			<div class="checkbox-selector pt-1">
+			<div class="checkbox-selector pt-1" *ngIf="selectable">
 				<input type="checkbox" (change)="content_selected.emit()" />
 			</div>
 		</section>
@@ -78,7 +78,7 @@
 						</div>
 
 						<div class="time-details">
-							<span class="md-text"><i class="fas fa-clock"></i> {{ content.duration }}</span>
+							<span class="md-text"><i class="fas fa-clock"></i> {{ content.duration || 0 }}s</span>
 						</div>
 					</div>
 
@@ -86,8 +86,8 @@
 						<ng-container *ngFor="let c of playlistContentControls; let i = index">
 							<button
 								*ngIf="enabled_controls.includes(c.action)"
-								class="naked-btn"
-								[ngClass]="i < playlistContentControls.length - 1 && 'mr-2'"
+								class="naked-btn text-center"
+								[ngClass]="i < playlistContentControls.length - 1 && 'mr-3'"
 								[matTooltip]="c.label"
 								(click)="control_click.emit({ playlistContent: content, action: c.action })">
 								<span class="md-text"><i class="{{ c.icon }} {{ c.colorClass }}"></i></span>

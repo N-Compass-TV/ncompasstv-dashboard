@@ -59,8 +59,12 @@ export class SinglePlaylistV2Component implements OnInit {
 		this.playlistRouteInit();
 	}
 
-	public onChangeViewOptions(action: string) {
-		this.detailedViewMode = action === PlaylistViewOptionActions.detailedView ? true : false;
+	private addContents(contentData: any) {
+		console.log(contentData);
+		this._playlist.addContent(contentData).subscribe({
+			next: (res) => console.log('Added', res),
+			error: (err) => console.log('Error', err)
+		});
 	}
 
 	public contentControlClicked(e: { playlistContent: any; action: string }) {
@@ -183,6 +187,10 @@ export class SinglePlaylistV2Component implements OnInit {
 		});
 	}
 
+	public onChangeViewOptions(action: string) {
+		this.detailedViewMode = action === PlaylistViewOptionActions.detailedView ? true : false;
+	}
+
 	public playlistControlClicked(e: { action: string }) {
 		switch (e.action) {
 			case pActions.addContent:
@@ -201,13 +209,18 @@ export class SinglePlaylistV2Component implements OnInit {
 	}
 
 	private showAddContentDialog() {
-		this._dialog.open(AddContentComponent, {
-			data: {
-				playlistId: this.playlist.playlistId,
-				assets: this.assets,
-				hostLicenses: this.playlistHostLicenses
-			}
-		});
+		this._dialog
+			.open(AddContentComponent, {
+				data: {
+					playlistId: this.playlist.playlistId,
+					assets: this.assets,
+					hostLicenses: this.playlistHostLicenses
+				}
+			})
+			.afterClosed()
+			.subscribe({
+				next: (res) => res && this.addContents(res)
+			});
 	}
 
 	private sortableJSInit(): void {
