@@ -25,7 +25,7 @@ import { SinglePlaylistService } from './services/single-playlist.service';
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types';
 import { AddContentComponent } from './components/add-content/add-content.component';
 import { FormControl } from '@angular/forms';
-import { PlaylistContentUpdate } from './type/PlaylistContentUpdate';
+import { PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -51,6 +51,7 @@ export class SinglePlaylistV2Component implements OnInit {
 	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] };
 	playlistName = 'Please wait';
 	playlistViews = PlaylistViewOptions;
+	savingPlaylistContents = [];
 	screens: API_SCREEN_OF_PLAYLIST[];
 	searchForm = new FormControl();
 	selectedPlaylistContents = [];
@@ -78,7 +79,7 @@ export class SinglePlaylistV2Component implements OnInit {
 			case pcActions.remove:
 				break;
 			case pcActions.edit:
-				this.playlistContentSettings([e.playlistContent]);
+				this.playlistContentSettings([e.playlistContent], false);
 				break;
 			case pcActions.fullscreen:
 				this.setFullscreenProperty(e.playlistContent);
@@ -95,12 +96,7 @@ export class SinglePlaylistV2Component implements OnInit {
 			this.selectedPlaylistContents = this.selectedPlaylistContents.filter((p) => p !== playlistContentId);
 		else this.selectedPlaylistContents.push(playlistContentId);
 
-		this.playlistControls = this.playlistControls.map((p) => {
-			/** Add Bulk Button Actions Here */
-			if (p.action == pActions.bulkModify || p.action == pActions.bulkDelete)
-				return { ...p, disabled: this.selectedPlaylistContents.length < 1 };
-			return p;
-		});
+		this.setBulkControlsState();
 	}
 
 	private getAssets() {
@@ -200,15 +196,21 @@ export class SinglePlaylistV2Component implements OnInit {
 				width: '1270px',
 				height: '720px',
 				data: {
-					playlistContent: [playlistContent],
+					playlistContents: playlistContent,
 					hostLicenses: this.playlistHostLicenses,
 					bulkSet: bulkSet
 				}
 			})
 			.afterClosed()
 			.subscribe({
-				next: (res) => {
-					console.log('=>', res);
+				next: (res: PlaylistContent[]) => {
+					if (!res) return;
+
+					/** Update playlist contents */
+					this.updatePlaylistContent({
+						playlistId: this.playlist.playlistId,
+						playlistContentsLicenses: res
+					});
 				}
 			});
 	}
@@ -219,7 +221,9 @@ export class SinglePlaylistV2Component implements OnInit {
 				this.showAddContentDialog();
 				break;
 			case pActions.bulkModify:
-				this.playlistContentSettings(this.selectedPlaylistContents, true);
+				/** Find playlist contents from selected playlist content ids */
+				const selected = this.playlistContents.filter((obj) => this.selectedPlaylistContents.includes(obj.playlistContentId));
+				this.playlistContentSettings(selected, true);
 			default:
 				break;
 		}
@@ -232,6 +236,23 @@ export class SinglePlaylistV2Component implements OnInit {
 		});
 	}
 
+	private setBulkControlsState() {
+		this.playlistControls = this.playlistControls.map((p) => {
+			/** Add Bulk Button Actions Here */
+			if (p.action == pActions.bulkModify || p.action == pActions.bulkDelete)
+				return { ...p, disabled: this.selectedPlaylistContents.length < 1 };
+			return p;
+		});
+	}
+
+	private searchFormInit() {
+		this.searchForm.valueChanges.subscribe({
+			next: (keyword: string) => {
+				console.log(keyword);
+			}
+		});
+	}
+
 	private setFullscreenProperty(p: API_CONTENT) {
 		this.updatePlaylistContent({
 			playlistId: this.playlist.playlistId,
@@ -241,14 +262,6 @@ export class SinglePlaylistV2Component implements OnInit {
 					isFullScreen: !p.isFullScreen ? 1 : 0
 				}
 			]
-		});
-	}
-
-	private searchFormInit() {
-		this.searchForm.valueChanges.subscribe({
-			next: (keyword: string) => {
-				console.log(keyword);
-			}
 		});
 	}
 
@@ -320,12 +333,14 @@ export class SinglePlaylistV2Component implements OnInit {
 	}
 
 	private updatePlaylistContent(data: PlaylistContentUpdate) {
-		data.playlistContentsLicenses.forEach((p) => {
-			this._playlist.savingPlaylistContent(true, p.playlistContentId);
-		});
+		data.playlistContentsLicenses.forEach((p) => this.savingPlaylistContents.push(p.playlistContentId));
 
 		this._playlist.updatePlaylistContent(data).subscribe({
 			next: () => {
+				this.selectedPlaylistContents = [];
+				this.savingPlaylistContents = [];
+				this.setBulkControlsState();
+
 				this.playlistContents = this.playlistContents.map((p) => {
 					const updateObj = data.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
 

@@ -1,7 +1,7 @@
 <div class="content-basic-settings">
 	<form [formGroup]="basicSettings">
 		<div class="d-flex">
-			<div class="flex-even mr-2" *ngIf="has_image_and_feed || (!bulk_setting && !(playlist_content?.fileType | isvideo))">
+			<div class="flex-even mr-2" *ngIf="has_image_and_feed || (!bulk_setting && !(playlist_content[0]?.fileType | isvideo))">
 				<!-- Settings: Duration -->
 				<div class="duration-form-wrapper pb-2 border-bottom">
 					<mat-form-field class="full-width" appearance="fill">
@@ -12,7 +12,7 @@
 				</div>
 			</div>
 
-			<div class="flex-even" *ngIf="sequence_setting">
+			<div class="flex-even" *ngIf="sequence_setting && !bulk_setting">
 				<!-- Sequence Position -->
 				<div class="duration-form-wrapper pb-2 border-bottom">
 					<mat-form-field class="full-width" appearance="fill">

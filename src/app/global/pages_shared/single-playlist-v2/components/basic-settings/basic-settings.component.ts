@@ -39,8 +39,10 @@ export class BasicSettingsComponent implements OnInit {
 			isFullScreen: [(!this.bulk_setting && this.playlist_content[0].isFullScreen) || 0]
 		});
 
+		this.changed.emit({ ...this.basicSettings.value, isFullScreen: this.basicSettings.controls['isFullScreen'].value.isFullScreen ? 1 : 0 });
+
 		this.basicSettings.valueChanges.subscribe({
-			next: (res) => this.changed.emit({ res, isFullScreen: res.isFullScreen ? 1 : 0 })
+			next: (res) => this.changed.emit({ ...res, isFullScreen: res.isFullScreen ? 1 : 0 })
 		});
 	}
 }
