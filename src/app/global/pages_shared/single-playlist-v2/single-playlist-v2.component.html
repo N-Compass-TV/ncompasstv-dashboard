@@ -110,6 +110,7 @@
 												[content]="c"
 												[index]="i + 1"
 												[detailed_view_mode]="detailedViewMode"
+												[saving]="savingPlaylistContents.includes(c.playlistContentId)"
 												(content_selected)="contentSelected(c.playlistContentId)"
 												(control_click)="contentControlClicked($event)"></app-content>
 										</div>

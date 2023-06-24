@@ -10,7 +10,12 @@
 	.playlist-content-preview {
 		height: 280px;
 
-		img {
+		&.scroll {
+			position: relative;
+			overflow-y: scroll;
+		}
+
+		.thumbnail-preview-100 {
 			background-color: #000;
 			height: 100%;
 			object-fit: contain;

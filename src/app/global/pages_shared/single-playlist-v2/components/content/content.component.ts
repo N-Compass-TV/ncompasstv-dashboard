@@ -15,6 +15,7 @@ export class ContentComponent implements OnInit {
 	@Input() content: API_CONTENT;
 	@Input() index: number;
 	@Input() controls = true;
+	@Input() saving = false;
 	@Input() selectable = true;
 	@Input() enabled_controls = ['fullscreen', 'swap', 'edit', 'remove'];
 	@Input() default_width = true;
@@ -24,13 +25,11 @@ export class ContentComponent implements OnInit {
 	contentName: string;
 	filestackScreenshot = `${environment.third_party.filestack_screenshot}`;
 	playlistContentControls = PlaylistContentControls;
-	saving: boolean;
 
 	constructor(private _isImage: IsimagePipe, private _playlist: SinglePlaylistService) {}
 
 	ngOnInit() {
 		this.prepareThumbnails();
-		this.watchSaveState();
 	}
 
 	private prepareThumbnails() {
@@ -46,14 +45,5 @@ export class ContentComponent implements OnInit {
 
 		/** image assets */
 		if (this._isImage.transform(this.content.fileType)) this.content.thumbnail = `${this.content.url}${this.content.fileName}`;
-	}
-
-	private watchSaveState() {
-		this._playlist.saving_playlist_content$.subscribe({
-			next: (res: { status; playlistContentId }) => {
-				if (res.status && this.content.playlistContentId == res.playlistContentId) this.saving = res.status;
-				else this.saving = false;
-			}
-		});
 	}
 }

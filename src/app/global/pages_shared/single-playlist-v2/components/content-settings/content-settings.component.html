@@ -21,39 +21,55 @@
 	<div class="row">
 		<!-- Info/Fullscreen/Duration/Frequency -->
 		<div class="col-lg-6">
-			<div class="playlist-content-preview mb-3">
+			<div class="playlist-content-preview mb-3" *ngIf="!contentData.bulkSet; else selected">
 				<img
-					class="thumbnail-preview border"
-					[src]="contentData.playlistContent.thumbnail | sanitize"
-					[alt]="contentData.playlistContent.filename || contentData.playlistContent.title" />
+					class="thumbnail-preview-100 border"
+					[src]="contentData.playlistContents[0].thumbnail | sanitize"
+					[alt]="contentData.playlistContents[0].filename || contentData.playlistContents[0].title" />
 			</div>
 
-			<!-- Playlist Content Basic Info -->
-			<div class="row mb-3">
+			<ng-template #selected>
+				<div class="playlist-content-preview scroll bg-gray p-2 w-100 mb-3">
+					<div class="row no-gutters mb-1">
+						<div class="col-lg-3" *ngFor="let c of contentData.playlistContents; let i = index">
+							<div class="m-1">
+								<app-content [content]="c" [controls]="true" [enabled_controls]="['remove']" [index]="i + 1" [selectable]="false">
+								</app-content>
+							</div>
+						</div>
+					</div>
+				</div>
+			</ng-template>
+
+			<!-- Playlist Content Basic Info -- Frequency/Fullscreen/Duration -->
+			<div class="row mb-3" *ngIf="!contentData.bulkSet">
 				<!-- Playlist Content Basic Info -->
 				<div class="col-lg-8">
 					<div class="playlist-content-basic-info">
 						<h5 class="m-0 font-weight-bold">
-							{{ contentData.playlistContent.fileName || contentData.playlistContent.title | nohandle | slice : 0 : 50 }}
+							{{ contentData.playlistContents[0].fileName || contentData.playlistContents[0].title | nohandle | slice : 0 : 50 }}
 						</h5>
-						<p class="sm-text">Uploaded {{ contentData.playlistContent.dateCreated | date : 'MMM d, y, h:mm:ss a' }}</p>
+						<p class="sm-text">Uploaded {{ contentData.playlistContents[0].dateCreated | date : 'MMM d, y, h:mm:ss a' }}</p>
 					</div>
 				</div>
 				<div class="col-lg-4 text-right">
 					<span
 						class="text-primary fas mr-1"
 						[ngClass]="{
-							'fa-image': contentData.playlistContent.fileType | isimage,
-							'fa-video': contentData.playlistContent.fileType | isvideo,
-							'fa-rss': contentData.playlistContent.fileType | isFeed
+							'fa-image': contentData.playlistContents[0].fileType | isimage,
+							'fa-video': contentData.playlistContents[0].fileType | isvideo,
+							'fa-rss': contentData.playlistContents[0].fileType | isFeed
 						}">
 					</span>
 				</div>
 			</div>
 
-			<app-basic-settings [playlist_content]="contentData.playlistContent" (changed)="playlistContentModified($event)"></app-basic-settings>
+			<app-basic-settings
+				[bulk_setting]="contentData.bulkSet"
+				[has_image_and_feed]="hasImageAndFeed"
+				[playlist_content]="contentData.playlistContents"
+				(changed)="playlistContentModified($event)"></app-basic-settings>
 		</div>
-		<!-- Info/Fullscreen/Duration/Frequency -->
 
 		<!-- Play Where/Content Schedule -->
 		<div class="col-lg-6">
