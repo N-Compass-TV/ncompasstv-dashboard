@@ -8,7 +8,14 @@
 	}
 
 	.playlist-content-preview {
-		height: 290px;
+		height: 280px;
+
+		img {
+			background-color: #000;
+			height: 100%;
+			object-fit: contain;
+			width: 100%;
+		}
 	}
 
 	.modal-btn {
