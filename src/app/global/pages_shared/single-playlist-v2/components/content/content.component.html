@@ -36,7 +36,10 @@
 						[ngClass]="i < playlistContentControls.length - 1 && 'mr-2'"
 						[matTooltip]="c.label"
 						(click)="control_click.emit({ playlistContent: content, action: c.action })">
-						<span class="xsm-text"><i class="{{ c.icon }} {{ c.colorClass }}"></i></span>
+						<span class="xsm-text">
+							<i class="{{ c.icon }}" [ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-primary' : c.colorClass">
+							</i>
+						</span>
 					</button>
 				</ng-container>
 			</div>
@@ -51,8 +54,8 @@
 			<div class="playlistv2__content-list-details">
 				<div class="upper__details">
 					<div class="upper__details-text">
-						<span class="upper__details-title">This is a title</span>
-						<span class="upper__details-date">Uploaded {{ content.dateCreated | date : 'mediumDate' }} by Sheldon Lee Cooper</span>
+						<span class="upper__details-title">{{ content.fileName || content.title | nohandle | slice : 0 : 28 }}</span>
+						<span class="upper__details-date">Uploaded {{ content.dateCreated | date : 'mediumDate' }}</span>
 					</div>
 
 					<div class="checkbox-selector pt-1">
@@ -90,7 +93,12 @@
 								[ngClass]="i < playlistContentControls.length - 1 && 'mr-3'"
 								[matTooltip]="c.label"
 								(click)="control_click.emit({ playlistContent: content, action: c.action })">
-								<span class="md-text"><i class="{{ c.icon }} {{ c.colorClass }}"></i></span>
+								<span class="md-text">
+									<i
+										class="{{ c.icon }}"
+										[ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-primary' : c.colorClass">
+									</i>
+								</span>
 							</button>
 						</ng-container>
 					</div>
@@ -98,4 +106,13 @@
 			</div>
 		</div>
 	</ng-template>
+
+	<div class="saving-overlay" *ngIf="saving">
+		<div class="loader-wrapper">
+			<app-spinner [diameter]="30"></app-spinner>
+			<h5 class="mt-2">
+				<strong>Saving...</strong>
+			</h5>
+		</div>
+	</div>
 </div>

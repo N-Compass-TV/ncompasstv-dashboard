@@ -23,7 +23,7 @@
 		<div class="col-lg-6">
 			<div class="playlist-content-preview mb-3">
 				<img
-					class="image-w-100 border"
+					class="thumbnail-preview border"
 					[src]="contentData.playlistContent.thumbnail | sanitize"
 					[alt]="contentData.playlistContent.filename || contentData.playlistContent.title" />
 			</div>
@@ -51,7 +51,7 @@
 				</div>
 			</div>
 
-			<app-basic-settings [playlist_content]="contentData.playlistContent"></app-basic-settings>
+			<app-basic-settings [playlist_content]="contentData.playlistContent" (changed)="playlistContentModified($event)"></app-basic-settings>
 		</div>
 		<!-- Info/Fullscreen/Duration/Frequency -->
 
@@ -75,7 +75,7 @@
 
 	<!-- Save/Cancel Button -->
 	<div class="save-cancel-button-wrapper">
-		<button mat-button mat-raised-button class="theme-btn mr-2">
+		<button mat-button mat-raised-button class="theme-btn mr-2" [mat-dialog-close]="playlistUpdates" [disabled]="!playlistUpdates">
 			<i class="fas fa-save mr-3 text-green"></i>
 			<small class="font-weight-bold">Save</small>
 		</button>

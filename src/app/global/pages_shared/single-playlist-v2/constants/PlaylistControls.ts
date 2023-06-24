@@ -1,7 +1,7 @@
 export const PlaylistPrimaryControlActions = {
 	addContent: 'add-content',
-	bulkModify: 'bulk-modify',
 	bulkDelete: 'bulk-delete',
+	bulkModify: 'bulk-modify',
 	playlistDemo: 'playlist-demo',
 	savePlaylist: 'save-playlist',
 	viewSchedule: 'view-schedule'

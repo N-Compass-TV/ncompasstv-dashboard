@@ -3,6 +3,7 @@ import { API_CONTENT } from 'src/app/global/models';
 import { IsimagePipe } from 'src/app/global/pipes';
 import { environment } from 'src/environments/environment';
 import { PlaylistContentControls } from '../../constants/PlaylistContentControls';
+import { SinglePlaylistService } from '../../services/single-playlist.service';
 
 @Component({
 	selector: 'app-content',
@@ -23,14 +24,16 @@ export class ContentComponent implements OnInit {
 	contentName: string;
 	filestackScreenshot = `${environment.third_party.filestack_screenshot}`;
 	playlistContentControls = PlaylistContentControls;
+	saving: boolean;
 
-	constructor(private _isImage: IsimagePipe) {}
+	constructor(private _isImage: IsimagePipe, private _playlist: SinglePlaylistService) {}
 
 	ngOnInit() {
 		this.prepareThumbnails();
+		this.watchSaveState();
 	}
 
-	prepareThumbnails() {
+	private prepareThumbnails() {
 		if (!this.content) return;
 
 		/** webm assets  */
@@ -43,5 +46,14 @@ export class ContentComponent implements OnInit {
 
 		/** image assets */
 		if (this._isImage.transform(this.content.fileType)) this.content.thumbnail = `${this.content.url}${this.content.fileName}`;
+	}
+
+	private watchSaveState() {
+		this._playlist.saving_playlist_content$.subscribe({
+			next: (res: { status; playlistContentId }) => {
+				if (res.status && this.content.playlistContentId == res.playlistContentId) this.saving = res.status;
+				else this.saving = false;
+			}
+		});
 	}
 }

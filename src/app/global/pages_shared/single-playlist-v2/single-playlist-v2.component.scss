@@ -12,6 +12,20 @@
 	}
 }
 
+.playlist-contents {
+	position: relative;
+
+	.overlay-loader {
+		background: rgba(#fff, 0.9);
+		position: absolute;
+		height: 100%;
+		left: 0;
+		top: 0;
+		width: 100%;
+		z-index: 9;
+	}
+}
+
 .search-form {
 	width: 500px;
 }

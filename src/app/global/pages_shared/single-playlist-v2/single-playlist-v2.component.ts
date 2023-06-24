@@ -24,6 +24,8 @@ import {
 import { SinglePlaylistService } from './services/single-playlist.service';
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types';
 import { AddContentComponent } from './components/add-content/add-content.component';
+import { FormControl } from '@angular/forms';
+import { PlaylistContentUpdate } from './type/PlaylistContentUpdate';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -50,6 +52,7 @@ export class SinglePlaylistV2Component implements OnInit {
 	playlistName = 'Please wait';
 	playlistViews = PlaylistViewOptions;
 	screens: API_SCREEN_OF_PLAYLIST[];
+	searchForm = new FormControl();
 	selectedPlaylistContents = [];
 	videoCount = 0;
 
@@ -60,9 +63,12 @@ export class SinglePlaylistV2Component implements OnInit {
 	}
 
 	private addContents(contentData: any) {
-		console.log(contentData);
+		this.playlist = null;
+
 		this._playlist.addContent(contentData).subscribe({
-			next: (res) => console.log('Added', res),
+			next: (res) => {
+				this.playlistRouteInit();
+			},
 			error: (err) => console.log('Error', err)
 		});
 	}
@@ -72,16 +78,10 @@ export class SinglePlaylistV2Component implements OnInit {
 			case pcActions.remove:
 				break;
 			case pcActions.edit:
-				this._dialog.open(ContentSettingsComponent, {
-					width: '1270px',
-					height: '720px',
-					data: {
-						playlistContent: e.playlistContent,
-						hostLicenses: this.playlistHostLicenses
-					}
-				});
+				this.playlistContentSettings([e.playlistContent]);
 				break;
 			case pcActions.fullscreen:
+				this.setFullscreenProperty(e.playlistContent);
 				break;
 			case pcActions.swap:
 				break;
@@ -169,6 +169,9 @@ export class SinglePlaylistV2Component implements OnInit {
 				/** Get Asset Count By Type */
 				this.getAssetCount();
 
+				/** Initialize search form watch */
+				this.searchFormInit();
+
 				/** Initialize SortableJS */
 				setTimeout(() => this.sortableJSInit(), 0);
 			},
@@ -191,11 +194,32 @@ export class SinglePlaylistV2Component implements OnInit {
 		this.detailedViewMode = action === PlaylistViewOptionActions.detailedView ? true : false;
 	}
 
+	private playlistContentSettings(playlistContent: API_CONTENT[], bulkSet: boolean = false) {
+		this._dialog
+			.open(ContentSettingsComponent, {
+				width: '1270px',
+				height: '720px',
+				data: {
+					playlistContent: [playlistContent],
+					hostLicenses: this.playlistHostLicenses,
+					bulkSet: bulkSet
+				}
+			})
+			.afterClosed()
+			.subscribe({
+				next: (res) => {
+					console.log('=>', res);
+				}
+			});
+	}
+
 	public playlistControlClicked(e: { action: string }) {
 		switch (e.action) {
 			case pActions.addContent:
 				this.showAddContentDialog();
 				break;
+			case pActions.bulkModify:
+				this.playlistContentSettings(this.selectedPlaylistContents, true);
 			default:
 				break;
 		}
@@ -205,6 +229,26 @@ export class SinglePlaylistV2Component implements OnInit {
 		this._activatedRoute.paramMap.subscribe((data: any) => {
 			this.getPlaylistData(data.params.data);
 			this.getPlaylistHostLicenses(data.params.data);
+		});
+	}
+
+	private setFullscreenProperty(p: API_CONTENT) {
+		this.updatePlaylistContent({
+			playlistId: this.playlist.playlistId,
+			playlistContentsLicenses: [
+				{
+					playlistContentId: p.playlistContentId,
+					isFullScreen: !p.isFullScreen ? 1 : 0
+				}
+			]
+		});
+	}
+
+	private searchFormInit() {
+		this.searchForm.valueChanges.subscribe({
+			next: (keyword: string) => {
+				console.log(keyword);
+			}
 		});
 	}
 
@@ -272,6 +316,27 @@ export class SinglePlaylistV2Component implements OnInit {
 			onDeselect,
 			onStart,
 			onEnd
+		});
+	}
+
+	private updatePlaylistContent(data: PlaylistContentUpdate) {
+		data.playlistContentsLicenses.forEach((p) => {
+			this._playlist.savingPlaylistContent(true, p.playlistContentId);
+		});
+
+		this._playlist.updatePlaylistContent(data).subscribe({
+			next: () => {
+				this.playlistContents = this.playlistContents.map((p) => {
+					const updateObj = data.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
+
+					if (updateObj) {
+						return { ...p, ...updateObj };
+					}
+
+					return p;
+				});
+			},
+			error: (err) => {}
 		});
 	}
 }
