@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Observable } from 'rxjs/internal/Observable';
+import { Subscription } from 'rxjs/internal/Subscription';
 import { API_HOST, API_LICENSE_PROPS } from 'src/app/global/models';
 
 interface HostLicenses {
@@ -13,25 +15,35 @@ interface HostLicenses {
 })
 export class PlayLocationComponent implements OnInit {
 	@Input() host_licenses: HostLicenses[];
+	@Input() toggle_all: Observable<void>;
 	@Output() toggle: EventEmitter<string[]> = new EventEmitter();
+	private allToggled: Subscription;
 	selectedHostIds = [];
 	selectedLicenseIds = [];
 
 	constructor() {}
 
-	ngOnInit() {}
+	ngOnInit() {
+		this.allToggled = this.toggle_all.subscribe((e: any) => this.onAllToggled(e));
+	}
+
+	ngOnDestroy() {
+		this.allToggled.unsubscribe();
+	}
+
+	private onAllToggled(e) {
+		this.host_licenses.forEach((h) => this.toggleAllHostLicenses(e, h));
+	}
 
 	public toggleAllHostLicenses(e, hostLicenses: HostLicenses) {
 		if (e.checked) {
-			this.selectedHostIds.push(hostLicenses.host.hostId);
+			if (!this.selectedHostIds.includes(hostLicenses.host.hostId)) this.selectedHostIds.push(hostLicenses.host.hostId);
 			hostLicenses.licenses.forEach((l) => !this.selectedLicenseIds.includes(l.licenseId) && this.selectedLicenseIds.push(l.licenseId));
 		} else {
 			this.selectedHostIds = this.selectedHostIds.filter((h) => h !== hostLicenses.host.hostId);
 			this.selectedLicenseIds = this.selectedLicenseIds.filter((id) => !hostLicenses.licenses.some((l) => id === l.licenseId));
 		}
 
-		console.log('toggleAllHostLicenses', this.selectedHostIds);
-		console.log('toggleHostLicense', this.selectedLicenseIds);
 		this.toggle.emit(this.selectedLicenseIds);
 	}
 

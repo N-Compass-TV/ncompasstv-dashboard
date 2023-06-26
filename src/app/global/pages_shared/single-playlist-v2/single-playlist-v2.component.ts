@@ -333,6 +333,7 @@ export class SinglePlaylistV2Component implements OnInit {
 	}
 
 	private updatePlaylistContent(data: PlaylistContentUpdate) {
+		console.log('#updatePlaylistContent =>', data);
 		data.playlistContentsLicenses.forEach((p) => this.savingPlaylistContents.push(p.playlistContentId));
 
 		this._playlist.updatePlaylistContent(data).subscribe({

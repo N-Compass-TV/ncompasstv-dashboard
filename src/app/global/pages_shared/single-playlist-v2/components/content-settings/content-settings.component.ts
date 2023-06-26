@@ -4,6 +4,7 @@ import { API_CONTENT, API_HOST, API_LICENSE_PROPS } from '../../../../models';
 import { PlaylistService } from '../../../../services';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
 import { IsvideoPipe } from 'src/app/global/pipes';
+import { Subject } from 'rxjs/internal/Subject';
 
 @Component({
 	selector: 'app-content-settings',
@@ -14,6 +15,8 @@ import { IsvideoPipe } from 'src/app/global/pipes';
 export class ContentSettingsComponent implements OnInit {
 	hasImageAndFeed;
 	playlistUpdates: any;
+	toggleAll: Subject<void> = new Subject<void>();
+	whitelistedLicenses: string[] = [];
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA)
@@ -39,26 +42,61 @@ export class ContentSettingsComponent implements OnInit {
 		});
 	}
 
+	public licenseIdToggled(licenseIds: string[]) {
+		/** Single Playlist Content Edit */
+		if (!this.contentData.bulkSet) {
+			this.playlistUpdates = [
+				{
+					...(this.playlistUpdates && this.playlistUpdates[0]),
+					licenseIds,
+					playlistContentId: this.contentData.playlistContents[0].playlistContentId
+				}
+			];
+
+			console.log(this.playlistUpdates);
+			return;
+		}
+
+		/** Multiple Playlist Content Edit, Duration applies to non video filetype only */
+		const contentData = this.playlistUpdates.length ? this.playlistUpdates : this.contentData.playlistContents;
+		this.playlistUpdates = contentData.map((p) => {
+			return {
+				...p,
+				playlistContentId: p.playlistContentId,
+				licenseIds
+			};
+		});
+
+		console.log(this.playlistUpdates);
+	}
+
 	public playlistContentModified(data: any) {
 		/** Single Playlist Content Edit */
 		if (!this.contentData.bulkSet) {
 			this.playlistUpdates = [
 				{
+					...(this.playlistUpdates && this.playlistUpdates[0]),
+					...data,
 					playlistContentId: this.contentData.playlistContents[0].playlistContentId,
-					...data
+					duration: this._video.transform(this.contentData.playlistContents[0].fileType)
+						? this.contentData.playlistContents[0].duration
+						: data.duration || this.playlistUpdates.duration
 				}
 			];
-
+			console.log(this.playlistUpdates);
 			return;
 		}
 
 		/** Multiple Playlist Content Edit, Duration applies to non video filetype only */
-		this.playlistUpdates = this.contentData.playlistContents.map((p) => {
+		const contentData = this.playlistUpdates.length ? this.playlistUpdates : this.contentData.playlistContents;
+		this.playlistUpdates = contentData.map((p) => {
 			return {
 				playlistContentId: p.playlistContentId,
 				...data,
-				duration: this._video.transform(p.fileType) ? p.duration : data.duration
+				duration: this._video.transform(p.fileType) ? p.duration : data.duration || p.duration
 			};
 		});
+
+		console.log(this.playlistUpdates);
 	}
 }
