@@ -9,4 +9,5 @@ export type PlaylistContent = {
 	seq?: number;
 	duration?: number;
 	playlistContentId?: string;
+	licenseIds?: string;
 };
