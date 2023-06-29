@@ -474,6 +474,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	rearrangePlaylistContents(incoming_order): void {
+		console.log(incoming_order);
 		const updated_playlist_content_order = [];
 
 		// Rearrange Playlist Content
@@ -582,6 +583,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		};
 
 		const set = (sortable) => {
+			console.log(sortable.toArray());
 			this.rearrangePlaylistContents(sortable.toArray());
 			localStorage.setItem('playlist_order', sortable.toArray());
 		};
@@ -591,6 +593,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		};
 
 		const onEnd = (event) => {
+			console.log(event);
 			const { oldIndex, newIndex } = event;
 			const draggedContent = this.playlist_contents[oldIndex];
 
