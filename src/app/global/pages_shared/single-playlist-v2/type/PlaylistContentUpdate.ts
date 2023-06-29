@@ -5,9 +5,9 @@ export type PlaylistContentUpdate = {
 
 export type PlaylistContent = {
 	contentId?: string;
-	isFullScreen?: number;
-	seq?: number;
 	duration?: number;
-	playlistContentId?: string;
+	isFullScreen?: number;
 	licenseIds?: string;
+	playlistContentId?: string;
+	seq?: number;
 };

@@ -103,21 +103,23 @@
 							</div>
 
 							<div class="bg-gray box-shadow p-3 playlist-contents vh-64 rounded overflow-y-scroll">
-								<div class="row no-gutters" #draggables id="draggables" *ngIf="playlist as p; else spinner">
-									<div [ngClass]="detailedViewMode ? 'col-lg-4' : 'col-lg-1'" *ngFor="let c of playlistContents; let i = index">
-										<div id="{{ 'drg_' + c.playlistContentId }}" [attr.data-id]="c.playlistContentId" class="m-1">
+								<div class="row no-gutters" #draggables id="draggables" *ngIf="!savingPlaylist && playlist as p; else spinner">
+									<div
+										id="{{ 'drg_' + c.playlistContentId }}"
+										[ngClass]="detailedViewMode ? 'col-lg-4' : 'col-lg-1'"
+										*ngFor="let c of playlistContents"
+										[attr.data-id]="c.playlistContentId">
+										<div class="m-1">
 											<app-content
 												[content]="c"
-												[index]="i + 1"
+												[index]="c.seq"
 												[detailed_view_mode]="detailedViewMode"
-												[saving]="savingPlaylistContents.includes(c.playlistContentId)"
+												[saving]="playlistContentsToSave.includes(c.playlistContentId)"
 												(content_selected)="contentSelected(c.playlistContentId)"
 												(control_click)="contentControlClicked($event)"></app-content>
 										</div>
 									</div>
 								</div>
-
-								<!-- <div class="overlay-loader"></div> -->
 							</div>
 						</section>
 					</div>
@@ -130,7 +132,7 @@
 
 	<ng-template #spinner>
 		<div class="vh-60">
-			<app-spinner></app-spinner>
+			<app-spinner [message]="(savingPlaylist && 'Saving playlist, Please wait ...') || 'Getting Playlist, Please wait ...'"></app-spinner>
 		</div>
 	</ng-template>
 </div>

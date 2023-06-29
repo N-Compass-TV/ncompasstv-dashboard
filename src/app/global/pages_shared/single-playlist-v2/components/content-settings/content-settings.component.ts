@@ -14,7 +14,7 @@ import { Subject } from 'rxjs/internal/Subject';
 })
 export class ContentSettingsComponent implements OnInit {
 	hasImageAndFeed;
-	playlistUpdates: any;
+	playlistUpdates: any[] = [];
 	toggleAll: Subject<void> = new Subject<void>();
 	whitelistedLicenses: string[] = [];
 
@@ -31,8 +31,6 @@ export class ContentSettingsComponent implements OnInit {
 		if (!this.contentData.bulkSet) this.getBlacklistData();
 		this.hasImageAndFeed = this.contentData.playlistContents.filter((p) => p.fileType !== 'webm').length > 0;
 	}
-
-	createWhitelistRecord(data) {}
 
 	private getBlacklistData() {
 		this._playlist.get_blacklisted_by_id(this.contentData.playlistContents[0].playlistContentId).subscribe({
@@ -80,10 +78,9 @@ export class ContentSettingsComponent implements OnInit {
 					playlistContentId: this.contentData.playlistContents[0].playlistContentId,
 					duration: this._video.transform(this.contentData.playlistContents[0].fileType)
 						? this.contentData.playlistContents[0].duration
-						: data.duration || this.playlistUpdates.duration
+						: data.duration || this.playlistUpdates[0].duration
 				}
 			];
-			console.log(this.playlistUpdates);
 			return;
 		}
 
@@ -96,7 +93,5 @@ export class ContentSettingsComponent implements OnInit {
 				duration: this._video.transform(p.fileType) ? p.duration : data.duration || p.duration
 			};
 		});
-
-		console.log(this.playlistUpdates);
 	}
 }

@@ -28,7 +28,7 @@ export class PlayLocationComponent implements OnInit {
 	}
 
 	ngOnDestroy() {
-		this.allToggled.unsubscribe();
+		if (this.allToggled) this.allToggled.unsubscribe();
 	}
 
 	private onAllToggled(e) {

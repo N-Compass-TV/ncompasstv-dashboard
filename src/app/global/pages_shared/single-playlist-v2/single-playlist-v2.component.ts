@@ -51,7 +51,10 @@ export class SinglePlaylistV2Component implements OnInit {
 	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] };
 	playlistName = 'Please wait';
 	playlistViews = PlaylistViewOptions;
-	savingPlaylistContents = [];
+	playlistSortableOrder: string[] = [];
+	playlistSequenceUpdates: PlaylistContent[] = [];
+	playlistContentsToSave = [];
+	savingPlaylist = false;
 	screens: API_SCREEN_OF_PLAYLIST[];
 	searchForm = new FormControl();
 	selectedPlaylistContents = [];
@@ -150,7 +153,15 @@ export class SinglePlaylistV2Component implements OnInit {
 			next: (data: API_SINGLE_PLAYLIST) => {
 				/** This call should only return playlist related data like the ones below */
 				this.playlist = data.playlist;
-				this.playlistContents = data.playlistContents;
+
+				/** Making sure playlist contents are ordered properly */
+				this.playlistContents = data.playlistContents.map((p, index) => {
+					return {
+						...p,
+						seq: index + 1
+					};
+				});
+
 				this.playlistName = this.playlist.playlistName;
 				this.playlistDescription = this.playlist.playlistDescription;
 
@@ -206,11 +217,25 @@ export class SinglePlaylistV2Component implements OnInit {
 				next: (res: PlaylistContent[]) => {
 					if (!res) return;
 
-					/** Update playlist contents */
-					this.updatePlaylistContent({
-						playlistId: this.playlist.playlistId,
-						playlistContentsLicenses: res
+					/** Store updates for saving */
+					res.forEach((p) => {
+						this.playlistContentsToSave.push(p.playlistContentId);
+
+						if (this.playlistSequenceUpdates.filter((i: PlaylistContent) => i.playlistContentId == p.playlistContentId).length) {
+							const playlistContentIndex = this.playlistSequenceUpdates.findIndex(
+								(i: PlaylistContent) => i.playlistContentId == p.playlistContentId
+							);
+
+							this.playlistSequenceUpdates[playlistContentIndex] = {
+								...p,
+								seq: this.playlistSequenceUpdates[playlistContentIndex].seq
+							};
+						} else {
+							this.playlistSequenceUpdates.push(p);
+						}
 					});
+
+					this.updatePlaylistContent(res, false);
 				}
 			});
 	}
@@ -224,6 +249,9 @@ export class SinglePlaylistV2Component implements OnInit {
 				/** Find playlist contents from selected playlist content ids */
 				const selected = this.playlistContents.filter((obj) => this.selectedPlaylistContents.includes(obj.playlistContentId));
 				this.playlistContentSettings(selected, true);
+				break;
+			case pActions.savePlaylist:
+				this.updatePlaylistContent(this.playlistSequenceUpdates);
 			default:
 				break;
 		}
@@ -241,6 +269,7 @@ export class SinglePlaylistV2Component implements OnInit {
 			/** Add Bulk Button Actions Here */
 			if (p.action == pActions.bulkModify || p.action == pActions.bulkDelete)
 				return { ...p, disabled: this.selectedPlaylistContents.length < 1 };
+			else if (p.action == pActions.savePlaylist) return { ...p, disabled: this.playlistSequenceUpdates.length == 0 };
 			return p;
 		});
 	}
@@ -254,15 +283,17 @@ export class SinglePlaylistV2Component implements OnInit {
 	}
 
 	private setFullscreenProperty(p: API_CONTENT) {
-		this.updatePlaylistContent({
-			playlistId: this.playlist.playlistId,
-			playlistContentsLicenses: [
+		this.playlistContentsToSave.push(p.playlistContentId);
+
+		this.updatePlaylistContent(
+			[
 				{
 					playlistContentId: p.playlistContentId,
 					isFullScreen: !p.isFullScreen ? 1 : 0
 				}
-			]
-		});
+			],
+			false
+		);
 	}
 
 	private showAddContentDialog() {
@@ -281,34 +312,9 @@ export class SinglePlaylistV2Component implements OnInit {
 	}
 
 	private sortableJSInit(): void {
-		// Sortable.mount(new MultiDrag());
-
-		const onDeselect = (e) => {
-			// this.selected_content_count = e.newIndicies.length;
-			// setTimeout(() => {
-			// 	if (this.button_click_event == 'edit-marked' || this.button_click_event == 'delete-marked') {
-			// 	} else {
-			// 		this.selected_contents = [];
-			// 		this.selected_content_ids = [];
-			// 	}
-			// }, 0);
-		};
-
-		const onSelect = (e) => {
-			//this.selected_content_count = e.newIndicies.length;
-		};
-
 		const set = (sortable) => {
-			// this.rearrangePlaylistContents(sortable.toArray());
-			// localStorage.setItem('playlist_order', sortable.toArray());
-		};
-
-		const onStart = () => {
-			// if (localStorage.getItem('playlist_order')) this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','));
-		};
-
-		const onEnd = () => {
-			// this.search_control.setValue('');
+			this.playlistSortableOrder = [...sortable.toArray()];
+			this.rearrangePlaylist(this.playlistSortableOrder);
 		};
 
 		new Sortable(this.draggables.nativeElement, {
@@ -324,33 +330,67 @@ export class SinglePlaylistV2Component implements OnInit {
 			group: 'playlist_content',
 			fallbackTolerance: 10,
 			store: { set },
-			filter: '.undraggable',
-			onSelect,
-			onDeselect,
-			onStart,
-			onEnd
+			filter: '.undraggable'
 		});
 	}
 
-	private updatePlaylistContent(data: PlaylistContentUpdate) {
-		console.log('#updatePlaylistContent =>', data);
-		data.playlistContentsLicenses.forEach((p) => this.savingPlaylistContents.push(p.playlistContentId));
+	private rearrangePlaylist(updates: any[]) {
+		updates.forEach((p, index) => {
+			if (this.playlistSequenceUpdates.filter((i: PlaylistContent) => i.playlistContentId == p).length) {
+				/** Get index of the re-updated playlist content (in this.playlistSequenceUpdates) */
+				const pcIndex = this.playlistSequenceUpdates.findIndex((i: PlaylistContent) => i.playlistContentId == p);
 
-		this._playlist.updatePlaylistContent(data).subscribe({
+				/** Apply new sequence value of the re-updated playlist content */
+				this.playlistSequenceUpdates[pcIndex] = { ...this.playlistSequenceUpdates[pcIndex], seq: index + 1 };
+			} else {
+				/** First time update, not in the stored playlist updates (this.playlistSequenceUpdates) array */
+				const sequenceUpdate = { playlistContentId: p, seq: index + 1 };
+
+				/** Store new */
+				this.playlistSequenceUpdates.push(sequenceUpdate);
+			}
+		});
+
+		this.setBulkControlsState();
+	}
+
+	/**
+	 * @param data - Data to be saved
+	 * @param playlistSave - If true then saves the whole playlist, else just the playlist content
+	 */
+	private updatePlaylistContent(data: PlaylistContent[], playlistSave: boolean = true) {
+		let playlistUpdatesToSave: PlaylistContentUpdate = {
+			playlistId: this.playlist.playlistId,
+			playlistContentsLicenses: playlistSave ? this.playlistSequenceUpdates : data
+		};
+
+		this.savingPlaylist = playlistSave;
+
+		/** Save playlist updates */
+		this._playlist.updatePlaylistContent(playlistUpdatesToSave).subscribe({
 			next: () => {
+				this.savingPlaylist = false;
 				this.selectedPlaylistContents = [];
-				this.savingPlaylistContents = [];
+				this.playlistContentsToSave = [];
+				if (playlistSave) this.playlistSequenceUpdates = [];
 				this.setBulkControlsState();
 
 				this.playlistContents = this.playlistContents.map((p) => {
-					const updateObj = data.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
+					const updateObj = playlistUpdatesToSave.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
 
 					if (updateObj) {
-						return { ...p, ...updateObj };
+						return {
+							...p,
+							...updateObj
+						};
 					}
 
 					return p;
 				});
+
+				this.playlistContents = this.playlistContents.sort(
+					(a, b) => this.playlistSortableOrder.indexOf(a.playlistContentId) - this.playlistSortableOrder.indexOf(b.playlistContentId)
+				);
 			},
 			error: (err) => {}
 		});

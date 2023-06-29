@@ -49,7 +49,8 @@ export const PlaylistPrimaryControls = [
 	{
 		label: 'Save Changes',
 		action: PlaylistPrimaryControlActions.savePlaylist,
-		icon: 'fas fa-save'
+		icon: 'fas fa-save',
+		disabled: true
 	}
 ];
 
