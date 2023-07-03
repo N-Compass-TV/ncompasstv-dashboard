@@ -1,4 +1,4 @@
-<div class="playlistv2-content box-shadow" *ngIf="content" [ngClass]="default_width && 'default_width'">
+<div class="playlistv2-content box-shadow" *ngIf="content" [ngClass]="!detailed_view_mode && 'default_width'">
 	<ng-container *ngIf="!detailed_view_mode; else detailed_view">
 		<section class="playlistv2-content__header d-flex align-items-center px-2" [matTooltip]="content.fileName || content.title | nohandle">
 			<div class="content-filename-wrapper flex-even">

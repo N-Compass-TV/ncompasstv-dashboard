@@ -26,6 +26,7 @@ import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types
 import { AddContentComponent } from './components/add-content/add-content.component';
 import { FormControl } from '@angular/forms';
 import { PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
+import { MoveSwapComponent } from './components/move-swap/move-swap.component';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -87,7 +88,8 @@ export class SinglePlaylistV2Component implements OnInit {
 			case pcActions.fullscreen:
 				this.setFullscreenProperty(e.playlistContent);
 				break;
-			case pcActions.swap:
+			case pcActions.moveSwap:
+				this.playlistContentMoveSwap(e.playlistContent);
 				break;
 			default:
 				break;
@@ -238,6 +240,14 @@ export class SinglePlaylistV2Component implements OnInit {
 					this.updatePlaylistContent(res, false);
 				}
 			});
+	}
+
+	playlistContentMoveSwap(playlistContent: API_CONTENT[]) {
+		console.log('==>', playlistContent);
+
+		this._dialog.open(MoveSwapComponent, {
+			width: '678px'
+		});
 	}
 
 	public playlistControlClicked(e: { action: string }) {
