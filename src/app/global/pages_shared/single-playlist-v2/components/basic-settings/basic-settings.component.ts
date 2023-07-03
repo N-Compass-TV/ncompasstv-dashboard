@@ -23,12 +23,6 @@ export class BasicSettingsComponent implements OnInit {
 
 	ngOnInit() {
 		this.basicSettings = this._formBuilder.group({
-			seq: [
-				{
-					value: !this.bulk_setting && this.playlist_content[0].seq,
-					disabled: this.bulk_setting
-				}
-			],
 			duration: [
 				{
 					value: (!this.bulk_setting && this.playlist_content[0].duration) || 20,

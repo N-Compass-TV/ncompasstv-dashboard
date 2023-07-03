@@ -3,7 +3,6 @@ import { API_CONTENT } from 'src/app/global/models';
 import { IsimagePipe } from 'src/app/global/pipes';
 import { environment } from 'src/environments/environment';
 import { PlaylistContentControls } from '../../constants/PlaylistContentControls';
-import { SinglePlaylistService } from '../../services/single-playlist.service';
 
 @Component({
 	selector: 'app-content',
@@ -17,7 +16,7 @@ export class ContentComponent implements OnInit {
 	@Input() controls = true;
 	@Input() saving = false;
 	@Input() selectable = true;
-	@Input() enabled_controls = ['fullscreen', 'swap', 'edit', 'remove'];
+	@Input() enabled_controls = ['fullscreen', 'move-swap', 'edit', 'remove'];
 	@Input() default_width = true;
 	@Input() detailed_view_mode = false;
 	@Output() control_click: EventEmitter<any> = new EventEmitter();
@@ -26,7 +25,7 @@ export class ContentComponent implements OnInit {
 	filestackScreenshot = `${environment.third_party.filestack_screenshot}`;
 	playlistContentControls = PlaylistContentControls;
 
-	constructor(private _isImage: IsimagePipe, private _playlist: SinglePlaylistService) {}
+	constructor(private _isImage: IsimagePipe) {}
 
 	ngOnInit() {
 		this.prepareThumbnails();

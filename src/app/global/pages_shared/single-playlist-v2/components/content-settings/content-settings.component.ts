@@ -22,7 +22,6 @@ export class ContentSettingsComponent implements OnInit {
 		@Inject(MAT_DIALOG_DATA)
 		public contentData: { playlistContents: API_CONTENT[]; hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }; bulkSet: boolean },
 		private _playlist: PlaylistService,
-		private _playlistV2: SinglePlaylistService,
 		private _video: IsvideoPipe
 	) {}
 
