@@ -1,16 +1,22 @@
-<div class="move-swap">
+<div class="move-swap" *ngIf="playlistContent">
 	<div class="row align-items-start mb-3">
 		<div class="col-lg-12">
 			<h3 class="m-0 font-weight-bold">Move/Swap Playlist Content</h3>
-			<p class="sm-text m-0">Move or swap playlist content position</p>
+			<p class="sm-text">
+				{{ selectedAction.value == 1 ? 'Moving' : 'Swapping' }} position for
+				<strong>{{ playlistContent.title || playlistContent.fileName }}</strong
+				>, current position is: <strong>{{ playlistContent.seq }}</strong>
+			</p>
 		</div>
 	</div>
 	<!-- Title -->
 
 	<div class="row mb-3">
 		<div class="col-lg-12">
-			<mat-button-toggle-group class="w-100" *ngFor>
-				<mat-button-toggle class="flex-even"> <i class="mr-2"></i> <strong class="sm-text">Move</strong> </mat-button-toggle>
+			<mat-button-toggle-group class="w-100" [value]="selectedAction.value">
+				<mat-button-toggle *ngFor="let m of moveSwap" class="flex-even" [value]="m.value" (click)="selectedAction = m">
+					<i class="mr-2 {{ m.icon }}"></i> <strong class="sm-text">{{ m.label }}</strong>
+				</mat-button-toggle>
 			</mat-button-toggle-group>
 		</div>
 	</div>
@@ -19,18 +25,26 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<form [formGroup]="moveSwapForm">
-				<mat-form-field class="full-width mb-3" appearance="fill">
-					<mat-label>Position #</mat-label>
-					<input name="sequence" formControlName="seq" matInput placeholder="Example: 17" type="number" />
+				<mat-form-field class="full-width" appearance="fill">
+					<mat-label>Set Position #</mat-label>
+					<input name="sequence" formControlName="seq" matInput placeholder="Example: 4" type="number" />
 				</mat-form-field>
+				<div class="d-flex form-desc">
+					<p class="flex-even sm-text">
+						Position limit is <strong>{{ data.playlistContentCount }}</strong>
+					</p>
+					<p class="sm-text text-danger" *ngIf="moveSwapForm.get('seq').invalid && moveSwapForm.get('seq').errors?.numberRange">
+						Please enter a number between 1 and {{ playlistCount }}.
+					</p>
+				</div>
 
-				<div class="save-cancel-button-wrapper">
+				<div class="save-cancel-button-wrapper mt-3">
 					<button
 						mat-button
 						mat-raised-button
 						class="theme-btn mr-2"
-						[disabled]="!this.moveSwapValue && moveSwapForm.value"
-						[mat-dialog-close]="moveSwapForm.value">
+						[disabled]="!moveSwapForm.valid"
+						[mat-dialog-close]="{ seq: moveSwapForm.value['seq'], action: selectedAction.value }">
 						<i class="fas fa-save mr-3 text-green"></i>
 						<small class="font-weight-bold">Save</small>
 					</button>
