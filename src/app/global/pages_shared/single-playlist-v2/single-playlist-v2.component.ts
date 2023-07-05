@@ -242,12 +242,23 @@ export class SinglePlaylistV2Component implements OnInit {
 			});
 	}
 
-	playlistContentMoveSwap(playlistContent: API_CONTENT[]) {
-		console.log('==>', playlistContent);
-
-		this._dialog.open(MoveSwapComponent, {
-			width: '678px'
-		});
+	public playlistContentMoveSwap(playlistContent: API_CONTENT) {
+		this._dialog
+			.open(MoveSwapComponent, {
+				width: '678px',
+				data: {
+					playlistContent,
+					playlistContentCount: this.playlistContents.length
+				}
+			})
+			.afterClosed()
+			.subscribe({
+				next: (res: { seq: number; action: number }) => {
+					// actions are 1 - Move, 2 - Swap
+					if (res.action === 1) this.movePlaylistContent(playlistContent.playlistContentId, res.seq);
+					if (res.action === 2) this.swapPlaylistContentPosition();
+				}
+			});
 	}
 
 	public playlistControlClicked(e: { action: string }) {
@@ -323,6 +334,7 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	private sortableJSInit(): void {
 		const set = (sortable) => {
+			console.log('set =>', sortable);
 			this.playlistSortableOrder = [...sortable.toArray()];
 			this.rearrangePlaylist(this.playlistSortableOrder);
 		};
@@ -340,9 +352,26 @@ export class SinglePlaylistV2Component implements OnInit {
 			group: 'playlist_content',
 			fallbackTolerance: 10,
 			store: { set },
-			filter: '.undraggable'
+			filter: '.undraggable',
+			onUpdate: (event: any) => {
+				console.log('onUpdate =>', event);
+			}
 		});
 	}
+
+	private movePlaylistContent(playlistContentId: string, seq: number) {
+		// Get source index and the playlist content to move
+		const playlistContentSrcIndex = this.playlistContents.findIndex((i: PlaylistContent) => playlistContentId == i.playlistContentId);
+		const playlistContentToMove = this.playlistContents[playlistContentSrcIndex];
+
+		// Remove the object from the source index
+		this.playlistContents.splice(playlistContentSrcIndex, 1);
+
+		// Insert the object at the target index
+		this.playlistContents.splice(seq - 1, 0, { ...playlistContentToMove });
+	}
+
+	private swapPlaylistContentPosition() {}
 
 	private rearrangePlaylist(updates: any[]) {
 		updates.forEach((p, index) => {
