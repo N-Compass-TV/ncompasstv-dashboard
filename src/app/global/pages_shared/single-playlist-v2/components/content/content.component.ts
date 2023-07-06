@@ -16,7 +16,7 @@ export class ContentComponent implements OnInit {
 	@Input() controls = true;
 	@Input() saving = false;
 	@Input() selectable = true;
-	@Input() enabled_controls = ['fullscreen', 'move-swap', 'edit', 'remove'];
+	@Input() enabled_controls = ['fullscreen', 'quick-move', 'swap-content', 'edit', 'remove'];
 	@Input() default_width = true;
 	@Input() detailed_view_mode = false;
 	@Output() control_click: EventEmitter<any> = new EventEmitter();

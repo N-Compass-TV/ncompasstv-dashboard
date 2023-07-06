@@ -117,7 +117,7 @@ import { MediaModalComponent } from './components_shared/media_components/media-
 import { MediaPlaywhereComponent } from './components_shared/playlist_components/media-playwhere/media-playwhere.component';
 import { MediaViewerComponent } from './components_shared/media_components/media-viewer/media-viewer.component';
 import { MonthDayFormatDirective } from './directives/month-day-format/month-day-format.directive';
-import { MoveSwapComponent } from './pages_shared/single-playlist-v2/components/move-swap/move-swap.component';
+import { QuickMoveComponent } from './pages_shared/single-playlist-v2/components/quick-move/quick-move.component';
 import { NavbarComponent } from './components_shared/page_components/navbar/navbar.component';
 import { NewAdminComponent } from './components_shared/user_components/user-forms/new-admin/new-admin.component';
 import { NewAdvertiserComponent } from './components_shared/user_components/user-forms/new-advertiser/new-advertiser.component';
@@ -336,7 +336,7 @@ const ngComponents = [
 	MediaPlaywhereComponent,
 	MediaPlaywhereComponent,
 	MediaViewerComponent,
-	MoveSwapComponent,
+	QuickMoveComponent,
 	NavbarComponent,
 	NewAdminComponent,
 	NewAdvertiserComponent,
@@ -461,7 +461,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES, MoveSwapComponent],
+	declarations: [ngComponents, DIRECTIVES, QuickMoveComponent],
 	entryComponents: [
 		AddCardComponent,
 		AddContentComponent,
@@ -491,7 +491,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		MediaModalComponent,
 		MediaPlaywhereComponent,
 		MediaViewerComponent,
-		MoveSwapComponent,
+		QuickMoveComponent,
 		NewZoneModalComponent,
 		OptionsComponent,
 		PlaylistContentSchedulingDialogComponent,

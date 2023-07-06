@@ -2,14 +2,20 @@ export const PlaylistContentControls = [
 	{
 		label: 'Fullscreen',
 		icon: 'fas fa-expand-arrows-alt',
-		colorClass: 'text-muted',
+		colorClass: 'text-black',
 		action: 'fullscreen'
 	},
 	{
-		label: 'Move/Swap',
+		label: 'Quick Move',
+		icon: 'fas fa-retweet-alt',
+		colorClass: 'text-info',
+		action: 'quick-move'
+	},
+	{
+		label: 'Swap Content',
 		icon: 'fas fa-exchange-alt',
-		colorClass: 'info-text',
-		action: 'move-swap'
+		colorClass: 'text-orange',
+		action: 'swap-content'
 	},
 	{
 		label: 'Edit',
@@ -29,5 +35,6 @@ export const PlaylistContentControlActions = {
 	remove: 'remove',
 	edit: 'edit',
 	fullscreen: 'fullscreen',
-	moveSwap: 'move-swap'
+	quickMove: 'quick-move',
+	swapContent: 'swap-content'
 };

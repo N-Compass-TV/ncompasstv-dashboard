@@ -1,19 +1,16 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { MOVE_SWAP } from '../../constants/MoveSwap';
 import { ButtonGroup } from '../../type/ButtonGroup';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { API_CONTENT } from 'src/app/global/models';
 
 @Component({
-	selector: 'app-move-swap',
-	templateUrl: './move-swap.component.html',
-	styleUrls: ['./move-swap.component.scss']
+	selector: 'app-quick-move',
+	templateUrl: './quick-move.component.html',
+	styleUrls: ['./quick-move.component.scss']
 })
-export class MoveSwapComponent implements OnInit {
-	moveSwap = MOVE_SWAP;
-	moveSwapForm: FormGroup;
-	selectedAction: ButtonGroup = this.moveSwap[0];
+export class QuickMoveComponent implements OnInit {
+	quickMoveForm: FormGroup;
 	playlistContent;
 	playlistCount = 0;
 
@@ -30,7 +27,7 @@ export class MoveSwapComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.moveSwapForm = this._formBuilder.group({
+		this.quickMoveForm = this._formBuilder.group({
 			seq: [this.playlistContent.seq, [Validators.required, this.numberRangeValidator(this.playlistCount)]]
 		});
 	}

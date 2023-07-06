@@ -26,7 +26,7 @@ import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types
 import { AddContentComponent } from './components/add-content/add-content.component';
 import { FormControl } from '@angular/forms';
 import { PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
-import { MoveSwapComponent } from './components/move-swap/move-swap.component';
+import { QuickMoveComponent } from './components/quick-move/quick-move.component';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -59,6 +59,7 @@ export class SinglePlaylistV2Component implements OnInit {
 	screens: API_SCREEN_OF_PLAYLIST[];
 	searchForm = new FormControl();
 	selectedPlaylistContents = [];
+	sortablejs: any;
 	videoCount = 0;
 
 	constructor(private _activatedRoute: ActivatedRoute, private _dialog: MatDialog, private _playlist: SinglePlaylistService) {}
@@ -88,8 +89,10 @@ export class SinglePlaylistV2Component implements OnInit {
 			case pcActions.fullscreen:
 				this.setFullscreenProperty(e.playlistContent);
 				break;
-			case pcActions.moveSwap:
+			case pcActions.quickMove:
 				this.playlistContentMoveSwap(e.playlistContent);
+				break;
+			case pcActions.swapContent:
 				break;
 			default:
 				break;
@@ -244,7 +247,7 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	public playlistContentMoveSwap(playlistContent: API_CONTENT) {
 		this._dialog
-			.open(MoveSwapComponent, {
+			.open(QuickMoveComponent, {
 				width: '678px',
 				data: {
 					playlistContent,
@@ -253,10 +256,8 @@ export class SinglePlaylistV2Component implements OnInit {
 			})
 			.afterClosed()
 			.subscribe({
-				next: (res: { seq: number; action: number }) => {
-					// actions are 1 - Move, 2 - Swap
-					if (res.action === 1) this.movePlaylistContent(playlistContent.playlistContentId, res.seq);
-					if (res.action === 2) this.swapPlaylistContentPosition();
+				next: (res: { seq: number }) => {
+					if (res.seq) this.movePlaylistContent(playlistContent.playlistContentId, res.seq);
 				}
 			});
 	}
@@ -339,7 +340,7 @@ export class SinglePlaylistV2Component implements OnInit {
 			this.rearrangePlaylist(this.playlistSortableOrder);
 		};
 
-		new Sortable(this.draggables.nativeElement, {
+		this.sortablejs = new Sortable(this.draggables.nativeElement, {
 			swapThreshold: 1,
 			sort: true,
 			animation: 500,
@@ -355,6 +356,9 @@ export class SinglePlaylistV2Component implements OnInit {
 			filter: '.undraggable',
 			onUpdate: (event: any) => {
 				console.log('onUpdate =>', event);
+			},
+			onSort: (event: any) => {
+				console.log('OnSort =>', event);
 			}
 		});
 	}
@@ -369,11 +373,16 @@ export class SinglePlaylistV2Component implements OnInit {
 
 		// Insert the object at the target index
 		this.playlistContents.splice(seq - 1, 0, { ...playlistContentToMove });
+		this.playlistSortableOrder = this.playlistContents.map((i) => i.playlistContentId);
+
+		this.sortablejs.sort(this.playlistSortableOrder);
+		// Save Playlist
+		// this.rearrangePlaylist(this.playlistSortableOrder, true);
 	}
 
 	private swapPlaylistContentPosition() {}
 
-	private rearrangePlaylist(updates: any[]) {
+	private rearrangePlaylist(updates: any[], moveSwap: boolean = false) {
 		updates.forEach((p, index) => {
 			if (this.playlistSequenceUpdates.filter((i: PlaylistContent) => i.playlistContentId == p).length) {
 				/** Get index of the re-updated playlist content (in this.playlistSequenceUpdates) */
@@ -389,6 +398,11 @@ export class SinglePlaylistV2Component implements OnInit {
 				this.playlistSequenceUpdates.push(sequenceUpdate);
 			}
 		});
+
+		if (moveSwap) {
+			this.updatePlaylistContent(this.playlistSequenceUpdates, true);
+			return;
+		}
 
 		this.setBulkControlsState();
 	}
