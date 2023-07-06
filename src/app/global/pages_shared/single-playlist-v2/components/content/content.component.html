@@ -33,11 +33,11 @@
 					<button
 						*ngIf="enabled_controls.includes(c.action)"
 						class="naked-btn"
-						[ngClass]="i < playlistContentControls.length - 1 && 'mr-2'"
+						[ngClass]="i < playlistContentControls.length - 1 && 'mr-15'"
 						[matTooltip]="c.label"
 						(click)="control_click.emit({ playlistContent: content, action: c.action })">
 						<span class="xsm-text">
-							<i class="{{ c.icon }}" [ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-primary' : c.colorClass">
+							<i class="{{ c.icon }}" [ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-green-2' : c.colorClass">
 							</i>
 						</span>
 					</button>
