@@ -115,6 +115,7 @@
 												[index]="c.seq"
 												[detailed_view_mode]="detailedViewMode"
 												[saving]="playlistContentsToSave.includes(c.playlistContentId)"
+												[move_enabled]="sortablejsTriggered"
 												(content_selected)="contentSelected(c.playlistContentId)"
 												(control_click)="contentControlClicked($event)"></app-content>
 										</div>

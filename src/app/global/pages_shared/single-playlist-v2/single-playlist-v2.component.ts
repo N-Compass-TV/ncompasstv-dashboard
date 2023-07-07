@@ -27,6 +27,7 @@ import { AddContentComponent } from './components/add-content/add-content.compon
 import { FormControl } from '@angular/forms';
 import { PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
 import { QuickMoveComponent } from './components/quick-move/quick-move.component';
+import { Observable, Subject } from 'rxjs';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -59,6 +60,7 @@ export class SinglePlaylistV2Component implements OnInit {
 	screens: API_SCREEN_OF_PLAYLIST[];
 	searchForm = new FormControl();
 	selectedPlaylistContents = [];
+	sortablejsTriggered: Subject<boolean> = new Subject<boolean>();
 	sortablejs: any;
 	videoCount = 0;
 
@@ -93,6 +95,7 @@ export class SinglePlaylistV2Component implements OnInit {
 				this.playlistContentMoveSwap(e.playlistContent);
 				break;
 			case pcActions.swapContent:
+				this.showAddContentDialog();
 				break;
 			default:
 				break;
@@ -223,22 +226,7 @@ export class SinglePlaylistV2Component implements OnInit {
 					if (!res) return;
 
 					/** Store updates for saving */
-					res.forEach((p) => {
-						this.playlistContentsToSave.push(p.playlistContentId);
-
-						if (this.playlistSequenceUpdates.filter((i: PlaylistContent) => i.playlistContentId == p.playlistContentId).length) {
-							const playlistContentIndex = this.playlistSequenceUpdates.findIndex(
-								(i: PlaylistContent) => i.playlistContentId == p.playlistContentId
-							);
-
-							this.playlistSequenceUpdates[playlistContentIndex] = {
-								...p,
-								seq: this.playlistSequenceUpdates[playlistContentIndex].seq
-							};
-						} else {
-							this.playlistSequenceUpdates.push(p);
-						}
-					});
+					res.forEach((p) => this.playlistContentsToSave.push(p.playlistContentId));
 
 					this.updatePlaylistContent(res, false);
 				}
@@ -257,7 +245,7 @@ export class SinglePlaylistV2Component implements OnInit {
 			.afterClosed()
 			.subscribe({
 				next: (res: { seq: number }) => {
-					if (res.seq) this.movePlaylistContent(playlistContent.playlistContentId, res.seq);
+					if (res && res.seq) this.movePlaylistContent(playlistContent.playlistContentId, res.seq);
 				}
 			});
 	}
@@ -287,6 +275,7 @@ export class SinglePlaylistV2Component implements OnInit {
 	}
 
 	private setBulkControlsState() {
+		console.log('=>B', this.playlistSequenceUpdates);
 		this.playlistControls = this.playlistControls.map((p) => {
 			/** Add Bulk Button Actions Here */
 			if (p.action == pActions.bulkModify || p.action == pActions.bulkDelete)
@@ -335,12 +324,13 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	private sortableJSInit(): void {
 		const set = (sortable) => {
-			console.log('set =>', sortable);
+			this.sortablejsTriggered.next(true);
 			this.playlistSortableOrder = [...sortable.toArray()];
 			this.rearrangePlaylist(this.playlistSortableOrder);
 		};
 
-		this.sortablejs = new Sortable(this.draggables.nativeElement, {
+		const list = document.getElementById('draggables');
+		this.sortablejs = new Sortable(list, {
 			swapThreshold: 1,
 			sort: true,
 			animation: 500,
@@ -375,14 +365,11 @@ export class SinglePlaylistV2Component implements OnInit {
 		this.playlistContents.splice(seq - 1, 0, { ...playlistContentToMove });
 		this.playlistSortableOrder = this.playlistContents.map((i) => i.playlistContentId);
 
-		this.sortablejs.sort(this.playlistSortableOrder);
 		// Save Playlist
-		// this.rearrangePlaylist(this.playlistSortableOrder, true);
+		this.rearrangePlaylist(this.playlistSortableOrder, true);
 	}
 
-	private swapPlaylistContentPosition() {}
-
-	private rearrangePlaylist(updates: any[], moveSwap: boolean = false) {
+	private rearrangePlaylist(updates: any[], moveAndSave: boolean = false) {
 		updates.forEach((p, index) => {
 			if (this.playlistSequenceUpdates.filter((i: PlaylistContent) => i.playlistContentId == p).length) {
 				/** Get index of the re-updated playlist content (in this.playlistSequenceUpdates) */
@@ -399,7 +386,7 @@ export class SinglePlaylistV2Component implements OnInit {
 			}
 		});
 
-		if (moveSwap) {
+		if (moveAndSave) {
 			this.updatePlaylistContent(this.playlistSequenceUpdates, true);
 			return;
 		}
@@ -444,6 +431,10 @@ export class SinglePlaylistV2Component implements OnInit {
 				this.playlistContents = this.playlistContents.sort(
 					(a, b) => this.playlistSortableOrder.indexOf(a.playlistContentId) - this.playlistSortableOrder.indexOf(b.playlistContentId)
 				);
+
+				setTimeout(() => {
+					this.sortableJSInit();
+				}, 0);
 			},
 			error: (err) => {}
 		});

@@ -9,6 +9,7 @@ export const PlaylistContentControls = [
 		label: 'Quick Move',
 		icon: 'fas fa-retweet-alt',
 		colorClass: 'text-info',
+		disabled: false,
 		action: 'quick-move'
 	},
 	{
