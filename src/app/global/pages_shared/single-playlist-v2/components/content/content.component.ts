@@ -3,6 +3,7 @@ import { API_CONTENT } from 'src/app/global/models';
 import { IsimagePipe } from 'src/app/global/pipes';
 import { environment } from 'src/environments/environment';
 import { PlaylistContentControls } from '../../constants/PlaylistContentControls';
+import { Subject } from 'rxjs/internal/Subject';
 
 @Component({
 	selector: 'app-content',
@@ -19,6 +20,7 @@ export class ContentComponent implements OnInit {
 	@Input() enabled_controls = ['fullscreen', 'quick-move', 'swap-content', 'edit', 'remove'];
 	@Input() default_width = true;
 	@Input() detailed_view_mode = false;
+	@Input() move_enabled: Subject<boolean> = new Subject<boolean>();
 	@Output() control_click: EventEmitter<any> = new EventEmitter();
 	@Output() content_selected: EventEmitter<string> = new EventEmitter();
 	contentName: string;
@@ -29,6 +31,13 @@ export class ContentComponent implements OnInit {
 
 	ngOnInit() {
 		this.prepareThumbnails();
+
+		this.move_enabled.subscribe({
+			next: (res) => {
+				const moveButton = this.playlistContentControls.find((obj) => obj.action == 'quick-move');
+				moveButton.disabled = true;
+			}
+		});
 	}
 
 	private prepareThumbnails() {
