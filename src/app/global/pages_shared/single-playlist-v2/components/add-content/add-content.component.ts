@@ -48,15 +48,8 @@ export class AddContentComponent implements OnInit {
 	}
 
 	public contentSelected(content: API_CONTENT, e?: any) {
-		if (this._dialog_data.swapping) {
-			if (e.target.checked) this.selectedContents = [content];
-			else this.selectedContents = [];
-		} else {
-			if (this.selectedContents.includes(content)) this.selectedContents = this.selectedContents.filter((p) => p !== content);
-			else this.selectedContents.push(content);
-		}
-
-		console.log('=>', this.selectedContents);
+		if (!e.target.checked) this.selectedContents = this.selectedContents.filter((i) => i !== content);
+		else this.selectedContents.push(content);
 
 		this.newContentsSettings.playlistContentsLicenses = this.selectedContents.map((c, index) => {
 			return {

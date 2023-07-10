@@ -18,22 +18,34 @@
 						<!-- Allows devs to define desired number of columns per row via gridCount -->
 						<div class="row no-gutters mb-1" *ngIf="i % gridCount == 0">
 							<div class="col-lg" *ngFor="let col of [].constructor(gridCount); let count = index">
-								<div *ngIf="assets[count + i]" class="m-1">
-									<div
-										class="mark-content-wrapper"
-										(click)="_dialog_data.swapping && markContent(assets[count + i])"
-										[ngClass]="[
-											markedContent && markedContent.contentId == assets[count + i].contentId ? 'marked' : '',
-											_dialog_data.swapping && 'cursor-pointer'
-										]">
-										<app-content
-											[content]="assets[count + i]"
-											[controls]="false"
-											[default_width]="false"
-											[swapping]="_dialog_data.swapping"
-											(content_selected)="contentSelected(assets[count + i], $event)">
-										</app-content>
-									</div>
+								<div class="m-1">
+									<app-content
+										*ngIf="!_dialog_data.swapping; else swapping"
+										[content]="assets[count + i]"
+										[controls]="false"
+										[default_width]="false"
+										(content_selected)="contentSelected(assets[count + i], $event)">
+									</app-content>
+
+									<!-- This is due to checkbox not working when wrapped within .mark-content-wrapper -->
+									<ng-template #swapping>
+										<div
+											class="mark-content-wrapper"
+											(click)="_dialog_data.swapping && markContent(assets[count + i])"
+											[ngClass]="{
+												'cursor-pointer': _dialog_data.swapping,
+												marked: assets[count + i] && markedContent && markedContent.contentId == assets[count + i].contentId
+											}">
+											<app-content
+												[content]="assets[count + i]"
+												[controls]="false"
+												[default_width]="false"
+												[selectable]="!_dialog_data.swapping"
+												[swapping]="_dialog_data.swapping"
+												(content_selected)="contentSelected(assets[count + i], $event)">
+											</app-content>
+										</div>
+									</ng-template>
 								</div>
 							</div>
 						</div>
