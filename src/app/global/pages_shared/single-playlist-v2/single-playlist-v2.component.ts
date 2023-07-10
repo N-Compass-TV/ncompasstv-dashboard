@@ -95,14 +95,14 @@ export class SinglePlaylistV2Component implements OnInit {
 				this.playlistContentMoveSwap(e.playlistContent);
 				break;
 			case pcActions.swapContent:
-				this.showAddContentDialog();
+				this.showAddContentDialog(true);
 				break;
 			default:
 				break;
 		}
 	}
 
-	public contentSelected(playlistContentId: string) {
+	public playlistContentSelected(playlistContentId: string) {
 		if (this.selectedPlaylistContents.includes(playlistContentId))
 			this.selectedPlaylistContents = this.selectedPlaylistContents.filter((p) => p !== playlistContentId);
 		else this.selectedPlaylistContents.push(playlistContentId);
@@ -275,7 +275,6 @@ export class SinglePlaylistV2Component implements OnInit {
 	}
 
 	private setBulkControlsState() {
-		console.log('=>B', this.playlistSequenceUpdates);
 		this.playlistControls = this.playlistControls.map((p) => {
 			/** Add Bulk Button Actions Here */
 			if (p.action == pActions.bulkModify || p.action == pActions.bulkDelete)
@@ -307,18 +306,26 @@ export class SinglePlaylistV2Component implements OnInit {
 		);
 	}
 
-	private showAddContentDialog() {
+	private showAddContentDialog(swapping: boolean = false) {
 		this._dialog
 			.open(AddContentComponent, {
 				data: {
 					playlistId: this.playlist.playlistId,
 					assets: this.assets,
-					hostLicenses: this.playlistHostLicenses
+					hostLicenses: this.playlistHostLicenses,
+					swapping
 				}
 			})
 			.afterClosed()
 			.subscribe({
-				next: (res) => res && this.addContents(res)
+				next: (res) => {
+					if (swapping) {
+						console.log(res);
+						return;
+					}
+
+					res && this.addContents(res);
+				}
 			});
 	}
 
