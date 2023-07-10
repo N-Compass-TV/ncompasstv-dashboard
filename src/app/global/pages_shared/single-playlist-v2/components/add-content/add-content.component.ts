@@ -9,17 +9,23 @@ import { AddPlaylistContent } from '../../class/AddPlaylistContent';
 	styleUrls: ['./add-content.component.scss']
 })
 export class AddContentComponent implements OnInit {
-	assets: API_CONTENT[] = [];
 	activeEdits: boolean;
-	newContentsSettings: AddPlaylistContent = new AddPlaylistContent();
+	assets: API_CONTENT[] = [];
 	gridCount = 8;
+	hasImageAndFeed: boolean;
+	markedContent: API_CONTENT;
+	newContentsSettings: AddPlaylistContent = new AddPlaylistContent();
 	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[] = [];
 	selectedContents: API_CONTENT[] = [];
-	hasImageAndFeed: boolean;
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA)
-		public _dialog_data: { playlistId: string; assets: API_CONTENT[]; hostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[] }
+		public _dialog_data: {
+			playlistId: string;
+			assets: API_CONTENT[];
+			hostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[];
+			swapping: boolean;
+		}
 	) {
 		this.assets = [...this._dialog_data.assets];
 		this.playlistHostLicenses = this._dialog_data.hostLicenses ? [...this._dialog_data.hostLicenses] : [];
@@ -41,9 +47,16 @@ export class AddContentComponent implements OnInit {
 		console.log(this.newContentsSettings);
 	}
 
-	public contentSelected(content: API_CONTENT) {
-		if (this.selectedContents.includes(content)) this.selectedContents = this.selectedContents.filter((p) => p !== content);
-		else this.selectedContents.push(content);
+	public contentSelected(content: API_CONTENT, e?: any) {
+		if (this._dialog_data.swapping) {
+			if (e.target.checked) this.selectedContents = [content];
+			else this.selectedContents = [];
+		} else {
+			if (this.selectedContents.includes(content)) this.selectedContents = this.selectedContents.filter((p) => p !== content);
+			else this.selectedContents.push(content);
+		}
+
+		console.log('=>', this.selectedContents);
 
 		this.newContentsSettings.playlistContentsLicenses = this.selectedContents.map((c, index) => {
 			return {
@@ -71,5 +84,10 @@ export class AddContentComponent implements OnInit {
 		});
 
 		console.log('=>', this.newContentsSettings);
+	}
+
+	public markContent(content: API_CONTENT) {
+		if (!this._dialog_data.swapping) return;
+		this.markedContent = content;
 	}
 }

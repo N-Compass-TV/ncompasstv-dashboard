@@ -18,13 +18,22 @@
 						<!-- Allows devs to define desired number of columns per row via gridCount -->
 						<div class="row no-gutters mb-1" *ngIf="i % gridCount == 0">
 							<div class="col-lg" *ngFor="let col of [].constructor(gridCount); let count = index">
-								<div class="m-1">
-									<app-content
-										[content]="assets[count + i]"
-										[controls]="false"
-										[default_width]="false"
-										(content_selected)="contentSelected(assets[count + i])">
-									</app-content>
+								<div *ngIf="assets[count + i]" class="m-1">
+									<div
+										class="mark-content-wrapper"
+										(click)="_dialog_data.swapping && markContent(assets[count + i])"
+										[ngClass]="[
+											markedContent && markedContent.contentId == assets[count + i].contentId ? 'marked' : '',
+											_dialog_data.swapping && 'cursor-pointer'
+										]">
+										<app-content
+											[content]="assets[count + i]"
+											[controls]="false"
+											[default_width]="false"
+											[swapping]="_dialog_data.swapping"
+											(content_selected)="contentSelected(assets[count + i], $event)">
+										</app-content>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -32,17 +41,40 @@
 				</div>
 
 				<div class="add-content-controls">
-					<button mat-button mat-raised-button class="theme-btn" [disabled]="!selectedContents.length" matStepperNext>
+					<button
+						mat-button
+						mat-raised-button
+						class="theme-btn"
+						*ngIf="!_dialog_data.swapping; else doSwap"
+						[disabled]="!selectedContents.length"
+						matStepperNext>
 						<i class="fas fa-long-arrow-alt-right mr-3 text-green"></i>
 						<small class="font-weight-bold">Next</small>
 					</button>
+					<ng-template #doSwap>
+						<button
+							mat-button
+							mat-raised-button
+							class="theme-btn mr-2"
+							[disabled]="!markedContent"
+							matStepperNext
+							[mat-dialog-close]="markedContent">
+							<i class="fas fa-exchange-alt mr-3 text-green"></i>
+							<small class="font-weight-bold">Swap</small>
+						</button>
+
+						<button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]>
+							<i class="fas fa-times mr-3"></i>
+							<small class="font-weight-bold">Cancel</small>
+						</button>
+					</ng-template>
 				</div>
 			</div>
 		</mat-step>
 		<!-- End: Step 1 -->
 
 		<!-- Begin: Step 2 -->
-		<mat-step>
+		<mat-step *ngIf="!_dialog_data.swapping">
 			<ng-template matStepLabel>Settings</ng-template>
 			<div class="step-2 playlist-content-settings">
 				<div class="step-header d-flex mb-3">
