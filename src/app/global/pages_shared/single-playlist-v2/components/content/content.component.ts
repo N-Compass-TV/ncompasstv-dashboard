@@ -24,7 +24,6 @@ export class ContentComponent implements OnInit {
 	@Input() swapping: boolean;
 	@Output() control_click: EventEmitter<any> = new EventEmitter();
 	@Output() content_selected: EventEmitter<string> = new EventEmitter();
-	@Output() marked: EventEmitter<any> = new EventEmitter();
 	contentName: string;
 	filestackScreenshot = `${environment.third_party.filestack_screenshot}`;
 	playlistContentControls = PlaylistContentControls;
@@ -32,8 +31,6 @@ export class ContentComponent implements OnInit {
 	constructor(private _isImage: IsimagePipe) {}
 
 	ngOnInit() {
-		this.selectable = !this.swapping;
-
 		this.prepareThumbnails();
 
 		this.move_enabled.subscribe({
