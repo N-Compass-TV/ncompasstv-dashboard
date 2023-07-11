@@ -20,7 +20,7 @@
 							<div class="col-lg" *ngFor="let col of [].constructor(gridCount); let count = index">
 								<div class="m-1">
 									<app-content
-										*ngIf="!_dialog_data.swapping; else swapping"
+										*ngIf="!_dialog_data.playlistContentId; else swapping"
 										[content]="assets[count + i]"
 										[controls]="false"
 										[default_width]="false"
@@ -31,17 +31,17 @@
 									<ng-template #swapping>
 										<div
 											class="mark-content-wrapper"
-											(click)="_dialog_data.swapping && markContent(assets[count + i])"
+											(click)="_dialog_data.playlistContentId && markContent(assets[count + i])"
 											[ngClass]="{
-												'cursor-pointer': _dialog_data.swapping,
+												'cursor-pointer': _dialog_data.playlistContentId,
 												marked: assets[count + i] && markedContent && markedContent.contentId == assets[count + i].contentId
 											}">
 											<app-content
 												[content]="assets[count + i]"
 												[controls]="false"
 												[default_width]="false"
-												[selectable]="!_dialog_data.swapping"
-												[swapping]="_dialog_data.swapping"
+												[selectable]="!_dialog_data.playlistContentId"
+												[swapping]="_dialog_data.playlistContentId"
 												(content_selected)="contentSelected(assets[count + i], $event)">
 											</app-content>
 										</div>
@@ -57,7 +57,7 @@
 						mat-button
 						mat-raised-button
 						class="theme-btn"
-						*ngIf="!_dialog_data.swapping; else doSwap"
+						*ngIf="!_dialog_data.playlistContentId; else doSwap"
 						[disabled]="!selectedContents.length"
 						matStepperNext>
 						<i class="fas fa-long-arrow-alt-right mr-3 text-green"></i>
@@ -86,7 +86,7 @@
 		<!-- End: Step 1 -->
 
 		<!-- Begin: Step 2 -->
-		<mat-step *ngIf="!_dialog_data.swapping">
+		<mat-step *ngIf="!_dialog_data.playlistContentId">
 			<ng-template matStepLabel>Settings</ng-template>
 			<div class="step-2 playlist-content-settings">
 				<div class="step-header d-flex mb-3">

@@ -24,7 +24,7 @@ export class AddContentComponent implements OnInit {
 			playlistId: string;
 			assets: API_CONTENT[];
 			hostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[];
-			swapping: boolean;
+			playlistContentId: string;
 		}
 	) {
 		this.assets = [...this._dialog_data.assets];
@@ -65,8 +65,6 @@ export class AddContentComponent implements OnInit {
 	}
 
 	public licenseIdToggled(licenseIds: string[]) {
-		console.log(licenseIds);
-
 		this.newContentsSettings.playlistContentsLicenses = this.newContentsSettings.playlistContentsLicenses.map((c, index) => {
 			if (!c.licenseIds) c.licenseIds = [];
 
@@ -80,7 +78,7 @@ export class AddContentComponent implements OnInit {
 	}
 
 	public markContent(content: API_CONTENT) {
-		if (!this._dialog_data.swapping) return;
+		if (!this._dialog_data.playlistContentId) return;
 		this.markedContent = content;
 	}
 }

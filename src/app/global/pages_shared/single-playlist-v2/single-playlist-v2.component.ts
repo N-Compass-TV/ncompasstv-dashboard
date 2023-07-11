@@ -95,7 +95,7 @@ export class SinglePlaylistV2Component implements OnInit {
 				this.playlistContentMoveSwap(e.playlistContent);
 				break;
 			case pcActions.swapContent:
-				this.showAddContentDialog(true);
+				this.showAddContentDialog(e.playlistContent);
 				break;
 			default:
 				break;
@@ -306,21 +306,21 @@ export class SinglePlaylistV2Component implements OnInit {
 		);
 	}
 
-	private showAddContentDialog(swapping: boolean = false) {
+	private showAddContentDialog(playlistContentId?: string) {
 		this._dialog
 			.open(AddContentComponent, {
 				data: {
 					playlistId: this.playlist.playlistId,
 					assets: this.assets,
 					hostLicenses: this.playlistHostLicenses,
-					swapping
+					playlistContentId
 				}
 			})
 			.afterClosed()
 			.subscribe({
 				next: (res) => {
-					if (swapping) {
-						console.log(res);
+					if (playlistContentId) {
+						this.swapContent(res, playlistContentId);
 						return;
 					}
 
@@ -358,6 +358,24 @@ export class SinglePlaylistV2Component implements OnInit {
 				console.log('OnSort =>', event);
 			}
 		});
+	}
+
+	private swapContent(newContent: API_CONTENT, playlistContentId: string) {
+		console.log(newContent, playlistContentId);
+
+		// Get source index and the playlist content to move
+		const playlistContentSrcIndex = this.playlistContents.findIndex((i: PlaylistContent) => playlistContentId == i.playlistContentId);
+		const playlistContentToRemove = { ...this.playlistContents[playlistContentSrcIndex] };
+
+		// Remove the object from the source index
+		this.playlistContents.splice(playlistContentSrcIndex, 1);
+
+		// Insert the object at the target index
+		this.playlistContents.splice(playlistContentToRemove.seq - 1, 0, { ...newContent });
+		this.playlistSortableOrder = this.playlistContents.map((i) => i.playlistContentId);
+
+		// Save Playlist
+		this.rearrangePlaylist(this.playlistSortableOrder, true);
 	}
 
 	private movePlaylistContent(playlistContentId: string, seq: number) {
@@ -419,7 +437,10 @@ export class SinglePlaylistV2Component implements OnInit {
 				this.savingPlaylist = false;
 				this.selectedPlaylistContents = [];
 				this.playlistContentsToSave = [];
-				if (playlistSave) this.playlistSequenceUpdates = [];
+				if (playlistSave) {
+					this.playlistSequenceUpdates = [];
+					this.sortablejsTriggered.next(false);
+				}
 				this.setBulkControlsState();
 
 				this.playlistContents = this.playlistContents.map((p) => {

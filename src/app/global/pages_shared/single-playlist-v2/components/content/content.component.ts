@@ -36,7 +36,7 @@ export class ContentComponent implements OnInit {
 		this.move_enabled.subscribe({
 			next: (res) => {
 				const moveButton = this.playlistContentControls.find((obj) => obj.action == 'quick-move');
-				moveButton.disabled = true;
+				moveButton.disabled = res;
 			}
 		});
 	}
