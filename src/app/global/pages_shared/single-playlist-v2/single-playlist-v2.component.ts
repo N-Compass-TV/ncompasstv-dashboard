@@ -9,7 +9,8 @@ import {
 	API_LICENSE_PROPS,
 	API_SCREEN_OF_PLAYLIST,
 	API_SINGLE_PLAYLIST,
-	API_SINGLE_PLAYLIST_INFO
+	API_SINGLE_PLAYLIST_INFO,
+	API_UPDATED_PLAYLIST_CONTENT
 } from '../../models';
 import { ContentSettingsComponent } from './components/content-settings/content-settings.component';
 import {
@@ -27,12 +28,14 @@ import { AddContentComponent } from './components/add-content/add-content.compon
 import { FormControl } from '@angular/forms';
 import { PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
 import { QuickMoveComponent } from './components/quick-move/quick-move.component';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
+import { IsvideoPipe } from '../../pipes';
 
 @Component({
 	selector: 'app-single-playlist-v2',
 	templateUrl: './single-playlist-v2.component.html',
-	styleUrls: ['./single-playlist-v2.component.scss']
+	styleUrls: ['./single-playlist-v2.component.scss'],
+	providers: [IsvideoPipe]
 })
 export class SinglePlaylistV2Component implements OnInit {
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
@@ -64,7 +67,12 @@ export class SinglePlaylistV2Component implements OnInit {
 	sortablejs: any;
 	videoCount = 0;
 
-	constructor(private _activatedRoute: ActivatedRoute, private _dialog: MatDialog, private _playlist: SinglePlaylistService) {}
+	constructor(
+		private _activatedRoute: ActivatedRoute,
+		private _dialog: MatDialog,
+		private _playlist: SinglePlaylistService,
+		private _isVideo: IsvideoPipe
+	) {}
 
 	ngOnInit() {
 		this.playlistRouteInit();
@@ -123,6 +131,9 @@ export class SinglePlaylistV2Component implements OnInit {
 						return { ...p, icon: this.assets.length ? 'fas fa-plus' : 'fas fa-ban', disabled: this.assets.length < 1 };
 					return p;
 				});
+
+				/** Send signal */
+				this._playlist.contentReady(data.contents);
 			},
 			error: (error) => {
 				throw Error(error);
@@ -198,7 +209,12 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	private getPlaylistHostLicenses(playlistId: string) {
 		this._playlist.getPlaylistHosts(playlistId).subscribe({
-			next: (res) => (this.playlistHostLicenses = res),
+			next: (res) => {
+				this.playlistHostLicenses = res;
+
+				/** Send signal */
+				this._playlist.hostsReady(res);
+			},
 			error: (error) => {
 				throw Error(error);
 			}
@@ -306,21 +322,21 @@ export class SinglePlaylistV2Component implements OnInit {
 		);
 	}
 
-	private showAddContentDialog(playlistContentId?: string) {
+	private showAddContentDialog(playlistContent?: API_CONTENT) {
 		this._dialog
 			.open(AddContentComponent, {
 				data: {
 					playlistId: this.playlist.playlistId,
 					assets: this.assets,
 					hostLicenses: this.playlistHostLicenses,
-					playlistContentId
+					playlistContentId: playlistContent ? playlistContent.playlistContentId : null
 				}
 			})
 			.afterClosed()
 			.subscribe({
 				next: (res) => {
-					if (playlistContentId) {
-						this.swapContent(res, playlistContentId);
+					if (playlistContent) {
+						this.swapContent(res, playlistContent);
 						return;
 					}
 
@@ -360,22 +376,44 @@ export class SinglePlaylistV2Component implements OnInit {
 		});
 	}
 
-	private swapContent(newContent: API_CONTENT, playlistContentId: string) {
-		console.log(newContent, playlistContentId);
+	private swapContent(newContent: API_CONTENT, playlistContent: API_CONTENT) {
+		const playlistContentToSwap = {
+			contentId: newContent.contentId,
+			playlistContentId: playlistContent.playlistContentId,
+			duration: this._isVideo.transform(newContent.fileType) ? newContent.duration : playlistContent.duration
+		};
 
-		// Get source index and the playlist content to move
-		const playlistContentSrcIndex = this.playlistContents.findIndex((i: PlaylistContent) => playlistContentId == i.playlistContentId);
-		const playlistContentToRemove = { ...this.playlistContents[playlistContentSrcIndex] };
+		/** Store updates for saving */
+		this.playlistContentsToSave.push(playlistContent.playlistContentId);
 
-		// Remove the object from the source index
-		this.playlistContents.splice(playlistContentSrcIndex, 1);
+		/** Save and Update View */
+		this._playlist.swapPlaylistContent(playlistContentToSwap).subscribe({
+			next: (res: { content: API_CONTENT; plContent: API_UPDATED_PLAYLIST_CONTENT }) => {
+				this.playlistContents = this.playlistContents.map((p) => {
+					if (p.playlistContentId == playlistContent.playlistContentId) {
+						return {
+							...res.content,
+							...res.plContent
+						};
+					}
 
-		// Insert the object at the target index
-		this.playlistContents.splice(playlistContentToRemove.seq - 1, 0, { ...newContent });
-		this.playlistSortableOrder = this.playlistContents.map((i) => i.playlistContentId);
+					return p;
+				});
 
-		// Save Playlist
-		this.rearrangePlaylist(this.playlistSortableOrder, true);
+				this.playlistContents = this.playlistContents.sort(
+					(a, b) => this.playlistSortableOrder.indexOf(a.playlistContentId) - this.playlistSortableOrder.indexOf(b.playlistContentId)
+				);
+
+				this.playlistContentsToSave = [];
+
+				setTimeout(() => {
+					this.sortableJSInit();
+				}, 0);
+			},
+			error: (err) => {
+				console.log(err);
+			}
+		});
 	}
 
 	private movePlaylistContent(playlistContentId: string, seq: number) {
