@@ -16,6 +16,8 @@ interface HostLicenses {
 export class PlayLocationComponent implements OnInit {
 	@Input() host_licenses: HostLicenses[];
 	@Input() toggle_all: Observable<void>;
+	@Input() whitelisted_hosts: string[] = [];
+	@Input() whitelisted_licenses: string[] = [];
 	@Output() toggle: EventEmitter<string[]> = new EventEmitter();
 	private allToggled: Subscription;
 	selectedHostIds = [];

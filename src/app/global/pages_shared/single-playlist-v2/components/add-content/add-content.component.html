@@ -13,7 +13,7 @@
 					<div class="search-form-wrapper"></div>
 				</div>
 
-				<div class="media-files-wrapper bg-gray rounded p-2 mb-4" *ngIf="assets">
+				<div class="media-files-wrapper bg-gray rounded p-2 mb-4" *ngIf="assets.length; else loading">
 					<ng-container *ngFor="let c of assets; let i = index">
 						<!-- Allows devs to define desired number of columns per row via gridCount -->
 						<div class="row no-gutters mb-1" *ngIf="i % gridCount == 0">
@@ -53,16 +53,18 @@
 				</div>
 
 				<div class="add-content-controls">
-					<button
-						mat-button
-						mat-raised-button
-						class="theme-btn"
-						*ngIf="!_dialog_data.playlistContentId; else doSwap"
-						[disabled]="!selectedContents.length"
-						matStepperNext>
-						<i class="fas fa-long-arrow-alt-right mr-3 text-green"></i>
-						<small class="font-weight-bold">Next</small>
-					</button>
+					<ng-container *ngIf="!_dialog_data.playlistContentId; else doSwap">
+						<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="!selectedContents.length" matStepperNext>
+							<i class="fas fa-long-arrow-alt-right mr-3 text-green"></i>
+							<small class="font-weight-bold">Next</small>
+						</button>
+
+						<button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]>
+							<i class="fas fa-times mr-3"></i>
+							<small class="font-weight-bold">Cancel</small>
+						</button>
+					</ng-container>
+
 					<ng-template #doSwap>
 						<button
 							mat-button
@@ -143,7 +145,7 @@
 							</mat-tab>
 							<mat-tab label="Play Where">
 								<div class="mt-3">
-									<div class="play-location-wrapper">
+									<div class="play-location-wrapper" *ngIf="playlistHostLicenses.length; else loading">
 										<app-play-location
 											[host_licenses]="playlistHostLicenses"
 											(toggle)="licenseIdToggled($event)"></app-play-location>
@@ -158,11 +160,16 @@
 					<button
 						mat-button
 						mat-raised-button
-						class="theme-btn"
+						class="theme-btn mr-2"
 						[disabled]="!selectedContents.length && !newContentsSettings"
 						[mat-dialog-close]="newContentsSettings">
 						<i class="fas fa-save mr-3 text-green"></i>
 						<small class="font-weight-bold">Save</small>
+					</button>
+
+					<button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]>
+						<i class="fas fa-times mr-3"></i>
+						<small class="font-weight-bold">Cancel</small>
 					</button>
 				</div>
 
@@ -176,4 +183,10 @@
 		</mat-step>
 		<!-- End: Step 2 -->
 	</mat-horizontal-stepper>
+
+	<ng-template #loading>
+		<div class="media-files-wrapper bg-gray rounded p-2 mb-4">
+			<app-spinner></app-spinner>
+		</div>
+	</ng-template>
 </div>

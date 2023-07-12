@@ -80,23 +80,28 @@
 					</div>
 				</mat-tab>
 				<mat-tab label="Play Where">
-					<div class="d-flex align-items-center pt-3">
-						<div class="flex-even">
-							<h4>Whitelist Host and Licenses</h4>
-							<p class="sm-text m-0">
-								Select host and licenses you want {{ contentData.bulkSet ? 'these contents' : 'this content' }} to play or toggle all.
-							</p>
+					<div class="play-where-wrapper" *ngIf="contentData.hostLicenses && contentData.hostLicenses.length; else loading">
+						<div class="d-flex align-items-center pt-3">
+							<div class="flex-even">
+								<h4>Whitelist Host and Licenses</h4>
+								<p class="sm-text m-0">
+									Select host and licenses you want {{ contentData.bulkSet ? 'these contents' : 'this content' }} to play or toggle
+									all.
+								</p>
+							</div>
+							<div class="toggle-wrapper pt-1 pr-2">
+								<mat-slide-toggle (change)="toggleAll.next($event)"></mat-slide-toggle>
+							</div>
 						</div>
-						<div class="toggle-wrapper pt-1 pr-2">
-							<mat-slide-toggle (change)="toggleAll.next($event)"></mat-slide-toggle>
-						</div>
-					</div>
 
-					<div class="play-location-wrapper mt-3" *ngIf="contentData.hostLicenses && contentData.hostLicenses.length">
-						<app-play-location
-							[host_licenses]="contentData.hostLicenses"
-							[toggle_all]="toggleAll.asObservable()"
-							(toggle)="licenseIdToggled($event)"></app-play-location>
+						<div class="play-location-wrapper mt-3">
+							<app-play-location
+								[host_licenses]="contentData.hostLicenses"
+								[whitelisted_hosts]="whitelistedHosts"
+								[whitelisted_licenses]="whitelistedLicenses"
+								[toggle_all]="toggleAll.asObservable()"
+								(toggle)="licenseIdToggled($event)"></app-play-location>
+						</div>
 					</div>
 				</mat-tab>
 			</mat-tab-group>
@@ -115,4 +120,10 @@
 			<small class="font-weight-bold">Cancel</small>
 		</button>
 	</div>
+
+	<ng-template #loading>
+		<div class="play-location-wrapper mt-3">
+			<app-spinner></app-spinner>
+		</div>
+	</ng-template>
 </div>

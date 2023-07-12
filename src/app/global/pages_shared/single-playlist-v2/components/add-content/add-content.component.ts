@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { API_CONTENT, API_HOST, API_LICENSE } from 'src/app/global/models';
 import { AddPlaylistContent } from '../../class/AddPlaylistContent';
+import { SinglePlaylistService } from '../../services/single-playlist.service';
 
 @Component({
 	selector: 'app-add-content',
@@ -25,7 +26,8 @@ export class AddContentComponent implements OnInit {
 			assets: API_CONTENT[];
 			hostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[];
 			playlistContentId: string;
-		}
+		},
+		private _playlist: SinglePlaylistService
 	) {
 		this.assets = [...this._dialog_data.assets];
 		this.playlistHostLicenses = this._dialog_data.hostLicenses ? [...this._dialog_data.hostLicenses] : [];
@@ -33,6 +35,20 @@ export class AddContentComponent implements OnInit {
 
 	ngOnInit() {
 		this.newContentsSettings.playlistId = this._dialog_data.playlistId;
+
+		/** Watch Contents Readiness */
+		this._playlist.contentLoaded$.subscribe({
+			next: (res: API_CONTENT[]) => {
+				if (!this.assets.length) this.assets = res;
+			}
+		});
+
+		/** Watch Hosts Data Readiness */
+		this._playlist.hostLoaded$.subscribe({
+			next: (res: { host: API_HOST; licenses: API_LICENSE[] }[]) => {
+				if (!this.playlistHostLicenses.length && res.length) this.playlistHostLicenses = res;
+			}
+		});
 	}
 
 	public applyContentSettings(settingsData: any) {
