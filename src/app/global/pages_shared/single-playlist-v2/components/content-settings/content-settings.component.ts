@@ -81,6 +81,9 @@ export class ContentSettingsComponent implements OnInit {
 		console.log(this.playlistUpdates);
 	}
 
+	/**
+	 * @param data - Playlist content setting changes
+	 */
 	public playlistContentModified(data: any) {
 		/** Single Playlist Content Edit */
 		if (!this.contentData.bulkSet) {

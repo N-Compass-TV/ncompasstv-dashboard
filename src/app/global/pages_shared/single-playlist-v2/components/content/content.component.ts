@@ -17,6 +17,7 @@ export class ContentComponent implements OnInit {
 	@Input() controls = true;
 	@Input() saving = false;
 	@Input() selectable = true;
+	@Input() selected = false;
 	@Input() enabled_controls = ['fullscreen', 'quick-move', 'swap-content', 'edit', 'remove'];
 	@Input() default_width = true;
 	@Input() detailed_view_mode = false;

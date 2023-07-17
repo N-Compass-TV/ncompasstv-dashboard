@@ -15,7 +15,12 @@
 			</div>
 
 			<div class="checkbox-selector pt-1" *ngIf="selectable">
-				<input type="checkbox" (change)="content_selected.emit($event)" />
+				<input
+					type="checkbox"
+					[(ngModel)]="selected"
+					[ngModelOptions]="{ standalone: true }"
+					[checked]="selected"
+					(change)="content_selected.emit($event)" />
 			</div>
 		</section>
 

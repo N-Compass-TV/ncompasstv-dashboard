@@ -23,9 +23,18 @@
 		<div class="col-lg-6">
 			<div class="playlist-content-preview mb-3" *ngIf="!contentData.bulkSet; else selected">
 				<img
+					*ngIf="contentData.playlistContents[0].fileType | isimage; else video"
 					class="thumbnail-preview-100 border"
 					[src]="contentData.playlistContents[0].thumbnail | sanitize"
 					[alt]="contentData.playlistContents[0].filename || contentData.playlistContents[0].title" />
+
+				<ng-template #video>
+					<video
+						class="thumbnail-preview-100 border"
+						[src]="contentData.playlistContents[0].url + contentData.playlistContents[0].fileName"
+						controls
+						muted></video>
+				</ng-template>
 			</div>
 
 			<ng-template #selected>
@@ -115,8 +124,8 @@
 			<i class="fas fa-save mr-3 text-green"></i>
 			<small class="font-weight-bold">Save</small>
 		</button>
-		<button mat-button mat-raised-button class="theme-btn">
-			<i class="fas fa-times mr-3 text-danger"></i>
+		<button mat-button mat-raised-button class="theme-btn bg-danger">
+			<i class="fas fa-times mr-3"></i>
 			<small class="font-weight-bold">Cancel</small>
 		</button>
 	</div>

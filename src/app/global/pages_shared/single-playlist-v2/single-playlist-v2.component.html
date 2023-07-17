@@ -112,12 +112,13 @@
 										<div class="m-1">
 											<app-content
 												[content]="c"
-												[index]="c.seq"
 												[detailed_view_mode]="detailedViewMode"
-												[saving]="playlistContentsToSave.includes(c.playlistContentId)"
+												[index]="c.seq"
 												[move_enabled]="sortablejsTriggered"
-												(content_selected)="playlistContentSelected(c.playlistContentId)"
-												(control_click)="contentControlClicked($event)"></app-content>
+												[saving]="playlistContentsToSave.includes(c.playlistContentId)"
+												[selected]="selectedPlaylistContents.includes(c.playlistContentId)"
+												(control_click)="contentControlClicked($event)"
+												(content_selected)="playlistContentSelected(c.playlistContentId)"></app-content>
 										</div>
 									</div>
 								</div>
