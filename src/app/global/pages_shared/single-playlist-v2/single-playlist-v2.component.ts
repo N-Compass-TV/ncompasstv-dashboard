@@ -110,14 +110,6 @@ export class SinglePlaylistV2Component implements OnInit {
 		}
 	}
 
-	public playlistContentSelected(playlistContentId: string) {
-		if (this.selectedPlaylistContents.includes(playlistContentId))
-			this.selectedPlaylistContents = this.selectedPlaylistContents.filter((p) => p !== playlistContentId);
-		else this.selectedPlaylistContents.push(playlistContentId);
-
-		this.setBulkControlsState();
-	}
-
 	private getAssets() {
 		this._playlist.getAvailableDealerAssets().subscribe({
 			next: (data: { contents: API_CONTENT[]; page: any }) => {
@@ -198,6 +190,9 @@ export class SinglePlaylistV2Component implements OnInit {
 				/** Initialize search form watch */
 				this.searchFormInit();
 
+				/** Set Bulk Controls State */
+				this.setBulkControlsState();
+
 				/** Initialize SortableJS */
 				setTimeout(() => this.sortableJSInit(), 0);
 			},
@@ -221,8 +216,37 @@ export class SinglePlaylistV2Component implements OnInit {
 		});
 	}
 
+	private markAll() {
+		this.selectedPlaylistContents = this.playlistContents.map((i) => i.playlistContentId);
+		this.setBulkControlsState();
+	}
+
+	private movePlaylistContent(playlistContentId: string, seq: number) {
+		// Get source index and the playlist content to move
+		const playlistContentSrcIndex = this.playlistContents.findIndex((i: PlaylistContent) => playlistContentId == i.playlistContentId);
+		const playlistContentToMove = this.playlistContents[playlistContentSrcIndex];
+
+		// Remove the object from the source index
+		this.playlistContents.splice(playlistContentSrcIndex, 1);
+
+		// Insert the object at the target index
+		this.playlistContents.splice(seq - 1, 0, { ...playlistContentToMove });
+		this.playlistSortableOrder = this.playlistContents.map((i) => i.playlistContentId);
+
+		// Save Playlist
+		this.rearrangePlaylist(this.playlistSortableOrder, true);
+	}
+
 	public onChangeViewOptions(action: string) {
 		this.detailedViewMode = action === PlaylistViewOptionActions.detailedView ? true : false;
+	}
+
+	public playlistContentSelected(playlistContentId: string) {
+		if (this.selectedPlaylistContents.includes(playlistContentId))
+			this.selectedPlaylistContents = this.selectedPlaylistContents.filter((p) => p !== playlistContentId);
+		else this.selectedPlaylistContents.push(playlistContentId);
+
+		this.setBulkControlsState();
 	}
 
 	private playlistContentSettings(playlistContent: API_CONTENT[], bulkSet: boolean = false) {
@@ -268,6 +292,9 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	public playlistControlClicked(e: { action: string }) {
 		switch (e.action) {
+			case pActions.markAll:
+				this.markAll();
+				break;
 			case pActions.addContent:
 				this.showAddContentDialog();
 				break;
@@ -278,6 +305,7 @@ export class SinglePlaylistV2Component implements OnInit {
 				break;
 			case pActions.savePlaylist:
 				this.updatePlaylistContent(this.playlistSequenceUpdates);
+				break;
 			default:
 				break;
 		}
@@ -290,12 +318,38 @@ export class SinglePlaylistV2Component implements OnInit {
 		});
 	}
 
+	private rearrangePlaylist(updates: any[], moveAndSave: boolean = false) {
+		updates.forEach((p, index) => {
+			if (this.playlistSequenceUpdates.filter((i: PlaylistContent) => i.playlistContentId == p).length) {
+				/** Get index of the re-updated playlist content (in this.playlistSequenceUpdates) */
+				const pcIndex = this.playlistSequenceUpdates.findIndex((i: PlaylistContent) => i.playlistContentId == p);
+
+				/** Apply new sequence value of the re-updated playlist content */
+				this.playlistSequenceUpdates[pcIndex] = { ...this.playlistSequenceUpdates[pcIndex], seq: index + 1 };
+			} else {
+				/** First time update, not in the stored playlist updates (this.playlistSequenceUpdates) array */
+				const sequenceUpdate = { playlistContentId: p, seq: index + 1 };
+
+				/** Store new */
+				this.playlistSequenceUpdates.push(sequenceUpdate);
+			}
+		});
+
+		if (moveAndSave) {
+			this.updatePlaylistContent(this.playlistSequenceUpdates, true);
+			return;
+		}
+
+		this.setBulkControlsState();
+	}
+
 	private setBulkControlsState() {
 		this.playlistControls = this.playlistControls.map((p) => {
 			/** Add Bulk Button Actions Here */
 			if (p.action == pActions.bulkModify || p.action == pActions.bulkDelete)
 				return { ...p, disabled: this.selectedPlaylistContents.length < 1 };
 			else if (p.action == pActions.savePlaylist) return { ...p, disabled: this.playlistSequenceUpdates.length == 0 };
+			else if (p.action == pActions.markAll) return { ...p, disabled: this.playlistContents.length == 0 };
 			return p;
 		});
 	}
@@ -414,47 +468,6 @@ export class SinglePlaylistV2Component implements OnInit {
 				console.log(err);
 			}
 		});
-	}
-
-	private movePlaylistContent(playlistContentId: string, seq: number) {
-		// Get source index and the playlist content to move
-		const playlistContentSrcIndex = this.playlistContents.findIndex((i: PlaylistContent) => playlistContentId == i.playlistContentId);
-		const playlistContentToMove = this.playlistContents[playlistContentSrcIndex];
-
-		// Remove the object from the source index
-		this.playlistContents.splice(playlistContentSrcIndex, 1);
-
-		// Insert the object at the target index
-		this.playlistContents.splice(seq - 1, 0, { ...playlistContentToMove });
-		this.playlistSortableOrder = this.playlistContents.map((i) => i.playlistContentId);
-
-		// Save Playlist
-		this.rearrangePlaylist(this.playlistSortableOrder, true);
-	}
-
-	private rearrangePlaylist(updates: any[], moveAndSave: boolean = false) {
-		updates.forEach((p, index) => {
-			if (this.playlistSequenceUpdates.filter((i: PlaylistContent) => i.playlistContentId == p).length) {
-				/** Get index of the re-updated playlist content (in this.playlistSequenceUpdates) */
-				const pcIndex = this.playlistSequenceUpdates.findIndex((i: PlaylistContent) => i.playlistContentId == p);
-
-				/** Apply new sequence value of the re-updated playlist content */
-				this.playlistSequenceUpdates[pcIndex] = { ...this.playlistSequenceUpdates[pcIndex], seq: index + 1 };
-			} else {
-				/** First time update, not in the stored playlist updates (this.playlistSequenceUpdates) array */
-				const sequenceUpdate = { playlistContentId: p, seq: index + 1 };
-
-				/** Store new */
-				this.playlistSequenceUpdates.push(sequenceUpdate);
-			}
-		});
-
-		if (moveAndSave) {
-			this.updatePlaylistContent(this.playlistSequenceUpdates, true);
-			return;
-		}
-
-		this.setBulkControlsState();
 	}
 
 	/**

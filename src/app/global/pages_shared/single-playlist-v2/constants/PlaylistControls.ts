@@ -2,6 +2,7 @@ export const PlaylistPrimaryControlActions = {
 	addContent: 'add-content',
 	bulkDelete: 'bulk-delete',
 	bulkModify: 'bulk-modify',
+	markAll: 'mark-all',
 	playlistDemo: 'playlist-demo',
 	savePlaylist: 'save-playlist',
 	viewSchedule: 'view-schedule'
@@ -18,6 +19,12 @@ export const PlaylistFilterActions = {
 };
 
 export const PlaylistPrimaryControls = [
+	{
+		label: 'Mark All',
+		action: PlaylistPrimaryControlActions.markAll,
+		icon: 'fas fa-check',
+		disabled: true
+	},
 	{
 		label: 'Add Content',
 		action: PlaylistPrimaryControlActions.addContent,
