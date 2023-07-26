@@ -1,6 +1,10 @@
-<div class="playlistv2-content box-shadow" *ngIf="content" [ngClass]="{ 'default-width': !detailed_view_mode, 'swap-width': swapping }">
+<div class="playlistv2-content box-shadow" *ngIf="content" [ngClass]="{ 'swap-width': swapping }">
 	<ng-container *ngIf="!detailed_view_mode; else detailed_view">
-		<section class="playlistv2-content__header d-flex align-items-center px-2" [matTooltip]="content.fileName || content.title | nohandle">
+		<section
+			class="playlistv2-content__header d-flex align-items-center px-2"
+			[matTooltip]="content.fileName || content.title | nohandle"
+			[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
+			[class.future-schedule]="content.scheduleStatus === 'future'">
 			<div class="content-filename-wrapper flex-even">
 				<span
 					class="xsm-text text-primary fas mr-1"
@@ -25,12 +29,12 @@
 		</section>
 
 		<section class="playlistv2-content__thumbnail" [ngClass]="!controls && 'no-controls'">
-			<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
+			<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName || content.title" />
 		</section>
 
 		<section class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white" *ngIf="controls">
 			<div class="index flex-even">
-				<span class="xsm-text mr-2">{{ index }}</span>
+				<span class="index-font mr-2">{{ index }}</span>
 			</div>
 
 			<div class="playlist-content-controls">
@@ -55,9 +59,12 @@
 	<ng-template #detailed_view>
 		<div class="playlistv2__content-list">
 			<div class="playlistv2__content-list-thumbnail">
-				<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.filename || content.title" />
+				<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName || content.title" />
 			</div>
-			<div class="playlistv2__content-list-details">
+			<div
+				class="playlistv2__content-list-details"
+				[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
+				[class.future-schedule]="content.scheduleStatus === 'future'">
 				<div class="upper__details">
 					<div class="upper__details-text">
 						<span class="upper__details-title">{{ content.fileName || content.title | nohandle | slice : 0 : 28 }}</span>
