@@ -26,6 +26,26 @@
 		left: 0;
 		top: 0;
 		width: 100%;
+
+		&.inactive-schedule {
+			background: rgba(28, 47, 233, 0.8) !important;
+
+			.content-filename-wrapper {
+				span {
+					color: white !important;
+				}
+			}
+		}
+
+		&.future-schedule {
+			background: rgba(241, 169, 81, 0.8) !important;
+
+			.content-filename-wrapper {
+				span {
+					color: black !important;
+				}
+			}
+		}
 	}
 
 	.playlistv2-content__thumbnail {
@@ -62,6 +82,14 @@
 			gap: 30px;
 			width: 70%;
 			padding: 10px 13px;
+
+			&.inactive-schedule {
+				border-right: 5px solid rgba(28, 47, 233, 0.8);
+			}
+
+			&.future-schedule {
+				border-right: 5px solid rgba(241, 169, 81, 0.8);
+			}
 		}
 
 		.upper__details {
@@ -132,4 +160,9 @@
 		top: 0;
 		width: 100%;
 	}
+}
+
+.index-font {
+	font-size: 9px !important;
+	font-weight: bold;
 }
