@@ -1,0 +1,46 @@
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+
+export interface API_CONTENT_V2 {
+	advertiserId: string;
+	alternateWeek?: number;
+	classification?: string;
+	contentId: string;
+	creditsEnabled?: number | boolean;
+	dateCreated: string;
+	days?: string;
+	dealerId: string;
+	description: string;
+	duration?: number;
+	feedId: string;
+	fileName?: string;
+	fileType: string;
+	filesize?: string | number;
+	frequency?: number;
+	from?: string;
+	handlerId?: string;
+	hostId?: string;
+	isConverted: number;
+	isFullScreen: number;
+	isProtected: number;
+	liveStream?: number;
+	parentId?: string;
+	playTimeEnd?: null;
+	playTimeEndData?: NgbTimeStruct;
+	playTimeStart?: null;
+	playTimeStartData?: NgbTimeStruct;
+	playlistContentId?: string;
+	playlistContentsScheduleId?: string;
+	playsTotal: number;
+	prefix?: string;
+	previewThumbnail?: string;
+	refDealerId?: string;
+	scheduleStatus?: string;
+	seq: number;
+	status?: string;
+	thumbnail: string;
+	title: string;
+	to?: string;
+	type?: number;
+	url: string;
+	uuid?: string;
+}
