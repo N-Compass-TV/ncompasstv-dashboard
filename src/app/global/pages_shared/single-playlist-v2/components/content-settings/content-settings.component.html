@@ -26,7 +26,7 @@
 					*ngIf="contentData.playlistContents[0].fileType | isimage; else video"
 					class="thumbnail-preview-100 border"
 					[src]="contentData.playlistContents[0].thumbnail | sanitize"
-					[alt]="contentData.playlistContents[0].filename || contentData.playlistContents[0].title" />
+					[alt]="contentData.playlistContents[0].fileName || contentData.playlistContents[0].title" />
 
 				<ng-template #video>
 					<video
