@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { BaseService } from 'src/app/global/services/base.service';
 import { AddPlaylistContent } from '../class/AddPlaylistContent';
 import { PlaylistContentUpdate } from '../type/PlaylistContentUpdate';
-import { Subject } from 'rxjs';
-import { API_CONTENT } from 'src/app/global/models';
+import { Observable, Subject } from 'rxjs';
+import { API_CONTENT_V2, API_PLAYLIST_V2 } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -18,7 +18,7 @@ export class SinglePlaylistService extends BaseService {
 		return this.postRequest('playlistsv2/addcontent', data);
 	}
 
-	contentReady(contents: API_CONTENT[]) {
+	contentReady(contents: API_CONTENT_V2[]) {
 		this.contentLoaded.next(contents);
 	}
 
@@ -30,7 +30,7 @@ export class SinglePlaylistService extends BaseService {
 		return this.getRequest(`content/getbydealerid?dealerid=${dealerId}&page=${page}&pageSize=${pageSize}`);
 	}
 
-	getPlaylistData(playlistId: string) {
+	getPlaylistData(playlistId: string): Observable<API_PLAYLIST_V2> {
 		return this.getRequest(`playlistsv2?playlistid=${playlistId}`);
 	}
 

@@ -2,17 +2,19 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { Sortable } from 'sortablejs';
+import { FormControl } from '@angular/forms';
+import { Subject } from 'rxjs';
 import {
 	API_CONTENT,
 	API_HOST,
 	API_LICENSE,
 	API_LICENSE_PROPS,
 	API_SCREEN_OF_PLAYLIST,
-	API_SINGLE_PLAYLIST,
-	API_SINGLE_PLAYLIST_INFO,
-	API_UPDATED_PLAYLIST_CONTENT
+	API_UPDATED_PLAYLIST_CONTENT,
+	API_CONTENT_V2,
+	API_PLAYLIST_V2
 } from '../../models';
-import { ContentSettingsComponent } from './components/content-settings/content-settings.component';
+
 import {
 	PlaylistPrimaryControlActions as pActions,
 	PlaylistPrimaryControls,
@@ -22,13 +24,12 @@ import {
 	PlaylistViewOptionActions
 } from './constants';
 
-import { SinglePlaylistService } from './services/single-playlist.service';
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types';
+import { SinglePlaylistService } from './services/single-playlist.service';
+import { ContentSettingsComponent } from './components/content-settings/content-settings.component';
 import { AddContentComponent } from './components/add-content/add-content.component';
-import { FormControl } from '@angular/forms';
 import { PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
 import { QuickMoveComponent } from './components/quick-move/quick-move.component';
-import { Subject } from 'rxjs';
 import { IsvideoPipe } from '../../pipes';
 
 @Component({
@@ -39,7 +40,7 @@ import { IsvideoPipe } from '../../pipes';
 })
 export class SinglePlaylistV2Component implements OnInit {
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
-	assets: API_CONTENT[] = [];
+	assets: API_CONTENT_V2[] = [];
 	contentStatusBreakdown = [];
 	feedCount = 0;
 	hostLicenses: any;
@@ -47,9 +48,9 @@ export class SinglePlaylistV2Component implements OnInit {
 	imageCount = 0;
 	licenses: API_LICENSE_PROPS[];
 	detailedViewMode = false;
-	playlist: API_SINGLE_PLAYLIST_INFO;
+	playlist: API_PLAYLIST_V2['playlist'];
 	playlistContentBreakdown = [];
-	playlistContents: API_CONTENT[];
+	playlistContents: API_CONTENT_V2[];
 	playlistControls = PlaylistPrimaryControls;
 	playlistDescription = 'Getting playlist data';
 	playlistFilters = PlaylistFiltersDropdown;
@@ -112,7 +113,7 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	private getAssets() {
 		this._playlist.getAvailableDealerAssets().subscribe({
-			next: (data: { contents: API_CONTENT[]; page: any }) => {
+			next: (data: { contents: API_CONTENT_V2[]; page: any }) => {
 				/** Implement paging */
 				this.assets = data.contents;
 
@@ -161,25 +162,22 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	private getPlaylistData(playlistId: string) {
 		this._playlist.getPlaylistData(playlistId).subscribe({
-			next: (data: API_SINGLE_PLAYLIST) => {
+			next: (data: API_PLAYLIST_V2) => {
+				const { playlist, playlistContents } = data;
+				const { playlistName, playlistDescription } = playlist;
+
 				/** This call should only return playlist related data like the ones below */
-				this.playlist = data.playlist;
+				this.playlist = playlist;
 
 				/** Making sure playlist contents are ordered properly */
-				this.playlistContents = data.playlistContents.map((p, index) => {
-					return {
-						...p,
-						seq: index + 1
-					};
-				});
-
-				this.playlistName = this.playlist.playlistName;
-				this.playlistDescription = this.playlist.playlistDescription;
+				this.playlistContents = this.preparePlaylistContents(playlistContents);
+				this.playlistName = playlistName;
+				this.playlistDescription = playlistDescription;
 
 				/** These data should be coming from another API call but since they're included ... */
-				this.screens = data.screens;
-				this.hostLicenses = data.hostLicenses;
-				this.licenses = data.licenses;
+				// this.screens = data.screens;
+				// this.hostLicenses = data.hostLicenses;
+				// this.licenses = data.licenses;
 
 				/** Get Assets */
 				this.getAssets();
@@ -249,7 +247,21 @@ export class SinglePlaylistV2Component implements OnInit {
 		this.setBulkControlsState();
 	}
 
-	private playlistContentSettings(playlistContent: API_CONTENT[], bulkSet: boolean = false) {
+	/**
+	 * Use this function to modify the playlist contents, e.g. set the sequence or set the schedule status
+	 * @param data: API_CONTENT_V2[]
+	 * @returns API_CONTENT_V2[]
+	 */
+	private preparePlaylistContents(data: API_CONTENT_V2[]) {
+		return data.map((content, index) => {
+			return {
+				...content,
+				seq: index + 1
+			};
+		});
+	}
+
+	private playlistContentSettings(playlistContent: API_CONTENT_V2[], bulkSet: boolean = false) {
 		this._dialog
 			.open(ContentSettingsComponent, {
 				width: '1270px',
