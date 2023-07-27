@@ -59,7 +59,17 @@
 															[ngClass]="i == 0 && 'mr-3'">
 															<button mat-button mat-raised-button class="theme-btn" [matMenuTriggerFor]="menu">
 																<i class="{{ p.icon }} mr-3 text-green"></i>
-																<small class="font-weight-bold mr-2">{{ p.label }}</small>
+																<small class="font-weight-bold mr-2"
+																	>{{ p.label }}
+
+																	<ng-container *ngIf="p.label === 'Content Type' && currentFilters.type">
+																		: {{ currentFilters.type | titlecase }}
+																	</ng-container>
+
+																	<ng-container *ngIf="p.label === 'Content Status' && currentFilters.status">
+																		: {{ currentFilters.status | titlecase }}
+																	</ng-container>
+																</small>
 																<i class="fas fa-caret-down"></i>
 															</button>
 															<mat-menu #menu="matMenu">
