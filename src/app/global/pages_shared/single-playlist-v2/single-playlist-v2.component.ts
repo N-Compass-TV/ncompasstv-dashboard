@@ -21,7 +21,8 @@ import {
 	PlaylistContentControlActions as pcActions,
 	PlaylistFiltersDropdown,
 	PlaylistViewOptions,
-	PlaylistViewOptionActions
+	PlaylistViewOptionActions,
+	PlaylistFilterActions
 } from './constants';
 
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types';
@@ -31,6 +32,8 @@ import { AddContentComponent } from './components/add-content/add-content.compon
 import { PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
 import { QuickMoveComponent } from './components/quick-move/quick-move.component';
 import { IsvideoPipe } from '../../pipes';
+import { debounceTime } from 'rxjs/operators';
+import { type } from 'os';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -42,10 +45,12 @@ export class SinglePlaylistV2Component implements OnInit {
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	assets: API_CONTENT_V2[] = [];
 	contentStatusBreakdown = [];
+	currentFilters: { type: string; status: string; keyword: string } = { type: null, status: null, keyword: null };
 	feedCount = 0;
 	hostLicenses: any;
 	hosts: API_HOST[];
 	imageCount = 0;
+	isFiltered: { type: boolean; status: boolean; keyword: boolean } = { type: false, status: false, keyword: false };
 	licenses: API_LICENSE_PROPS[];
 	detailedViewMode = false;
 	playlist: API_PLAYLIST_V2['playlist'];
@@ -68,6 +73,8 @@ export class SinglePlaylistV2Component implements OnInit {
 	sortablejs: any;
 	videoCount = 0;
 
+	private playlistContentsBackup: API_CONTENT_V2[] = [];
+
 	constructor(
 		private _activatedRoute: ActivatedRoute,
 		private _dialog: MatDialog,
@@ -88,6 +95,63 @@ export class SinglePlaylistV2Component implements OnInit {
 			},
 			error: (err) => console.log('Error', err)
 		});
+	}
+
+	public filterContent(filterType: string, filterValue: string) {
+		switch (filterType) {
+			case PlaylistFilterActions.contentType:
+				this.currentFilters.type = filterValue;
+				break;
+
+			case PlaylistFilterActions.contentStatus:
+				this.currentFilters.status = filterValue;
+				break;
+
+			default:
+				this.currentFilters.keyword = filterValue;
+		}
+
+		const filterByKeyword = (c: API_CONTENT_V2) => {
+			if (!this.currentFilters.keyword || this.currentFilters.keyword.trim().length <= 0) return Array.from(this.playlistContentsBackup);
+
+			return c.fileName.toLowerCase().includes(this.currentFilters.keyword.toLowerCase());
+		};
+
+		const filterByContentType = (c: API_CONTENT_V2) => {
+			const filter = this.currentFilters.type;
+
+			switch (filter) {
+				case 'image':
+					return IMAGE_TYPES.includes(c.fileType);
+				case 'video':
+					return VIDEO_TYPES.includes(c.fileType);
+				case 'feed':
+					return FEED_TYPES.includes(c.fileType);
+				default: // all
+					return Array.from(this.playlistContentsBackup);
+			}
+		};
+
+		const filterByStatus = (c: API_CONTENT_V2) => {
+			const filter = this.currentFilters.status;
+
+			switch (filter) {
+				case 'active':
+					return c.scheduleStatus === 'active';
+				case 'inactive':
+					return c.scheduleStatus === 'inactive';
+				case 'in-queue':
+					return c.scheduleStatus === 'future';
+				default: // all
+					return Array.from(this.playlistContentsBackup);
+			}
+		};
+
+		let result = Array.from(this.playlistContentsBackup);
+
+		result = result.filter(filterByKeyword).filter(filterByContentType).filter(filterByStatus);
+
+		this.playlistContents = [...result];
 	}
 
 	public contentControlClicked(e: { playlistContent: any; action: string }) {
@@ -171,6 +235,7 @@ export class SinglePlaylistV2Component implements OnInit {
 
 				/** Making sure playlist contents are ordered properly */
 				this.playlistContents = this.preparePlaylistContents(playlistContents);
+				this.playlistContentsBackup = Array.from(this.playlistContents);
 				this.playlistName = playlistName;
 				this.playlistDescription = playlistDescription;
 
@@ -367,9 +432,9 @@ export class SinglePlaylistV2Component implements OnInit {
 	}
 
 	private searchFormInit() {
-		this.searchForm.valueChanges.subscribe({
+		this.searchForm.valueChanges.pipe(debounceTime(1000)).subscribe({
 			next: (keyword: string) => {
-				console.log(keyword);
+				this.filterContent('search', keyword);
 			}
 		});
 	}
