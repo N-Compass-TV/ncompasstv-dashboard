@@ -63,7 +63,12 @@
 																<i class="fas fa-caret-down"></i>
 															</button>
 															<mat-menu #menu="matMenu">
-																<button mat-menu-item *ngFor="let i of p.items">{{ i.label }}</button>
+																<button
+																	mat-menu-item
+																	*ngFor="let i of p.items"
+																	(click)="filterContent(p.action, i.action)">
+																	{{ i.label }}
+																</button>
 															</mat-menu>
 														</div>
 													</div>
