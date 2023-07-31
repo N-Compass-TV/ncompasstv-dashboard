@@ -32,3 +32,17 @@
 .search-form {
 	width: 500px;
 }
+
+button {
+	&.selected {
+		background: #8ec641 !important;
+
+		i {
+			color: white !important;
+		}
+
+		small {
+			color: black !important;
+		}
+	}
+}
