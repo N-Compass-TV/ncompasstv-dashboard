@@ -301,7 +301,18 @@ export class SinglePlaylistV2Component implements OnInit {
 	}
 
 	public onChangeViewOptions(action: string) {
-		this.detailedViewMode = action === PlaylistViewOptionActions.detailedView ? true : false;
+		this.detailedViewMode = action === PlaylistViewOptionActions.detailedView;
+		const detailedViewIndex = this.playlistViews.findIndex((v) => v.label === 'Detailed View');
+		const gridViewIndex = this.playlistViews.findIndex((v) => v.label === 'Grid View');
+
+		if (this.detailedViewMode) {
+			this.playlistViews[detailedViewIndex].is_selected = true;
+			this.playlistViews[gridViewIndex].is_selected = false;
+			return;
+		}
+
+		this.playlistViews[detailedViewIndex].is_selected = false;
+		this.playlistViews[gridViewIndex].is_selected = true;
 	}
 
 	public playlistContentSelected(playlistContentId: string) {
