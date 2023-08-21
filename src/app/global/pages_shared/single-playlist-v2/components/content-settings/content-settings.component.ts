@@ -15,6 +15,7 @@ export class ContentSettingsComponent implements OnInit {
 	hasImageAndFeed;
 	playlistUpdates: any[] = [];
 	toggleAll: Subject<void> = new Subject<void>();
+	loadingWhitelistedLicenses: boolean = true;
 	whitelistedLicenses: string[] = [];
 	whitelistedHosts: string[] = [];
 
@@ -49,6 +50,8 @@ export class ContentSettingsComponent implements OnInit {
 				if (!res.licensePlaylistContents) return;
 				this.whitelistedLicenses = res.licensePlaylistContents.map((i) => i.licenseId);
 				this.whitelistedHosts = res.licensePlaylistContents.map((i) => i.hostId);
+				this.loadingWhitelistedLicenses = false;
+				console.log(this.whitelistedLicenses);
 			}
 		});
 	}

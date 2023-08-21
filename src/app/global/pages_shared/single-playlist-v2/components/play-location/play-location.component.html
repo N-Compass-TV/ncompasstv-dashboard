@@ -13,7 +13,7 @@
 			<div class="location-license-list border-top pt-3 w-100">
 				<mat-slide-toggle
 					*ngFor="let l of hl.licenses"
-					[checked]="selectedLicenseIds.includes(l.licenseId) || whitelisted_licenses.includes(hl.host.hostId)"
+					[checked]="selectedLicenseIds.includes(l.licenseId) || whitelisted_licenses.includes(l.licenseId)"
 					(change)="toggleHostLicense($event, hl, l.licenseId)">
 					<h5 class="ml-2">{{ l.alias || l.licenseKey }}</h5>
 				</mat-slide-toggle>

@@ -105,6 +105,7 @@
 
 						<div class="play-location-wrapper mt-3">
 							<app-play-location
+								*ngIf="!loadingWhitelistedLicenses; else loading"
 								[host_licenses]="contentData.hostLicenses"
 								[whitelisted_hosts]="whitelistedHosts"
 								[whitelisted_licenses]="whitelistedLicenses"
