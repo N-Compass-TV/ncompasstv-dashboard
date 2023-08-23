@@ -39,9 +39,13 @@ export class PlayLocationComponent implements OnInit {
 
 	public toggleAllHostLicenses(e, hostLicenses: HostLicenses) {
 		if (e.checked) {
+			console.log(1);
 			if (!this.selectedHostIds.includes(hostLicenses.host.hostId)) this.selectedHostIds.push(hostLicenses.host.hostId);
 			hostLicenses.licenses.forEach((l) => !this.selectedLicenseIds.includes(l.licenseId) && this.selectedLicenseIds.push(l.licenseId));
 		} else {
+			this.whitelisted_hosts = [];
+			this.whitelisted_licenses = [];
+			console.log(2, this.selectedHostIds, this.selectedLicenseIds);
 			this.selectedHostIds = this.selectedHostIds.filter((h) => h !== hostLicenses.host.hostId);
 			this.selectedLicenseIds = this.selectedLicenseIds.filter((id) => !hostLicenses.licenses.some((l) => id === l.licenseId));
 		}

@@ -47,11 +47,12 @@ export class ContentSettingsComponent implements OnInit {
 
 		this._playlist.getWhitelistData(this.contentData.playlistContents[0].playlistContentId).subscribe({
 			next: (res: { licensePlaylistContents: any[] }) => {
+				this.loadingWhitelistedLicenses = false;
+
 				if (!res.licensePlaylistContents) return;
 				this.whitelistedLicenses = res.licensePlaylistContents.map((i) => i.licenseId);
 				this.whitelistedHosts = res.licensePlaylistContents.map((i) => i.hostId);
-				this.loadingWhitelistedLicenses = false;
-				console.log(this.whitelistedLicenses);
+				console.log('===>', this.whitelistedLicenses, this.loadingWhitelistedLicenses);
 			}
 		});
 	}
