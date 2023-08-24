@@ -42,11 +42,15 @@ export class SinglePlaylistService extends BaseService {
 		return this.getRequest(`playlistsv2/GetLicensePlaylistContents?playlistContentId=${playlistContentId}`);
 	}
 
+	removeWhitelist(blacklistData: { playlistContentId: string; licenses: string[] }[]) {
+		return this.postRequest(`playlistsv2/LicensePlaylistContentsDelete`, blacklistData).map((data) => data);
+	}
+
 	swapPlaylistContent(data: any) {
 		return this.postRequest(`playlistsv2/swapcontent`, data);
 	}
 
 	updatePlaylistContent(data: PlaylistContentUpdate) {
-		return this.postRequest(`playlistsv2/updatecontent`, data);
+		return this.postRequest(`playlistsv2/updatecontent`, data).map((data) => data);
 	}
 }

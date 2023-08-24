@@ -4,6 +4,7 @@ import { API_CONTENT, API_HOST, API_LICENSE_PROPS } from '../../../../models';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
 import { IsvideoPipe } from 'src/app/global/pipes';
 import { Subject } from 'rxjs/internal/Subject';
+import { BlacklistUpdates, PlaylistContent } from '../../type/PlaylistContentUpdate';
 
 @Component({
 	selector: 'app-content-settings',
@@ -13,11 +14,21 @@ import { Subject } from 'rxjs/internal/Subject';
 })
 export class ContentSettingsComponent implements OnInit {
 	hasImageAndFeed;
-	playlistUpdates: any[] = [];
+	playlistContent: { contentUpdates: PlaylistContent[]; blacklistUpdates?: BlacklistUpdates } = {
+		contentUpdates: [],
+		blacklistUpdates: {
+			playlistContentId: '',
+			licenses: []
+		}
+	};
 	toggleAll: Subject<void> = new Subject<void>();
 	loadingWhitelistedLicenses: boolean = true;
 	whitelistedLicenses: string[] = [];
 	whitelistedHosts: string[] = [];
+	blacklist: BlacklistUpdates = {
+		playlistContentId: '',
+		licenses: []
+	};
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA)
@@ -27,7 +38,7 @@ export class ContentSettingsComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-		console.log(this.contentData);
+		this.playlistContent.blacklistUpdates.playlistContentId = this.contentData.playlistContents[0].playlistContentId;
 		this.hasImageAndFeed = this.contentData.playlistContents.filter((p) => p.fileType !== 'webm').length > 0;
 
 		this._playlist.hostLoaded$.subscribe({
@@ -52,37 +63,37 @@ export class ContentSettingsComponent implements OnInit {
 				if (!res.licensePlaylistContents) return;
 				this.whitelistedLicenses = res.licensePlaylistContents.map((i) => i.licenseId);
 				this.whitelistedHosts = res.licensePlaylistContents.map((i) => i.hostId);
-				console.log('===>', this.whitelistedLicenses, this.loadingWhitelistedLicenses);
 			}
 		});
+	}
+
+	public licensesToBlacklist(licenseIds: string[]) {
+		this.playlistContent.blacklistUpdates.licenses = licenseIds;
 	}
 
 	public licenseIdToggled(licenseIds: string[]) {
 		/** Single Playlist Content Edit */
 		if (!this.contentData.bulkSet) {
-			this.playlistUpdates = [
+			this.playlistContent.contentUpdates = [
 				{
-					...(this.playlistUpdates && this.playlistUpdates[0]),
+					...(this.playlistContent.contentUpdates && this.playlistContent.contentUpdates[0]),
 					licenseIds,
 					playlistContentId: this.contentData.playlistContents[0].playlistContentId
 				}
 			];
 
-			console.log(this.playlistUpdates);
 			return;
 		}
 
 		/** Multiple Playlist Content Edit, Duration applies to non video filetype only */
-		const contentData = this.playlistUpdates.length ? this.playlistUpdates : this.contentData.playlistContents;
-		this.playlistUpdates = contentData.map((p) => {
+		const contentData: any = this.playlistContent.contentUpdates.length ? this.playlistContent.contentUpdates : this.contentData.playlistContents;
+		this.playlistContent.contentUpdates = contentData.map((p) => {
 			return {
 				...p,
 				playlistContentId: p.playlistContentId,
 				licenseIds
 			};
 		});
-
-		console.log(this.playlistUpdates);
 	}
 
 	/**
@@ -91,22 +102,22 @@ export class ContentSettingsComponent implements OnInit {
 	public playlistContentModified(data: any) {
 		/** Single Playlist Content Edit */
 		if (!this.contentData.bulkSet) {
-			this.playlistUpdates = [
+			this.playlistContent.contentUpdates = [
 				{
-					...(this.playlistUpdates && this.playlistUpdates[0]),
+					...(this.playlistContent.contentUpdates && this.playlistContent.contentUpdates[0]),
 					...data,
 					playlistContentId: this.contentData.playlistContents[0].playlistContentId,
 					duration: this._video.transform(this.contentData.playlistContents[0].fileType)
 						? this.contentData.playlistContents[0].duration
-						: data.duration || this.playlistUpdates[0].duration
+						: data.duration || this.playlistContent.contentUpdates[0].duration
 				}
 			];
 			return;
 		}
 
 		/** Multiple Playlist Content Edit, Duration applies to non video filetype only */
-		const contentData = this.playlistUpdates.length ? this.playlistUpdates : this.contentData.playlistContents;
-		this.playlistUpdates = contentData.map((p) => {
+		const contentData: any = this.playlistContent.contentUpdates.length ? this.playlistContent.contentUpdates : this.contentData.playlistContents;
+		this.playlistContent.contentUpdates = contentData.map((p) => {
 			return {
 				playlistContentId: p.playlistContentId,
 				...data,
