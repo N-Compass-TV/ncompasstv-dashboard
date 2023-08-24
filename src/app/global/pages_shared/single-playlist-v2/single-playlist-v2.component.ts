@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { Sortable } from 'sortablejs';
 import { FormControl } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Observable, Subject, forkJoin } from 'rxjs';
 import {
 	API_CONTENT,
 	API_HOST,
@@ -29,11 +29,10 @@ import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types
 import { SinglePlaylistService } from './services/single-playlist.service';
 import { ContentSettingsComponent } from './components/content-settings/content-settings.component';
 import { AddContentComponent } from './components/add-content/add-content.component';
-import { PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
+import { BlacklistUpdates, PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
 import { QuickMoveComponent } from './components/quick-move/quick-move.component';
 import { IsvideoPipe } from '../../pipes';
-import { debounceTime } from 'rxjs/operators';
-import { type } from 'os';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -74,6 +73,7 @@ export class SinglePlaylistV2Component implements OnInit {
 	videoCount = 0;
 
 	private playlistContentsBackup: API_CONTENT_V2[] = [];
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		private _activatedRoute: ActivatedRoute,
@@ -84,6 +84,11 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	ngOnInit() {
 		this.playlistRouteInit();
+	}
+
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	private addContents(contentData: any) {
@@ -350,13 +355,13 @@ export class SinglePlaylistV2Component implements OnInit {
 			})
 			.afterClosed()
 			.subscribe({
-				next: (res: PlaylistContent[]) => {
+				next: (res: { contentUpdates: PlaylistContent[]; blacklistUpdates: BlacklistUpdates }) => {
 					if (!res) return;
 
 					/** Store updates for saving */
-					res.forEach((p) => this.playlistContentsToSave.push(p.playlistContentId));
+					res.contentUpdates.forEach((p) => this.playlistContentsToSave.push(p.playlistContentId));
 
-					this.updatePlaylistContent(res, false);
+					this.savePlaylistContentUpdates(res, false);
 				}
 			});
 	}
@@ -392,7 +397,7 @@ export class SinglePlaylistV2Component implements OnInit {
 				this.playlistContentSettings(selected, true);
 				break;
 			case pActions.savePlaylist:
-				this.updatePlaylistContent(this.playlistSequenceUpdates);
+				this.savePlaylistContentUpdates({ contentUpdates: this.playlistSequenceUpdates });
 				break;
 			default:
 				break;
@@ -424,7 +429,7 @@ export class SinglePlaylistV2Component implements OnInit {
 		});
 
 		if (moveAndSave) {
-			this.updatePlaylistContent(this.playlistSequenceUpdates, true);
+			this.savePlaylistContentUpdates({ contentUpdates: this.playlistSequenceUpdates }, true);
 			return;
 		}
 
@@ -453,13 +458,15 @@ export class SinglePlaylistV2Component implements OnInit {
 	private setFullscreenProperty(p: API_CONTENT) {
 		this.playlistContentsToSave.push(p.playlistContentId);
 
-		this.updatePlaylistContent(
-			[
-				{
-					playlistContentId: p.playlistContentId,
-					isFullScreen: !p.isFullScreen ? 1 : 0
-				}
-			],
+		this.savePlaylistContentUpdates(
+			{
+				contentUpdates: [
+					{
+						playlistContentId: p.playlistContentId,
+						isFullScreen: !p.isFullScreen ? 1 : 0
+					}
+				]
+			},
 			false
 		);
 	}
@@ -558,21 +565,23 @@ export class SinglePlaylistV2Component implements OnInit {
 		});
 	}
 
-	/**
-	 * @param data - Data to be saved
-	 * @param playlistSave - If true then saves the whole playlist, else just the playlist content
-	 */
-	private updatePlaylistContent(data: PlaylistContent[], playlistSave: boolean = true) {
+	savePlaylistContentUpdates(
+		data: { contentUpdates: PlaylistContent[]; blacklistUpdates?: { playlistContentId: string; licenses: string[] } },
+		playlistSave: boolean = true
+	) {
 		let playlistUpdatesToSave: PlaylistContentUpdate = {
 			playlistId: this.playlist.playlistId,
-			playlistContentsLicenses: playlistSave ? this.playlistSequenceUpdates : data
+			playlistContentsLicenses: playlistSave ? this.playlistSequenceUpdates : data.contentUpdates
 		};
+
+		const request = [this._playlist.updatePlaylistContent(playlistUpdatesToSave).pipe(takeUntil(this._unsubscribe))];
+
+		if (data.blacklistUpdates.licenses.length) request.push(this._playlist.removeWhitelist([data.blacklistUpdates]));
 
 		this.savingPlaylist = playlistSave;
 
-		/** Save playlist updates */
-		this._playlist.updatePlaylistContent(playlistUpdatesToSave).subscribe({
-			next: () => {
+		forkJoin(request).subscribe(
+			() => {
 				this.savingPlaylist = false;
 				this.selectedPlaylistContents = [];
 				this.playlistContentsToSave = [];
@@ -603,7 +612,10 @@ export class SinglePlaylistV2Component implements OnInit {
 					this.sortableJSInit();
 				}, 0);
 			},
-			error: (err) => {}
-		});
+			(error) => {}
+		);
 	}
+}
+function lastValueFrom(arg0: Observable<any>) {
+	throw new Error('Function not implemented.');
 }

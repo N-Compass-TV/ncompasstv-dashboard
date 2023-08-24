@@ -7,7 +7,12 @@ export type PlaylistContent = {
 	contentId?: string;
 	duration?: number;
 	isFullScreen?: number;
-	licenseIds?: string;
+	licenseIds?: string[];
 	playlistContentId?: string;
 	seq?: number;
+};
+
+export type BlacklistUpdates = {
+	playlistContentId: string;
+	licenses: string[];
 };
