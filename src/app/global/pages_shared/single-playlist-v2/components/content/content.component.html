@@ -1,4 +1,12 @@
-<div class="playlistv2-content box-shadow" *ngIf="content" [ngClass]="{ 'swap-width': swapping, 'grid-dimension': !detailed_view_mode }">
+<div
+	class="playlistv2-content box-shadow"
+	*ngIf="content"
+	[ngClass]="{
+		'swap-width': swapping,
+		'grid-dimension': !detailed_view_mode,
+		'inactive-schedule': content.scheduleStatus === 'inactive',
+		'future-schedule': content.scheduleStatus === 'future'
+	}">
 	<ng-container *ngIf="!detailed_view_mode; else detailed_view">
 		<section
 			class="playlistv2-content__header d-flex align-items-center px-2"
