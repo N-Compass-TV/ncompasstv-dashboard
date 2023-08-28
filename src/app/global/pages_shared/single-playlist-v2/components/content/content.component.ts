@@ -34,7 +34,7 @@ export class ContentComponent implements OnInit {
 
 	ngOnInit() {
 		this.prepareThumbnails();
-		this.content.scheduleStatus = this.getScheduleStatus();
+		if (this.content) this.content.scheduleStatus = this.getScheduleStatus();
 
 		this.move_enabled.subscribe({
 			next: (res) => {
@@ -53,12 +53,12 @@ export class ContentComponent implements OnInit {
 		const data: API_CONTENT_V2 = this.content;
 		let result = 'inactive';
 
-		if (!data.playlistContentsScheduleId) {
+		if (data && !data.playlistContentsScheduleId) {
 			data.scheduleStatus = result; // content is inactive if it does not have a content schedule ID
 			return;
 		}
 
-		switch (data.type) {
+		switch (data && data.type) {
 			case 3: // type 3 means the content only plays during the set schedule
 				const currentDate = moment(new Date(), 'MM/DD/YYYY hh:mm A');
 				const startDate = moment(`${data.from} ${data.playTimeStart}`, 'MM/DD/YYYY hh:mm A');

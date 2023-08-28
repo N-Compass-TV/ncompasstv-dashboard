@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { API_CONTENT, API_HOST, API_LICENSE } from 'src/app/global/models';
 import { AddPlaylistContent } from '../../class/AddPlaylistContent';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
+import { Subject } from 'rxjs';
 
 @Component({
 	selector: 'app-add-content',
@@ -18,6 +19,7 @@ export class AddContentComponent implements OnInit {
 	newContentsSettings: AddPlaylistContent = new AddPlaylistContent();
 	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[] = [];
 	selectedContents: API_CONTENT[] = [];
+	toggleAll: Subject<void> = new Subject<void>();
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA)
@@ -59,8 +61,6 @@ export class AddContentComponent implements OnInit {
 				seq: index
 			};
 		});
-
-		console.log(this.newContentsSettings);
 	}
 
 	public contentSelected(content: API_CONTENT, e?: any) {

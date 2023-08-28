@@ -2,8 +2,16 @@
 	position: relative;
 
 	&.grid-dimension {
+		box-shadow: 0 0 3px rgba(0, 0, 0, 0.24);
 		height: 112px;
-		// width: 121.58px;
+
+		&.inactive-schedule {
+			box-shadow: 0 0 20px rgba(170, 35, 51);
+		}
+
+		&.future-schedule {
+			box-shadow: 0 0 20px rgba(218, 125, 10);
+		}
 	}
 
 	.checkbox-selector {
@@ -31,7 +39,7 @@
 		width: 100%;
 
 		&.inactive-schedule {
-			background: rgba(28, 47, 233, 0.8) !important;
+			background: rgba(170, 35, 51, 0.95) !important;
 
 			.content-filename-wrapper {
 				span {
@@ -41,7 +49,7 @@
 		}
 
 		&.future-schedule {
-			background: rgba(241, 169, 81, 0.8) !important;
+			background: rgba(218, 125, 10, 0.95) !important;
 
 			.content-filename-wrapper {
 				span {
@@ -66,6 +74,7 @@
 		box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.177);
 		display: flex;
 		height: 100%;
+		height: 112px;
 
 		&-thumbnail {
 			width: 30%;
@@ -86,11 +95,11 @@
 			padding: 10px 13px;
 
 			&.inactive-schedule {
-				border-right: 5px solid rgba(28, 47, 233, 0.8);
+				border-right: 5px solid rgba(170, 35, 51);
 			}
 
 			&.future-schedule {
-				border-right: 5px solid rgba(241, 169, 81, 0.8);
+				border-right: 5px solid rgba(218, 125, 10);
 			}
 		}
 
