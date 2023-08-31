@@ -1,9 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { Sortable } from 'sortablejs';
 import { FormControl } from '@angular/forms';
-import { Observable, Subject, forkJoin } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import {
 	API_CONTENT,
 	API_HOST,
@@ -32,7 +33,6 @@ import { AddContentComponent } from './components/add-content/add-content.compon
 import { BlacklistUpdates, PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
 import { QuickMoveComponent } from './components/quick-move/quick-move.component';
 import { IsvideoPipe } from '../../pipes';
-import { debounceTime, takeUntil } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -40,7 +40,7 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 	styleUrls: ['./single-playlist-v2.component.scss'],
 	providers: [IsvideoPipe]
 })
-export class SinglePlaylistV2Component implements OnInit {
+export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	assets: API_CONTENT_V2[] = [];
 	contentStatusBreakdown = [];
@@ -86,7 +86,7 @@ export class SinglePlaylistV2Component implements OnInit {
 		this.playlistRouteInit();
 	}
 
-	ngOnDestroy() {
+	ngOnDestroy(): void {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
 	}
@@ -357,6 +357,7 @@ export class SinglePlaylistV2Component implements OnInit {
 			.subscribe({
 				next: (res: { contentUpdates: PlaylistContent[]; blacklistUpdates: BlacklistUpdates }) => {
 					if (!res) return;
+					console.log('closed content settings', res);
 
 					/** Store updates for saving */
 					res.contentUpdates.forEach((p) => this.playlistContentsToSave.push(p.playlistContentId));
@@ -580,6 +581,8 @@ export class SinglePlaylistV2Component implements OnInit {
 
 		this.savingPlaylist = playlistSave;
 
+		this.updateContentSchedule(data.contentUpdates);
+
 		forkJoin(request).subscribe(
 			() => {
 				this.savingPlaylist = false;
@@ -615,7 +618,29 @@ export class SinglePlaylistV2Component implements OnInit {
 			(error) => {}
 		);
 	}
-}
-function lastValueFrom(arg0: Observable<any>) {
-	throw new Error('Function not implemented.');
+
+	private updateContentSchedule(data: PlaylistContent[]) {
+		const schedules = data.filter((content) => typeof content.schedule !== 'undefined').map((content) => content.schedule);
+
+		this._playlist
+			.updateContentSchedule(schedules)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					const currentContents = Array.from(this.playlistContents);
+					schedules.forEach((data) => {
+						const indexToReplace = currentContents.findIndex(
+							(content) => content.playlistContentsScheduleId === data.playlistContentsScheduleId
+						);
+
+						Object.keys(data).forEach((key) => {
+							currentContents[indexToReplace][key] = data[key];
+						});
+					});
+				},
+				(e) => {
+					console.log('Error updating content schedules', e);
+				}
+			);
+	}
 }

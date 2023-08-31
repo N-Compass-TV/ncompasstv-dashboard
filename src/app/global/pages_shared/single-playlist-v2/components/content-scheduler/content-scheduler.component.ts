@@ -1,6 +1,7 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CONTENT_SCHEDULE } from '../../constants/ContentSchedule';
 import { ButtonGroup } from '../../type/ButtonGroup';
+import { SinglePlaylistService } from '../../services/single-playlist.service';
 
 @Component({
 	selector: 'app-content-scheduler',
@@ -8,11 +9,23 @@ import { ButtonGroup } from '../../type/ButtonGroup';
 	styleUrls: ['./content-scheduler.component.scss']
 })
 export class ContentSchedulerComponent implements OnInit {
-	content_schedule: EventEmitter<any> = new EventEmitter();
+	@Output() schedule_type_emitter: EventEmitter<any> = new EventEmitter();
+	@Input() schedule_id: string;
+
 	contentSchedule = CONTENT_SCHEDULE;
 	selectedContentSchedule: ButtonGroup = this.contentSchedule[0];
 
-	constructor() {}
+	constructor(private _playlist: SinglePlaylistService) {}
 
 	ngOnInit() {}
+
+	onSelectContentScheduleType(data: ButtonGroup) {
+		this.selectedContentSchedule = data;
+
+		if (data)
+			this._playlist.schedulerFormEmitter.emit({
+				type: data.value,
+				playlistContentsScheduleId: this.schedule_id
+			});
+	}
 }

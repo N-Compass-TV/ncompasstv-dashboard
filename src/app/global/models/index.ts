@@ -79,6 +79,7 @@ export * from './ui_advertiser.model';
 export * from './ui_city_state_region.model';
 export * from './ui_confirmation-modal.model';
 export * from './ui_content.model';
+export * from './ui_content-schedule.model';
 export * from './ui_current-user.model';
 export * from './ui_credit-card-details.model';
 export * from './ui_dealer_orders.model';

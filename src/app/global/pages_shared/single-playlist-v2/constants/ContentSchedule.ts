@@ -8,13 +8,13 @@ export const CONTENT_SCHEDULE: ButtonGroup[] = [
 		icon: 'fas fa-clock'
 	},
 	{
-		value: 2,
+		value: 3,
 		label: 'Custom Schedule',
 		slug: 'custom-schedule',
 		icon: 'fas fa-calendar'
 	},
 	{
-		value: 0,
+		value: 2,
 		label: 'Do Not Play',
 		slug: 'do-not-play',
 		icon: 'fas fa-ban'

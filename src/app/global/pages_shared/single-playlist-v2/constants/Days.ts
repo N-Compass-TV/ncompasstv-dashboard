@@ -1,30 +1,37 @@
 export const DAYS = [
 	{
 		dayId: 1,
-		day: 'Mon'
+		day: 'Mon',
+		checked: true
 	},
 	{
 		dayId: 2,
-		day: 'Tue'
+		day: 'Tue',
+		checked: true
 	},
 	{
 		dayId: 3,
-		day: 'Wed'
+		day: 'Wed',
+		checked: true
 	},
 	{
 		dayId: 4,
-		day: 'Thu'
+		day: 'Thu',
+		checked: true
 	},
 	{
 		dayId: 5,
-		day: 'Fri'
+		day: 'Fri',
+		checked: true
 	},
 	{
 		dayId: 6,
-		day: 'Sat'
+		day: 'Sat',
+		checked: true
 	},
 	{
 		dayId: 0,
-		day: 'Sun'
+		day: 'Sun',
+		checked: true
 	}
 ];

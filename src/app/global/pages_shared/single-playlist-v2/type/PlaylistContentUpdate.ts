@@ -1,3 +1,5 @@
+import { PlaylistContentSchedule } from 'src/app/global/models';
+
 export type PlaylistContentUpdate = {
 	playlistId: string;
 	playlistContentsLicenses: PlaylistContent[];
@@ -10,6 +12,7 @@ export type PlaylistContent = {
 	licenseIds?: string[];
 	playlistContentId?: string;
 	seq?: number;
+	schedule?: PlaylistContentSchedule;
 };
 
 export type BlacklistUpdates = {

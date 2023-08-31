@@ -1,10 +1,12 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { API_CONTENT, API_HOST, API_LICENSE_PROPS } from '../../../../models';
+import { API_CONTENT_V2, API_HOST, API_LICENSE_PROPS, PlaylistContentSchedule, UI_CONTENT_SCHEDULE } from '../../../../models';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/internal/operators';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
 import { IsvideoPipe } from 'src/app/global/pipes';
-import { Subject } from 'rxjs/internal/Subject';
 import { BlacklistUpdates, PlaylistContent } from '../../type/PlaylistContentUpdate';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-content-settings',
@@ -12,7 +14,7 @@ import { BlacklistUpdates, PlaylistContent } from '../../type/PlaylistContentUpd
 	styleUrls: ['./content-settings.component.scss'],
 	providers: [IsvideoPipe]
 })
-export class ContentSettingsComponent implements OnInit {
+export class ContentSettingsComponent implements OnInit, OnDestroy {
 	hasImageAndFeed;
 	playlistContent: { contentUpdates: PlaylistContent[]; blacklistUpdates?: BlacklistUpdates } = {
 		contentUpdates: [],
@@ -30,9 +32,18 @@ export class ContentSettingsComponent implements OnInit {
 		licenses: []
 	};
 
+	playlistContentScheduleId = this.contentData.playlistContents[0].playlistContentsScheduleId;
+	private playlistUpdates: any;
+	private playlistContentId = this.contentData.playlistContents[0].playlistContentId;
+	protected _unsubscribe = new Subject<void>();
+
 	constructor(
 		@Inject(MAT_DIALOG_DATA)
-		public contentData: { playlistContents: API_CONTENT[]; hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[]; bulkSet: boolean },
+		public contentData: {
+			playlistContents: API_CONTENT_V2[];
+			hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
+			bulkSet: boolean;
+		},
 		private _playlist: SinglePlaylistService,
 		private _video: IsvideoPipe
 	) {}
@@ -51,6 +62,12 @@ export class ContentSettingsComponent implements OnInit {
 		});
 
 		this.getPlaylistContentWhitelistData();
+		this.subscribeToContentSchedulerFormChanges();
+	}
+
+	ngOnDestroy(): void {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	private getPlaylistContentWhitelistData() {
@@ -96,6 +113,8 @@ export class ContentSettingsComponent implements OnInit {
 		});
 	}
 
+	public onSelectType(event: any) {}
+
 	/**
 	 * @param data - Playlist content setting changes
 	 */
@@ -123,6 +142,61 @@ export class ContentSettingsComponent implements OnInit {
 				...data,
 				duration: this._video.transform(p.fileType) ? p.duration : data.duration || p.duration
 			};
+		});
+	}
+
+	private mapContentScheduleForSubmission(data: UI_CONTENT_SCHEDULE) {
+		const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+		const TIME_FORMAT = 'hh:mm A';
+		let result = {} as PlaylistContentSchedule;
+
+		Object.keys(data).forEach((key) => {
+			if (typeof data[key] === 'undefined' || (!data[key] && typeof data[key] !== 'number')) {
+				return;
+			}
+
+			switch (key) {
+				case 'days':
+					result.days = data.days
+						.filter((day) => day.checked)
+						.map((day) => day.day)
+						.join(',');
+					break;
+				case 'playTimeStartData':
+				case 'playTimeEndData':
+					let toParse = key === 'playTimeStartData' ? data.playTimeStartData : data.playTimeEndData;
+					const resultKey = key === 'playTimeStartData' ? 'playTimeStart' : 'playTimeEnd';
+					result[resultKey] = moment(`${toParse.hour}:${toParse.minute}`, 'HH:mm').format(TIME_FORMAT);
+					break;
+				case 'startDate':
+				case 'endDate':
+					let parsedDate = moment(data[key]).format(DATE_FORMAT);
+
+					if (key === 'startDate') result.from = parsedDate;
+					else result.to = parsedDate;
+
+					break;
+				default:
+					result[key] = data[key];
+			}
+		});
+
+		return result;
+	}
+
+	private subscribeToContentSchedulerFormChanges() {
+		this._playlist.schedulerFormEmitter.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+			const forSubmission = this.mapContentScheduleForSubmission(response);
+			const playlistUpdates = this.playlistUpdates as {
+				duration: number;
+				frequency: number;
+				isFullScreen: number;
+				playlistContentId: string;
+				schedule: PlaylistContentSchedule;
+			}[];
+			const indexToUpdate = playlistUpdates.findIndex((update) => update.playlistContentId === this.playlistContentId);
+			this.playlistUpdates[indexToUpdate].schedule = forSubmission;
+			console.log('playlist updated', this.playlistUpdates);
 		});
 	}
 }

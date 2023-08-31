@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { BaseService } from 'src/app/global/services/base.service';
 import { AddPlaylistContent } from '../class/AddPlaylistContent';
 import { PlaylistContentUpdate } from '../type/PlaylistContentUpdate';
 import { Observable, Subject } from 'rxjs';
-import { API_CONTENT_V2, API_PLAYLIST_V2 } from 'src/app/global/models';
+import { API_CONTENT_V2, API_PLAYLIST_V2, PlaylistContentSchedule, UI_CONTENT_SCHEDULE } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -13,6 +13,8 @@ export class SinglePlaylistService extends BaseService {
 	private hostLoaded = new Subject<any>();
 	contentLoaded$ = this.contentLoaded.asObservable();
 	hostLoaded$ = this.hostLoaded.asObservable();
+
+	schedulerFormEmitter = new EventEmitter<UI_CONTENT_SCHEDULE>();
 
 	addContent(data: AddPlaylistContent) {
 		return this.postRequest('playlistsv2/addcontent', data);
@@ -48,6 +50,10 @@ export class SinglePlaylistService extends BaseService {
 
 	swapPlaylistContent(data: any) {
 		return this.postRequest(`playlistsv2/swapcontent`, data);
+	}
+
+	updateContentSchedule(data: { playlistContentsScheduleId?: string; type: number }[]) {
+		return this.postRequest(this.updaters.content_schedule_v2, data);
 	}
 
 	updatePlaylistContent(data: PlaylistContentUpdate) {
