@@ -322,3 +322,11 @@ breadcrumb {
 .mat-tab-body-content {
 	overflow-x: hidden !important;
 }
+
+/** 100/10 = 10 **/
+.col-lg-1-5 {
+	flex: 0 0 10%;
+	max-width: 10%;
+	position: relative;
+	width: 100%;
+}
