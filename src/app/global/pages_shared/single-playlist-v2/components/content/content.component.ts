@@ -34,7 +34,7 @@ export class ContentComponent implements OnInit {
 
 	ngOnInit() {
 		this.prepareThumbnails();
-		this.content.scheduleStatus = this.getScheduleStatus();
+		if (this.content) this.content.scheduleStatus = this.getScheduleStatus();
 
 		this.move_enabled.subscribe({
 			next: (res) => {
@@ -52,6 +52,8 @@ export class ContentComponent implements OnInit {
 	private getScheduleStatus(): string {
 		const data: API_CONTENT_V2 = this.content;
 		let result = 'inactive';
+
+		if (!data) return result;
 
 		if (!data.playlistContentsScheduleId) {
 			data.scheduleStatus = result; // content is inactive if it does not have a content schedule ID
