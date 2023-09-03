@@ -53,7 +53,9 @@ export class ContentComponent implements OnInit {
 		const data: API_CONTENT_V2 = this.content;
 		let result = 'inactive';
 
-		if (data && !data.playlistContentsScheduleId) {
+		if (!data) return result;
+
+		if (!data.playlistContentsScheduleId) {
 			data.scheduleStatus = result; // content is inactive if it does not have a content schedule ID
 			return;
 		}

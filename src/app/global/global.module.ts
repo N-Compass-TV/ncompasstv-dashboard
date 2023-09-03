@@ -135,6 +135,7 @@ import { NewAdvertiserComponent } from './components_shared/user_components/user
 import { NewDealerAdminComponent } from './components_shared/user_components/user-forms/new-dealer-admin/new-dealer-admin.component';
 import { NewDealerComponent } from './components_shared/user_components/user-forms/new-dealer/new-dealer.component';
 import { NewHostUserComponent } from './components_shared/user_components/user-forms/new-host-user/new-host-user.component';
+import { SpacerSetupComponent } from './pages_shared/single-playlist-v2/components/spacer-setup/spacer-setup.component';
 import { NewSubDealerComponent } from './components_shared/user_components/user-forms/new-sub-dealer/new-sub-dealer.component';
 import { NewTechrepComponent } from './components_shared/user_components/user-forms/new-techrep/new-techrep.component';
 import { NewZoneComponent } from './components_shared/zone_components/new-zone/new-zone.component';
@@ -367,6 +368,7 @@ const ngComponents = [
 	NewDealerAdminComponent,
 	NewDealerComponent,
 	NewHostUserComponent,
+	SpacerSetupComponent,
 	NewSubDealerComponent,
 	NewTechrepComponent,
 	NewZoneComponent,
@@ -524,6 +526,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		MediaPlaywhereComponent,
 		MediaViewerComponent,
 		QuickMoveComponent,
+		SpacerSetupComponent,
 		NewZoneModalComponent,
 		OptionsComponent,
 		PlaylistContentSchedulingDialogComponent,
