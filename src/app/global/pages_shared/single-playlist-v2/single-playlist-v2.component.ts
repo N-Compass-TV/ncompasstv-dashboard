@@ -501,7 +501,10 @@ export class SinglePlaylistV2Component implements OnInit {
 	private showNewSpacerDialog() {
 		this._dialog
 			.open(SpacerSetupComponent, {
-				width: '768px'
+				width: '860px',
+				data: {
+					hostLicenses: this.playlistHostLicenses
+				}
 			})
 			.afterClosed();
 	}

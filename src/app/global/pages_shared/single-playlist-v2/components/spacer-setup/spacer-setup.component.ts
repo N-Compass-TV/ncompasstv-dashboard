@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA } from '@angular/material';
+import { API_HOST, API_LICENSE } from 'src/app/global/models';
 
 const DUMMY_AVAILABLE_CATEGORIES = [
 	{
@@ -31,19 +33,37 @@ const DUMMY_AVAILABLE_CATEGORIES = [
 })
 export class SpacerSetupComponent implements OnInit {
 	availableContentCategories = DUMMY_AVAILABLE_CATEGORIES;
+	assignedLicenses = [];
+	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[] = [];
 	spacerInfo: FormGroup = this._form_builder.group({
 		spacerName: ['', Validators.required],
 		spacerDescription: ['', Validators.required],
 		spacerAlgoFields: this._form_builder.array([])
 	});
 
-	constructor(private _form_builder: FormBuilder) {
+	constructor(
+		@Inject(MAT_DIALOG_DATA)
+		public _dialog_data: {
+			hostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[];
+		},
+		private _form_builder: FormBuilder
+	) {
 		this.setDynamicSpacerAlgoFields(this.availableContentCategories);
 	}
 
-	ngOnInit() {}
+	ngOnInit() {
+		this.playlistHostLicenses = this._dialog_data.hostLicenses ? [...this._dialog_data.hostLicenses] : [];
+	}
 
-	setDynamicSpacerAlgoFields(contentCategories: any[]) {
+	private get dynamicSpacerAlgoFields() {
+		return this.spacerInfo.get('spacerAlgoFields') as FormArray;
+	}
+
+	public getCategoryInfoByName(categoryName: string) {
+		return this.availableContentCategories.filter((i) => i.categoryName == categoryName)[0];
+	}
+
+	private setDynamicSpacerAlgoFields(contentCategories: any[]) {
 		/** Initialize dynamic spacer algo fields
 		 * @todo - fields added to the dynamic spacer algo fields form array
 		 * should be calculated based on the available categories on playlist contents in a playlist
@@ -55,18 +75,25 @@ export class SpacerSetupComponent implements OnInit {
 			const contentCategoryBasedFields = {};
 
 			Object.assign(contentCategoryBasedFields, {
-				[c.categoryName]: ['', Validators.required]
+				[c.categoryName]: [0, [Validators.required, this.numberRangeValidator.bind(this, this.getCategoryInfoByName(c.categoryName))]]
 			});
 
 			this.dynamicSpacerAlgoFields.push(this._form_builder.group(contentCategoryBasedFields));
 		});
-
-		this.spacerInfo.valueChanges.subscribe((p) => {
-			console.log(p);
-		});
 	}
 
-	get dynamicSpacerAlgoFields() {
-		return this.spacerInfo.get('spacerAlgoFields') as FormArray;
+	private numberRangeValidator(category: any, control: AbstractControl): ValidationErrors | null {
+		const value = control.value;
+		const minNumber = 0;
+		const maxNumber = category.count;
+		if (value !== null && (isNaN(value) || value < minNumber || value > maxNumber)) {
+			return { numberRange: true };
+		}
+		return null;
+	}
+
+	public licenseIdToggled(licenseIds: string[]) {
+		this.assignedLicenses = licenseIds;
+		console.log('=>', this.assignedLicenses);
 	}
 }
