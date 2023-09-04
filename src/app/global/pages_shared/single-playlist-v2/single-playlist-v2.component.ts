@@ -33,6 +33,7 @@ import { BlacklistUpdates, PlaylistContent, PlaylistContentUpdate } from './type
 import { QuickMoveComponent } from './components/quick-move/quick-move.component';
 import { IsvideoPipe } from '../../pipes';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { SpacerSetupComponent } from './components/spacer-setup/spacer-setup.component';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -391,6 +392,9 @@ export class SinglePlaylistV2Component implements OnInit {
 			case pActions.addContent:
 				this.showAddContentDialog();
 				break;
+			case pActions.newSpacer:
+				this.showNewSpacerDialog();
+				break;
 			case pActions.bulkModify:
 				/** Find playlist contents from selected playlist content ids */
 				const selected = this.playlistContents.filter((obj) => this.selectedPlaylistContents.includes(obj.playlistContentId));
@@ -492,6 +496,17 @@ export class SinglePlaylistV2Component implements OnInit {
 					res && this.addContents(res);
 				}
 			});
+	}
+
+	private showNewSpacerDialog() {
+		this._dialog
+			.open(SpacerSetupComponent, {
+				width: '860px',
+				data: {
+					hostLicenses: this.playlistHostLicenses
+				}
+			})
+			.afterClosed();
 	}
 
 	private sortableJSInit(): void {
