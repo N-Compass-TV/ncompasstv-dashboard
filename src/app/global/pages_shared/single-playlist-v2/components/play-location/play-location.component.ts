@@ -17,6 +17,7 @@ export class PlayLocationComponent implements OnInit {
 	@Input() host_licenses: HostLicenses[];
 	@Input() toggle_all: Observable<void>;
 	@Input() toggle_all_add_content: Observable<void>;
+	@Input() toggle_all_spacer: Observable<void>;
 	@Input() whitelisted_hosts: string[] = [];
 	@Input() whitelisted_licenses: string[] = [];
 	@Output() toggle: EventEmitter<string[]> = new EventEmitter();
@@ -28,8 +29,10 @@ export class PlayLocationComponent implements OnInit {
 	constructor() {}
 
 	ngOnInit() {
+		/** Yes I had them separated instead of just one observable instance */
 		if (this.toggle_all) this.toggle_all.subscribe((e: any) => this.onAllToggled(e));
 		if (this.toggle_all_add_content) this.toggle_all_add_content.subscribe((e: any) => this.onAllToggled(e));
+		if (this.toggle_all_spacer) this.toggle_all_spacer.subscribe((e: any) => this.onAllToggled(e));
 	}
 
 	private onAllToggled(e, inAddContent: boolean = false) {
