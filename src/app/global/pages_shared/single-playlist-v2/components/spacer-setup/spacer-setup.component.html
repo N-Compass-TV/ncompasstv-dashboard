@@ -109,7 +109,7 @@
 					</div>
 				</div>
 
-				<div class="play-location-wrapper" *ngIf="playlistHostLicenses.length; else loading">
+				<div class="play-location-wrapper" *ngIf="playlistHostLicenses.length">
 					<app-play-location
 						[host_licenses]="playlistHostLicenses"
 						[toggle_all_spacer]="toggleAll.asObservable()"
