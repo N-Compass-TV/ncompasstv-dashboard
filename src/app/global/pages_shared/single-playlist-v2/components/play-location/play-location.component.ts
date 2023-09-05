@@ -16,11 +16,12 @@ interface HostLicenses {
 export class PlayLocationComponent implements OnInit {
 	@Input() host_licenses: HostLicenses[];
 	@Input() toggle_all: Observable<void>;
+	@Input() toggle_all_add_content: Observable<void>;
+	@Input() toggle_all_spacer: Observable<void>;
 	@Input() whitelisted_hosts: string[] = [];
 	@Input() whitelisted_licenses: string[] = [];
 	@Output() toggle: EventEmitter<string[]> = new EventEmitter();
 	@Output() to_blacklist: EventEmitter<string[]> = new EventEmitter();
-	private allToggled: Subscription;
 	selectedHostIds = [];
 	selectedLicenseIds = [];
 	blacklistLicences = []; // Licenses that will be removed in the whitelist records
@@ -28,15 +29,21 @@ export class PlayLocationComponent implements OnInit {
 	constructor() {}
 
 	ngOnInit() {
-		this.allToggled = this.toggle_all.subscribe((e: any) => this.onAllToggled(e));
+		/** Yes I had them separated instead of just one observable instance */
+		if (this.toggle_all) this.toggle_all.subscribe((e: any) => this.onAllToggled(e));
+		if (this.toggle_all_add_content) this.toggle_all_add_content.subscribe((e: any) => this.onAllToggled(e));
+		if (this.toggle_all_spacer) this.toggle_all_spacer.subscribe((e: any) => this.onAllToggled(e));
 	}
 
-	ngOnDestroy() {
-		if (this.allToggled) this.allToggled.unsubscribe();
-	}
+	private onAllToggled(e, inAddContent: boolean = false) {
+		this.host_licenses.forEach((h) => {
+			if (!inAddContent) {
+				this.toggleAllHostLicenses(e, h);
+				return;
+			}
 
-	private onAllToggled(e) {
-		this.host_licenses.forEach((h) => this.toggleAllHostLicenses(e, h));
+			this.addContent_toggleAllHostLicenses(e, h);
+		});
 	}
 
 	public toggleAllHostLicenses(e, hostLicenses: HostLicenses) {
@@ -55,6 +62,18 @@ export class PlayLocationComponent implements OnInit {
 		}
 
 		this.to_blacklist.emit(this.blacklistLicences);
+		this.toggle.emit(this.selectedLicenseIds);
+	}
+
+	addContent_toggleAllHostLicenses(e, hostLicenses: HostLicenses) {
+		if (e.checked) {
+			if (!this.selectedHostIds.includes(hostLicenses.host.hostId)) this.selectedHostIds.push(hostLicenses.host.hostId);
+			hostLicenses.licenses.forEach((l) => !this.selectedLicenseIds.includes(l.licenseId) && this.selectedLicenseIds.push(l.licenseId));
+		} else {
+			this.selectedHostIds = this.selectedHostIds.filter((h) => h !== hostLicenses.host.hostId);
+			this.selectedLicenseIds = this.selectedLicenseIds.filter((id) => !hostLicenses.licenses.some((l) => id === l.licenseId));
+		}
+
 		this.toggle.emit(this.selectedLicenseIds);
 	}
 

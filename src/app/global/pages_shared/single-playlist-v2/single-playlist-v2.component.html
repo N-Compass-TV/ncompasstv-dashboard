@@ -88,7 +88,7 @@
 											<!-- View Options -->
 											<div class="other-options mr-4">
 												<div class="d-flex align-items-center filters-wrapper border rounded px-2">
-													<h6 class="floating-title">VIEW OPTIONS</h6>
+													<h6 class="floating-title">VIEWS</h6>
 													<div class="d-flex">
 														<button
 															mat-button
@@ -96,7 +96,7 @@
 															class="theme-btn"
 															*ngFor="let p of playlistViews; let i = index"
 															(click)="onChangeViewOptions(p.action)"
-															[ngClass]="i == 0 && 'mr-3'"
+															[ngClass]="i !== playlistViews.length - 1 && 'mr-3'"
 															[class.selected]="p.is_selected">
 															<i class="{{ p.icon }} mr-3 text-green"></i>
 															<small class="font-weight-bold mr-1">{{ p.label }}</small>

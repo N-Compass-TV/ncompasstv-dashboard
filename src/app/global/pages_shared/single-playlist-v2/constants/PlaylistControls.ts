@@ -5,6 +5,7 @@ export const PlaylistPrimaryControlActions = {
 	markAll: 'mark-all',
 	playlistDemo: 'playlist-demo',
 	savePlaylist: 'save-playlist',
+	newSpacer: 'news-spacer',
 	viewSchedule: 'view-schedule'
 };
 
@@ -32,6 +33,11 @@ export const PlaylistPrimaryControls = [
 		disabled: true
 	},
 	{
+		label: 'New Spacer',
+		action: PlaylistPrimaryControlActions.newSpacer,
+		icon: 'fas fa-plus'
+	},
+	{
 		label: 'Bulk Modify',
 		action: PlaylistPrimaryControlActions.bulkModify,
 		icon: 'fas fa-cog',
@@ -42,16 +48,6 @@ export const PlaylistPrimaryControls = [
 		action: PlaylistPrimaryControlActions.bulkDelete,
 		icon: 'fas fa-times text-danger',
 		disabled: true
-	},
-	{
-		label: 'View Schedule',
-		action: PlaylistPrimaryControlActions.viewSchedule,
-		icon: 'fas fa-calendar'
-	},
-	{
-		label: 'Playlist Demo',
-		action: PlaylistPrimaryControlActions.playlistDemo,
-		icon: 'fas fa-play'
 	},
 	{
 		label: 'Save Changes',
@@ -98,5 +94,15 @@ export const PlaylistViewOptions = [
 		action: PlaylistViewOptionActions.gridView,
 		icon: 'fas fa-th',
 		is_selected: false
+	},
+	{
+		label: 'View Schedule',
+		action: PlaylistPrimaryControlActions.viewSchedule,
+		icon: 'fas fa-calendar'
+	},
+	{
+		label: 'View Demo',
+		action: PlaylistPrimaryControlActions.playlistDemo,
+		icon: 'fas fa-play'
 	}
 ];

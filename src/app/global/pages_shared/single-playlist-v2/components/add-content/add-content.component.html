@@ -20,7 +20,7 @@
 							<div class="col-lg" *ngFor="let col of [].constructor(gridCount); let count = index">
 								<div class="m-1">
 									<app-content
-										*ngIf="!_dialog_data.playlistContentId; else swapping"
+										*ngIf="_dialog_data && !_dialog_data.playlistContentId; else swapping"
 										[content]="assets[count + i]"
 										[controls]="false"
 										[default_width]="false"
@@ -31,7 +31,7 @@
 									<ng-template #swapping>
 										<div
 											class="mark-content-wrapper"
-											(click)="_dialog_data.playlistContentId && markContent(assets[count + i])"
+											(click)="_dialog_data && _dialog_data.playlistContentId && markContent(assets[count + i])"
 											[ngClass]="{
 												'cursor-pointer': _dialog_data.playlistContentId,
 												marked: assets[count + i] && markedContent && markedContent.contentId == assets[count + i].contentId
@@ -40,7 +40,7 @@
 												[content]="assets[count + i]"
 												[controls]="false"
 												[default_width]="false"
-												[selectable]="!_dialog_data.playlistContentId"
+												[selectable]="_dialog_data && !_dialog_data.playlistContentId"
 												[swapping]="_dialog_data.playlistContentId"
 												(content_selected)="contentSelected(assets[count + i], $event)">
 											</app-content>
@@ -145,9 +145,19 @@
 							</mat-tab>
 							<mat-tab label="Play Where">
 								<div class="mt-3">
+									<div class="d-flex align-items-center pt-3 mb-3">
+										<div class="flex-even">
+											<h4>Whitelist Host and Licenses</h4>
+											<p class="sm-text m-0">Select host and licenses you want your contents to play.</p>
+										</div>
+										<div class="toggle-wrapper pt-1 pr-2">
+											<mat-slide-toggle (change)="toggleAll.next($event)"></mat-slide-toggle>
+										</div>
+									</div>
 									<div class="play-location-wrapper" *ngIf="playlistHostLicenses.length; else loading">
 										<app-play-location
 											[host_licenses]="playlistHostLicenses"
+											[toggle_all_add_content]="toggleAll.asObservable()"
 											(toggle)="licenseIdToggled($event)"></app-play-location>
 									</div>
 								</div>
