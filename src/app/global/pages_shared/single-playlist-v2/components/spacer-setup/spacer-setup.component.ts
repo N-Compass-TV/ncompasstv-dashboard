@@ -57,7 +57,7 @@ export class SpacerSetupComponent implements OnInit {
 		this.playlistHostLicenses = this._dialog_data.hostLicenses ? [...this._dialog_data.hostLicenses] : [];
 	}
 
-	private get dynamicSpacerAlgoFields() {
+	public get dynamicSpacerAlgoFields() {
 		return this.spacerInfo.get('spacerAlgoFields') as FormArray;
 	}
 
