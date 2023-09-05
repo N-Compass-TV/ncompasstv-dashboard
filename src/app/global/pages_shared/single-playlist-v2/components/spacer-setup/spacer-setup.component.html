@@ -53,8 +53,6 @@
 						<div class="row">
 							<div class="col-lg-6" *ngFor="let field of dynamicSpacerAlgoFields.controls; let i = index">
 								<div [formGroup]="field" *ngIf="field.value | keyvalue as f">
-									{{ f[0].key }}
-
 									<p class="m-0 sm-text font-italic" *ngIf="!field.get(f[0].key).hasError('numberRange'); else shortDesc">
 										Should be between 0 and
 										{{ getCategoryInfoByName(f[0].key).count || 0 }}.
