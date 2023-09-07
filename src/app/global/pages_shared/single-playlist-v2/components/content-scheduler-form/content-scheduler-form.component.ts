@@ -13,7 +13,6 @@ import { MatCheckboxChange } from '@angular/material';
 	styleUrls: ['./content-scheduler-form.component.scss']
 })
 export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
-	@Input() playlistContentScheduleId: string;
 	alternateWeek = 0;
 	days = DAYS;
 	hasAlternateWeekSet = false;
@@ -27,18 +26,17 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 		days: ['', Validators.required],
 		playTimeStartData: ['', Validators.required],
 		playTimeEndData: ['', Validators.required],
-		playlistContentsScheduleId: [null, Validators.required],
 		type: [3, Validators.required]
 	});
 
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(private _form_builder: FormBuilder, private _singlePlaylist: SinglePlaylistService) {}
+	constructor(private _form_builder: FormBuilder, private _playlist: SinglePlaylistService) {}
 
 	ngOnInit() {
+		this.subscribeToGetFormData();
 		this.subscribeToFormChanges();
 		this.setDefaultFormValues();
-		this.schedulerForm.get('playlistContentsScheduleId').setValue(this.playlistContentScheduleId, { emitEvent: false });
 	}
 
 	ngOnDestroy(): void {
@@ -47,9 +45,7 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 	}
 
 	onCheckboxChange(event: MatCheckboxChange) {
-		console.log('event', event);
 		const dayChanged = event.source.value as any;
-		console.log('day changed', dayChanged);
 		let currentDaysValue = this.schedulerForm.get('days').value as { dayId: number; day: string; checked: boolean }[];
 
 		currentDaysValue = currentDaysValue.map((day) => {
@@ -97,7 +93,6 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 		this.hasAlternateWeekSet = !this.hasAlternateWeekSet;
 		this.alternateWeek = this.hasAlternateWeekSet ? 1 : 0;
 		alternateWeekControl.setValue(this.alternateWeek);
-		console.log('form after alternate week?', this.schedulerForm.value);
 	}
 
 	private subscribeToFormChanges() {
@@ -105,8 +100,15 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 
 		form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe({
 			next: () => {
-				this._singlePlaylist.schedulerFormEmitter.emit(form.value);
+				this._playlist.schedulerFormUpdated.emit(form.value);
 			}
+		});
+	}
+
+	private subscribeToGetFormData() {
+		this._playlist.requestSchedulerFormData.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			const form = this.schedulerForm;
+			this._playlist.receiveSchedulerFormData.emit(form.value);
 		});
 	}
 

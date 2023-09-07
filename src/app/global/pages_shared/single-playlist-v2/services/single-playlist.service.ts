@@ -14,7 +14,10 @@ export class SinglePlaylistService extends BaseService {
 	contentLoaded$ = this.contentLoaded.asObservable();
 	hostLoaded$ = this.hostLoaded.asObservable();
 
-	schedulerFormEmitter = new EventEmitter<UI_CONTENT_SCHEDULE>();
+	requestSchedulerFormData = new EventEmitter<void>();
+	receiveSchedulerFormData = new EventEmitter<UI_CONTENT_SCHEDULE>();
+	schedulerFormUpdated = new EventEmitter<UI_CONTENT_SCHEDULE>();
+	recheckContentSchedule = new EventEmitter<{ playlistContentId: string }>();
 
 	addContent(data: AddPlaylistContent) {
 		return this.postRequest('playlistsv2/addcontent', data);

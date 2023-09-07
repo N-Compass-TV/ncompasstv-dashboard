@@ -1,10 +1,12 @@
 import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { Sortable } from 'sortablejs';
 import { FormControl } from '@angular/forms';
 import { Subject, forkJoin } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil, tap } from 'rxjs/operators';
+import * as moment from 'moment';
+
 import {
 	API_CONTENT,
 	API_HOST,
@@ -13,8 +15,9 @@ import {
 	API_SCREEN_OF_PLAYLIST,
 	API_UPDATED_PLAYLIST_CONTENT,
 	API_CONTENT_V2,
-	API_PLAYLIST_V2
-} from '../../models';
+	API_PLAYLIST_V2,
+	PlaylistContentSchedule
+} from 'src/app/global/models';
 
 import {
 	PlaylistPrimaryControlActions as pActions,
@@ -34,6 +37,7 @@ import { BlacklistUpdates, PlaylistContent, PlaylistContentUpdate } from './type
 import { QuickMoveComponent } from './components/quick-move/quick-move.component';
 import { IsvideoPipe } from '../../pipes';
 import { SpacerSetupComponent } from './components/spacer-setup/spacer-setup.component';
+import { SavePlaylistContentUpdate } from './models';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -230,6 +234,40 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		}
 	}
 
+	/**
+	 * Gets the schedule status of a playlist content based on its type
+	 * @param data
+	 * @returns
+	 */
+	private getScheduleStatus(data: API_CONTENT_V2 | PlaylistContentSchedule) {
+		let result = 'inactive';
+		const DATE_FORMAT = 'YYYY-MM-DD';
+		const TIME_FORMAT = 'hh:mm A';
+
+		if (!data || !data.playlistContentsScheduleId) return result;
+
+		switch (data.type) {
+			case 3: // type 3 means the content only plays during the set schedule
+				const currentDate = moment(new Date(), `${DATE_FORMAT} ${TIME_FORMAT}`);
+				const startDate = moment(`${data.from} ${data.playTimeStart}`, `${DATE_FORMAT} ${TIME_FORMAT}`);
+				const endDate = moment(`${data.to} ${data.playTimeEnd}`, `${DATE_FORMAT} ${TIME_FORMAT}`);
+
+				if (currentDate.isBefore(startDate)) result = 'future';
+				if (currentDate.isBetween(startDate, endDate, undefined)) result = 'active';
+				break;
+
+			case 2: // type 2 means the content is set to not play
+				result = 'inactive';
+				break;
+
+			default: // type 1 means the content is set to always play
+				result = 'active';
+				break;
+		}
+
+		return result;
+	}
+
 	private getPlaylistData(playlistId: string) {
 		this._playlist.getPlaylistData(playlistId).subscribe({
 			next: (data: API_PLAYLIST_V2) => {
@@ -338,27 +376,22 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		return data.map((content, index) => {
 			return {
 				...content,
-				seq: index + 1
+				seq: index + 1,
+				scheduleStatus: this.getScheduleStatus(content)
 			};
 		});
 	}
 
-	private playlistContentSettings(playlistContent: API_CONTENT_V2[], bulkSet: boolean = false) {
+	private playlistContentSettings(playlistContents: API_CONTENT_V2[], bulkSet = false) {
+		const data = { playlistContents, hostLicenses: this.playlistHostLicenses, bulkSet };
+		const configs: MatDialogConfig = { width: '1270px', height: '720px', data };
+
 		this._dialog
-			.open(ContentSettingsComponent, {
-				width: '1270px',
-				height: '720px',
-				data: {
-					playlistContents: playlistContent,
-					hostLicenses: this.playlistHostLicenses,
-					bulkSet: bulkSet
-				}
-			})
+			.open(ContentSettingsComponent, configs)
 			.afterClosed()
 			.subscribe({
 				next: (res: { contentUpdates: PlaylistContent[]; blacklistUpdates: BlacklistUpdates }) => {
 					if (!res) return;
-					console.log('closed content settings', res);
 
 					/** Store updates for saving */
 					res.contentUpdates.forEach((p) => this.playlistContentsToSave.push(p.playlistContentId));
@@ -581,80 +614,83 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		});
 	}
 
-	savePlaylistContentUpdates(
-		data: { contentUpdates: PlaylistContent[]; blacklistUpdates?: { playlistContentId: string; licenses: string[] } },
-		playlistSave: boolean = true
-	) {
-		let playlistUpdatesToSave: PlaylistContentUpdate = {
+	private savePlaylistContentUpdates(data: SavePlaylistContentUpdate, savingPlaylist = true) {
+		const playlistUpdatesToSave: PlaylistContentUpdate = {
 			playlistId: this.playlist.playlistId,
-			playlistContentsLicenses: playlistSave ? this.playlistSequenceUpdates : data.contentUpdates
+			playlistContentsLicenses: savingPlaylist ? this.playlistSequenceUpdates : data.contentUpdates
 		};
 
-		const request = [this._playlist.updatePlaylistContent(playlistUpdatesToSave).pipe(takeUntil(this._unsubscribe))];
+		const requests = [this._playlist.updatePlaylistContent(playlistUpdatesToSave)];
+		const schedulesToUpdate = data.contentUpdates.filter((c) => typeof c.schedule !== 'undefined').map((c) => c.schedule);
 
-		if (data.blacklistUpdates.licenses.length) request.push(this._playlist.removeWhitelist([data.blacklistUpdates]));
+		// test func
+		playlistUpdatesToSave.playlistContentsLicenses = data.contentUpdates.map((c) => {
+			delete c.schedule;
+			return c;
+		});
 
-		this.savingPlaylist = playlistSave;
+		if (data.blacklistUpdates.licenses.length > 0) requests.push(this._playlist.removeWhitelist([data.blacklistUpdates]));
+		if (schedulesToUpdate.length > 0) requests.push(this._playlist.updateContentSchedule(schedulesToUpdate));
 
-		this.updateContentSchedule(data.contentUpdates);
-
-		forkJoin(request).subscribe(
-			() => {
-				this.savingPlaylist = false;
-				this.selectedPlaylistContents = [];
-				this.playlistContentsToSave = [];
-				if (playlistSave) {
-					this.playlistSequenceUpdates = [];
-					this.sortablejsTriggered.next(false);
-				}
-				this.setBulkControlsState();
-
-				this.playlistContents = this.playlistContents.map((p) => {
-					const updateObj = playlistUpdatesToSave.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
-
-					if (updateObj) {
-						return {
-							...p,
-							...updateObj
-						};
-					}
-
-					return p;
-				});
-
-				this.playlistContents = this.playlistContents.sort(
-					(a, b) => this.playlistSortableOrder.indexOf(a.playlistContentId) - this.playlistSortableOrder.indexOf(b.playlistContentId)
-				);
-
-				setTimeout(() => {
-					this.sortableJSInit();
-				}, 0);
-			},
-			(error) => {}
-		);
-	}
-
-	private updateContentSchedule(data: PlaylistContent[]) {
-		const schedules = data.filter((content) => typeof content.schedule !== 'undefined').map((content) => content.schedule);
-
-		this._playlist
-			.updateContentSchedule(schedules)
-			.pipe(takeUntil(this._unsubscribe))
+		forkJoin(requests)
+			.pipe(
+				takeUntil(this._unsubscribe),
+				tap(() => (this.savingPlaylist = savingPlaylist))
+			)
 			.subscribe(
 				() => {
-					const currentContents = Array.from(this.playlistContents);
-					schedules.forEach((data) => {
-						const indexToReplace = currentContents.findIndex(
-							(content) => content.playlistContentsScheduleId === data.playlistContentsScheduleId
+					this.savingPlaylist = false;
+					this.selectedPlaylistContents = [];
+					this.playlistContentsToSave = [];
+
+					if (savingPlaylist) {
+						this.playlistSequenceUpdates = [];
+						this.sortablejsTriggered.next(false);
+					}
+
+					this.setBulkControlsState();
+
+					this.playlistContents = this.playlistContents
+						.map((p) => {
+							const updateObj = playlistUpdatesToSave.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
+
+							if (updateObj) {
+								return {
+									...p,
+									...updateObj
+								};
+							}
+
+							return p;
+						})
+						.map((c) => {
+							// map to update the content array schedules after submitting to the server
+							// this is assuming that all requests will be successful
+							// maybe refactor this in the near future to use zip instead of forkJoin
+
+							schedulesToUpdate.forEach((toUpdate) => {
+								if (c.playlistContentsScheduleId === toUpdate.playlistContentsScheduleId) {
+									Object.keys(toUpdate).forEach((key) => {
+										c[key] = toUpdate[key];
+										const scheduleStatus = this.getScheduleStatus(toUpdate);
+										c.scheduleStatus = this.getScheduleStatus(toUpdate);
+									});
+								}
+							});
+
+							return c;
+						})
+						.sort(
+							(a, b) =>
+								this.playlistSortableOrder.indexOf(a.playlistContentId) - this.playlistSortableOrder.indexOf(b.playlistContentId)
 						);
 
-						Object.keys(data).forEach((key) => {
-							currentContents[indexToReplace][key] = data[key];
-						});
-					});
+					setTimeout(() => {
+						this.sortableJSInit();
+					}, 0);
 				},
-				(e) => {
-					console.log('Error updating content schedules', e);
+				(error) => {
+					console.log('Error updating the playlist contents', error);
 				}
 			);
 	}

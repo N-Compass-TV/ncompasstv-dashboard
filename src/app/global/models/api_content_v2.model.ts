@@ -1,4 +1,5 @@
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { PlaylistContentSchedule } from './playlist-content-schedule.model';
 
 export interface API_CONTENT_V2 {
 	advertiserId: string;
@@ -34,6 +35,7 @@ export interface API_CONTENT_V2 {
 	prefix?: string;
 	previewThumbnail?: string;
 	refDealerId?: string;
+	schedule?: PlaylistContentSchedule;
 	scheduleStatus?: string;
 	seq: number;
 	status?: string;
