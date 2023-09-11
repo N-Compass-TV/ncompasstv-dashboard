@@ -19,12 +19,10 @@
 									class="breakdown-item"
 									*ngFor="let p of playlistContentBreakdown; let i = index"
 									[ngClass]="i < playlistContentBreakdown.length - 1 && 'mr-4'">
-									<h5 class="font-weight-bold m-0">
-										<span class="text-green" *ngIf="p.active > 0">{{ p.active }}</span>
-										<span class="text-gray d-inline-block mx-1 xsm-text" *ngIf="p.active > 0">of</span>
+									<h4 class="font-weight-bold m-0 text-green">
 										{{ p.total }}
-									</h5>
-									<p class="xsm-text m-0">{{ p.label }}</p>
+									</h4>
+									<p class="xsm-text font-weight-bold font-italic m-0">{{ p.label }}</p>
 								</div>
 							</div>
 							<div class="flex-even text-right">
@@ -143,8 +141,57 @@
 						</section>
 					</div>
 				</mat-tab>
-				<mat-tab label="Screens"> Content 2 </mat-tab>
-				<mat-tab label="Host & Licenses"> Content 3 </mat-tab>
+				<mat-tab label="Screens">
+					<mat-card class="mt-3" *ngIf="playlistScreens && playlistScreens.length">
+						<app-data-table [table_columns]="screenTableColumns" [table_data]="playlistScreenTable" [new_table]="true"> </app-data-table>
+					</mat-card>
+				</mat-tab>
+				<mat-tab label="Host & Licenses">
+					<button
+						mat-button
+						mat-raised-button
+						class="theme-btn mr-2 mt-3"
+						(click)="pushUpdateToSelectedLicenses()"
+						[disabled]="licensesToUpdate.length == 0 || is_view_only">
+						Push Updates to Selected Licenses
+					</button>
+
+					<div class="row no-gutters">
+						<div class="col-lg-6">
+							<div class="mt-3">
+								<ng-container>
+									<mat-accordion>
+										<mat-expansion-panel hideToggle [expanded]="false" *ngFor="let h of playlistHostLicenses">
+											<mat-expansion-panel-header>
+												<div class="d-flex w-100">
+													<div>
+														<a [routerLink]="[host_url, h.host.hostId]" target="_blank">
+															<h5 class="sm-text font-weight-bold mb-0">{{ h.host.name }}</h5>
+														</a>
+													</div>
+													<div class="flex-even text-right sm-text">
+														{{ h.licenses.length }} License<span *ngIf="h.licenses.length > 1">s</span>
+														<span class="fas fa-arrow-down ml-2"></span>
+													</div>
+												</div>
+											</mat-expansion-panel-header>
+
+											<div class="px-3 py-3 border-top w-100">
+												<div *ngFor="let l of h.licenses" class="option-license-list w-100 mb-1">
+													<mat-checkbox class="sm-text" (change)="addToLicenseToPush($event, l.licenseId)">
+														<a [routerLink]="[license_url, l.licenseId]" target="_blank">
+															<h5 class="sm-text font-weight-bold mb-0">{{ l.alias || l.licenseKey }}</h5>
+														</a>
+													</mat-checkbox>
+												</div>
+											</div>
+										</mat-expansion-panel>
+									</mat-accordion>
+								</ng-container>
+							</div>
+						</div>
+					</div>
+				</mat-tab>
 			</mat-tab-group>
 		</section>
 	</div>

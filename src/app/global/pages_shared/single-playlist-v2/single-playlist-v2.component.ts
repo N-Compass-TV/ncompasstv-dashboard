@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { Sortable } from 'sortablejs';
 import { FormControl } from '@angular/forms';
-import { Observable, Subject, forkJoin } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import {
 	API_CONTENT,
 	API_HOST,
@@ -12,8 +12,12 @@ import {
 	API_SCREEN_OF_PLAYLIST,
 	API_UPDATED_PLAYLIST_CONTENT,
 	API_CONTENT_V2,
-	API_PLAYLIST_V2
+	API_PLAYLIST_V2,
+	UI_ROLE_DEFINITION_TEXT,
+	UI_PLAYLIST_SCREENS_NEW
 } from '../../models';
+
+import * as io from 'socket.io-client';
 
 import {
 	PlaylistPrimaryControlActions as pActions,
@@ -34,6 +38,9 @@ import { QuickMoveComponent } from './components/quick-move/quick-move.component
 import { IsvideoPipe } from '../../pipes';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { SpacerSetupComponent } from './components/spacer-setup/spacer-setup.component';
+import { AuthService } from '../../services';
+import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -52,23 +59,28 @@ export class SinglePlaylistV2Component implements OnInit {
 	imageCount = 0;
 	isFiltered: { type: boolean; status: boolean; keyword: boolean } = { type: false, status: false, keyword: false };
 	licenses: API_LICENSE_PROPS[];
+	licensesToUpdate: any[] = [];
 	detailedViewMode = false;
 	playlist: API_PLAYLIST_V2['playlist'];
 	playlistContentBreakdown = [];
 	playlistContents: API_CONTENT_V2[];
+	playlistContentsToSave = [];
 	playlistControls = PlaylistPrimaryControls;
 	playlistDescription = 'Getting playlist data';
 	playlistFilters = PlaylistFiltersDropdown;
 	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] };
 	playlistName = 'Please wait';
-	playlistViews = PlaylistViewOptions;
-	playlistSortableOrder: string[] = [];
+	playlistScreens: API_SCREEN_OF_PLAYLIST[] = [];
+	playlistScreenTable: any;
 	playlistSequenceUpdates: PlaylistContent[] = [];
-	playlistContentsToSave = [];
+	playlistSortableOrder: string[] = [];
+	playlistViews = PlaylistViewOptions;
 	savingPlaylist = false;
 	screens: API_SCREEN_OF_PLAYLIST[];
+	screenTableColumns = ['#', 'Screen Title', 'Dealer', 'Host', 'Type', 'Template', 'Created By'];
 	searchForm = new FormControl();
 	selectedPlaylistContents = [];
+	_socket: any;
 	sortablejsTriggered: Subject<boolean> = new Subject<boolean>();
 	sortablejs: any;
 	videoCount = 0;
@@ -78,10 +90,19 @@ export class SinglePlaylistV2Component implements OnInit {
 
 	constructor(
 		private _activatedRoute: ActivatedRoute,
+		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _playlist: SinglePlaylistService,
 		private _isVideo: IsvideoPipe
-	) {}
+	) {
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket'],
+			query: 'client=Dashboard__SinglePlaylistComponent'
+		});
+
+		this._socket.on('connect', () => {});
+		this._socket.on('disconnect', () => {});
+	}
 
 	ngOnInit() {
 		this.playlistRouteInit();
@@ -101,6 +122,11 @@ export class SinglePlaylistV2Component implements OnInit {
 			},
 			error: (err) => console.log('Error', err)
 		});
+	}
+
+	public addToLicenseToPush(e, licenseId) {
+		if (e.checked == true && !this.licensesToUpdate.includes(licenseId)) this.licensesToUpdate.push({ licenseId: licenseId });
+		else this.licensesToUpdate = this.licensesToUpdate.filter((i) => i.licenseId !== licenseId);
 	}
 
 	public filterContent(filterType: string, filterValue: string) {
@@ -210,10 +236,10 @@ export class SinglePlaylistV2Component implements OnInit {
 		this.imageCount = this.playlistContents.filter((i) => fileTypes('image').includes(i.fileType.toLowerCase())).length;
 		this.feedCount = this.playlistContents.filter((i) => fileTypes('feed').includes(i.fileType.toLowerCase())).length;
 		this.playlistContentBreakdown = [
-			{ label: 'Active Contents', active: 267, total: this.playlistContents.length },
-			{ label: 'Active Videos', active: 185, total: this.videoCount },
-			{ label: 'Active Images', active: 82, total: this.imageCount },
-			{ label: 'Active Feeds', active: 0, total: this.feedCount }
+			{ label: 'Content Count', total: this.playlistContents.length },
+			{ label: 'All Videos', total: this.videoCount },
+			{ label: 'All Images', total: this.imageCount },
+			{ label: 'All Feeds', total: this.feedCount }
 		];
 	}
 
@@ -285,6 +311,49 @@ export class SinglePlaylistV2Component implements OnInit {
 		});
 	}
 
+	private getPlaylistScreens(playlistId: string) {
+		return this._playlist
+			.getPlaylistScreens(playlistId)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					this.playlistScreens = response.screens;
+					this.mapToTable(this.playlistScreens);
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+	}
+
+	private mapToTable(screens) {
+		let counter = 1;
+		// const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		let role = this.currentRole;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			role = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
+		if (screens) {
+			this.playlistScreenTable = [];
+			this.playlistScreenTable = screens.map((i) => {
+				return new UI_PLAYLIST_SCREENS_NEW(
+					{ value: i.screenId, link: null, editable: false, hidden: true },
+					{ value: counter++, link: null, editable: false, hidden: false },
+					{ value: i.screenName, link: `/` + role + `/screens/` + i.screenId, editable: false, hidden: false, new_tab_link: true },
+					{ value: i.businessName, link: null, editable: false, hidden: false },
+					{ value: i.hostName, link: null, editable: false, hidden: false },
+					{ value: i.screenTypeName || '--', link: null, editable: false, hidden: false },
+					{ value: i.templateName, link: null, editable: false, hidden: false },
+					{ value: i.createdBy, link: null, editable: false, hidden: false }
+				);
+			});
+		} else {
+			this.playlistScreenTable = {
+				message: 'No Screens Available'
+			};
+		}
+	}
+
 	private markAll() {
 		this.selectedPlaylistContents = this.playlistContents.map((i) => i.playlistContentId);
 		this.setBulkControlsState();
@@ -327,6 +396,17 @@ export class SinglePlaylistV2Component implements OnInit {
 		else this.selectedPlaylistContents.push(playlistContentId);
 
 		this.setBulkControlsState();
+	}
+
+	public pushUpdateToSelectedLicenses() {
+		this.warningModal(
+			'warning',
+			'Push Playlist Updates',
+			`You are about to push playlist updates to ${this.licensesToUpdate.length} licenses?`,
+			`Playlist Update will be pushed on ${this.licensesToUpdate.length} licenses. Click OK to Continue.`,
+			'update',
+			this.licensesToUpdate
+		);
 	}
 
 	/**
@@ -412,6 +492,7 @@ export class SinglePlaylistV2Component implements OnInit {
 		this._activatedRoute.paramMap.subscribe((data: any) => {
 			this.getPlaylistData(data.params.data);
 			this.getPlaylistHostLicenses(data.params.data);
+			this.getPlaylistScreens(data.params.data);
 		});
 	}
 
@@ -591,7 +672,7 @@ export class SinglePlaylistV2Component implements OnInit {
 
 		const request = [this._playlist.updatePlaylistContent(playlistUpdatesToSave).pipe(takeUntil(this._unsubscribe))];
 
-		if (data.blacklistUpdates.licenses.length) request.push(this._playlist.removeWhitelist([data.blacklistUpdates]));
+		if (data.blacklistUpdates && data.blacklistUpdates.licenses.length) request.push(this._playlist.removeWhitelist([data.blacklistUpdates]));
 
 		this.savingPlaylist = playlistSave;
 
@@ -630,7 +711,47 @@ export class SinglePlaylistV2Component implements OnInit {
 			(error) => {}
 		);
 	}
-}
-function lastValueFrom(arg0: Observable<any>) {
-	throw new Error('Function not implemented.');
+
+	private warningModal(status, message, data, return_msg, action, licenses: API_LICENSE_PROPS[]): void {
+		this._dialog.closeAll();
+
+		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			disableClose: true,
+			data: {
+				status: status,
+				message: message,
+				data: data,
+				return_msg: return_msg,
+				action: action
+			}
+		});
+
+		dialogRef.afterClosed().subscribe((result) => {
+			if (result === 'update') {
+				licenses.forEach((p) => {
+					this._socket.emit('D_update_player', p.licenseId);
+				});
+
+				this.ngOnInit();
+			}
+		});
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
+	}
+
+	protected get isAdmin() {
+		return this._auth.current_role === 'administrator';
+	}
+
+	protected get isDealer() {
+		return this._auth.current_role === 'dealer';
+	}
 }
