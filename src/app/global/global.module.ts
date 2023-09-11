@@ -416,6 +416,7 @@ const ngComponents = [
 	SingleDealerComponent,
 	SingleDealerSidebarComponent,
 	SinglePlaylistComponent,
+	SinglePlaylistV2Component,
 	SingleScreenComponent,
 	SingleTemplateComponent,
 	SingleUserComponent,
