@@ -50,6 +50,8 @@ export interface API_LICENSE_PROPS {
 	piVersion?: string;
 	playerSocketId: any;
 	playerStatus: number;
+	publicIP?: string;
+	prevPublicIP?: string;
 	rebootTime?: string;
 	resourceSettings: number;
 	screenId: string;

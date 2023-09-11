@@ -16,6 +16,7 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DealersComponent } from './pages/dealers/dealers.component';
 import { DirectoryComponent } from './pages/directory/directory.component';
 import { FeedsComponent } from '../../global/pages_shared/feeds/feeds.component';
+import { FillersComponent } from '../../global/pages_shared/fillers/fillers.component';
 import { GenerateFeedComponent } from '../../global/pages_shared/generate-feed/generate-feed.component';
 import { HostCustomFieldsComponent } from '../../global/pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostsComponent } from './pages/hosts/hosts.component';
@@ -26,6 +27,8 @@ import { MediaLibraryComponent } from '../../global/pages_shared/media-library/m
 import { NotificationsComponent } from '../../global/pages_shared/notifications/notifications.component';
 import { PlaylistsComponent } from './pages/playlists/playlists.component';
 import { ProfileSettingComponent } from '../../global/pages_shared/profile-setting/profile-setting.component';
+import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
+import { ReleaseNotesViewComponent } from './pages/release-notes/components/release-notes-view/release-notes-view.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 import { RolesComponent } from './pages/roles/roles.component';
 import { ScreensComponent } from './pages/screens/screens.component';
@@ -35,6 +38,7 @@ import { SingleDealerComponent } from '../../global/pages_shared/single-dealer/s
 import { SingleHostComponent } from '../../global/pages_shared/single-host/single-host.component';
 import { SingleLicenseComponent } from '../../global/pages_shared/single-license/single-license.component';
 import { SinglePlaylistComponent } from '../../global/pages_shared/single-playlist/single-playlist.component';
+import { SinglePlaylistV2Component } from 'src/app/global/pages_shared/single-playlist-v2/single-playlist-v2.component';
 import { SingleScreenComponent } from '../../global/pages_shared/single-screen/single-screen.component';
 import { SingleTemplateComponent } from '../../global/pages_shared/single-template/single-template.component';
 import { SingleUserComponent } from '../../global/pages_shared/single-user/single-user.component';
@@ -43,12 +47,8 @@ import { TemplatesComponent } from './pages/templates/templates.component';
 import { ToolsComponent } from '../../global/pages_shared/tools/tools.component';
 import { UI_ROLE_DEFINITION } from '../../global/models/ui_role-definition.model';
 import { UpdateComponent } from './pages/update/update.component';
-// import { UserAccountSettingComponent } from '../../global/pages_shared/user-account-setting/user-account-setting.component';
-// import { UserProfileComponent } from '../../global/pages_shared/user-profile/user-profile.component';
 import { UsersComponent } from './pages/users/users.component';
-import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
-import { ReleaseNotesViewComponent } from './pages/release-notes/components/release-notes-view/release-notes-view.component';
-import { SinglePlaylistV2Component } from 'src/app/global/pages_shared/single-playlist-v2/single-playlist-v2.component';
+import { ViewFillersGroupComponent } from 'src/app/global/pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
 
 export const ADMINISTRATOR_ROUTES: Routes = [
 	{
@@ -154,6 +154,25 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 					{
 						path: ':data/:breadcrumb',
 						component: GenerateFeedComponent
+					}
+				]
+			},
+			{
+				path: 'fillers',
+				data: {
+					breadcrumb: 'Fillers Library'
+				},
+				children: [
+					{
+						path: '',
+						component: FillersComponent
+					},
+					{
+						path: 'view-fillers-group/:data',
+						component: ViewFillersGroupComponent,
+						data: {
+							breadcrumb: 'View Filler Group Contents'
+						}
 					}
 				]
 			},
@@ -424,17 +443,6 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 					}
 				]
 			},
-			// {
-			//     path: 'user-profile/:data',
-			//     component: UserProfileComponent,
-			//     data: {
-			//         breadcrumb: 'User Profile'
-			//     },
-			// },
-			// {
-			//     path: 'user-profile/:data/:breadcrumb',
-			//     component: UserProfileComponent
-			// },
 			{
 				path: 'profile-setting/:data',
 				component: ProfileSettingComponent,
@@ -442,17 +450,6 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 					breadcrumb: 'Profile Settings'
 				}
 			},
-			// {
-			//     path: 'user-account-setting/:data',
-			//     component: UserAccountSettingComponent,
-			//     data: {
-			//         breadcrumb: 'User Account Settings'
-			//     },
-			// },
-			// {
-			//     path: 'user-account-setting/:data/:breadcrumb',
-			//     component: UserAccountSettingComponent
-			// },
 			{
 				path: 'version-control',
 				component: UpdateComponent,

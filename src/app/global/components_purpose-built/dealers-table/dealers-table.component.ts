@@ -30,6 +30,7 @@ export class DealersTableComponent implements OnInit {
 	sortOrder: string = 'desc';
 	tooltip: string = '';
 	ongoing_filter: boolean = false;
+	role_label: string = '';
 	filter = [
 		{ min_value: '0', max_value: '5', viewValue: '0-5' },
 		{ min_value: '6', max_value: '10', viewValue: '6-10' },
@@ -55,6 +56,7 @@ export class DealersTableComponent implements OnInit {
 	constructor(private _route: ActivatedRoute, private _dealer: DealerService, private _helper: HelperService, private _auth: AuthService) {}
 
 	ngOnInit() {
+		this.formTitle();
 		this.subscribeToDealerStatusFilter();
 		// Saved Page on URL
 		this._route.queryParams.subscribe((params) => {
@@ -124,6 +126,7 @@ export class DealersTableComponent implements OnInit {
 	}
 
 	clearFilter() {
+		this.ongoing_filter = false;
 		this.filters = {
 			label_age: '',
 			label_unassigned: '',
@@ -189,8 +192,15 @@ export class DealersTableComponent implements OnInit {
 		}
 	}
 
+	formTitle() {
+		if (this._auth.current_role === 'administrator') {
+			this.role_label = 'Search Dealer Alias, Business Name, Contact Person or #Tag';
+		} else {
+			this.role_label = 'Search Dealer Alias, Business Name or Tag';
+		}
+	}
+
 	dealerSetMappingData(response) {
-		this.ongoing_filter = false;
 		this.initial_load = false;
 		this.paging_data = response.paging;
 		if (!response.paging.entities) {
@@ -198,7 +208,7 @@ export class DealersTableComponent implements OnInit {
 			this.no_dealer = true;
 			return;
 		}
-		if (this._auth.current_role === 'dealeradmin') {
+		if (this._auth.current_role === 'dealeradmin' && !this.ongoing_filter) {
 			this.dealers_data = this.mapToUIFormat(response.entities);
 		} else {
 			this.dealers_data = this.mapToUIFormat(response.paging.entities);

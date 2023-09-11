@@ -8,6 +8,9 @@ import { RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { AddCardComponent } from './pages_shared/profile-setting/payment-setting/add-card/add-card.component';
+import { AddFillerContentComponent } from './pages_shared/fillers/components/add-filler-content/add-filler-content.component';
+import { AddFillerFeedsComponent } from './pages_shared/fillers/components/add-filler-content/components/add-filler-feeds/add-filler-feeds.component';
+import { AddFillerGroupComponent } from './pages_shared/fillers/components/add-filler-group/add-filler-group.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
 import { AddContentComponent } from './pages_shared/single-playlist-v2/components/add-content/add-content.component';
 import { AgmCoreModule } from '@agm/core';
@@ -36,7 +39,9 @@ import { ContentSettingsComponent } from './pages_shared/single-playlist-v2/comp
 import { ContentsTabComponent } from './components_shared/reports_components/contents-tab/contents-tab.component';
 import { CreateAdvertiserComponent } from './pages_shared/create-advertiser/create-advertiser.component';
 import { CreateCustomHostFieldsComponent } from './pages_shared/create-custom-host-fields/create-custom-host-fields.component';
+import { CreateEntryComponent } from './components_shared/host_components/create-entry/create-entry.component';
 import { CreateFeedComponent } from './components_shared/feed_components/create-feed/create-feed.component';
+import { CreateFillerFeedComponent } from './pages_shared/fillers/components/create-filler-feed/create-filler-feed.component';
 import { CreateHostComponent } from './pages_shared/create-host/create-host.component';
 import { CreatePlaylistComponent } from './pages_shared/create-playlist/create-playlist.component';
 import { CreatePlaylistContentComponent } from './components_shared/playlist_components/create-playlist-content/create-playlist-content.component';
@@ -67,11 +72,15 @@ import { DealersTableComponent } from './components_purpose-built/dealers-table/
 import { DealersViewComponent } from './pages_shared/single-billings/dealers-view/dealers-view.component';
 import { DefaultDateFormatDirective } from './directives/default-date-format/default-date-format.directive';
 import { DeleteDealerDialogComponent } from './pages_shared/edit-single-dealer/delete-dealer-dialog/delete-dealer-dialog.component';
+import { DeleteFillerFeedsComponent } from './pages_shared/fillers/components/delete-filler-feeds/delete-filler-feeds.component';
+import { DeleteFillerGroupComponent } from './pages_shared/fillers/components/delete-filler-group/delete-filler-group.component';
 import { DeletePlaylistComponent } from './components_shared/playlist_components/delete-playlist/delete-playlist.component';
 import { DemoZoneComponent } from './components_shared/zone_components/demo-zone/demo-zone.component';
 import { DmaTabComponent } from './components_shared/locator_components/dma-tab/dma-tab.component';
+import { DropdownMultipleSelectionFieldComponent } from './components_shared/page_components/dropdown-multiple-selection-field/dropdown-multiple-selection-field.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EditFeedComponent } from './components_shared/feed_components/edit-feed/edit-feed.component';
+import { EditFillerGroupComponent } from './pages_shared/fillers/components/edit-filler-group/edit-filler-group.component';
 import { EditSingleAdvertiserComponent } from './pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from './pages_shared/edit-single-dealer/edit-single-dealer.component';
 import { EditSingleHostComponent } from './pages_shared/edit-single-host/edit-single-host.component';
@@ -85,6 +94,8 @@ import { FeedInfoComponent } from './components_shared/feed_components/feed-info
 import { FeedMediaComponent } from './components_shared/feed_components/feed-media/feed-media.component';
 import { FeedsPageActionButtonsComponent } from './components_shared/data_components/data-table/components/feeds-page-action-buttons/feeds-page-action-buttons.component';
 import { FilenamePipe } from './pipes/filename.pipe';
+import { FileSizePipe } from './pipes/filesize.pipe';
+import { FillersComponent } from './pages_shared/fillers/fillers.component';
 import { FillerDemoComponent } from './components_shared/feed_components/filler-demo/filler-demo.component';
 import { FillerFormComponent } from './components_shared/feed_components/filler-form/filler-form.component';
 import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
@@ -193,6 +204,7 @@ import { UserSortModalComponent } from './components_shared/media_components/use
 import { UserTypeComponent } from './components_shared/user_components/user-type/user-type.component';
 import { ViewCardsComponent } from './pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
 import { ViewDmaHostComponent } from './components_shared/data_components/data-table/dialogs/view-dma-host/view-dma-host.component';
+import { ViewFillersGroupComponent } from './pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
 import { ViewSchedulesComponent } from './components_shared/playlist_components/view-schedules/view-schedules.component';
 import { WarningAnimationComponent } from './components_shared/page_components/warning-animation/warning-animation.component';
 import { WarningPopupComponent } from './components_shared/page_components/warning-popup/warning-popup.component';
@@ -233,11 +245,15 @@ import {
 
 const ngComponents = [
 	AddCardComponent,
+	AddFillerContentComponent,
+	AddFillerFeedsComponent,
+	AddFillerGroupComponent,
 	AddContentComponent,
 	AdvertiserViewComponent,
 	AssignLicenseModalComponent,
 	AutocompleteFieldComponent,
 	BannerComponent,
+	BasicSettingsComponent,
 	BulkEditBusinessHoursComponent,
 	BulkOptionsComponent,
 	BulkPlaywhereComponent,
@@ -258,7 +274,9 @@ const ngComponents = [
 	ContentsTabComponent,
 	CreateAdvertiserComponent,
 	CreateCustomHostFieldsComponent,
+	CreateEntryComponent,
 	CreateFeedComponent,
+	CreateFillerFeedComponent,
 	CreateHostComponent,
 	CreatePlaylistComponent,
 	CreatePlaylistContentComponent,
@@ -279,6 +297,8 @@ const ngComponents = [
 	DataTotalComponent,
 	DealerContentTabComponent,
 	DealerDetailsTabComponent,
+	DeleteFillerFeedsComponent,
+	DeleteFillerGroupComponent,
 	DealerHistoryTabComponent,
 	DealerHostTabComponent,
 	DealerInvoicesTabComponent,
@@ -291,7 +311,9 @@ const ngComponents = [
 	DeletePlaylistComponent,
 	DemoZoneComponent,
 	DmaTabComponent,
+	DropdownMultipleSelectionFieldComponent,
 	EditFeedComponent,
+	EditFillerGroupComponent,
 	EditSingleAdvertiserComponent,
 	EditSingleDealerComponent,
 	EditSingleHostComponent,
@@ -307,6 +329,8 @@ const ngComponents = [
 	FeedMediaComponent,
 	FeedsPageActionButtonsComponent,
 	FilenamePipe,
+	FileSizePipe,
+	FillersComponent,
 	FillerDemoComponent,
 	FillerFormComponent,
 	FilterLabelsComponent,
@@ -414,6 +438,7 @@ const ngComponents = [
 	UserTypeComponent,
 	ViewCardsComponent,
 	ViewDmaHostComponent,
+	ViewFillersGroupComponent,
 	ViewSchedulesComponent,
 	WarningAnimationComponent,
 	WarningPopupComponent,
@@ -466,6 +491,10 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 	declarations: [ngComponents, DIRECTIVES, QuickMoveComponent],
 	entryComponents: [
 		AddCardComponent,
+		AddFillerContentComponent,
+		AddFillerFeedsComponent,
+		AddFillerGroupComponent,
+		AddCardComponent,
 		AddContentComponent,
 		AssignLicenseModalComponent,
 		BulkEditBusinessHoursComponent,
@@ -475,13 +504,18 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		CloneFeedDialogComponent,
 		ClonePlaylistComponent,
 		CloneScreenComponent,
+		CreateFillerFeedComponent,
 		ConfirmTemplateModalComponent,
 		ConfirmationModalComponent,
+		CreateEntryComponent,
 		ContentSettingsComponent,
 		CreateFeedComponent,
 		DeleteDealerDialogComponent,
+		DeleteFillerFeedsComponent,
+		DeleteFillerGroupComponent,
 		DeletePlaylistComponent,
 		EditFeedComponent,
+		EditFillerGroupComponent,
 		EditSingleAdvertiserComponent,
 		EditSingleDealerComponent,
 		EditSingleHostComponent,

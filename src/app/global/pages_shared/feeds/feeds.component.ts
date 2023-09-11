@@ -1,12 +1,14 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { CreateFeedComponent } from '../../components_shared/feed_components/create-feed/create-feed.component';
+import { CreateFillerFeedComponent } from '../fillers/components/create-filler-feed/create-filler-feed.component';
 import { AuthService, FeedService } from 'src/app/global/services';
-import { API_FEED, FEED, PAGING, UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED, UI_TABLE_FEED_DEALER } from 'src/app/global/models';
+import { UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED, UI_TABLE_FEED_DEALER } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-feeds',
@@ -19,10 +21,13 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	feed_stats: any = {};
 	feeds_stats: any = {};
 	filtered_data: UI_TABLE_FEED[] | UI_TABLE_FEED_DEALER[] = [];
+	filler_stats: any = {};
 	initial_load = true;
+	isActiveTab = 0;
 	is_view_only = false;
 	no_feeds = false;
 	paging_data: any;
+	reload_detected: boolean = false;
 	search_data = '';
 	searching = false;
 	sort_column = 'DateCreated';
@@ -41,20 +46,35 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _auth: AuthService, private _date: DatePipe, private _dialog: MatDialog, private _feed: FeedService) {}
+	constructor(
+		private _auth: AuthService,
+		private _date: DatePipe,
+		private _dialog: MatDialog,
+		private _feed: FeedService,
+		private cdRef: ChangeDetectorRef,
+		private _location: Location,
+		private _route: Router
+	) {}
 
 	ngOnInit() {
 		if (this.isCurrentRoleDealer) {
 			this.feeds_table_column = this.feeds_table_column.filter((col) => col.name != 'Business Name');
 			this.feeds_table_column.map((column) => {
-				if (column.name == 'Created By') {
-					column.sortable = false;
-				}
+				if (column.name == 'Created By') column.sortable = false;
 			});
 		}
+		this.onTabChanged(0);
 		this.getFeedsTotal();
 		this.getFeeds(1);
 		this.is_view_only = this.current_user.roleInfo.permission === 'V';
+		if (this.isFillersTab) {
+			this.onTabChanged(1);
+			this.reload_detected = !this.reload_detected;
+		}
+	}
+
+	ngAfterViewInit() {
+		this.cdRef.detectChanges();
 	}
 
 	ngOnDestroy() {
@@ -125,6 +145,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 		dialog.afterClosed().subscribe((data) => {
 			if (data) this.getFeeds(1);
+			this.reloadPage(true);
 		});
 	}
 
@@ -146,12 +167,29 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				total_label: 'Feed(s)',
 				this_week_value: response.newFeedsThisWeek,
 				this_week_value_label: 'Feed(s)',
-				this_week_value_description: 'New this week',
-				last_week_value: response.newFeedsLastWeek,
-				last_week_value_label: 'Feed(s)',
-				last_week_value_description: 'New this week'
+				this_week_value_description: 'New this week'
+			};
+
+			this.filler_stats = {
+				total_value: response.fillerTotal,
+				total_label: 'Filler Feed(s)',
+				this_week_value: response.newFillerThisWeek,
+				this_week_value_label: 'Filler Feed(s)',
+				this_week_value_description: 'New this week'
 			};
 		});
+	}
+
+	onTabChanged(index) {
+		this.isActiveTab = index;
+		switch (index) {
+			case 0:
+				this.getFeeds(1);
+				break;
+			case 1:
+				break;
+			default:
+		}
 	}
 
 	private mapToTableFormat(feeds): any {
@@ -176,7 +214,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 					{ value: this._date.transform(f.feed.dateCreated, 'MMMM d, y'), editable: false, hidden: false },
 					{ value: f.feed.feedTitle, link: f.feed.feedUrl, editable: false, hidden: true },
 					{ value: f.feed.feedDescription, editable: false, hidden: true },
-					{ value: f.feed.embeddedscript, editable: false, hidden: true }
+					{ value: f.feed.embeddedScript, editable: false, hidden: true }
 				);
 			}
 
@@ -198,12 +236,35 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				{ value: this._date.transform(f.dateCreated, 'MMMM d, y'), editable: false, hidden: false },
 				{ value: f.title, link: f.url, editable: false, hidden: true },
 				{ value: f.description, editable: false, hidden: true },
-				{ value: f.embeddedscript, editable: false, hidden: true }
+				{ value: f.embeddedScript, editable: false, hidden: true }
 			);
 		});
 	}
 
 	protected get currentRole() {
 		return this._auth.current_role;
+	}
+
+	createFillerFeed() {
+		this._dialog
+			.open(CreateFillerFeedComponent, {
+				width: '500px',
+				data: {
+					group: []
+				}
+			})
+			.afterClosed()
+			.subscribe(() => {
+				this._route.navigateByUrl(`/${this.roleRoute}/feeds?tab=1`);
+				this.ngOnInit();
+			});
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
+	}
+
+	private get isFillersTab(): boolean {
+		return this._location.path().includes('tab=1');
 	}
 }

@@ -57,7 +57,7 @@ export class SpacerSetupComponent implements OnInit {
 		this.playlistHostLicenses = this._dialog_data.hostLicenses ? [...this._dialog_data.hostLicenses] : [];
 	}
 
-	private get dynamicSpacerAlgoFields() {
+	public get dynamicSpacerAlgoFields() {
 		return this.spacerInfo.get('spacerAlgoFields') as FormArray;
 	}
 
@@ -65,7 +65,7 @@ export class SpacerSetupComponent implements OnInit {
 		return this.availableContentCategories.filter((i) => i.categoryName == categoryName)[0];
 	}
 
-	private setDynamicSpacerAlgoFields(contentCategories: any[]) {
+	public setDynamicSpacerAlgoFields(contentCategories: any[]) {
 		/** Initialize dynamic spacer algo fields
 		 * @todo - fields added to the dynamic spacer algo fields form array
 		 * should be calculated based on the available categories on playlist contents in a playlist
