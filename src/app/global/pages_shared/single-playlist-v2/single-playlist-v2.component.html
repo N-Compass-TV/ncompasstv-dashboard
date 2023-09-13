@@ -93,7 +93,7 @@
 															mat-raised-button
 															class="theme-btn"
 															*ngFor="let p of playlistViews; let i = index"
-															(click)="onChangeViewOptions(p.action)"
+															(click)="viewButtonClicked(p.action)"
 															[ngClass]="i !== playlistViews.length - 1 && 'mr-3'"
 															[class.selected]="p.is_selected">
 															<i class="{{ p.icon }} mr-3 text-green"></i>

@@ -26,7 +26,8 @@ import {
 	PlaylistFiltersDropdown,
 	PlaylistViewOptions,
 	PlaylistViewOptionActions,
-	PlaylistFilterActions
+	PlaylistFilterActions,
+	PlaylistPrimaryControlActions
 } from './constants';
 
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types';
@@ -41,6 +42,7 @@ import { SpacerSetupComponent } from './components/spacer-setup/spacer-setup.com
 import { AuthService } from '../../services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { environment } from 'src/environments/environment';
+import { PlaylistDemoComponent, ViewSchedulesComponent } from '../../components_shared/playlist_components';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -117,10 +119,7 @@ export class SinglePlaylistV2Component implements OnInit {
 		this.playlist = null;
 
 		this._playlist.addContent(contentData).subscribe({
-			next: (res) => {
-				this.playlistRouteInit();
-			},
-			error: (err) => console.log('Error', err)
+			next: () => this.playlistRouteInit()
 		});
 	}
 
@@ -174,6 +173,8 @@ export class SinglePlaylistV2Component implements OnInit {
 					return c.scheduleStatus === 'inactive';
 				case 'in-queue':
 					return c.scheduleStatus === 'future';
+				case 'scheduled':
+					return c.scheduleStatus === 'scheduled';
 				default: // all
 					return Array.from(this.playlistContentsBackup);
 			}
@@ -181,7 +182,14 @@ export class SinglePlaylistV2Component implements OnInit {
 
 		let result = Array.from(this.playlistContentsBackup);
 
-		result = result.filter(filterByKeyword).filter(filterByContentType).filter(filterByStatus);
+		if (this.currentFilters.status === 'scheduled') {
+			result = result
+				.filter(filterByKeyword)
+				.filter(filterByContentType)
+				.filter((c) => c.scheduleStatus !== 'active');
+		} else {
+			result = result.filter(filterByKeyword).filter(filterByContentType).filter(filterByStatus);
+		}
 
 		this.playlistContents = [...result];
 	}
@@ -375,7 +383,48 @@ export class SinglePlaylistV2Component implements OnInit {
 		this.rearrangePlaylist(this.playlistSortableOrder, true);
 	}
 
-	public onChangeViewOptions(action: string) {
+	public viewButtonClicked(action: string) {
+		switch (action) {
+			case PlaylistViewOptionActions.detailedView:
+				this.onChangeViewOptions(action);
+				break;
+			case PlaylistViewOptionActions.gridView:
+				this.onChangeViewOptions(action);
+				break;
+			case PlaylistPrimaryControlActions.playlistDemo:
+				this.showPlaylistDemo();
+				break;
+			case PlaylistPrimaryControlActions.viewSchedule:
+				this.showPlaylistSchedules();
+				break;
+			default:
+				break;
+		}
+	}
+
+	private showPlaylistSchedules() {
+		const contents = this.playlistContents;
+
+		this._dialog.open(ViewSchedulesComponent, {
+			width: '1280px',
+			data: { contents },
+			autoFocus: false
+		});
+	}
+
+	private showPlaylistDemo() {
+		this._dialog.open(PlaylistDemoComponent, {
+			data: {
+				playlistId: this.playlist.playlistId,
+				playlistContents: this.playlistContents
+			},
+			width: '768px',
+			height: '432px',
+			panelClass: 'no-padding'
+		});
+	}
+
+	private onChangeViewOptions(action: string) {
 		this.detailedViewMode = action === PlaylistViewOptionActions.detailedView;
 		const detailedViewIndex = this.playlistViews.findIndex((v) => v.label === 'Detailed View');
 		const gridViewIndex = this.playlistViews.findIndex((v) => v.label === 'Grid View');
