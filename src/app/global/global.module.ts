@@ -155,6 +155,7 @@ import { PlaylistMediaComponent } from './components_shared/playlist_components/
 import { PlaylistMediaThumbnailComponent } from './components_shared/playlist_components/playlist-media-thumbnail/playlist-media-thumbnail.component';
 import { ProfileSettingComponent } from './pages_shared/profile-setting/profile-setting.component';
 import { PushUpdateComponent } from './components_shared/playlist_components/push-update/push-update.component';
+import { RemoteTerminalComponent } from './components_shared/tools_component/remote-terminal/remote-terminal.component';
 import { RenameModalComponent } from './components_shared/media_components/rename-modal/rename-modal.component';
 import { SanitizePipe } from './pipes/sanitize.pipe';
 import { ScreenCreatedModalComponent } from './components_shared/screen_components/screen-created-modal/screen-created-modal.component';
@@ -231,7 +232,9 @@ import {
 	MatProgressBarModule,
 	MatTooltipModule,
 	MatIconModule,
-	MatButtonToggleModule
+	MatButtonToggleModule,
+	MatSnackBar,
+	MatSnackBarModule
 } from '@angular/material';
 
 const ngComponents = [
@@ -378,6 +381,7 @@ const ngComponents = [
 	PlaylistMediaThumbnailComponent,
 	ProfileSettingComponent,
 	PushUpdateComponent,
+	RemoteTerminalComponent,
 	RenameModalComponent,
 	SanitizePipe,
 	ScreenCreatedModalComponent,
@@ -430,9 +434,12 @@ const ngComponents = [
 const MaterialModules = [
 	MatAutocompleteModule,
 	MatButtonModule,
+	MatButtonToggleModule,
 	MatCardModule,
 	MatCheckboxModule,
 	MatChipsModule,
+	MatDatepickerModule,
+	MatDatepickerModule,
 	MatDialogModule,
 	MatDividerModule,
 	MatExpansionModule,
@@ -440,19 +447,20 @@ const MaterialModules = [
 	MatInputModule,
 	MatListModule,
 	MatMenuModule,
+	MatMomentDateModule,
+	MatNativeDateModule,
+	MatNativeDateModule,
 	MatPaginatorModule,
-	MatRadioModule,
+	MatProgressBarModule,
 	MatProgressSpinnerModule,
+	MatRadioModule,
 	MatSelectModule,
+	MatSnackBarModule,
 	MatSlideToggleModule,
 	MatStepperModule,
 	MatTableModule,
 	MatTabsModule,
-	MatDatepickerModule,
-	MatNativeDateModule,
-	MatProgressBarModule,
-	MatTooltipModule,
-	MatButtonToggleModule
+	MatTooltipModule
 ];
 
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
@@ -524,10 +532,6 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		FormsModule,
 		HttpClientModule,
 		MaterialModules,
-		MatInputModule,
-		MatDatepickerModule,
-		MatNativeDateModule,
-		MatMomentDateModule,
 		MomentDateModule,
 		NgbModule,
 		NgxPaginationModule,
