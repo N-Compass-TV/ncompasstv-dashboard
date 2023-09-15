@@ -3,12 +3,11 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/internal/operators';
 
-import { API_CONTENT_V2, API_HOST, API_LICENSE_PROPS, PlaylistContentSchedule, UI_CONTENT_SCHEDULE } from 'src/app/global/models';
+import { API_CONTENT_V2, API_HOST, API_LICENSE_PROPS } from 'src/app/global/models';
 import { SavePlaylistContentUpdate } from '../../models';
 import { BlacklistUpdates } from '../../type/PlaylistContentUpdate';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
 import { IsvideoPipe } from 'src/app/global/pipes';
-import * as moment from 'moment';
 
 @Component({
 	selector: 'app-content-settings',
@@ -43,6 +42,8 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 			playlistContents: API_CONTENT_V2[];
 			hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
 			bulkSet: boolean;
+			hasExistingSchedule: boolean;
+			scheduleType?: number;
 		},
 		private _playlist: SinglePlaylistService,
 		private _video: IsvideoPipe
@@ -116,19 +117,24 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 	public onSelectType(event: any) {}
 
 	/**
-	 * @param data - Playlist content setting changes
+	 * @param basicSettings - Playlist content setting changes
 	 */
-	public playlistContentModified(data: any) {
+	public playlistContentModified(basicSettings: { duration?: number; frequency?: number; isFullScreen?: number }) {
+		console.log('playlist content modified', basicSettings);
+
+		// simply parse frequency if it is of type string
+		if (typeof basicSettings.frequency === 'string') basicSettings.frequency = parseInt(basicSettings.frequency);
+
 		/** Single Playlist Content Edit */
 		if (!this.contentData.bulkSet) {
 			this.playlistContent.contentUpdates = [
 				{
 					...(this.playlistContent.contentUpdates && this.playlistContent.contentUpdates[0]),
-					...data,
+					...basicSettings,
 					playlistContentId: this.contentData.playlistContents[0].playlistContentId,
 					duration: this._video.transform(this.contentData.playlistContents[0].fileType)
 						? this.contentData.playlistContents[0].duration
-						: data.duration || this.playlistContent.contentUpdates[0].duration
+						: basicSettings.duration || this.playlistContent.contentUpdates[0].duration
 				}
 			];
 			return;
@@ -139,68 +145,24 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 		this.playlistContent.contentUpdates = contentData.map((p) => {
 			return {
 				playlistContentId: p.playlistContentId,
-				...data,
-				duration: this._video.transform(p.fileType) ? p.duration : data.duration || p.duration
+				...basicSettings,
+				duration: this._video.transform(p.fileType) ? p.duration : basicSettings.duration || p.duration
 			};
 		});
 	}
 
-	private mapContentScheduleForSubmission(data: UI_CONTENT_SCHEDULE, playlistContentId: string) {
-		const result = {} as PlaylistContentSchedule;
-		const contents = this.contentData.playlistContents;
-
-		switch (data.type) {
-			case 1:
-			case 2:
-				result.type = data.type;
-				result.playlistContentsScheduleId = contents.find((c) => c.playlistContentId === playlistContentId).playlistContentId;
-				break;
-			default:
-				const DATE_FORMAT = 'YYYY-MM-DD';
-				const TIME_FORMAT = 'hh:mm A';
-
-				Object.keys(data).forEach((key) => {
-					if (typeof data[key] === 'undefined' || (!data[key] && typeof data[key] !== 'number')) return;
-
-					switch (key) {
-						case 'days':
-							result.days = data.days
-								.filter((day) => day.checked)
-								.map((day) => day.day)
-								.join(',');
-							break;
-						case 'playTimeStartData':
-						case 'playTimeEndData':
-							let toParse = key === 'playTimeStartData' ? data.playTimeStartData : data.playTimeEndData;
-							const resultKey = key === 'playTimeStartData' ? 'playTimeStart' : 'playTimeEnd';
-							result[resultKey] = moment(`${toParse.hour}:${toParse.minute}`, 'HH:mm').format(TIME_FORMAT);
-							break;
-						case 'startDate':
-						case 'endDate':
-							const parsedDate = moment(`${data[key]}`).format(DATE_FORMAT);
-							if (key === 'startDate') result.from = parsedDate;
-							else result.to = parsedDate;
-
-							break;
-						default:
-							result[key] = data[key];
-					}
-				});
-
-				result.from += ` ${result.playTimeStart}`;
-				result.to += ` ${result.playTimeEnd}`;
-				result.playlistContentsScheduleId = contents.find((c) => c.playlistContentId === playlistContentId).playlistContentsScheduleId;
-		}
-
-		return result;
-	}
-
 	private subscribeToContentSchedulerFormChanges() {
-		this._playlist.schedulerFormUpdated.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
-			this.playlistContent.contentUpdates = this.playlistContent.contentUpdates.map((contentUpdate) => {
-				contentUpdate.schedule = this.mapContentScheduleForSubmission(response, contentUpdate.playlistContentId);
-				return contentUpdate;
-			});
+		this._playlist.schedulerFormUpdated.pipe(takeUntil(this._unsubscribe)).subscribe({
+			next: (response) => {
+				this.playlistContent.contentUpdates = this.playlistContent.contentUpdates.map((contentUpdate) => {
+					contentUpdate.schedule = this._playlist.mapScheduleFromUiContent(
+						response,
+						contentUpdate.playlistContentId,
+						this.contentData.playlistContents
+					);
+					return contentUpdate;
+				});
+			}
 		});
 	}
 }

@@ -6,5 +6,13 @@ export class AddPlaylistContent {
 		isFullScreen: number;
 		duration: number;
 		licenseIds: string[];
+		alternateWeek?: number;
+		from?: string;
+		to?: string;
+		day?: string;
+		playTimeStart?: string;
+		playTimeEnd?: string;
+		type?: number;
+		playlistContentShceduleId?: string;
 	}[];
 }

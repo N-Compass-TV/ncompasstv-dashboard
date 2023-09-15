@@ -1,11 +1,13 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import * as moment from 'moment';
+
 import { DAYS } from '../../constants';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
-import * as moment from 'moment';
 import { MatCheckboxChange } from '@angular/material';
+import { PlaylistContentSchedule } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-content-scheduler-form',
@@ -37,6 +39,7 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 		this.subscribeToGetFormData();
 		this.subscribeToFormChanges();
 		this.setDefaultFormValues();
+		this.subscribeToSetExistingFormData();
 	}
 
 	ngOnDestroy(): void {
@@ -106,27 +109,81 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 	}
 
 	private subscribeToGetFormData() {
-		this._playlist.requestSchedulerFormData.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			const form = this.schedulerForm;
-			this._playlist.receiveSchedulerFormData.emit(form.value);
+		this._playlist.requestSchedulerFormData.pipe(takeUntil(this._unsubscribe)).subscribe({
+			next: () => {
+				const form = this.schedulerForm;
+				this._playlist.receiveSchedulerFormData.emit(form.value);
+			}
+		});
+	}
+
+	private subscribeToSetExistingFormData() {
+		this._playlist.receiveExistingScheduleData.pipe(takeUntil(this._unsubscribe)).subscribe({
+			next: (response) => {
+				this.setExistingScheduleFormValues(response);
+			}
+		});
+	}
+
+	private setExistingScheduleFormValues(data: PlaylistContentSchedule) {
+		const { playTimeStart, playTimeEnd, from, to, alternateWeek, days } = data;
+		const startDate = moment(from, 'YYYY-MM-DD hh:mm A').format();
+		const endDate = moment(to, 'YYYY-MM-DD hh:mm A').format();
+		const daysList = days.split(',');
+
+		const parsedDays = this.days.map((data) => {
+			data.checked = daysList.includes(`${data.dayId}`);
+			return data;
+		});
+
+		let parsedPlayTimeStart: any = moment(playTimeStart, 'hh:mm A').format('HH:mm:ss').split(':');
+		parsedPlayTimeStart = { hour: parsedPlayTimeStart[0], minute: parsedPlayTimeStart[1], second: parsedPlayTimeStart[2] };
+
+		let parsedPlayTimeEnd: any = moment(playTimeEnd, 'hh:mm A').format('HH:mm:ss').split(':');
+		parsedPlayTimeEnd = { hour: parsedPlayTimeEnd[0], minute: parsedPlayTimeEnd[1], second: parsedPlayTimeEnd[2] };
+
+		this.form.patchValue({
+			startDate,
+			endDate,
+			days: parsedDays,
+			alternateWeek,
+			playTimeStart: parsedPlayTimeStart,
+			playTimeEnd: parsedPlayTimeEnd
 		});
 	}
 
 	private setDefaultFormValues() {
-		const form = this.schedulerForm;
-		const startDateCtrl = form.get('startDate');
-		const endDateCtrl = form.get('endDate');
-		const daysCtrl = form.get('days') as FormArray;
-		const startTimeCtrl = form.get('playTimeStartData');
-		const endTimeCtrl = form.get('playTimeEndData');
-
 		const defaultStartDate = moment(new Date()).format();
 		const defaultEndDate = moment(new Date()).add(5, 'years').format();
 
-		startDateCtrl.setValue(defaultStartDate, { emitEvent: false });
-		endDateCtrl.setValue(defaultEndDate, { emitEvent: false });
-		daysCtrl.setValue(this.days, { emitEvent: false });
-		startTimeCtrl.setValue({ hour: 0, minute: 0, second: 0 }, { emitEvent: false });
-		endTimeCtrl.setValue({ hour: 23, minute: 59, second: 59 }, { emitEvent: false });
+		this.startDateCtrl.setValue(defaultStartDate, { emitEvent: false });
+		this.endDateCtrl.setValue(defaultEndDate, { emitEvent: false });
+		this.daysCtrl.setValue(this.days, { emitEvent: false });
+		this.startTimeCtrl.setValue({ hour: 0, minute: 0, second: 0 }, { emitEvent: false });
+		this.endTimeCtrl.setValue({ hour: 23, minute: 59, second: 59 }, { emitEvent: false });
+	}
+
+	protected get form() {
+		return this.schedulerForm;
+	}
+
+	protected get startDateCtrl() {
+		return this.form.get('startDate');
+	}
+
+	protected get endDateCtrl() {
+		return this.form.get('endDate');
+	}
+
+	protected get daysCtrl() {
+		return this.form.get('days');
+	}
+
+	protected get startTimeCtrl() {
+		return this.form.get('playTimeStartData');
+	}
+
+	protected get endTimeCtrl() {
+		return this.form.get('playTimeEndData');
 	}
 }

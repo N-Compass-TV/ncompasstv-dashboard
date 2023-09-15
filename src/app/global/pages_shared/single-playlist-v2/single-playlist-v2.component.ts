@@ -5,7 +5,6 @@ import { Sortable } from 'sortablejs';
 import { FormControl } from '@angular/forms';
 import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, takeUntil, tap } from 'rxjs/operators';
-import * as moment from 'moment';
 
 import {
 	API_CONTENT,
@@ -38,6 +37,7 @@ import { QuickMoveComponent } from './components/quick-move/quick-move.component
 import { IsvideoPipe } from '../../pipes';
 import { SpacerSetupComponent } from './components/spacer-setup/spacer-setup.component';
 import { SavePlaylistContentUpdate } from './models';
+import { AddPlaylistContent } from './class/AddPlaylistContent';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -96,15 +96,18 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	private addContents(contentData: any) {
+	private addContents(data: AddPlaylistContent) {
 		this.playlist = null;
 
-		this._playlist.addContent(contentData).subscribe({
-			next: (res) => {
-				this.playlistRouteInit();
-			},
-			error: (err) => console.log('Error', err)
-		});
+		this._playlist
+			.addContent(data)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe({
+				next: (res) => {
+					this.playlistRouteInit();
+				},
+				error: (err) => console.log('Error adding contents to playlist', err)
+			});
 	}
 
 	public filterContent(filterType: string, filterValue: string) {
@@ -234,40 +237,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		}
 	}
 
-	/**
-	 * Gets the schedule status of a playlist content based on its type
-	 * @param data
-	 * @returns
-	 */
-	private getScheduleStatus(data: API_CONTENT_V2 | PlaylistContentSchedule) {
-		let result = 'inactive';
-		const DATE_FORMAT = 'YYYY-MM-DD';
-		const TIME_FORMAT = 'hh:mm A';
-
-		if (!data || !data.playlistContentsScheduleId) return result;
-
-		switch (data.type) {
-			case 3: // type 3 means the content only plays during the set schedule
-				const currentDate = moment(new Date(), `${DATE_FORMAT} ${TIME_FORMAT}`);
-				const startDate = moment(`${data.from} ${data.playTimeStart}`, `${DATE_FORMAT} ${TIME_FORMAT}`);
-				const endDate = moment(`${data.to} ${data.playTimeEnd}`, `${DATE_FORMAT} ${TIME_FORMAT}`);
-
-				if (currentDate.isBefore(startDate)) result = 'future';
-				if (currentDate.isBetween(startDate, endDate, undefined)) result = 'active';
-				break;
-
-			case 2: // type 2 means the content is set to not play
-				result = 'inactive';
-				break;
-
-			default: // type 1 means the content is set to always play
-				result = 'active';
-				break;
-		}
-
-		return result;
-	}
-
 	private getPlaylistData(playlistId: string) {
 		this._playlist.getPlaylistData(playlistId).subscribe({
 			next: (data: API_PLAYLIST_V2) => {
@@ -377,13 +346,15 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			return {
 				...content,
 				seq: index + 1,
-				scheduleStatus: this.getScheduleStatus(content)
+				scheduleStatus: this._playlist.getScheduleStatus(content)
 			};
 		});
 	}
 
 	private playlistContentSettings(playlistContents: API_CONTENT_V2[], bulkSet = false) {
-		const data = { playlistContents, hostLicenses: this.playlistHostLicenses, bulkSet };
+		const hasExistingSchedule = playlistContents.length === 1 && playlistContents[0].type === 3;
+		const scheduleType = bulkSet ? 1 : playlistContents[0].type;
+		const data = { playlistContents, hostLicenses: this.playlistHostLicenses, bulkSet, hasExistingSchedule, scheduleType };
 		const configs: MatDialogConfig = { width: '1270px', height: '720px', data };
 
 		this._dialog
@@ -509,25 +480,30 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		);
 	}
 
-	private showAddContentDialog(playlistContent?: API_CONTENT) {
+	private showAddContentDialog(contentToSwap?: API_CONTENT) {
+		const configs = {
+			data: {
+				playlistId: this.playlist.playlistId,
+				assets: this.assets,
+				hostLicenses: this.playlistHostLicenses,
+				playlistContentId: contentToSwap ? contentToSwap.playlistContentId : null
+			}
+		};
+
 		this._dialog
-			.open(AddContentComponent, {
-				data: {
-					playlistId: this.playlist.playlistId,
-					assets: this.assets,
-					hostLicenses: this.playlistHostLicenses,
-					playlistContentId: playlistContent ? playlistContent.playlistContentId : null
-				}
-			})
+			.open(AddContentComponent, configs)
 			.afterClosed()
 			.subscribe({
-				next: (res) => {
-					if (playlistContent) {
-						this.swapContent(res, playlistContent);
+				next: (response: AddPlaylistContent | API_CONTENT | undefined) => {
+					// closed or cancelled the dialog
+					if (typeof response === 'undefined') return;
+
+					if (typeof contentToSwap === 'undefined') {
+						this.addContents(response as AddPlaylistContent);
 						return;
 					}
 
-					res && this.addContents(res);
+					this.swapContent(response as API_CONTENT, contentToSwap);
 				}
 			});
 	}
@@ -615,16 +591,16 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	}
 
 	private savePlaylistContentUpdates(data: SavePlaylistContentUpdate, savingPlaylist = true) {
-		const playlistUpdatesToSave: PlaylistContentUpdate = {
+		const toUpdate: PlaylistContentUpdate = {
 			playlistId: this.playlist.playlistId,
 			playlistContentsLicenses: savingPlaylist ? this.playlistSequenceUpdates : data.contentUpdates
 		};
 
-		const requests = [this._playlist.updatePlaylistContent(playlistUpdatesToSave)];
+		const requests = [this._playlist.updatePlaylistContent(toUpdate)];
 		const schedulesToUpdate = data.contentUpdates.filter((c) => typeof c.schedule !== 'undefined').map((c) => c.schedule);
 
 		// test func
-		playlistUpdatesToSave.playlistContentsLicenses = data.contentUpdates.map((c) => {
+		toUpdate.playlistContentsLicenses = data.contentUpdates.map((c) => {
 			delete c.schedule;
 			return c;
 		});
@@ -637,8 +613,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 				takeUntil(this._unsubscribe),
 				tap(() => (this.savingPlaylist = savingPlaylist))
 			)
-			.subscribe(
-				() => {
+			.subscribe({
+				next: () => {
 					this.savingPlaylist = false;
 					this.selectedPlaylistContents = [];
 					this.playlistContentsToSave = [];
@@ -652,16 +628,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 					this.playlistContents = this.playlistContents
 						.map((p) => {
-							const updateObj = playlistUpdatesToSave.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
-
-							if (updateObj) {
-								return {
-									...p,
-									...updateObj
-								};
-							}
-
-							return p;
+							const updateObj = toUpdate.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
+							const mapped = updateObj ? { ...p, ...updateObj } : p;
+							return mapped;
 						})
 						.map((c) => {
 							// map to update the content array schedules after submitting to the server
@@ -672,26 +641,22 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 								if (c.playlistContentsScheduleId === toUpdate.playlistContentsScheduleId) {
 									Object.keys(toUpdate).forEach((key) => {
 										c[key] = toUpdate[key];
-										const scheduleStatus = this.getScheduleStatus(toUpdate);
-										c.scheduleStatus = this.getScheduleStatus(toUpdate);
+										c.scheduleStatus = this._playlist.getScheduleStatus(toUpdate);
 									});
 								}
 							});
 
 							return c;
 						})
-						.sort(
-							(a, b) =>
-								this.playlistSortableOrder.indexOf(a.playlistContentId) - this.playlistSortableOrder.indexOf(b.playlistContentId)
-						);
+						.sort((a, b) => {
+							const order = this.playlistSortableOrder;
+							return order.indexOf(a.playlistContentId) - order.indexOf(b.playlistContentId);
+						});
 
 					setTimeout(() => {
 						this.sortableJSInit();
 					}, 0);
-				},
-				(error) => {
-					console.log('Error updating the playlist contents', error);
 				}
-			);
+			});
 	}
 }

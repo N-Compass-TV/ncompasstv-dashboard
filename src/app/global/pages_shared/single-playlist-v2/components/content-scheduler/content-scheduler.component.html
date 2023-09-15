@@ -1,7 +1,7 @@
 <div class="content-scheduler">
 	<mat-button-toggle-group class="w-100" [value]="selectedContentSchedule.value">
-		<mat-button-toggle *ngFor="let cs of contentSchedule" class="flex-even" [value]="cs.value" (click)="onSelectContentScheduleType(cs)">
-			<i class="mr-2 {{ cs.icon }}"></i> <strong class="sm-text">{{ cs.label }}</strong>
+		<mat-button-toggle *ngFor="let type of scheduleTypes" class="flex-even" [value]="type.value" (click)="onSelectContentScheduleType(type)">
+			<i class="mr-2 {{ type.icon }}"></i> <strong class="sm-text">{{ type.label }}</strong>
 		</mat-button-toggle>
 	</mat-button-toggle-group>
 

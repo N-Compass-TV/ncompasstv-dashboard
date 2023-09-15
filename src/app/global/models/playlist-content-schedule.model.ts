@@ -4,7 +4,7 @@ import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
  * SAMPLE DATA FROM API:
 {
 	dateCreated: "2021-04-07T03:38:49+00:00",
-	days: "0,1,2,3,4,5,6,7",
+	days: "0,1,2,3,4,5,6",
 	from: "2021-04-07T00:00:00",
 	playTimeEnd: "11:59 PM",
 	playTimeStart: "12:00 AM",
