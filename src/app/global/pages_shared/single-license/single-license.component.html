@@ -266,12 +266,12 @@
 																</h5>
 															</div>
 
-															<!-- CEC Status -->
+															<!-- TV Status -->
 															<div class="flex-even">
-																<span class="sm-text"> CEC Enabled </span>
+																<span class="sm-text"> TV Status </span>
 
-																<h5 class="sm-text">
-																	{{ cec_status ? 'YES' : 'NO' }}
+																<h5 class="sm-text" [ngClass]="{ good: cec_status, bad: !cec_status }">
+																	{{ cec_status ? 'ON' : 'OFF' }}
 																</h5>
 															</div>
 
@@ -295,17 +295,6 @@
 																		{{ pi_status ? 'Checking ...' : 'N/A' }}
 																	</h5>
 																</ng-template>
-															</div>
-
-															<div class="flex-even">
-																<span class="sm-text">Display ON/OFF</span>
-																<br />
-																<mat-slide-toggle
-																	[matTooltip]="getCECStatusTooltip(license_data.isCecEnabled)"
-																	(change)="monitorToggle($event)"
-																	[checked]="display_status === 1 ? 'checked' : 'false'"
-																	[disabled]="license_data.isCecEnabled === 0">
-																</mat-slide-toggle>
 															</div>
 														</div>
 														<hr class="my-3" />
@@ -440,14 +429,16 @@
 															</div>
 														</div>
 
-														<hr class="my-3" />
+														<div *ngIf="!isCurrentUserDealer">
+															<hr class="my-3" />
 
-														<!-- Notes -->
-														<div class="notes">
-															<span class="sm-text">Host Notes: </span>
-															<p (click)="onShowNotes()" class="sm-text hoverable">
-																{{ host_notes ? (host_notes | substring : 100) : 'No notes available' }}
-															</p>
+															<!-- Notes -->
+															<div class="notes">
+																<span class="sm-text">Host Notes: </span>
+																<p (click)="onShowNotes()" class="sm-text hoverable">
+																	{{ host_notes ? (host_notes | substring : 100) : 'No notes available' }}
+																</p>
+															</div>
 														</div>
 													</mat-card>
 												</div>
@@ -599,6 +590,26 @@
 																<h5 class="sm-text">{{ apps && apps.chromium ? apps.chromium : 'N/A' }}</h5>
 															</div>
 														</div>
+
+														<ng-container *ngIf="isCurrentUserAdmin">
+															<hr class="my-3" />
+															<div class="d-flex">
+																<div class="flex-even">
+																	<span class="sm-text">Current IP</span>
+																	<br />
+																	<h5 class="sm-text">
+																		{{ license_data.publicIP ? license_data.publicIP : 'N/A' }}
+																	</h5>
+																</div>
+																<div class="flex-even">
+																	<span class="sm-text">Previous IP</span>
+																	<br />
+																	<h5 class="sm-text">
+																		{{ license_data.prevPublicIP ? license_data.prevPublicIP : 'N/A' }}
+																	</h5>
+																</div>
+															</div>
+														</ng-container>
 													</mat-card>
 												</div>
 

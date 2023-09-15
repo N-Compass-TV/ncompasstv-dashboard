@@ -52,27 +52,26 @@
 					<div class="spacer-algo-fields pt-2" formArrayName="spacerAlgoFields">
 						<div class="row">
 							<div class="col-lg-6" *ngFor="let field of dynamicSpacerAlgoFields.controls; let i = index">
-								<div [formGroup]="field">
-									<p
-										class="m-0 sm-text font-italic"
-										*ngIf="!field.get((field.value | keyvalue)[0].key).hasError('numberRange'); else shortDesc">
-										Should be between 0 and {{ getCategoryInfoByName((field.value | keyvalue)[0].key).count }}.
+								<div [formGroup]="field" *ngIf="field.value | keyvalue as f">
+									<p class="m-0 sm-text font-italic" *ngIf="!field.get(f[0].key).hasError('numberRange'); else shortDesc">
+										minimum 0, maximum
+										{{ getCategoryInfoByName(f[0].key).count || 0 }}.
 									</p>
 									<mat-form-field class="full-width" appearance="fill">
-										<mat-label>{{ (field.value | keyvalue)[0].key | titlecase }}</mat-label>
+										<mat-label>{{ f[0].key | titlecase }}</mat-label>
 										<input
 											name="field.key"
-											formControlName="{{ (field.value | keyvalue)[0].key }}"
+											formControlName="{{ f[0].key }}"
 											matInput
-											placeholder="{{ getCategoryInfoByName((field.value | keyvalue)[0].key).count }} available"
+											placeholder="{{ getCategoryInfoByName(f[0].key).count }} available"
 											type="number" />
 									</mat-form-field>
-
 									<ng-template #shortDesc>
 										<p class="m-0 sm-text sm-text text-danger font-italic">
 											Not enough
-											{{ getCategoryInfoByName((field.value | keyvalue)[0].key).categoryName }} content:
-											{{ getCategoryInfoByName((field.value | keyvalue)[0].key).count }}
+											{{ getCategoryInfoByName(f[0].key).categoryName }}
+											content:
+											{{ getCategoryInfoByName(f[0].key).count }}
 										</p>
 									</ng-template>
 								</div>
@@ -109,7 +108,7 @@
 					</div>
 				</div>
 
-				<div class="play-location-wrapper" *ngIf="playlistHostLicenses.length; else loading">
+				<div class="play-location-wrapper" *ngIf="playlistHostLicenses.length">
 					<app-play-location
 						[host_licenses]="playlistHostLicenses"
 						[toggle_all_spacer]="toggleAll.asObservable()"

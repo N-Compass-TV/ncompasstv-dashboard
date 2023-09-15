@@ -63,15 +63,9 @@
 					</mat-form-field>
 				</ng-template>
 			</div>
-			<div class="d-flex flex-even">
-				<button
-					mat-button
-					mat-raised-button
-					class="theme-btn mr-2"
-					[disabled]="edit_feed_form.invalid || is_loading_dealers || (is_current_user_dealer_admin && !has_selected_dealer_id)">
-					Submit
-				</button>
-				<button mat-button mat-raised-button class="theme-btn" [mat-dialog-close]="false">Cancel</button>
+			<div class="d-flex flex-even align-items-center">
+				<button mat-button mat-raised-button class="theme-btn mr-2">Submit</button>
+				<button mat-button mat-raised-button class="theme-btn btn-danger" [mat-dialog-close]="false">Cancel</button>
 			</div>
 		</form>
 	</ng-container>

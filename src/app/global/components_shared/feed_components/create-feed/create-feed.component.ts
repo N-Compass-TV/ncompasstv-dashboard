@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
-import { startWith, map, takeUntil, distinctUntilChanged } from 'rxjs/operators';
+import { startWith, map, takeUntil, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { DealerService, FeedService } from 'src/app/global/services';
@@ -22,6 +22,8 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 	dealers: API_DEALER[];
 	dealers_data: Array<any> = [];
 	filtered_options: Observable<any[]>;
+	has_loaded_dealers = false;
+	// is_invalid_url = false;
 	has_selected_dealer_id = false;
 	has_selected_widget_feed_type = false;
 	is_current_user_dealer = this._isDealer;
@@ -29,12 +31,12 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 	is_current_user_dealer_admin = this._isDealerAdmin;
 	is_creating_feed = false;
 	is_search = false;
+	// is_validating_url = false;
 	feed_types = this._feedTypes;
 	loading_data = true;
 	loading_search = false;
 	new_feed_form: FormGroup;
 	paging: PAGING;
-	has_loaded_dealers = false;
 
 	private selected_dealer_id: string;
 	protected _unsubscribe = new Subject<void>();
@@ -212,6 +214,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 		});
 
 		this.subscribeToFeedTypeChanges();
+		// this.subscribeToFeedUrlChanges();
 	}
 
 	// Autocomplete beyond this point
@@ -231,13 +234,13 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 		const setControlAsRequired = (control: AbstractControl) => {
 			control.setValidators(Validators.required);
 			control.setErrors(null);
-			control.updateValueAndValidity();
+			control.updateValueAndValidity({ emitEvent: false });
 		};
 
 		const setControlAsNotRequired = (control: AbstractControl) => {
 			control.clearValidators();
 			control.setErrors(null);
-			control.updateValueAndValidity();
+			control.updateValueAndValidity({ emitEvent: false });
 		};
 
 		// put distinctUntilChanged() here because for some reason, this fires A LOT which crashes the script
@@ -254,6 +257,17 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 			setControlAsNotRequired(embeddedScriptControl);
 		});
 	}
+
+	// private subscribeToFeedUrlChanges() {
+	// 	const control = this.new_feed_form.get('feedUrl');
+
+	// 	control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(async (response) => {
+	// 		this.is_validating_url = true;
+	// 		const url = response as string;
+	// 		this.is_invalid_url = !(await this._feed.check_url(url));
+	// 		this.is_validating_url = false;
+	// 	});
+	// }
 
 	protected get _feedTypes() {
 		return [

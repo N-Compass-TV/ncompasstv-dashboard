@@ -95,13 +95,14 @@
 						</span>
 
 						<ng-container *ngIf="!data[d].isImage; else isImage">
-							<ng-container *ngIf="data[d].link; else no_link">
+							<ng-container *ngIf="data[d].link || data[d].globalLink; else no_link">
 								<ng-container *ngIf="!data[d].isFile; else isFile">
-									<ng-container *ngIf="!data[d].link">
-										<h3>HERE</h3>
-										{{ data[d] | json }}
+									<ng-container *ngIf="!data[d].link && !data[d].globalLink;">
+									  <h3>HERE</h3>
+									  {{ data[d] | json }}
 									</ng-container>
-									<a
+									<ng-container *ngIf="!data[d].globalLink; else isGlobalLink">
+										<a
 										class="cursor-pointer table-row-url"
 										target="{{ data[d].new_tab_link ? '_blank' : '_self' }}"
 										[routerLink]="[data[d].link, data[d].value]"
@@ -141,8 +142,52 @@
 												</div>
 											</ng-template>
 										</ng-container>
-									</a>
-								</ng-container>
+									  </a>
+									</ng-container>
+									
+									<ng-template #isGlobalLink>
+											<a
+											class="cursor-pointer table-row-url"
+											target="{{ data[d].new_tab_link ? '_blank' : '_self' }}"
+											[attr.href]="data[d].globalLink.startsWith('http') ? data[d].globalLink : 'http://' + data[d].globalLink"
+											[ngClass]="{ 'text-danger': data[d].past, 'new-order-color': data[d].is_new_order }">
+											<ng-container>
+											  <div *ngIf="!data[d].permission; else userWithPermission">
+												<span *ngIf="!data[d].compressed; else shortened_tooltip">
+												  <div class="default-value-with-url d-flex align-items-center">
+													<div class="value">
+														{{ data[d].value.length > 80 ? (data[d].value.slice(0, 80) + '...more') : data[d].value }}
+													</div>
+													<ng-container *ngIf="pagesWithStatusIndicator.includes(page)">
+													  <span>
+														<i class="fas fa-circle" [ngClass]="getStatusColor(data.status.value)"></i>
+													  </span>
+													</ng-container>
+													<ng-container *ngIf="data[d].has_favorites && data[d].is_favorite">
+													  <span>
+														<i class="fas fa-star favorites" title="Favorite"></i>
+													  </span>
+													</ng-container>
+												  </div>
+												</span>
+									  
+												<ng-template #shortened_tooltip>
+												  <span [title]="data[d].value">
+													{{ data[d].value | substring : 10 }}
+												  </span>
+												</ng-template>
+											  </div>
+									  
+											  <ng-template #userWithPermission>
+												<div class="d-flex name-and-permission">
+												  <div>{{ data[d].value }}</div>
+												  <div class="permission-container">{{ data[d].permission }}</div>
+												</div>
+											  </ng-template>
+											</ng-container>
+										  </a>
+									</ng-template>
+								  </ng-container>
 
 								<ng-template #isFile>
 									<a
@@ -226,9 +271,12 @@
 
 									<ng-template #defaultValue>
 										<!-- DEFAULT DATA DISPLAY -->
-										<div *ngIf="!data[d].type">
+										<div *ngIf="!data[d].type" class="d-flex">
 											<div *ngIf="!data[d].anydesk; else anydesk">
-												{{ data[d].value }}
+												<span *ngIf="data[d].quantity; else default" [innerHTML]="data[d].value"></span>
+												<ng-template #default>
+													{{ data[d].value }}
+												</ng-template>
 												<button
 													class="fas fa-copy text-primary no-border"
 													*ngIf="data[d].copy && data[d].value != '--'"
@@ -269,6 +317,27 @@
 														[routerLink]="['/administrator/hosts', host.hostId]"
 														target="_blank">
 														{{ host.hostName }}
+													</a>
+												</div>
+											</div>
+
+											<!-- FILLER FEEDS QUANTITY -->
+											<div ngbDropdown class="float-right d-inline-block" *ngIf="data[d].quantity">
+												<button class="hidden-button no-background" id="quantity" ngbDropdownToggle>
+													<i
+														class="pl-3 cursor-pointer text-right fa fa-list-ol text-primary"
+														data-toggle="tooltip"
+														title="Show Quantity List"></i>
+												</button>
+
+												<div class="dropdown-menu bg-dark text-white" aria-labelledby="quantity" ngbDropdownMenu>
+													<span class="sm-text pl-2">QUANTITY BREAKDOWN:</span>
+													<a
+														class="dropdown-item sm-text text-white"
+														*ngFor="let group of data[d].filler_groups"
+														[routerLink]="['/administrator/fillers/view-fillers-group/', group.fillerGroupId]"
+														target="_blank">
+														{{ group.quantity }} - {{ group.name }}
 													</a>
 												</div>
 											</div>
@@ -385,6 +454,11 @@
 						title="Clone Feed"
 						*ngIf="!is_view_only"
 						(click)="onCloneFeed(data.id.value)"></i>
+				</td>
+
+				<td class="p-3 control-toggle md-text" *ngIf="fillers">
+					<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit" (click)="editFillerFeed(data.id.value)"> </i>
+					<i class="fas fa-trash cursor-pointer mx-2 text-danger" title="Delete" (click)="deleteFillers(data.id.value)"></i>
 				</td>
 
 				<td class="p-3 control-toggle" *ngIf="advertiser_delete">

@@ -1,33 +1,23 @@
 .content-schedule-card {
+	background: #fff;
+	border: 3px #222 solid;
+	width: 100%;
+	.card-thumbnail {
+		height: 120px;
+		width: 100px;
 
-	.schedule {
-		flex-direction: row;
-		align-items: center;
-	
-		.thumbnail {
-			width: 105px;
-			height: 85px;
-			padding: 10px;
-	
-			img {
-				width: 100%;
-				height: 100%;
-				object-fit: cover;
-			}
+		img {
+			object-fit: cover;
+			width: 100%;
+			height: 100%;
 		}
-	
-		.info {
-			font-size: 11px;
-			width: 65%;
-			padding: 10px 0;
-
-			.content-title {
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-		}
-	
 	}
+}
 
+.future-schedule {
+	border: 3px orange solid;
+}
+
+.inactive-schedule {
+	border: 3px rgb(200, 18, 27) solid;
 }
