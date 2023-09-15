@@ -38,6 +38,10 @@ export class SinglePlaylistService extends BaseService {
 		return this.getRequest(`playlistsv2/gethostlicenses?playlistid=${playlistId}`).map((data: any) => data.hostLicenses);
 	}
 
+	getPlaylistScreens(id) {
+		return this.getRequest(`${this.getters.api_get_screens_of_playlist}${id}`);
+	}
+
 	getWhitelistData(playlistContentId: string) {
 		return this.getRequest(`playlistsv2/GetLicensePlaylistContents?playlistContentId=${playlistContentId}`);
 	}

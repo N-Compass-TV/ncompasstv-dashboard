@@ -78,6 +78,7 @@ export const PlaylistFiltersDropdown = [
 			{ label: 'Active', action: 'active' },
 			{ label: 'In Queue', action: 'in-queue' },
 			{ label: 'Inactive', action: 'inactive' }
+			// ,{ label: 'Scheduled', action: 'scheduled' }
 		]
 	}
 ];
