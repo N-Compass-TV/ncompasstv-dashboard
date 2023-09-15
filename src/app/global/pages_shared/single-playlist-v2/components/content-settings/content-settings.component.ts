@@ -120,8 +120,6 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 	 * @param basicSettings - Playlist content setting changes
 	 */
 	public playlistContentModified(basicSettings: { duration?: number; frequency?: number; isFullScreen?: number }) {
-		console.log('playlist content modified', basicSettings);
-
 		// simply parse frequency if it is of type string
 		if (typeof basicSettings.frequency === 'string') basicSettings.frequency = parseInt(basicSettings.frequency);
 

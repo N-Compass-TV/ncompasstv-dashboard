@@ -20,6 +20,7 @@ export class SinglePlaylistService extends BaseService {
 	recheckContentSchedule = new EventEmitter<{ playlistContentId: string }>();
 	requestExistingScheduleData = new EventEmitter<UI_CONTENT_SCHEDULE>();
 	requestSchedulerFormData = new EventEmitter<void>();
+	scheduleTypeSelected = new EventEmitter<{ type: 1 | 2 | 3; hasExistingSchedule: boolean }>();
 	schedulerFormUpdated = new EventEmitter<UI_CONTENT_SCHEDULE>();
 
 	addContent(data: AddPlaylistContent) {

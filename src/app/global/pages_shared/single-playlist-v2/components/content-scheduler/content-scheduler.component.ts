@@ -39,14 +39,15 @@ export class ContentSchedulerComponent implements OnInit, OnDestroy, AfterViewIn
 
 	onSelectContentScheduleType(data: ButtonGroup) {
 		this.selectedContentSchedule = data;
+		this._playlist.scheduleTypeSelected.emit({ type: data.value as 1 | 2 | 3, hasExistingSchedule: this.hasExistingSchedule });
 
-		// if custom schedule is selected then request form data first
+		// if custom schedule type is selected then request form data first
 		if (data.value === 3) {
 			this._playlist.requestSchedulerFormData.emit();
 			return;
 		}
 
-		this._playlist.schedulerFormUpdated.emit({ type: data.value });
+		// this._playlist.schedulerFormUpdated.emit({ type: data.value });
 	}
 
 	private initializeData() {

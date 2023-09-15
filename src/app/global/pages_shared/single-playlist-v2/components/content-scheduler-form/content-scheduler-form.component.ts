@@ -36,6 +36,7 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 	constructor(private _form_builder: FormBuilder, private _playlist: SinglePlaylistService) {}
 
 	ngOnInit() {
+		this.subscribeToScheduleTypeSelection();
 		this.subscribeToGetFormData();
 		this.subscribeToFormChanges();
 		this.setDefaultFormValues();
@@ -98,33 +99,6 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 		alternateWeekControl.setValue(this.alternateWeek);
 	}
 
-	private subscribeToFormChanges() {
-		const form = this.schedulerForm;
-
-		form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe({
-			next: () => {
-				this._playlist.schedulerFormUpdated.emit(form.value);
-			}
-		});
-	}
-
-	private subscribeToGetFormData() {
-		this._playlist.requestSchedulerFormData.pipe(takeUntil(this._unsubscribe)).subscribe({
-			next: () => {
-				const form = this.schedulerForm;
-				this._playlist.receiveSchedulerFormData.emit(form.value);
-			}
-		});
-	}
-
-	private subscribeToSetExistingFormData() {
-		this._playlist.receiveExistingScheduleData.pipe(takeUntil(this._unsubscribe)).subscribe({
-			next: (response) => {
-				this.setExistingScheduleFormValues(response);
-			}
-		});
-	}
-
 	private setExistingScheduleFormValues(data: PlaylistContentSchedule) {
 		const { playTimeStart, playTimeEnd, from, to, alternateWeek, days } = data;
 		const startDate = moment(from, 'YYYY-MM-DD hh:mm A').format();
@@ -161,6 +135,42 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 		this.daysCtrl.setValue(this.days, { emitEvent: false });
 		this.startTimeCtrl.setValue({ hour: 0, minute: 0, second: 0 }, { emitEvent: false });
 		this.endTimeCtrl.setValue({ hour: 23, minute: 59, second: 59 }, { emitEvent: false });
+	}
+
+	private subscribeToFormChanges() {
+		const form = this.schedulerForm;
+
+		form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe({
+			next: () => {
+				this._playlist.schedulerFormUpdated.emit(form.value);
+			}
+		});
+	}
+
+	private subscribeToGetFormData() {
+		this._playlist.requestSchedulerFormData.pipe(takeUntil(this._unsubscribe)).subscribe({
+			next: () => {
+				const form = this.schedulerForm;
+				this._playlist.receiveSchedulerFormData.emit(form.value);
+			}
+		});
+	}
+
+	private subscribeToScheduleTypeSelection() {
+		this._playlist.scheduleTypeSelected.pipe(takeUntil(this._unsubscribe)).subscribe({
+			next: (response) => {
+				this._playlist.schedulerFormUpdated.emit(response);
+				if (!response.hasExistingSchedule && response.type === 3) this.setDefaultFormValues();
+			}
+		});
+	}
+
+	private subscribeToSetExistingFormData() {
+		this._playlist.receiveExistingScheduleData.pipe(takeUntil(this._unsubscribe)).subscribe({
+			next: (response) => {
+				this.setExistingScheduleFormValues(response);
+			}
+		});
 	}
 
 	protected get form() {

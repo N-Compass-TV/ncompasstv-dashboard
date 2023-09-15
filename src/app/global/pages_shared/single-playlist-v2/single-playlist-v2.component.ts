@@ -355,7 +355,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		const hasExistingSchedule = playlistContents.length === 1 && playlistContents[0].type === 3;
 		const scheduleType = bulkSet ? 1 : playlistContents[0].type;
 		const data = { playlistContents, hostLicenses: this.playlistHostLicenses, bulkSet, hasExistingSchedule, scheduleType };
-		const configs: MatDialogConfig = { width: '1270px', height: '720px', data };
+		const configs: MatDialogConfig = { width: '1270px', height: '720px', disableClose: true, data };
 
 		this._dialog
 			.open(ContentSettingsComponent, configs)
@@ -482,6 +482,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 	private showAddContentDialog(contentToSwap?: API_CONTENT) {
 		const configs = {
+			disableClose: true,
 			data: {
 				playlistId: this.playlist.playlistId,
 				assets: this.assets,
