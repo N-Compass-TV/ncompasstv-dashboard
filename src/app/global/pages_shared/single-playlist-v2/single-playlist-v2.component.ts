@@ -750,8 +750,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		});
 
 		if (data.blacklistUpdates && data.blacklistUpdates.licenses.length) requests.push(this._playlist.removeWhitelist([data.blacklistUpdates]));
-
-		if (data.blacklistUpdates.licenses.length > 0) requests.push(this._playlist.removeWhitelist([data.blacklistUpdates]));
 		if (schedulesToUpdate.length > 0) requests.push(this._playlist.updateContentSchedule(schedulesToUpdate));
 
 		forkJoin(requests)
