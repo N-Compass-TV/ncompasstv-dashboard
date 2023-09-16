@@ -62,10 +62,12 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	feedCount = 0;
 	hostLicenses: any;
 	hosts: API_HOST[];
+	hostURL = '';
 	imageCount = 0;
 	isFiltered: { type: boolean; status: boolean; keyword: boolean } = { type: false, status: false, keyword: false };
 	licenses: API_LICENSE_PROPS[];
 	licensesToUpdate: any[] = [];
+	licenseURL = '';
 	detailedViewMode = false;
 	playlist: API_PLAYLIST_V2['playlist'];
 	playlistContentBreakdown = [];
@@ -112,6 +114,14 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.playlistRouteInit();
+
+		let role = this.currentRole;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			role = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
+
+		this.hostURL = `/` + role + `/hosts/`;
+		this.licenseURL = `/` + role + `/licenses/`;
 	}
 
 	ngOnDestroy(): void {
