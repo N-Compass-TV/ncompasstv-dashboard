@@ -74,10 +74,10 @@
 		box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.177);
 		display: flex;
 		height: 100%;
-		height: 112px;
+		height: 137px;
 
 		&-thumbnail {
-			width: 30%;
+			width: 20%;
 
 			img {
 				background: #202020;
@@ -90,8 +90,7 @@
 		&-details {
 			display: flex;
 			flex-direction: column;
-			gap: 30px;
-			width: 70%;
+			width: 80%;
 			padding: 10px 13px;
 
 			&.inactive-schedule {

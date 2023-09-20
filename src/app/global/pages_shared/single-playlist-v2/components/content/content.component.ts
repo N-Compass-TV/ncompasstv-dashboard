@@ -63,4 +63,17 @@ export class ContentComponent implements OnInit, OnDestroy {
 		/** image assets */
 		if (this._isImage.transform(this.content.fileType)) this.content.thumbnail = `${this.content.url}${this.content.fileName}`;
 	}
+
+	public convertDayFormat(days: number[]) {
+		const daysOfWeek = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
+		const convertedDays = [];
+
+		for (const n of days) {
+			if (n >= 0 && n <= 6) convertedDays.push(daysOfWeek[n]);
+		}
+
+		if (convertedDays[0] == 'S') convertedDays.push(convertedDays.shift());
+
+		return convertedDays.join(', ');
+	}
 }

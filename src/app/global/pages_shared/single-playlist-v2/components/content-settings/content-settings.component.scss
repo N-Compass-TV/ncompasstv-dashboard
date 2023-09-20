@@ -2,10 +2,10 @@
 	height: 100%;
 	position: relative;
 
-	.save-cancel-button-wrapper {
-		position: absolute;
-		bottom: 0;
-	}
+	// .save-cancel-button-wrapper {
+	// 	position: absolute;
+	// 	bottom: 0;
+	// }
 
 	.playlist-content-preview {
 		height: 280px;
@@ -35,6 +35,6 @@
 .play-location-wrapper {
 	border-top: 1px solid #f0f0f0;
 	border-bottom: 1px solid #f0f0f0;
-	height: 480px;
+	height: 420px;
 	overflow-y: scroll;
 }

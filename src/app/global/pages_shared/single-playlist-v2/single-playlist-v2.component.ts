@@ -855,9 +855,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			case PlaylistPrimaryControlActions.playlistDemo:
 				this.showPlaylistDemo();
 				break;
-			case PlaylistPrimaryControlActions.viewSchedule:
-				this.showPlaylistSchedules();
-				break;
+			// case PlaylistPrimaryControlActions.viewSchedule:
+			// 	this.showPlaylistSchedules();
+			// 	break;
 			default:
 				break;
 		}

@@ -5,8 +5,7 @@ export const PlaylistPrimaryControlActions = {
 	markAll: 'mark-all',
 	playlistDemo: 'playlist-demo',
 	savePlaylist: 'save-playlist',
-	newSpacer: 'news-spacer',
-	viewSchedule: 'view-schedule'
+	newSpacer: 'news-spacer'
 };
 
 export const PlaylistViewOptionActions = {
@@ -95,11 +94,6 @@ export const PlaylistViewOptions = [
 		action: PlaylistViewOptionActions.gridView,
 		icon: 'fas fa-th',
 		is_selected: false
-	},
-	{
-		label: 'View Schedule',
-		action: PlaylistPrimaryControlActions.viewSchedule,
-		icon: 'fas fa-calendar'
 	},
 	{
 		label: 'View Demo',
