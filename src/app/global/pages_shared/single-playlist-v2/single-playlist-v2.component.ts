@@ -5,6 +5,7 @@ import { Sortable } from 'sortablejs';
 import { FormControl } from '@angular/forms';
 import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, takeUntil, tap } from 'rxjs/operators';
+import * as io from 'socket.io-client';
 
 import {
 	API_CONTENT,
@@ -15,12 +16,9 @@ import {
 	API_UPDATED_PLAYLIST_CONTENT,
 	API_CONTENT_V2,
 	API_PLAYLIST_V2,
-	PlaylistContentSchedule,
 	UI_ROLE_DEFINITION_TEXT,
 	UI_PLAYLIST_SCREENS_NEW
 } from 'src/app/global/models';
-
-import * as io from 'socket.io-client';
 
 import {
 	PlaylistPrimaryControlActions as pActions,
@@ -35,6 +33,7 @@ import {
 
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types';
 import { SinglePlaylistService } from './services/single-playlist.service';
+import { AuthService } from '../../services';
 import { ContentSettingsComponent } from './components/content-settings/content-settings.component';
 import { AddContentComponent } from './components/add-content/add-content.component';
 import { BlacklistUpdates, PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
@@ -43,7 +42,6 @@ import { IsvideoPipe } from '../../pipes';
 import { SpacerSetupComponent } from './components/spacer-setup/spacer-setup.component';
 import { SavePlaylistContentUpdate } from './models';
 import { AddPlaylistContent } from './class/AddPlaylistContent';
-import { AuthService } from '../../services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { environment } from 'src/environments/environment';
 import { PlaylistDemoComponent, ViewSchedulesComponent } from '../../components_shared/playlist_components';
@@ -94,6 +92,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	videoCount = 0;
 
 	private playlistContentsBackup: API_CONTENT_V2[] = [];
+	private playlistId: string;
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
@@ -143,8 +142,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			});
 	}
 
-	public addToLicenseToPush(e, licenseId) {
-		if (e.checked == true && !this.licensesToUpdate.includes(licenseId)) this.licensesToUpdate.push({ licenseId: licenseId });
+	public addToLicenseToPush(e: { checked: boolean }, licenseId: string) {
+		if (e.checked && !this.licensesToUpdate.includes(licenseId)) this.licensesToUpdate.push({ licenseId: licenseId });
 		else this.licensesToUpdate = this.licensesToUpdate.filter((i) => i.licenseId !== licenseId);
 	}
 
@@ -214,9 +213,10 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this.playlistContents = [...result];
 	}
 
-	public contentControlClicked(e: { playlistContent: any; action: string }) {
+	public contentControlClicked(e: { playlistContent: API_CONTENT_V2; action: string }) {
 		switch (e.action) {
 			case pcActions.remove:
+				this.showRemoveContentDialog(e.playlistContent);
 				break;
 			case pcActions.edit:
 				this.playlistContentSettings([e.playlistContent], false);
@@ -403,25 +403,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this.rearrangePlaylist(this.playlistSortableOrder, true);
 	}
 
-	public viewButtonClicked(action: string) {
-		switch (action) {
-			case PlaylistViewOptionActions.detailedView:
-				this.onChangeViewOptions(action);
-				break;
-			case PlaylistViewOptionActions.gridView:
-				this.onChangeViewOptions(action);
-				break;
-			case PlaylistPrimaryControlActions.playlistDemo:
-				this.showPlaylistDemo();
-				break;
-			case PlaylistPrimaryControlActions.viewSchedule:
-				this.showPlaylistSchedules();
-				break;
-			default:
-				break;
-		}
-	}
-
 	private showPlaylistSchedules() {
 		const contents = this.playlistContents;
 
@@ -514,7 +495,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			});
 	}
 
-	public playlistContentMoveSwap(playlistContent: API_CONTENT) {
+	public playlistContentMoveSwap(playlistContent: API_CONTENT_V2) {
 		this._dialog
 			.open(QuickMoveComponent, {
 				width: '678px',
@@ -550,6 +531,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			case pActions.savePlaylist:
 				this.savePlaylistContentUpdates({ contentUpdates: this.playlistSequenceUpdates });
 				break;
+			case pActions.bulkDelete:
+				this.showRemoveContentDialog();
+				break;
 			default:
 				break;
 		}
@@ -557,9 +541,10 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 	private playlistRouteInit() {
 		this._activatedRoute.paramMap.subscribe((data: any) => {
-			this.getPlaylistData(data.params.data);
-			this.getPlaylistHostLicenses(data.params.data);
-			this.getPlaylistScreens(data.params.data);
+			this.playlistId = data.params.data;
+			this.getPlaylistData(this.playlistId);
+			this.getPlaylistHostLicenses(this.playlistId);
+			this.getPlaylistScreens(this.playlistId);
 		});
 	}
 
@@ -588,6 +573,30 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this.setBulkControlsState();
 	}
 
+	private removePlaylistContents(playlistContentIds: string[]) {
+		if (playlistContentIds.length <= 0) return;
+
+		let requests = [];
+
+		playlistContentIds.forEach((id) => {
+			requests.push(this._playlist.removePlaylistContent(this.playlistId, id));
+		});
+
+		forkJoin(requests)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe({
+				next: () => {
+					// remove the deleted content(s) from the array
+					this.playlistContents = this.playlistContents.filter((c) => playlistContentIds.indexOf(c.playlistContentId) === -1);
+
+					// update the total number of contents on the breakdown
+					const indexForTotalCount = this.playlistContentBreakdown.findIndex((c) => c.label === 'Content Count');
+					this.playlistContentBreakdown[indexForTotalCount].total = this.playlistContents.length;
+				},
+				error: (e) => console.log('Error removing playlist contentes', e)
+			});
+	}
+
 	private setBulkControlsState() {
 		this.playlistControls = this.playlistControls.map((p) => {
 			/** Add Bulk Button Actions Here */
@@ -607,7 +616,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		});
 	}
 
-	private setFullscreenProperty(p: API_CONTENT) {
+	private setFullscreenProperty(p: API_CONTENT_V2) {
 		this.playlistContentsToSave.push(p.playlistContentId);
 
 		this.savePlaylistContentUpdates(
@@ -623,7 +632,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		);
 	}
 
-	private showAddContentDialog(contentToSwap?: API_CONTENT) {
+	private showAddContentDialog(contentToSwap?: API_CONTENT_V2) {
 		const configs = {
 			disableClose: true,
 			data: {
@@ -649,6 +658,35 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 					this.swapContent(response as API_CONTENT, contentToSwap);
 				}
+			});
+	}
+
+	private showRemoveContentDialog(content?: API_CONTENT_V2) {
+		const DEFAULT_WIDTH = '500px';
+		const DEFAULT_HEIGHT = '350px';
+		const dataMsg = typeof content === 'undefined' ? 'Proceed removing these contents?' : `Filename: ${content.fileName}`;
+		let returnMsg = 'Success!';
+
+		if (typeof content === 'undefined') returnMsg += ` ${this.selectedPlaylistContents.length} contents have been removed`;
+		else returnMsg += ' Content has been removed';
+
+		const data = {
+			status: 'warning',
+			action: 'delete',
+			data: dataMsg,
+			message: 'Remove Content(s)',
+			return_msg: returnMsg
+		};
+
+		const configs: MatDialogConfig = { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, disableClose: true, data };
+		const idsToDelete = typeof content === 'undefined' ? this.selectedPlaylistContents : [content.playlistContentId];
+
+		this._dialog
+			.open(ConfirmationModalComponent, configs)
+			.afterClosed()
+			.subscribe((response: string | boolean) => {
+				if (!response) return;
+				this.removePlaylistContents(idsToDelete);
 			});
 	}
 
@@ -694,7 +732,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		});
 	}
 
-	private swapContent(newContent: API_CONTENT, playlistContent: API_CONTENT) {
+	private swapContent(newContent: API_CONTENT, playlistContent: API_CONTENT_V2) {
 		const playlistContentToSwap = {
 			contentId: newContent.contentId,
 			playlistContentId: playlistContent.playlistContentId,
@@ -804,6 +842,25 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 					}, 0);
 				}
 			});
+	}
+
+	public viewButtonClicked(action: string) {
+		switch (action) {
+			case PlaylistViewOptionActions.detailedView:
+				this.onChangeViewOptions(action);
+				break;
+			case PlaylistViewOptionActions.gridView:
+				this.onChangeViewOptions(action);
+				break;
+			case PlaylistPrimaryControlActions.playlistDemo:
+				this.showPlaylistDemo();
+				break;
+			case PlaylistPrimaryControlActions.viewSchedule:
+				this.showPlaylistSchedules();
+				break;
+			default:
+				break;
+		}
 	}
 
 	private warningModal(status, message, data, return_msg, action, licenses: API_LICENSE_PROPS[]): void {

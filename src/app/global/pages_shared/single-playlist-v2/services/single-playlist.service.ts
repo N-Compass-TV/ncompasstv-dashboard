@@ -141,6 +141,11 @@ export class SinglePlaylistService extends BaseService {
 		return result;
 	}
 
+	removePlaylistContent(playlistId: string, playlistContentId: string) {
+		const url = `${this.deleters.api_remove_playlist_content}?playlistId=${playlistId}&playlistContentId=${playlistContentId}`;
+		return this.postRequest(url, {});
+	}
+
 	removeWhitelist(blacklistData: { playlistContentId: string; licenses: string[] }[]) {
 		return this.postRequest(`playlistsv2/LicensePlaylistContentsDelete`, blacklistData).map((data) => data);
 	}

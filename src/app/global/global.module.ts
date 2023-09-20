@@ -270,7 +270,6 @@ const ngComponents = [
 	ContentSchedulerComponent,
 	ContentSchedulerFormComponent,
 	ContentSettingsComponent,
-	ContentSettingsComponent,
 	ContentsTabComponent,
 	CreateAdvertiserComponent,
 	CreateCustomHostFieldsComponent,
