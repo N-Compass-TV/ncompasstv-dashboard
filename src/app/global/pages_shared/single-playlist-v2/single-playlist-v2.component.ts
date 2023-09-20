@@ -46,7 +46,7 @@ import { AddPlaylistContent } from './class/AddPlaylistContent';
 import { AuthService } from '../../services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { environment } from 'src/environments/environment';
-import { PlaylistDemoComponent, ViewSchedulesComponent } from '../../components_shared/playlist_components';
+import { PlaylistDemoComponent } from '../../components_shared/playlist_components';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -414,22 +414,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			case PlaylistPrimaryControlActions.playlistDemo:
 				this.showPlaylistDemo();
 				break;
-			case PlaylistPrimaryControlActions.viewSchedule:
-				this.showPlaylistSchedules();
-				break;
 			default:
 				break;
 		}
-	}
-
-	private showPlaylistSchedules() {
-		const contents = this.playlistContents;
-
-		this._dialog.open(ViewSchedulesComponent, {
-			width: '1280px',
-			data: { contents },
-			autoFocus: false
-		});
 	}
 
 	private showPlaylistDemo() {

@@ -66,21 +66,51 @@
 
 	<ng-template #detailed_view>
 		<div class="playlistv2__content-list">
-			<div class="playlistv2__content-list-thumbnail">
+			<div class="playlistv2__content-list-thumbnail border-right">
 				<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName || content.title" />
 			</div>
 			<div
 				class="playlistv2__content-list-details"
 				[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
 				[class.future-schedule]="content.scheduleStatus === 'future'">
-				<div class="upper__details">
+				<div class="upper__details mb-3">
 					<div class="upper__details-text">
-						<span class="upper__details-title">{{ content.fileName || content.title | nohandle | slice : 0 : 28 }}</span>
+						<span class="upper__details-title">{{ content.fileName || content.title | nohandle | slice : 0 : 40 }}</span>
 						<span class="upper__details-date">Uploaded {{ content.dateCreated | date : 'mediumDate' }}</span>
 					</div>
 
 					<div class="checkbox-selector pt-1">
 						<input type="checkbox" (change)="content_selected.emit()" />
+					</div>
+				</div>
+
+				<div class="middle__details mb-2">
+					<div class="d-flex playlist-content-schedule">
+						<div class="playlist-content-schedule__date-range flex-even" *ngIf="content.from && content.to">
+							<p class="xsm-text">
+								<span class="fas fa-calendar mr-2"></span>
+								<br />
+								{{
+									content.from && content.to
+										? (content.from | date : 'shortDate') + ' to ' + (content.to | date : 'shortDate')
+										: '--'
+								}}
+							</p>
+						</div>
+						<div class="playlist-content-schedule__days mr-3 flex-even" *ngIf="content.days">
+							<p class="xsm-text">
+								<span class="fas fa-calendar-check mr-2"></span>
+								<br />
+								{{ content.days ? convertDayFormat(content.days) : '--' }}
+							</p>
+						</div>
+						<div class="playlist-content-schedule__time-range flex-even" *ngIf="content.playTimeStart && content.playTimeEnd">
+							<p class="xsm-text">
+								<span class="fas fa-clock mr-2"></span>
+								<br />
+								{{ content.playTimeStart && content.playTimeEnd ? content.playTimeStart + ' to ' + content.playTimeEnd : '--' }}
+							</p>
+						</div>
 					</div>
 				</div>
 
@@ -96,9 +126,9 @@
 								}">
 							</span>
 
-							<span *ngIf="content.fileType | isimage"> image </span>
-							<span *ngIf="content.fileType | isvideo"> video </span>
-							<span *ngIf="content.fileType | isFeed"> feed </span>
+							<span *ngIf="content.fileType | isimage">image</span>
+							<span *ngIf="content.fileType | isvideo">video</span>
+							<span *ngIf="content.fileType | isFeed">feed</span>
 						</div>
 
 						<div class="time-details">
