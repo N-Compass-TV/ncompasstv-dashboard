@@ -64,7 +64,7 @@ export class ContentComponent implements OnInit, OnDestroy {
 		if (this._isImage.transform(this.content.fileType)) this.content.thumbnail = `${this.content.url}${this.content.fileName}`;
 	}
 
-	public convertDayFormat(days: number[]) {
+	public convertDayFormat(days: any) {
 		const daysOfWeek = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
 		const convertedDays = [];
 
