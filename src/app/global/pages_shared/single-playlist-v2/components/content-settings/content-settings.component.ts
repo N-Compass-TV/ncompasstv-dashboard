@@ -165,41 +165,6 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 		}, 400);
 	}
 
-	public prev() {
-		if (this.currentIndex !== 0) {
-			this.updatingView = true;
-			this.currentIndex--;
-			this.updateDialogData();
-		}
-
-		if (this.currentIndex === 0) this.prevDisabled = true;
-		if (this.currentIndex < this.contentData.allContents.length - 1) this.nextDisabled = false;
-	}
-
-	public next() {
-		if (this.currentIndex < this.contentData.allContents.length - 1) {
-			this.updatingView = true;
-			this.currentIndex++;
-			this.updateDialogData();
-		}
-
-		if (this.currentIndex >= this.contentData.allContents.length - 1) this.nextDisabled = true;
-		if (this.currentIndex > 0) this.prevDisabled = false;
-	}
-
-	private updateDialogData() {
-		const playlistContent = this.contentData.allContents[this.currentIndex];
-
-		this.contentData.playlistContents = [playlistContent];
-		this.contentData.hasExistingSchedule = playlistContent && playlistContent.type === 3;
-		this.contentData.scheduleType = playlistContent.type;
-		this.getPlaylistContentWhitelistData();
-
-		setTimeout(() => {
-			this.updatingView = false;
-		}, 400);
-	}
-
 	/**
 	 * @param basicSettings - Playlist content setting changes
 	 */
