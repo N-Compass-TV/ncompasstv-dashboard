@@ -487,7 +487,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			index
 		};
 		const configs: MatDialogConfig = { width: '1270px', disableClose: true, data };
-		
+
 		this._dialog
 			.open(ContentSettingsComponent, configs)
 			.afterClosed()
@@ -790,7 +790,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		const requests = [this._playlist.updatePlaylistContent(toUpdate)];
 		const schedulesToUpdate = data.contentUpdates.filter((c) => typeof c.schedule !== 'undefined').map((c) => c.schedule);
 
-		// test func
 		toUpdate.playlistContentsLicenses = data.contentUpdates.map((c) => {
 			// remove the schedule object after using it to filter
 			delete c.schedule;
