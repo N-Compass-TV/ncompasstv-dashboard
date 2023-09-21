@@ -1,6 +1,8 @@
 <div
-	class="playlistv2-content box-shadow"
 	*ngIf="content"
+	class="playlistv2-content box-shadow"
+	(mouseenter)="setHoveredBaseFrequency(content)"
+	(mouseleave)="unsetHoveredBaseFrequency()"
 	[ngClass]="{
 		'swap-width': swapping,
 		'grid-dimension': !detailed_view_mode,
@@ -12,7 +14,8 @@
 			class="playlistv2-content__header d-flex align-items-center px-2"
 			[matTooltip]="content.fileName || content.title | nohandle"
 			[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
-			[class.future-schedule]="content.scheduleStatus === 'future'">
+			[class.future-schedule]="content.scheduleStatus === 'future'"
+			[class.frequency-hover]="canSetFrequencyBorder">
 			<div class="content-filename-wrapper flex-even">
 				<span
 					class="xsm-text text-primary fas mr-1"
@@ -108,7 +111,7 @@
 							<p class="xsm-text">
 								<span class="fas fa-clock mr-2"></span>
 								<br />
-								{{ content.playTimeStart && content.playTimeEnd ? content.playTimeStart + ' to ' + content.playTimeEnd : '--' }}
+								{{ getPlayTimesText() }}
 							</p>
 						</div>
 					</div>

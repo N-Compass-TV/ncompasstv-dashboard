@@ -50,6 +50,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 			scheduleType?: number;
 			allContents?: API_CONTENT_V2[];
 			index?: number;
+			canSetFrequency?: boolean;
 		},
 		private _playlist: SinglePlaylistService,
 		private _video: IsvideoPipe
@@ -129,8 +130,6 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 			};
 		});
 	}
-
-	public onSelectType(event: any) {}
 
 	public prev() {
 		if (this.currentIndex !== 0) {

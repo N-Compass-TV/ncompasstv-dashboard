@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Sortable } from 'sortablejs';
 import { FormControl } from '@angular/forms';
 import { Subject, forkJoin } from 'rxjs';
-import { debounceTime, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
 import {
@@ -477,6 +477,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	private playlistContentSettings(playlistContents: API_CONTENT_V2[], bulkSet = false, index?: number) {
 		const hasExistingSchedule = playlistContents.length === 1 && playlistContents[0].type === 3;
 		const scheduleType = bulkSet ? 1 : playlistContents[0].type;
+		const canSetFrequency = this.playlistContents.length >= 6;
 		const data = {
 			playlistContents,
 			hostLicenses: this.playlistHostLicenses,
@@ -484,9 +485,10 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			hasExistingSchedule,
 			scheduleType,
 			allContents: this.playlistContents,
+			canSetFrequency,
 			index
 		};
-		const configs: MatDialogConfig = { width: '1270px', disableClose: true, data };
+		const configs: MatDialogConfig = { width: '1270px', height: '720px', disableClose: true, data };
 
 		this._dialog
 			.open(ContentSettingsComponent, configs)
@@ -781,6 +783,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	}
 
 	private savePlaylistContentUpdates(data: SavePlaylistContentUpdate, savingPlaylist = true) {
+		let updateFrequencyCount = 0;
 		const toUpdate: PlaylistContentUpdate = {
 			playlistId: this.playlist.playlistId,
 			playlistContentsLicenses: savingPlaylist ? this.playlistSequenceUpdates : data.contentUpdates
@@ -789,22 +792,32 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		const requests = [this._playlist.updatePlaylistContent(toUpdate)];
 		const schedulesToUpdate = data.contentUpdates.filter((c) => typeof c.schedule !== 'undefined').map((c) => c.schedule);
 
-		// test func
 		toUpdate.playlistContentsLicenses = data.contentUpdates.map((c) => {
+			// remove the schedule object after using it to filter
 			delete c.schedule;
+
+			// set the API calls for contents that have updated frequencies
+			if (c.frequency !== 0) {
+				// if frequency is 1 then revert
+				if (c.frequency === 1) requests.push(this._playlist.revert_frequency(c.playlistContentId));
+				// else update the frequency
+				else requests.push(this._playlist.set_frequency(c.frequency, c.playlistContentId, this.playlistId));
+
+				updateFrequencyCount++;
+			}
+
 			return c;
 		});
 
 		if (data.blacklistUpdates && data.blacklistUpdates.licenses.length) requests.push(this._playlist.removeWhitelist([data.blacklistUpdates]));
+
+		// api call to update content schedule
 		if (schedulesToUpdate.length > 0) requests.push(this._playlist.updateContentSchedule(schedulesToUpdate));
 
 		this.savingPlaylist = savingPlaylist;
 
 		forkJoin(requests)
-			.pipe(
-				takeUntil(this._unsubscribe),
-				tap(() => (this.savingPlaylist = savingPlaylist))
-			)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe({
 				next: () => {
 					this.savingPlaylist = false;
@@ -848,6 +861,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 					setTimeout(() => {
 						this.sortableJSInit();
 					}, 0);
+
+					if (updateFrequencyCount > 0) this.playlistRouteInit();
 				}
 			});
 	}
@@ -871,21 +886,25 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		}
 	}
 
-	private warningModal(status, message, data, return_msg, action, licenses: API_LICENSE_PROPS[]): void {
+	private warningModal(status: string, message: string, data: string, return_msg: string, action: string, licenses: API_LICENSE_PROPS[]): void {
 		this._dialog.closeAll();
 
-		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
+		const dialogData = {
+			status: status,
+			message: message,
+			data: data,
+			return_msg: return_msg,
+			action: action
+		};
+
+		const configs: MatDialogConfig = {
 			width: '500px',
 			height: '350px',
 			disableClose: true,
-			data: {
-				status: status,
-				message: message,
-				data: data,
-				return_msg: return_msg,
-				action: action
-			}
-		});
+			data: dialogData
+		};
+
+		const dialogRef = this._dialog.open(ConfirmationModalComponent, configs);
 
 		dialogRef.afterClosed().subscribe((result) => {
 			if (result === 'update') {

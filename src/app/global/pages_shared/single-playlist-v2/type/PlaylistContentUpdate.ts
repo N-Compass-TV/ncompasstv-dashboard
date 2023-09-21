@@ -8,6 +8,7 @@ export type PlaylistContentUpdate = {
 export type PlaylistContent = {
 	contentId?: string;
 	duration?: number;
+	frequency?: number;
 	isFullScreen?: number;
 	licenseIds?: string[];
 	playlistContentId?: string;

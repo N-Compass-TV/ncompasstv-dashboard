@@ -94,7 +94,6 @@
 					<mat-tab label="Content Schedule">
 						<div class="mt-3 pb-2">
 							<app-content-scheduler
-								(schedule_type_emitter)="onSelectType($event)"
 								[contents]="contentData.playlistContents"
 								[hasExistingSchedule]="contentData.hasExistingSchedule"
 								[scheduleType]="contentData.scheduleType">
