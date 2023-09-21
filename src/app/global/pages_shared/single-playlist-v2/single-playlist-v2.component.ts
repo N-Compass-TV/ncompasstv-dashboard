@@ -213,13 +213,13 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this.playlistContents = [...result];
 	}
 
-	public contentControlClicked(e: { playlistContent: API_CONTENT_V2; action: string }) {
+	public contentControlClicked(e: { playlistContent: any; action: string }, index: number) {
 		switch (e.action) {
 			case pcActions.remove:
 				this.showRemoveContentDialog(e.playlistContent);
 				break;
 			case pcActions.edit:
-				this.playlistContentSettings([e.playlistContent], false);
+				this.playlistContentSettings([e.playlistContent], false, index);
 				break;
 			case pcActions.fullscreen:
 				this.setFullscreenProperty(e.playlistContent);
@@ -474,11 +474,19 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		});
 	}
 
-	private playlistContentSettings(playlistContents: API_CONTENT_V2[], bulkSet = false) {
+	private playlistContentSettings(playlistContents: API_CONTENT_V2[], bulkSet = false, index?: number) {
 		const hasExistingSchedule = playlistContents.length === 1 && playlistContents[0].type === 3;
 		const scheduleType = bulkSet ? 1 : playlistContents[0].type;
-		const data = { playlistContents, hostLicenses: this.playlistHostLicenses, bulkSet, hasExistingSchedule, scheduleType };
-		const configs: MatDialogConfig = { width: '1270px', height: '720px', disableClose: true, data };
+		const data = {
+			playlistContents,
+			hostLicenses: this.playlistHostLicenses,
+			bulkSet,
+			hasExistingSchedule,
+			scheduleType,
+			allContents: this.playlistContents,
+			index
+		};
+		const configs: MatDialogConfig = { width: '1270px', disableClose: true, data };
 
 		this._dialog
 			.open(ContentSettingsComponent, configs)

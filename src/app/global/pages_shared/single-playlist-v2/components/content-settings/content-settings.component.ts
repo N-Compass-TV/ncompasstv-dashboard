@@ -16,6 +16,7 @@ import { IsvideoPipe } from 'src/app/global/pipes';
 	providers: [IsvideoPipe]
 })
 export class ContentSettingsComponent implements OnInit, OnDestroy {
+	currentIndex: number = 0;
 	hasImageAndFeed;
 	playlistContent: SavePlaylistContentUpdate = {
 		contentUpdates: [],
@@ -26,6 +27,9 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 	};
 	toggleAll = new Subject<void>();
 	loadingWhitelistedLicenses = true;
+	nextDisabled: boolean = false;
+	prevDisabled: boolean = false;
+	updatingView: boolean = false;
 	whitelistedLicenses: string[] = [];
 	whitelistedHosts: string[] = [];
 	blacklist: BlacklistUpdates = {
@@ -44,12 +48,15 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 			bulkSet: boolean;
 			hasExistingSchedule: boolean;
 			scheduleType?: number;
+			allContents?: API_CONTENT_V2[];
+			index?: number;
 		},
 		private _playlist: SinglePlaylistService,
 		private _video: IsvideoPipe
 	) {}
 
 	ngOnInit() {
+		this.currentIndex = this.contentData.index || 0;
 		this.playlistContent.blacklistUpdates.playlistContentId = this.contentData.playlistContents[0].playlistContentId;
 		this.hasImageAndFeed = this.contentData.playlistContents.filter((p) => p.fileType !== 'webm').length > 0;
 
@@ -64,6 +71,10 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 
 		this.getPlaylistContentWhitelistData();
 		this.subscribeToContentSchedulerFormChanges();
+
+		/** Set initial state of prev and next buttons */
+		if (this.contentData.index === 0) this.prevDisabled = true;
+		if (this.contentData.index > this.contentData.allContents.length - 1) this.nextDisabled = true;
 	}
 
 	ngOnDestroy(): void {
@@ -78,7 +89,12 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 			next: (res: { licensePlaylistContents: any[] }) => {
 				this.loadingWhitelistedLicenses = false;
 
-				if (!res.licensePlaylistContents) return;
+				if (!res.licensePlaylistContents) {
+					this.whitelistedLicenses = [];
+					this.whitelistedHosts = [];
+					return;
+				}
+
 				this.whitelistedLicenses = res.licensePlaylistContents.map((i) => i.licenseId);
 				this.whitelistedHosts = res.licensePlaylistContents.map((i) => i.hostId);
 			}
@@ -115,6 +131,41 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	public onSelectType(event: any) {}
+
+	public prev() {
+		if (this.currentIndex !== 0) {
+			this.updatingView = true;
+			this.currentIndex--;
+			this.updateDialogData();
+		}
+
+		if (this.currentIndex === 0) this.prevDisabled = true;
+		if (this.currentIndex < this.contentData.allContents.length - 1) this.nextDisabled = false;
+	}
+
+	public next() {
+		if (this.currentIndex < this.contentData.allContents.length - 1) {
+			this.updatingView = true;
+			this.currentIndex++;
+			this.updateDialogData();
+		}
+
+		if (this.currentIndex >= this.contentData.allContents.length - 1) this.nextDisabled = true;
+		if (this.currentIndex > 0) this.prevDisabled = false;
+	}
+
+	private updateDialogData() {
+		const playlistContent = this.contentData.allContents[this.currentIndex];
+
+		this.contentData.playlistContents = [playlistContent];
+		this.contentData.hasExistingSchedule = playlistContent && playlistContent.type === 3;
+		this.contentData.scheduleType = playlistContent.type;
+		this.getPlaylistContentWhitelistData();
+
+		setTimeout(() => {
+			this.updatingView = false;
+		}, 400);
+	}
 
 	/**
 	 * @param basicSettings - Playlist content setting changes
