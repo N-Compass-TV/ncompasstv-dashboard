@@ -57,6 +57,16 @@
 				}
 			}
 		}
+
+		&.frequency-hover {
+			background: rgba(17, 122, 139, 0.7) !important;
+
+			.content-filename-wrapper {
+				span {
+					color: white !important;
+				}
+			}
+		}
 	}
 
 	.playlistv2-content__thumbnail {

@@ -14,12 +14,18 @@
 		</div>
 
 		<!-- Settings: Frequency -->
-		<div class="frequency-set-wrapper border-bottom py-25 d-flex" *ngIf="frequency">
+		<div class="frequency-set-wrapper border-bottom py-25 d-flex" *ngIf="can_set_frequency">
 			<div class="flex-even">
 				<strong class="sm-text">Set Frequency</strong>
 			</div>
 			<div>
 				<mat-radio-group formControlName="frequency" aria-label="Select an option">
+					<ng-container *ngIf="isParentFrequency">
+						<mat-radio-button class="mr-3" value="1">
+							<strong class="sm-text">1x</strong>
+						</mat-radio-button>
+					</ng-container>
+
 					<mat-radio-button class="mr-3" value="2"><strong class="sm-text">2x</strong></mat-radio-button>
 					<mat-radio-button value="3"><strong class="sm-text">3x</strong></mat-radio-button>
 				</mat-radio-group>

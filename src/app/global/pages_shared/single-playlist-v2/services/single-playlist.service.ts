@@ -150,6 +150,18 @@ export class SinglePlaylistService extends BaseService {
 		return this.postRequest(`playlistsv2/LicensePlaylistContentsDelete`, blacklistData).map((data) => data);
 	}
 
+	revert_frequency(playlistContentId: string) {
+		const url = this.updaters.revert_frequency;
+		const body = { playlistContentId };
+		return this.postRequest(url, body);
+	}
+
+	set_frequency(frequency: number, playlistContentId: string, playlistId: string) {
+		const url = this.updaters.set_content_frequency;
+		const body = { frequency, playlistContentId, playlistId };
+		return this.postRequest(url, body);
+	}
+
 	swapPlaylistContent(data: any) {
 		return this.postRequest(`playlistsv2/swapcontent`, data);
 	}
