@@ -39,11 +39,13 @@ export class ContentComponent implements OnInit, OnDestroy {
 	constructor(private _isImage: IsimagePipe, private _helper: HelperService) {}
 
 	ngOnInit() {
-		this.prepareThumbnails();
-		this.subscribeToMoveButton();
-		this.isParentFrequency = this.content.frequency === 22 || this.content.frequency === 33;
-		this.isChildFrequency = !this.isParentFrequency && this.content.frequency !== 0;
-		this.subscribeToContentHover();
+		if (this.content) {
+			this.prepareThumbnails();
+			this.subscribeToMoveButton();
+			this.isParentFrequency = this.content['frequency'] === 22 || this.content['frequency'] === 33;
+			this.isChildFrequency = !this.isParentFrequency && this.content.frequency !== 0;
+			this.subscribeToContentHover();
+		}
 	}
 
 	ngOnDestroy(): void {

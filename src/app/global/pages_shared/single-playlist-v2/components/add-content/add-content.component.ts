@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { API_CONTENT, API_CONTENT_V2, API_HOST, API_LICENSE } from 'src/app/global/models';
+import { API_CONTENT_V2, API_HOST, API_LICENSE } from 'src/app/global/models';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
 import { AddPlaylistContent } from '../../class/AddPlaylistContent';
+import { FormControl } from '@angular/forms';
 
 @Component({
 	selector: 'app-add-content',
@@ -15,11 +16,17 @@ import { AddPlaylistContent } from '../../class/AddPlaylistContent';
 export class AddContentComponent implements OnInit, OnDestroy {
 	activeEdits: boolean;
 	assets: API_CONTENT_V2[] = [];
+	currentPage: number = 1;
 	gridCount = 8;
 	hasImageAndFeed: boolean;
 	markedContent: API_CONTENT_V2;
 	newContentsSettings: AddPlaylistContent = new AddPlaylistContent();
+	noData: boolean = false;
+	pageLimit: number = 0;
+	paginating: boolean = false;
 	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[] = [];
+	searchInput: FormControl = new FormControl('');
+	searching: boolean = false;
 	selectedContents: API_CONTENT_V2[] = [];
 	toggleAll = new Subject<void>();
 	protected _unsubscribe = new Subject<void>();
@@ -27,10 +34,12 @@ export class AddContentComponent implements OnInit, OnDestroy {
 	constructor(
 		@Inject(MAT_DIALOG_DATA)
 		public _dialog_data: {
-			playlistId: string;
 			assets: API_CONTENT_V2[];
+			dealerId: string;
+			isDealer: boolean;
 			hostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[];
 			playlistContentId: string;
+			playlistId: string;
 		},
 		private _playlist: SinglePlaylistService
 	) {}
@@ -55,6 +64,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 		});
 
 		this.subscribeToContentScheduleFormChanges();
+		this.searchInit();
 	}
 
 	ngOnDestroy(): void {
@@ -92,8 +102,47 @@ export class AddContentComponent implements OnInit, OnDestroy {
 		this.hasImageAndFeed = this.selectedContents.filter((p) => p.fileType !== 'webm').length > 0;
 	}
 
+	private getContents(floating: boolean = false, page: number = 1, pageSize: number = 60, searchKey?: string) {
+		this.noData = false;
+		const dealerId = floating ? null : this._dialog_data.dealerId;
+
+		this._playlist
+			.contentFetch({
+				dealerId,
+				floating,
+				page,
+				pageSize,
+				searchKey
+			})
+			.subscribe({
+				next: (response: { contents: API_CONTENT_V2[]; paging: any }) => {
+					/** Search result empty */
+					if (!response.contents || !response.contents.length) {
+						this.noData = true;
+						return;
+					}
+
+					/** Set paging limit */
+					if (response.paging) {
+						this.pageLimit = response.paging.pages;
+					}
+
+					/** Paginating */
+					if (page > 1 && page <= this.pageLimit) {
+						this.assets = [...this.assets, ...response.contents];
+						this.paginating = false;
+						return true;
+					}
+
+					/** Search results available */
+					this.assets = [...response.contents];
+					this.searching = false;
+				}
+			});
+	}
+
 	public licenseIdToggled(licenseIds: string[]) {
-		this.newContentsSettings.playlistContentsLicenses = this.newContentsSettings.playlistContentsLicenses.map((c, index) => {
+		this.newContentsSettings.playlistContentsLicenses = this.newContentsSettings.playlistContentsLicenses.map((c) => {
 			if (!c.licenseIds) c.licenseIds = [];
 
 			return {
@@ -106,6 +155,31 @@ export class AddContentComponent implements OnInit, OnDestroy {
 	public markContent(content: API_CONTENT_V2) {
 		if (!this._dialog_data.playlistContentId) return;
 		this.markedContent = content;
+	}
+
+	public onScroll(e: any): void {
+		if (this.paginating) return;
+
+		if (e.target.scrollTop + e.target.clientHeight + 1 >= e.target.scrollHeight) {
+			this.paginating = true;
+			this.currentPage += 1;
+			this.getContents(false, this.currentPage, 60);
+		}
+	}
+
+	private searchInit() {
+		this.searchInput.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe({
+			next: (searchKey) => {
+				if (searchKey.length) {
+					this.searching = true;
+					this.getContents(false, null, null, searchKey);
+					return;
+				}
+
+				this.assets = [...this._dialog_data.assets];
+				this.searching = false;
+			}
+		});
 	}
 
 	private subscribeToContentScheduleFormChanges() {

@@ -644,10 +644,12 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		const configs = {
 			disableClose: true,
 			data: {
-				playlistId: this.playlist.playlistId,
 				assets: this.assets,
+				dealerId: this.playlist.dealerId,
+				isDealer: this.isDealer,
 				hostLicenses: this.playlistHostLicenses,
-				playlistContentId: contentToSwap ? contentToSwap.playlistContentId : null
+				playlistContentId: contentToSwap ? contentToSwap.playlistContentId : null,
+				playlistId: this.playlist.playlistId
 			}
 		};
 
