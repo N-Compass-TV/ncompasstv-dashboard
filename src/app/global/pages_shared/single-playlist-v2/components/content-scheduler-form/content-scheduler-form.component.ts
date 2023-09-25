@@ -8,6 +8,7 @@ import { DAYS } from '../../constants';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
 import { MatCheckboxChange } from '@angular/material';
 import { PlaylistContentSchedule } from 'src/app/global/models';
+import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
 	selector: 'app-content-scheduler-form',
@@ -143,6 +144,15 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 		form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe({
 			next: () => {
 				this._playlist.schedulerFormUpdated.emit(form.value);
+
+				const playStart = form.value.playTimeStartData as NgbTimeStruct;
+				const playEnd = form.value.playTimeEndData as NgbTimeStruct;
+
+				const isSetToPlayAllDay = (start: NgbTimeStruct, end: NgbTimeStruct) => {
+					return start.hour === 0 && start.minute === 0 && end.hour === 23 && end.minute === 59;
+				};
+
+				this.isCheckedToPlayAllDay = isSetToPlayAllDay(playStart, playEnd);
 			}
 		});
 	}
