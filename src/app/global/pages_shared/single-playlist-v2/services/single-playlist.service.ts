@@ -31,6 +31,32 @@ export class SinglePlaylistService extends BaseService {
 		this.contentLoaded.next(contents);
 	}
 
+	contentFetch(data: { page: number; pageSize: number; dealerId?: string; searchKey?: string; floating?: boolean }) {
+		let childUrl = 'getAll';
+		const queryParams = [];
+
+		if (data.dealerId) {
+			childUrl = 'getByDealerId';
+			queryParams.push(`dealerid=${data.dealerId}`);
+		}
+
+		if (data.page) {
+			queryParams.push(`page=${data.page}`);
+		}
+
+		if (data.searchKey) {
+			queryParams.push(`search=${data.searchKey}`);
+		}
+
+		if (data.pageSize) {
+			queryParams.push(`pageSize=${data.pageSize}`);
+		}
+
+		const queryString = queryParams.join('&');
+		const url = `content/${childUrl}${queryString ? `?${queryString}` : ''}`;
+		return this.getRequest(url);
+	}
+
 	hostsReady(hosts: any) {
 		this.hostLoaded.next(hosts);
 	}

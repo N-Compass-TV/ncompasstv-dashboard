@@ -4,53 +4,67 @@
 		<mat-step>
 			<ng-template matStepLabel>Select Assets</ng-template>
 			<div class="step-1 select-assets pt-3">
-				<div class="step-header d-flex mb-3">
-					<div class="title-desc">
+				<div class="row align-items-center">
+					<div class="col-lg-7">
 						<h3 class="m-0">Media Library</h3>
 						<p class="sm-text">Select assets you wish to add to your playlist</p>
 					</div>
 
-					<div class="search-form-wrapper"></div>
+					<div class="col-lg-5">
+						<mat-form-field class="full-width" appearance="fill">
+							<mat-label>Search Asset</mat-label>
+							<input name="searchInput" [formControl]="searchInput" matInput placeholder="Example: Pizza.png" type="text" />
+						</mat-form-field>
+					</div>
 				</div>
 
-				<div class="media-files-wrapper bg-gray rounded p-2 mb-4" *ngIf="assets.length; else loading">
-					<ng-container *ngFor="let c of assets; let i = index">
-						<!-- Allows devs to define desired number of columns per row via gridCount -->
-						<div class="row no-gutters mb-1" *ngIf="i % gridCount == 0">
-							<div class="col-lg" *ngFor="let col of [].constructor(gridCount); let count = index">
-								<div class="m-1">
-									<app-content
-										*ngIf="_dialog_data && !_dialog_data.playlistContentId; else swapping"
-										[content]="assets[count + i]"
-										[controls]="false"
-										[default_width]="false"
-										(content_selected)="contentSelected(assets[count + i], $event)">
-									</app-content>
+				<ng-container *ngIf="!searching; else loading">
+					<div class="media-files-wrapper bg-gray rounded p-2 mb-4" *ngIf="assets.length; else loading" (scroll)="onScroll($event)">
+						<ng-container *ngFor="let c of assets; let i = index">
+							<!-- Allows devs to define desired number of columns per row via gridCount -->
+							<div class="row no-gutters mb-1" *ngIf="i % gridCount == 0">
+								<div class="col-lg" *ngFor="let col of [].constructor(gridCount); let count = index">
+									<div class="m-1">
+										<app-content
+											*ngIf="_dialog_data && !_dialog_data.playlistContentId; else swapping"
+											[content]="assets[count + i]"
+											[controls]="false"
+											[default_width]="false"
+											(content_selected)="contentSelected(assets[count + i], $event)">
+										</app-content>
 
-									<!-- This is due to checkbox not working when wrapped within .mark-content-wrapper -->
-									<ng-template #swapping>
-										<div
-											class="mark-content-wrapper"
-											(click)="_dialog_data && _dialog_data.playlistContentId && markContent(assets[count + i])"
-											[ngClass]="{
-												'cursor-pointer': _dialog_data.playlistContentId,
-												marked: assets[count + i] && markedContent && markedContent.contentId == assets[count + i].contentId
-											}">
-											<app-content
-												[content]="assets[count + i]"
-												[controls]="false"
-												[default_width]="false"
-												[selectable]="_dialog_data && !_dialog_data.playlistContentId"
-												[swapping]="_dialog_data.playlistContentId"
-												(content_selected)="contentSelected(assets[count + i], $event)">
-											</app-content>
-										</div>
-									</ng-template>
+										<!-- This is due to checkbox not working when wrapped within .mark-content-wrapper -->
+										<ng-template #swapping>
+											<div
+												class="mark-content-wrapper"
+												(click)="_dialog_data && _dialog_data.playlistContentId && markContent(assets[count + i])"
+												[ngClass]="{
+													'cursor-pointer': _dialog_data.playlistContentId,
+													marked:
+														assets[count + i] && markedContent && markedContent.contentId == assets[count + i].contentId
+												}">
+												<app-content
+													[content]="assets[count + i]"
+													[controls]="false"
+													[default_width]="false"
+													[selectable]="_dialog_data && !_dialog_data.playlistContentId"
+													[swapping]="_dialog_data.playlistContentId"
+													(content_selected)="contentSelected(assets[count + i], $event)">
+												</app-content>
+											</div>
+										</ng-template>
+									</div>
 								</div>
 							</div>
-						</div>
-					</ng-container>
-				</div>
+						</ng-container>
+
+						<ng-container *ngIf="paginating">
+							<div class="d-flex py-5 justify-content-center">
+								<mat-spinner [diameter]="100"></mat-spinner>
+							</div>
+						</ng-container>
+					</div>
+				</ng-container>
 
 				<div class="add-content-controls">
 					<ng-container *ngIf="!_dialog_data.playlistContentId; else doSwap">
@@ -195,8 +209,16 @@
 	</mat-horizontal-stepper>
 
 	<ng-template #loading>
-		<div class="media-files-wrapper bg-gray rounded p-2 mb-4">
-			<app-spinner></app-spinner>
-		</div>
+		<ng-container *ngIf="noData; else spin">
+			<div class="d-flex align-items-center text-center py-5 bg-gray">
+				<h4>Sorry! No data found.</h4>
+			</div>
+		</ng-container>
+
+		<ng-template #spin>
+			<div class="media-files-wrapper bg-gray rounded p-2 mb-4">
+				<app-spinner></app-spinner>
+			</div>
+		</ng-template>
 	</ng-template>
 </div>
