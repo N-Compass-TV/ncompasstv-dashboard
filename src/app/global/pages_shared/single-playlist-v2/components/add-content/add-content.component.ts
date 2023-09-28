@@ -7,6 +7,8 @@ import { API_CONTENT_V2, API_HOST, API_LICENSE } from 'src/app/global/models';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
 import { AddPlaylistContent } from '../../class/AddPlaylistContent';
 import { FormControl } from '@angular/forms';
+import { CONTENT_TYPE } from '../../constants/ContentType';
+import { ButtonGroup } from '../../type/ButtonGroup';
 
 @Component({
 	selector: 'app-add-content',
@@ -16,6 +18,7 @@ import { FormControl } from '@angular/forms';
 export class AddContentComponent implements OnInit, OnDestroy {
 	activeEdits: boolean;
 	assets: API_CONTENT_V2[] = [];
+	contentTypes: ButtonGroup[] = CONTENT_TYPE;
 	currentPage: number = 1;
 	gridCount = 8;
 	hasImageAndFeed: boolean;
@@ -28,6 +31,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 	searchInput: FormControl = new FormControl('');
 	searching: boolean = false;
 	selectedContents: API_CONTENT_V2[] = [];
+	selectedContentType: ButtonGroup = this.contentTypes[0];
 	toggleAll = new Subject<void>();
 	protected _unsubscribe = new Subject<void>();
 
