@@ -40,7 +40,10 @@
 		</section>
 
 		<section class="playlistv2-content__thumbnail" [ngClass]="!controls && 'no-controls'">
-			<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName || content.title" />
+			<img
+				class="image-w-100"
+				[src]="content.thumbnail | sanitize"
+				[alt]="content.fileName | slice : 0 : 15 || content.title | slice : 0 : 15" />
 		</section>
 
 		<section class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white" *ngIf="controls">
@@ -70,7 +73,10 @@
 	<ng-template #detailed_view>
 		<div class="playlistv2__content-list">
 			<div class="playlistv2__content-list-thumbnail border-right">
-				<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName || content.title" />
+				<img
+					class="image-w-100"
+					[src]="content.thumbnail | sanitize"
+					[alt]="content.fileName | slice : 0 : 15 || content.title | slice : 0 : 15" />
 			</div>
 			<div
 				class="playlistv2__content-list-details"

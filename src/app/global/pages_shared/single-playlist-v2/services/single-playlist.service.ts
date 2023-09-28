@@ -5,6 +5,7 @@ import { PlaylistContentUpdate } from '../type/PlaylistContentUpdate';
 import { Observable, Subject } from 'rxjs';
 import { API_CONTENT_V2, API_PLAYLIST_V2, PlaylistContentSchedule, UI_CONTENT_SCHEDULE } from 'src/app/global/models';
 import * as moment from 'moment';
+import { ContentFetch } from '../models/ContentFetch';
 
 @Injectable({
 	providedIn: 'root'
@@ -31,7 +32,7 @@ export class SinglePlaylistService extends BaseService {
 		this.contentLoaded.next(contents);
 	}
 
-	contentFetch(data: { page: number; pageSize: number; dealerId?: string; searchKey?: string; floating?: boolean }) {
+	contentFetch(data: ContentFetch) {
 		let childUrl = 'getAll';
 		const queryParams = [];
 
@@ -52,6 +53,10 @@ export class SinglePlaylistService extends BaseService {
 			queryParams.push(`pageSize=${data.pageSize}`);
 		}
 
+		if (data.floating) {
+			queryParams.push(`floating=${data.floating}`);
+		}
+
 		const queryString = queryParams.join('&');
 		const url = `content/${childUrl}${queryString ? `?${queryString}` : ''}`;
 		return this.getRequest(url);
@@ -59,10 +64,6 @@ export class SinglePlaylistService extends BaseService {
 
 	hostsReady(hosts: any) {
 		this.hostLoaded.next(hosts);
-	}
-
-	getAvailableDealerAssets(dealerId: string = '136ce61b-8c69-4723-95f3-45600090cf8b', page: number = 1, pageSize: number = 60) {
-		return this.getRequest(`content/getbydealerid?dealerid=${dealerId}&page=${page}&pageSize=${pageSize}`);
 	}
 
 	getPlaylistData(playlistId: string): Observable<API_PLAYLIST_V2> {

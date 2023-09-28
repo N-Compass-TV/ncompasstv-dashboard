@@ -18,15 +18,17 @@
 					</div>
 				</div>
 
+				<!-- Button group for content type switch -->
 				<mat-button-toggle-group class="mb-2 w-100" [value]="selectedContentType.value">
 					<mat-button-toggle
-						*ngFor="let type of contentTypes"
+						*ngFor="let type of contentTypesBtnGroup"
 						class="flex-even"
 						[value]="type.value"
-						(click)="onSelectContentScheduleType(type)">
+						(click)="onSelectContentType(type)">
 						<i class="mr-2 {{ type.icon }}"></i> <strong class="sm-text">{{ type.label }}</strong>
 					</mat-button-toggle>
 				</mat-button-toggle-group>
+				<!-- Button group for content type switch -->
 
 				<ng-container *ngIf="!searching; else loading">
 					<div class="media-files-wrapper bg-gray rounded p-2 mb-4" *ngIf="assets.length; else loading" (scroll)="onScroll($event)">
