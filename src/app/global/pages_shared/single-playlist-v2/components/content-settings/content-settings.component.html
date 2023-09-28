@@ -46,7 +46,7 @@
 
 				<ng-template #selected>
 					<div class="playlist-content-preview scroll bg-gray p-2 w-100 mb-3">
-						<div class="row no-gutters mb-1">
+						<div class="row -gutters mb-1">
 							<div class="col-lg-3" *ngFor="let c of contentData.playlistContents; let i = index">
 								<div class="m-1">
 									<app-content [content]="c" [controls]="true" [enabled_controls]="['remove']" [index]="i + 1" [selectable]="false">
@@ -101,31 +101,35 @@
 						</div>
 					</mat-tab>
 					<mat-tab label="Play Where">
-						<div class="play-where-wrapper" *ngIf="contentData.hostLicenses && contentData.hostLicenses.length; else loading">
-							<div class="d-flex align-items-center pt-3">
-								<div class="flex-even">
-									<h4>Whitelist Host and Licenses</h4>
-									<p class="sm-text m-0">
-										Select host and licenses you want {{ contentData.bulkSet ? 'these contents' : 'this content' }} to play or
-										toggle all.
-									</p>
-								</div>
-								<div class="toggle-wrapper pt-1 pr-2">
-									<mat-slide-toggle (change)="toggleAll.next($event)"></mat-slide-toggle>
-								</div>
-							</div>
+						<ng-container *ngIf="!loadingWhitelistedLicenses; else loading">
+							<ng-container *ngIf="contentData.hostLicenses.length > 0; else noLicenses">
+								<div class="play-where-wrapper">
+									<div class="d-flex align-items-center pt-3">
+										<div class="flex-even">
+											<h4>Whitelist Host and Licenses</h4>
+											<p class="sm-text m-0">
+												Select host and licenses you want {{ contentData.bulkSet ? 'these contents' : 'this content' }} to
+												play or toggle all.
+											</p>
+										</div>
+										<div class="toggle-wrapper pt-1 pr-2">
+											<mat-slide-toggle (change)="toggleAll.next($event)"></mat-slide-toggle>
+										</div>
+									</div>
 
-							<div class="play-location-wrapper mt-3">
-								<app-play-location
-									*ngIf="!loadingWhitelistedLicenses; else loading"
-									[host_licenses]="contentData.hostLicenses"
-									[whitelisted_hosts]="whitelistedHosts"
-									[whitelisted_licenses]="whitelistedLicenses"
-									[toggle_all]="toggleAll.asObservable()"
-									(to_blacklist)="licensesToBlacklist($event)"
-									(toggle)="licenseIdToggled($event)"></app-play-location>
-							</div>
-						</div>
+									<div class="play-location-wrapper mt-3">
+										<app-play-location
+											[host_licenses]="contentData.hostLicenses"
+											[whitelisted_hosts]="whitelistedHosts"
+											[whitelisted_licenses]="whitelistedLicenses"
+											[toggle_all]="toggleAll.asObservable()"
+											(to_blacklist)="licensesToBlacklist($event)"
+											(toggle)="licenseIdToggled($event)">
+										</app-play-location>
+									</div>
+								</div>
+							</ng-container>
+						</ng-container>
 					</mat-tab>
 				</mat-tab-group>
 			</div>
@@ -150,5 +154,9 @@
 		<div class="content-settings-spinner-min-height d-flex justify-content-center w-100">
 			<app-spinner></app-spinner>
 		</div>
+	</ng-template>
+
+	<ng-template #noLicenses>
+		<p>No licenses available</p>
 	</ng-template>
 </div>

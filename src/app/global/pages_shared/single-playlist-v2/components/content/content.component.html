@@ -39,7 +39,7 @@
 			</div>
 		</section>
 
-		<section class="playlistv2-content__thumbnail" [ngClass]="!controls && 'no-controls'">
+		<section class="playlistv2-content__thumbnail" [ngClass]="!controls && 'no-controls'" [matTooltip]="getFrequencyInfo()">
 			<img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName || content.title" />
 		</section>
 

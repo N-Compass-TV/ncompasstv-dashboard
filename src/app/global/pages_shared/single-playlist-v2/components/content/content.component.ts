@@ -42,7 +42,7 @@ export class ContentComponent implements OnInit, OnDestroy {
 		if (this.content) {
 			this.prepareThumbnails();
 			this.subscribeToMoveButton();
-			this.isParentFrequency = this.content['frequency'] === 22 || this.content['frequency'] === 33;
+			this.isParentFrequency = this.content.frequency === 22 || this.content.frequency === 33;
 			this.isChildFrequency = !this.isParentFrequency && this.content.frequency !== 0;
 			this.subscribeToContentHover();
 		}
@@ -79,6 +79,15 @@ export class ContentComponent implements OnInit, OnDestroy {
 		if (convertedDays[0] == 'S') convertedDays.push(convertedDays.shift());
 
 		return convertedDays.join(', ');
+	}
+
+	public getFrequencyInfo() {
+		if (!this.isParentFrequency && !this.isChildFrequency) return;
+		const frequency = this.content.frequency;
+		const parsedFrequency = this.isParentFrequency ? (frequency === 22 ? 2 : 3) : frequency;
+		let result = this.isParentFrequency ? 'Parent' : 'Child';
+		result += ` frequency: ${parsedFrequency}x`;
+		return result;
 	}
 
 	public getPlayTimesText() {

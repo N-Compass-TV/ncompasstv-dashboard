@@ -83,13 +83,17 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	private getPlaylistContentWhitelistData() {
-		if (this.contentData.bulkSet || (this.contentData && !this.contentData.hostLicenses)) return;
+		if (this.contentData.bulkSet || (this.contentData && !this.contentData.hostLicenses)) {
+			this.loadingWhitelistedLicenses = false;
+
+			return;
+		}
 
 		this._playlist.getWhitelistData(this.contentData.playlistContents[0].playlistContentId).subscribe({
-			next: (res: { licensePlaylistContents: any[] }) => {
+			next: (res: { licensePlaylistContents?: any[]; message?: string }) => {
 				this.loadingWhitelistedLicenses = false;
 
-				if (!res.licensePlaylistContents) {
+				if (!res.licensePlaylistContents || res.message) {
 					this.whitelistedLicenses = [];
 					this.whitelistedHosts = [];
 					return;
