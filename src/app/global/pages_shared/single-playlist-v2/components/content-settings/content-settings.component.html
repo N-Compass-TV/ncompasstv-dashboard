@@ -46,7 +46,7 @@
 
 				<ng-template #selected>
 					<div class="playlist-content-preview scroll bg-gray p-2 w-100 mb-3">
-						<div class="row -gutters mb-1">
+						<div class="row no-gutters mb-1">
 							<div class="col-lg-3" *ngFor="let c of contentData.playlistContents; let i = index">
 								<div class="m-1">
 									<app-content [content]="c" [controls]="true" [enabled_controls]="['remove']" [index]="i + 1" [selectable]="false">
