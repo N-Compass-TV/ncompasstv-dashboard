@@ -102,6 +102,8 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 
 	private setExistingScheduleFormValues(data: PlaylistContentSchedule) {
 		const { playTimeStart, playTimeEnd, from, to, alternateWeek, days } = data;
+		this.alternateWeek = alternateWeek;
+		this.hasAlternateWeekSet = alternateWeek === 1;
 		const startDate = moment(from, 'YYYY-MM-DD hh:mm A').format();
 		const endDate = moment(to, 'YYYY-MM-DD hh:mm A').format();
 		const daysList = days.split(',');
