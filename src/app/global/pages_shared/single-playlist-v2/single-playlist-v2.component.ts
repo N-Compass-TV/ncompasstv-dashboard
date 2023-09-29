@@ -164,8 +164,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 		const filterByKeyword = (c: API_CONTENT_V2) => {
 			if (!this.currentFilters.keyword || this.currentFilters.keyword.trim().length <= 0) return Array.from(this.playlistContentsBackup);
-
-			return c.fileName.toLowerCase().includes(this.currentFilters.keyword.toLowerCase());
+			return c.fileName && c.fileName.toLowerCase().includes(this.currentFilters.keyword.toLowerCase());
 		};
 
 		const filterByContentType = (c: API_CONTENT_V2) => {
