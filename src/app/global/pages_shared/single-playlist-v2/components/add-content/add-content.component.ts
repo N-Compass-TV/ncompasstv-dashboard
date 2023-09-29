@@ -3,10 +3,12 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { API_CONTENT_V2, API_HOST, API_LICENSE } from 'src/app/global/models';
+import { API_CONTENT, API_CONTENT_V2, API_HOST, API_LICENSE } from 'src/app/global/models';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
 import { AddPlaylistContent } from '../../class/AddPlaylistContent';
 import { FormControl } from '@angular/forms';
+import { CONTENT_TYPE } from '../../constants/ContentType';
+import { ButtonGroup } from '../../type/ButtonGroup';
 
 @Component({
 	selector: 'app-add-content',
@@ -16,7 +18,9 @@ import { FormControl } from '@angular/forms';
 export class AddContentComponent implements OnInit, OnDestroy {
 	activeEdits: boolean;
 	assets: API_CONTENT_V2[] = [];
+	contentTypesBtnGroup: ButtonGroup[] = CONTENT_TYPE;
 	currentPage: number = 1;
+	floating_assets: API_CONTENT_V2[] = [];
 	gridCount = 8;
 	hasImageAndFeed: boolean;
 	markedContent: API_CONTENT_V2;
@@ -28,6 +32,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 	searchInput: FormControl = new FormControl('');
 	searching: boolean = false;
 	selectedContents: API_CONTENT_V2[] = [];
+	selectedContentType: ButtonGroup = this.contentTypesBtnGroup[0];
 	toggleAll = new Subject<void>();
 	protected _unsubscribe = new Subject<void>();
 
@@ -35,6 +40,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 		@Inject(MAT_DIALOG_DATA)
 		public _dialog_data: {
 			assets: API_CONTENT_V2[];
+			floatingAssets: API_CONTENT_V2[];
 			dealerId: string;
 			isDealer: boolean;
 			hostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[];
@@ -46,6 +52,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.assets = [...this._dialog_data.assets];
+		this.floating_assets = [...this._dialog_data.floatingAssets];
 		this.playlistHostLicenses = this._dialog_data.hostLicenses ? [...this._dialog_data.hostLicenses] : [];
 		this.newContentsSettings.playlistId = this._dialog_data.playlistId;
 
@@ -103,6 +110,11 @@ export class AddContentComponent implements OnInit, OnDestroy {
 	}
 
 	private getContents(floating: boolean = false, page: number = 1, pageSize: number = 60, searchKey?: string) {
+		if (this.pageLimit > 0 && this.currentPage > this.pageLimit) {
+			this.paginating = false;
+			return;
+		}
+
 		this.noData = false;
 		const dealerId = floating ? null : this._dialog_data.dealerId;
 
@@ -115,9 +127,9 @@ export class AddContentComponent implements OnInit, OnDestroy {
 				searchKey
 			})
 			.subscribe({
-				next: (response: { contents: API_CONTENT_V2[]; paging: any }) => {
+				next: (response: { iContents?: API_CONTENT_V2[]; contents?: API_CONTENT_V2[]; paging?: any }) => {
 					/** Search result empty */
-					if (!response.contents || !response.contents.length) {
+					if ((!response.iContents || !response.iContents.length) && (!response.contents || !response.contents.length)) {
 						this.noData = true;
 						return;
 					}
@@ -129,13 +141,16 @@ export class AddContentComponent implements OnInit, OnDestroy {
 
 					/** Paginating */
 					if (page > 1 && page <= this.pageLimit) {
-						this.assets = [...this.assets, ...response.contents];
+						if (response.contents && response.contents.length) this.assets = [...this.assets, ...response.contents];
+						if (response.iContents && response.iContents.length)
+							this.assets = this.floating_assets = [...this.floating_assets, ...response.iContents];
 						this.paginating = false;
 						return true;
 					}
 
 					/** Search results available */
-					this.assets = [...response.contents];
+					if (response.contents && response.contents.length) this.assets = [...response.contents];
+					if (response.iContents && response.iContents.length) this.assets = [...response.iContents];
 					this.searching = false;
 				}
 			});
@@ -163,8 +178,34 @@ export class AddContentComponent implements OnInit, OnDestroy {
 		if (e.target.scrollTop + e.target.clientHeight + 1 >= e.target.scrollHeight) {
 			this.paginating = true;
 			this.currentPage += 1;
-			this.getContents(false, this.currentPage, 60);
+			const floating = this.selectedContentType.slug == 'floating-content';
+			this.getContents(floating, this.currentPage, 60);
 		}
+	}
+
+	public onSelectContentType(data: ButtonGroup) {
+		if (data == this.selectedContentType) return;
+
+		this.selectedContentType = data;
+		this.searching = true;
+		this.currentPage = 1;
+
+		switch (this.selectedContentType.slug) {
+			case 'dealer-content':
+				this.assets = [...this._dialog_data.assets];
+				break;
+			case 'floating-content':
+				this.assets = [...this.floating_assets];
+				break;
+			// case 'filler-content':
+			// 	break;
+			default:
+				break;
+		}
+
+		setTimeout(() => {
+			this.searching = false;
+		}, 350);
 	}
 
 	private searchInit() {
@@ -172,7 +213,8 @@ export class AddContentComponent implements OnInit, OnDestroy {
 			next: (searchKey) => {
 				if (searchKey.length) {
 					this.searching = true;
-					this.getContents(false, null, null, searchKey);
+					const floating = this.selectedContentType.slug == 'floating-content';
+					this.getContents(floating, null, null, searchKey);
 					return;
 				}
 

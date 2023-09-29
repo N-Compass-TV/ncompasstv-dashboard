@@ -18,6 +18,18 @@
 					</div>
 				</div>
 
+				<!-- Button group for content type switch -->
+				<mat-button-toggle-group class="mb-2 w-100" [value]="selectedContentType.value">
+					<mat-button-toggle
+						*ngFor="let type of contentTypesBtnGroup"
+						class="flex-even"
+						[value]="type.value"
+						(click)="onSelectContentType(type)">
+						<i class="mr-2 {{ type.icon }}"></i> <strong class="sm-text">{{ type.label }}</strong>
+					</mat-button-toggle>
+				</mat-button-toggle-group>
+				<!-- Button group for content type switch -->
+
 				<ng-container *ngIf="!searching; else loading">
 					<div class="media-files-wrapper bg-gray rounded p-2 mb-4" *ngIf="assets.length; else loading" (scroll)="onScroll($event)">
 						<ng-container *ngFor="let c of assets; let i = index">
@@ -29,6 +41,7 @@
 											*ngIf="_dialog_data && !_dialog_data.playlistContentId; else swapping"
 											[content]="assets[count + i]"
 											[controls]="false"
+											[selected]="selectedContents.includes(assets[count + i])"
 											[default_width]="false"
 											(content_selected)="contentSelected(assets[count + i], $event)">
 										</app-content>
@@ -210,8 +223,8 @@
 
 	<ng-template #loading>
 		<ng-container *ngIf="noData; else spin">
-			<div class="d-flex align-items-center text-center py-5 bg-gray">
-				<h4>Sorry! No data found.</h4>
+			<div class="d-flex align-items-center text-center bg-gray media-files-wrapper w-100 mb-4">
+				<h2 class="flex-even">Sorry! No data found.</h2>
 			</div>
 		</ng-container>
 

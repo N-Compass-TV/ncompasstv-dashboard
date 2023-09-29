@@ -18,7 +18,8 @@ export class BasicSettingsComponent implements OnInit, OnDestroy {
 	@Input() playlist_content: API_CONTENT_V2[] = [];
 	@Output() changed = new EventEmitter();
 
-	basicSettings: FormGroup;
+	basicSettings: FormGroup = new FormGroup({});
+	formReady: boolean = false;
 	isParentFrequency = false;
 	isChildFrequency = false;
 	protected _unsubscribe = new Subject<void>();
@@ -36,27 +37,28 @@ export class BasicSettingsComponent implements OnInit, OnDestroy {
 
 	private initializeForm() {
 		const content = this.playlist_content[0];
-		this.isParentFrequency = content.frequency === 33 || content.frequency === 22;
-		this.isChildFrequency = !this.isParentFrequency && content.frequency !== 0;
+		this.isParentFrequency = (content && content.frequency === 33) || (content && content.frequency === 22);
+		this.isChildFrequency = !this.isParentFrequency && content && content.frequency !== 0;
 		const parseFormValue = (value: any) => !this.bulk_setting && value;
 
 		// if the frequency value is 22 or 33 then parse it to 2 or 3 to comply with the form values
-		const parsedFrequency = this.parseFrequencyValueToString(content.frequency);
+		const parsedFrequency = content && this.parseFrequencyValueToString(content.frequency);
 
 		this.basicSettings = this._formBuilder.group({
 			duration: [
 				{
-					value: parseFormValue(content.duration) || 20,
+					value: content ? parseFormValue(content.duration) : 20,
 					disabled: !this.bulk_setting && this._video.transform(content.fileType)
 				}
 			],
 			frequency: [parseFormValue(parsedFrequency) || 0],
-			isFullScreen: [parseFormValue(content.isFullScreen) || 0]
+			isFullScreen: content ? parseFormValue(content.isFullScreen) : 0
 		});
 
 		if (this.isChildFrequency) this.basicSettings.get('frequency').disable();
 		this.changed.emit({ ...this.basicSettings.value, isFullScreen: this.basicSettings.controls['isFullScreen'].value.isFullScreen ? 1 : 0 });
 		this.subscribeToFormChanges();
+		this.formReady = true;
 	}
 
 	private subscribeToFormChanges() {

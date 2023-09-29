@@ -57,16 +57,17 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	assets: API_CONTENT_V2[] = [];
 	contentStatusBreakdown = [];
 	currentFilters: { type: string; status: string; keyword: string } = { type: null, status: null, keyword: null };
+	detailedViewMode = false;
 	feedCount = 0;
+	floatingAssets: API_CONTENT_V2[] = [];
 	hostLicenses: any;
-	hosts: API_HOST[];
 	hostURL = '';
+	hosts: API_HOST[];
 	imageCount = 0;
 	isFiltered: { type: boolean; status: boolean; keyword: boolean } = { type: false, status: false, keyword: false };
+	licenseURL = '';
 	licenses: API_LICENSE_PROPS[];
 	licensesToUpdate: any[] = [];
-	licenseURL = '';
-	detailedViewMode = false;
 	playlist: API_PLAYLIST_V2['playlist'];
 	playlistContentBreakdown = [];
 	playlistContents: API_CONTENT_V2[];
@@ -76,21 +77,21 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	playlistFilters = PlaylistFiltersDropdown;
 	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] };
 	playlistName = 'Please wait';
-	playlistScreens: API_SCREEN_OF_PLAYLIST[] = [];
 	playlistScreenTable: any;
+	playlistScreens: API_SCREEN_OF_PLAYLIST[] = [];
 	playlistSequenceUpdates: PlaylistContent[] = [];
 	playlistSortableOrder: string[] = [];
 	playlistViews = PlaylistViewOptions;
 	savingPlaylist = false;
-	screens: API_SCREEN_OF_PLAYLIST[];
 	screenTableColumns = ['#', 'Screen Title', 'Dealer', 'Host', 'Type', 'Template', 'Created By'];
+	screens: API_SCREEN_OF_PLAYLIST[];
 	searchForm = new FormControl();
 	selectedPlaylistContents = [];
-	_socket: any;
-	sortablejsTriggered: Subject<boolean> = new Subject<boolean>();
 	sortablejs: any;
+	sortablejsTriggered: Subject<boolean> = new Subject<boolean>();
 	videoCount = 0;
 
+	private _socket: any;
 	private playlistContentsBackup: API_CONTENT_V2[] = [];
 	private playlistId: string;
 	protected _unsubscribe = new Subject<void>();
@@ -236,21 +237,37 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	}
 
 	private getAssets() {
-		this._playlist.getAvailableDealerAssets().subscribe({
-			next: (data: { contents: API_CONTENT_V2[]; page: any }) => {
-				/** Implement paging */
-				this.assets = data.contents;
+		const requests = [];
 
-				/** Enable Add Content Button */
+		const dealerContentConfig = {
+			page: 1,
+			pageSize: 60,
+			dealerId: this.playlist.dealerId
+		};
+
+		const floatingContentConfig = {
+			page: 1,
+			pageSize: 60,
+			floating: true
+		};
+
+		requests.push(this._playlist.contentFetch(dealerContentConfig));
+		if (this.isAdmin) requests.push(this._playlist.contentFetch(floatingContentConfig));
+
+		forkJoin(requests).subscribe({
+			next: ([res1, res2]: [{ contents: API_CONTENT_V2[]; page: any }, { iContents: API_CONTENT_V2[]; page: any }]) => {
+				this.assets = res1.contents;
+				if (res2 && res2.iContents.length) this.floatingAssets = res2.iContents;
+
 				this.playlistControls = this.playlistControls.map((p) => {
 					/** Add Bulk Button Actions Here */
 					if (p.action == pActions.addContent)
-						return { ...p, icon: this.assets.length ? 'fas fa-plus' : 'fas fa-ban', disabled: this.assets.length < 1 };
+						return { ...p, icon: this.assets.length ? 'fas fa-plus' : 'fas fa-ban', disabled: !this.assets.length };
 					return p;
 				});
 
 				/** Send signal */
-				this._playlist.contentReady(data.contents);
+				this._playlist.contentReady(res1.contents);
 			},
 			error: (error) => {
 				throw Error(error);
@@ -646,8 +663,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			data: {
 				assets: this.assets,
 				dealerId: this.playlist.dealerId,
-				isDealer: this.isDealer,
+				floatingAssets: this.floatingAssets,
 				hostLicenses: this.playlistHostLicenses,
+				isDealer: this.isDealer,
 				playlistContentId: contentToSwap ? contentToSwap.playlistContentId : null,
 				playlistId: this.playlist.playlistId
 			}
