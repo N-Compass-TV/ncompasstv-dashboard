@@ -87,8 +87,6 @@ export class AddContentComponent implements OnInit, OnDestroy {
 				seq: index
 			};
 		});
-
-		console.log(this.newContentsSettings.playlistContentsLicenses);
 	}
 
 	public contentSelected(content: API_CONTENT_V2, e?: any) {
@@ -199,8 +197,8 @@ export class AddContentComponent implements OnInit, OnDestroy {
 			case 'floating-content':
 				this.assets = [...this.floating_assets];
 				break;
-			case 'filler-content':
-				break;
+			// case 'filler-content':
+			// 	break;
 			default:
 				break;
 		}

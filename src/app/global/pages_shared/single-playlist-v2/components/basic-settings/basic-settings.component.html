@@ -1,5 +1,5 @@
 <div class="content-basic-settings">
-	<form [formGroup]="basicSettings">
+	<form [formGroup]="basicSettings" *ngIf="formReady">
 		<div class="d-flex">
 			<div class="flex-even mr-2" *ngIf="has_image_and_feed || (!bulk_setting && !(playlist_content[0]?.fileType | isvideo))">
 				<!-- Settings: Duration -->

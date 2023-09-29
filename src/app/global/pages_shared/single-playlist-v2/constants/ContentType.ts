@@ -8,15 +8,15 @@ export const CONTENT_TYPE: ButtonGroup[] = [
 		icon: 'fas fa-users'
 	},
 	{
-		value: 3,
+		value: 2,
 		label: 'Floating Contents',
 		slug: 'floating-content',
 		icon: 'fas fa-ghost'
-	},
-	{
-		value: 2,
-		label: 'Fillers',
-		slug: 'filler-contents',
-		icon: 'fas fa-photo-video'
 	}
+	// {
+	// 	value: 3,
+	// 	label: 'Fillers',
+	// 	slug: 'filler-contents',
+	// 	icon: 'fas fa-photo-video'
+	// }
 ];
