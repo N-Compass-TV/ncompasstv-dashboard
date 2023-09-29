@@ -41,6 +41,7 @@
 											*ngIf="_dialog_data && !_dialog_data.playlistContentId; else swapping"
 											[content]="assets[count + i]"
 											[controls]="false"
+											[selected]="selectedContents.includes(assets[count + i])"
 											[default_width]="false"
 											(content_selected)="contentSelected(assets[count + i], $event)">
 										</app-content>
@@ -222,7 +223,7 @@
 
 	<ng-template #loading>
 		<ng-container *ngIf="noData; else spin">
-			<div class="d-flex align-items-center text-center py-5 bg-gray">
+			<div class="d-flex align-items-center text-center bg-gray media-files-wrapper w-100">
 				<h4>Sorry! No data found.</h4>
 			</div>
 		</ng-container>

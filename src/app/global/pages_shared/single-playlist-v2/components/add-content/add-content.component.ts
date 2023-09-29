@@ -51,7 +51,6 @@ export class AddContentComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
-		console.log(this._dialog_data);
 		this.assets = [...this._dialog_data.assets];
 		this.floating_assets = [...this._dialog_data.floatingAssets];
 		this.playlistHostLicenses = this._dialog_data.hostLicenses ? [...this._dialog_data.hostLicenses] : [];
@@ -88,6 +87,8 @@ export class AddContentComponent implements OnInit, OnDestroy {
 				seq: index
 			};
 		});
+
+		console.log(this.newContentsSettings.playlistContentsLicenses);
 	}
 
 	public contentSelected(content: API_CONTENT_V2, e?: any) {
@@ -151,7 +152,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 
 					/** Search results available */
 					if (response.contents && response.contents.length) this.assets = [...response.contents];
-					if (response.iContents && response.iContents.length) this.floating_assets = [...response.iContents];
+					if (response.iContents && response.iContents.length) this.assets = [...response.iContents];
 					this.searching = false;
 				}
 			});
