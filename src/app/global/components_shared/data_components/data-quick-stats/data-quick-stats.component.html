@@ -4,37 +4,34 @@
 			<span class="{{ icon }} text-primary mr-3"></span>
 			<span class="font-weight-bold">{{ total_label }}</span>
 		</h4>
-		<hr class="mb-2" />
+		<hr class="mb-3" />
 		<div class="row">
 			<div class="col-lg-12 mb-3" *ngIf="active || inactive">
 				<div class="row row-eq-height no-gutters">
 					<div class="col-lg-6">
 						<div class="p-2 text-center bg-primary mr-1">
-							<span class="font-weight-bold xlg-text text-white">
-								{{ active }}
-							</span>
-							<span class="font-weight-bold xsm-text text-white">
-								{{ active_label }}
-							</span>
+							<span class="font-weight-bold xlg-text text-white"> {{ active }}</span>
+							<span class="font-weight-bold xsm-text text-white"> {{ active_label }}</span>
 						</div>
 					</div>
 					<div class="col-lg-6">
 						<div class="p-2 text-center bg-gray-2 ml-1">
-							<span class="font-weight-bold xlg-text">
-								{{ inactive }}
-							</span>
-							<span class="font-weight-bold xsm-text">
-								{{ inactive_label }}
-							</span>
+							<span class="font-weight-bold xlg-text"> {{ inactive }}4 </span>
+							<span class="font-weight-bold xsm-text"> {{ inactive_label }}5 </span>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="col-lg-12 text-center">
-				<h4 class="font-weight-bold xlg-text text-primary line-height-xlg">
-					{{ total }}
-				</h4>
-				<span class="font-weight-bold p-0 xsm-text text-gray"> Total {{ total_label }} </span>
+			<div class="col-lg-12">
+				<div class="row no-gutters">
+					<div class="col-lg-12">
+						<h4 class="font-weight-bold xlg-text text-primary">{{ total }}</h4>
+						<p class="font-weight-bold">
+							<span class="fas fa-tools text-primary mr-1"></span>
+							<span class="col-lg-12 p-0 sm-text text-gray"> Total {{ total_label }} </span>
+						</p>
+					</div>
+				</div>
 			</div>
 			<div class="col-lg-12 mb-2 text-center text-notes">
 				<span class="font-weight-bold xsm-text text-danger" *ngIf="notes">
