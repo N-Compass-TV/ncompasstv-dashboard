@@ -771,7 +771,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 		/** Save and Update View */
 		this._playlist.swapPlaylistContent(playlistContentToSwap).subscribe({
-			next: (res: { content: API_CONTENT; plContent: API_UPDATED_PLAYLIST_CONTENT }) => {
+			next: (res: { content: API_CONTENT_V2; plContent: API_UPDATED_PLAYLIST_CONTENT }) => {
 				this.playlistContents = this.playlistContents.map((p) => {
 					if (p.playlistContentId == playlistContent.playlistContentId) {
 						return {
