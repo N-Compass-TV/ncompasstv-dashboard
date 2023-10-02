@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit {
 	daily_feed_total: number;
 	daily_login_total: number;
 	is_admin = this.current_user_role === 'administrator';
+	is_dealeradmin = this.current_user_role === 'dealeradmin';
 	subscription: Subscription = new Subscription();
 	title = 'Dashboard';
 	user_name: string;
