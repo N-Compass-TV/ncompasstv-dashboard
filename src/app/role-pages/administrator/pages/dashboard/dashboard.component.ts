@@ -177,9 +177,7 @@ export class DashboardComponent implements OnInit {
 		let request = this._feed.get_feeds_total();
 
 		request.pipe(takeUntil(this._unsubscribe)).subscribe((res) => {
-			if (res.newFeedsThisDay === 0) {
-				this.no_feed_total = true;
-			}
+			if (res.newFeedsThisDay === 0) this.no_feed_total = true;
 
 			this.daily_feed_total = res.newFeedsThisDay;
 		});
@@ -189,9 +187,8 @@ export class DashboardComponent implements OnInit {
 		let request = this._content.get_contents_total();
 
 		request.pipe(takeUntil(this._unsubscribe)).subscribe((res) => {
-			if (res.newContentsThisDay === 0) {
-				this.no_content_total = true;
-			}
+			if (res.newContentsThisDay === 0) this.no_content_total = true;
+
 			this.daily_content_total = res.newContentsThisDay;
 		});
 	}
@@ -200,9 +197,8 @@ export class DashboardComponent implements OnInit {
 		let request = this._user.get_user_total();
 
 		request.pipe(takeUntil(this._unsubscribe)).subscribe((res) => {
-			if (res.loggedInUsers === 0) {
-				this.no_user_total = true;
-			}
+			if (res.loggedInUsers === 0) this.no_user_total = true;
+
 			this.daily_login_total = res.loggedInUsers;
 		});
 	}
