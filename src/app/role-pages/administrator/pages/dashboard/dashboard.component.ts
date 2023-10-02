@@ -79,11 +79,11 @@ export class DashboardComponent implements OnInit {
 	setDealerStats(data) {
 		this.dealer_stats = {
 			total: data.total,
-			total_label: 'DEALERS',
+			total_label: 'Dealers',
 			active: data.totalActive,
-			active_label: 'ACTIVE',
+			active_label: 'Active',
 			inactive: data.totalInActive,
-			inactive_label: 'INACTIVE',
+			inactive_label: 'Inactive',
 			this_week: data.newDealersThisWeek,
 			last_week: data.newDealersLastWeek,
 			icon: 'fas fa-briefcase'
@@ -99,11 +99,11 @@ export class DashboardComponent implements OnInit {
 	setHostStatistics(data) {
 		this.host_stats = {
 			total: data.total,
-			total_label: 'HOSTS',
+			total_label: 'Hosts',
 			active: data.totalActive,
-			active_label: 'ACTIVE',
+			active_label: 'Active',
 			inactive: data.totalInActive,
-			inactive_label: 'INACTIVE',
+			inactive_label: 'Inactive',
 			this_week: data.newHostsThisWeek,
 			last_week: data.newHostsLastWeek,
 			icon: 'fas fa-map'
@@ -119,11 +119,11 @@ export class DashboardComponent implements OnInit {
 	setAdvertisersStats(data) {
 		this.advertiser_stats = {
 			total: data.total,
-			total_label: 'ADVERTISERS',
+			total_label: 'Advertisers',
 			active: data.totalActive,
-			active_label: 'ACTIVE',
+			active_label: 'Active',
 			inactive: data.totalInActive,
-			inactive_label: 'INACTIVE',
+			inactive_label: 'Inactive',
 			this_week: data.newAdvertisersThisWeek,
 			last_week: data.newAdvertisersLastWeek,
 			icon: 'fas fa-ad'
@@ -139,11 +139,11 @@ export class DashboardComponent implements OnInit {
 	setLicensesStats(data) {
 		this.license_stats = {
 			total: data.total,
-			total_label: 'LICENSES',
+			total_label: 'Licenses',
 			active: data.totalAssigned,
-			active_label: 'ASSIGNED',
+			active_label: 'Assigned',
 			inactive: data.totalUnAssigned,
-			inactive_label: 'UNASSIGNED',
+			inactive_label: 'Unassigned',
 			this_week: data.newLicensesThisWeek,
 			last_week: data.newLicensesLastWeek,
 			notes: data.totalDisabled + ' licenses were inactive.',
@@ -160,7 +160,7 @@ export class DashboardComponent implements OnInit {
 	setInstallationStatistics(data) {
 		this.installation_stats = {
 			total: data.licenseInstallationStats.total === 0 ? '0' : data.licenseInstallationStats.total,
-			total_label: 'INSTALLATIONS',
+			total_label: 'Installations',
 			icon: 'fas fa-calendar',
 			this_month: data.licenseInstallationStats.currentMonth,
 			last_month: data.licenseInstallationStats.previousMonth,
