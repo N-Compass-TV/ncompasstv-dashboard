@@ -261,7 +261,7 @@
 	</ng-template>
 
 	<ng-template #loader>
-		<ng-container *ngIf="!no_feed_total || !no_content_total; else no_data">
+		<ng-container *ngIf="!no_feed_total || !no_content_total || no_user_total; else no_data">
 			<div>
 				<app-spinner [diameter]="85"></app-spinner>
 			</div>
@@ -270,7 +270,7 @@
 
 	<ng-template #no_data>
 		<div>
-			<span class="p-0 sm-text text-gray"> No Content Created </span>
+			<span class="p-0 sm-text text-gray"> No Available Data </span>
 		</div>
 	</ng-template>
 </div>
