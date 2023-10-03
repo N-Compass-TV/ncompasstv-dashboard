@@ -15,7 +15,7 @@ import { ButtonGroup } from '../../type/ButtonGroup';
 export class ContentSchedulerComponent implements OnInit, OnDestroy, AfterViewInit {
 	@Input() contents?: API_CONTENT_V2[] = [];
 	@Input() hasExistingSchedule = false;
-	@Input() scheduleType: 1 | 2 | 3 = 1;
+	@Input() scheduleType: 1 | 2 | 3 = 1; // 1 - Default, 2 - Do Not Play, 3 - Custom Scheduled
 
 	scheduleTypes = CONTENT_SCHEDULE;
 	selectedContentSchedule: ButtonGroup = this.scheduleTypes[0];

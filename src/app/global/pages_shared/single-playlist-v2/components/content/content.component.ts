@@ -93,7 +93,7 @@ export class ContentComponent implements OnInit, OnDestroy {
 	public getPlayTimesText() {
 		const start = this.content.playTimeStart;
 		const end = this.content.playTimeEnd;
-		return start && end ? `${start} to ${end}` : '--';
+		return start && end ? `${start} - ${end}` : '--';
 	}
 
 	public setHoveredBaseFrequency(content: API_CONTENT_V2) {

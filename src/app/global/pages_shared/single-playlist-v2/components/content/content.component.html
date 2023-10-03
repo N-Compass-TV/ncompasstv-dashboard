@@ -93,14 +93,14 @@
 				</div>
 
 				<div class="middle__details mb-2">
-					<div class="d-flex playlist-content-schedule">
+					<div class="d-flex playlist-content-schedule" *ngIf="content.type === 3; else not_custom_scheduled">
 						<div class="playlist-content-schedule__date-range flex-even" *ngIf="content.from && content.to">
 							<p class="xsm-text">
 								<span class="fas fa-calendar mr-2"></span>
 								<br />
 								{{
 									content.from && content.to
-										? (content.from | date : 'shortDate') + ' to ' + (content.to | date : 'shortDate')
+										? (content.from | date : 'shortDate') + ' - ' + (content.to | date : 'shortDate')
 										: '--'
 								}}
 							</p>
@@ -120,6 +120,24 @@
 							</p>
 						</div>
 					</div>
+
+					<ng-template #not_custom_scheduled>
+						<div class="playlist-content-schedule__default" *ngIf="content.type === 1">
+							<p class="xsm-text">
+								<span class="fas fa-calendar mr-2"></span>
+								<br />
+								Default Play
+							</p>
+						</div>
+
+						<div class="playlist-content-schedule__default" *ngIf="content.type === 2">
+							<p class="xsm-text">
+								<span class="fas fa-ban mr-2"></span>
+								<br />
+								Do Not Play
+							</p>
+						</div>
+					</ng-template>
 				</div>
 
 				<div class="lower__details">
