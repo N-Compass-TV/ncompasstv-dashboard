@@ -56,7 +56,7 @@ export class DashboardComponent implements OnInit {
 		} else {
 			this.user_name = 'John Doe';
 		}
-		var date = new Date();
+		let date = new Date();
 		this.date = moment(date).format('LL') + ', ' + moment(date).format('dddd');
 
 		this.selected_date = moment(date).format('MM-DD-YYYY');
@@ -170,8 +170,8 @@ export class DashboardComponent implements OnInit {
 	}
 
 	getAverage(total) {
-		var average = total / this.dealer_stats.active;
-		return average.toFixed(0);
+		let average = total / this.dealer_stats.active;
+		return average ? average.toFixed(0) : null;
 	}
 
 	getFeedsTotal() {
