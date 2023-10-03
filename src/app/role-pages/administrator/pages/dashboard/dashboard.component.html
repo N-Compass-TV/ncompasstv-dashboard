@@ -251,7 +251,7 @@
 						<span class="font-weight-bold">Installation</span>
 					</h4>
 					<hr class="mb-3" />
-					<div *ngIf="daily_content_total; else loader">
+					<div *ngIf="installation_stats.total; else loader">
 						<h4 class="font-weight-bold xlg-text text-primary">{{ installation_stats.total }}</h4>
 						<p class="font-weight-bold">
 							<span class="fas fa-tools text-primary mr-1"></span>
