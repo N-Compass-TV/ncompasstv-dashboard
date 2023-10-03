@@ -1,10 +1,9 @@
 <div
 	*ngIf="content"
-	class="playlistv2-content box-shadow"
+	class="playlistv2-content box-shadow w-100"
 	(mouseenter)="setHoveredBaseFrequency(content)"
 	(mouseleave)="unsetHoveredBaseFrequency()"
 	[ngClass]="{
-		'swap-width': swapping,
 		'grid-dimension': !detailed_view_mode,
 		'inactive-schedule': content.scheduleStatus === 'inactive',
 		'future-schedule': content.scheduleStatus === 'future'
