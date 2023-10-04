@@ -58,6 +58,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	contentStatusBreakdown = [];
 	currentFilters: { type: string; status: string; keyword: string } = { type: null, status: null, keyword: null };
 	detailedViewMode = false;
+	enabledPlaylistContentControls = [];
 	feedCount = 0;
 	floatingAssets: API_CONTENT_V2[] = [];
 	hostLicenses: any;
@@ -70,6 +71,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	licensesToUpdate: any[] = [];
 	playlist: API_PLAYLIST_V2['playlist'];
 	playlistContentBreakdown = [];
+	playlistContentControls = ['fullscreen', 'quick-move', 'swap-content', 'edit', 'remove'];
 	playlistContents: API_CONTENT_V2[];
 	playlistContentsToSave = [];
 	playlistControls = PlaylistPrimaryControls;
@@ -120,6 +122,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			role = UI_ROLE_DEFINITION_TEXT.administrator;
 		}
 
+		this.enabledPlaylistContentControls = [...this.playlistContentControls];
 		this.hostURL = `/` + role + `/hosts/`;
 		this.licenseURL = `/` + role + `/licenses/`;
 	}
@@ -399,6 +402,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 	private markAll() {
 		this.selectedPlaylistContents = this.playlistContents.map((i) => i.playlistContentId);
+		this.enabledPlaylistContentControls = [];
 		this.setBulkControlsState();
 	}
 
@@ -451,6 +455,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		else this.selectedPlaylistContents.push(playlistContentId);
 
 		this.setBulkControlsState();
+
+		if (this.selectedPlaylistContents.length) this.enabledPlaylistContentControls = [];
+		else this.enabledPlaylistContentControls = this.playlistContentControls;
 	}
 
 	public pushUpdateToSelectedLicenses() {
@@ -738,13 +745,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			group: 'playlist_content',
 			fallbackTolerance: 10,
 			store: { set },
-			filter: '.undraggable',
-			onUpdate: (event: any) => {
-				console.log('onUpdate =>', event);
-			},
-			onSort: (event: any) => {
-				console.log('OnSort =>', event);
-			}
+			filter: '.undraggable'
 		});
 	}
 

@@ -20,7 +20,7 @@ export class ContentComponent implements OnInit, OnDestroy {
 	@Input() saving = false;
 	@Input() selectable = true;
 	@Input() selected = false;
-	@Input() enabled_controls = ['fullscreen', 'quick-move', 'swap-content', 'edit', 'remove'];
+	@Input() enabled_controls = [];
 	@Input() default_width = true;
 	@Input() detailed_view_mode = false;
 	@Input() move_enabled: Subject<boolean> = new Subject<boolean>();
