@@ -457,7 +457,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this.setBulkControlsState();
 
 		if (this.selectedPlaylistContents.length) this.enabledPlaylistContentControls = [];
-		else this.enabledPlaylistContentControls = this.playlistContentControls;
+		else this.enabledPlaylistContentControls = [...this.playlistContentControls];
 	}
 
 	public pushUpdateToSelectedLicenses() {
