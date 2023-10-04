@@ -225,7 +225,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 				this.setFullscreenProperty(e.playlistContent);
 				break;
 			case pcActions.quickMove:
-				this.playlistContentMoveSwap(e.playlistContent);
+				this.playlistContentQuickMove(e.playlistContent);
 				break;
 			case pcActions.swapContent:
 				this.showAddContentDialog(e.playlistContent);
@@ -372,7 +372,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 	private mapToTable(screens) {
 		let counter = 1;
-		// const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		let role = this.currentRole;
 		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
 			role = UI_ROLE_DEFINITION_TEXT.administrator;
@@ -417,16 +416,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 		// Save Playlist
 		this.rearrangePlaylist(this.playlistSortableOrder, true);
-	}
-
-	private showPlaylistSchedules() {
-		const contents = this.playlistContents;
-
-		this._dialog.open(ViewSchedulesComponent, {
-			width: '1280px',
-			data: { contents },
-			autoFocus: false
-		});
 	}
 
 	private showPlaylistDemo() {
@@ -519,7 +508,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			});
 	}
 
-	public playlistContentMoveSwap(playlistContent: API_CONTENT_V2) {
+	public playlistContentQuickMove(playlistContent: API_CONTENT_V2) {
 		this._dialog
 			.open(QuickMoveComponent, {
 				width: '678px',
@@ -775,6 +764,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 				this.playlistContents = this.playlistContents.map((p) => {
 					if (p.playlistContentId == playlistContent.playlistContentId) {
 						return {
+							...playlistContent,
 							...res.content,
 							...res.plContent
 						};
