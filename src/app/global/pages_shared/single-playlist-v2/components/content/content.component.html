@@ -28,6 +28,14 @@
 				<span class="font-weight-bold text-primary xsm-text">{{ content.fileName || content.title | nohandle | slice : 0 : 8 }}</span>
 			</div>
 
+			<ng-container *ngIf="content.frequency">
+				<i class="fas fa-crown text-warning mr-15" *ngIf="content.frequency > 10; else child_icon"></i>
+
+				<ng-template #child_icon>
+					<i class="fas fa-chess-pawn text-warning mr-15"></i>
+				</ng-template>
+			</ng-container>
+
 			<div class="checkbox-selector pt-1" *ngIf="selectable">
 				<input
 					type="checkbox"
