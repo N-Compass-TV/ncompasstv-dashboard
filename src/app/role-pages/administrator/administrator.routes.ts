@@ -46,6 +46,7 @@ import { TagsComponent } from '../../global/pages_shared/tags/tags.component';
 import { TemplatesComponent } from './pages/templates/templates.component';
 import { ToolsComponent } from '../../global/pages_shared/tools/tools.component';
 import { UI_ROLE_DEFINITION } from '../../global/models/ui_role-definition.model';
+import { UnsavedChangesGuard } from 'src/app/global/guards';
 import { UpdateComponent } from './pages/update/update.component';
 import { UsersComponent } from './pages/users/users.component';
 import { ViewFillersGroupComponent } from 'src/app/global/pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
@@ -140,6 +141,8 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 					{
 						path: 'generate',
 						component: GenerateFeedComponent,
+						canDeactivate: [UnsavedChangesGuard],
+
 						data: {
 							breadcrumb: 'Generate Feeds'
 						}
@@ -147,6 +150,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 					{
 						path: 'edit-generated/:data',
 						component: GenerateFeedComponent,
+						canDeactivate: [UnsavedChangesGuard],
 						data: {
 							breadcrumb: 'Edit Generated Feeds'
 						}

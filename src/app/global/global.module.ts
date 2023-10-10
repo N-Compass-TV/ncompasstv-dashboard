@@ -87,6 +87,7 @@ import { EditSingleHostComponent } from './pages_shared/edit-single-host/edit-si
 import { EditableFieldModalComponent } from './components_shared/page_components/editable-field-modal/editable-field-modal.component';
 import { ErrorMessageComponent } from './components_shared/page_components/error-message/error-message.component';
 import { ExpansionPanelComponent } from './components_shared/data_components/expansion-panel/expansion-panel.component';
+import { ExpiredContentsComponent } from './pages_shared/expired-contents/expired-contents.component';
 import { ExportsTabComponent } from './components_shared/reports_components/exports-tab/exports-tab.component';
 import { FailAnimationComponent } from './components_shared/page_components/fail-animation/fail-animation.component';
 import { FeedDemoComponent } from './components_shared/feed_components/feed-demo/feed-demo.component';
@@ -99,6 +100,7 @@ import { FillersComponent } from './pages_shared/fillers/fillers.component';
 import { FillerDemoComponent } from './components_shared/feed_components/filler-demo/filler-demo.component';
 import { FillerFormComponent } from './components_shared/feed_components/filler-form/filler-form.component';
 import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
+import { FillerMainViewComponent } from './pages_shared/fillers/components/filler-main-view/filler-main-view.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
 import { GridViewLicenseComponent } from './components_shared/license_components/grid-view-license/grid-view-license.component';
@@ -167,6 +169,7 @@ import { PlaylistMediaComponent } from './components_shared/playlist_components/
 import { PlaylistMediaThumbnailComponent } from './components_shared/playlist_components/playlist-media-thumbnail/playlist-media-thumbnail.component';
 import { ProfileSettingComponent } from './pages_shared/profile-setting/profile-setting.component';
 import { PushUpdateComponent } from './components_shared/playlist_components/push-update/push-update.component';
+import { RemoteTerminalComponent } from './components_shared/tools_component/remote-terminal/remote-terminal.component';
 import { RenameModalComponent } from './components_shared/media_components/rename-modal/rename-modal.component';
 import { SanitizePipe } from './pipes/sanitize.pipe';
 import { ScreenCreatedModalComponent } from './components_shared/screen_components/screen-created-modal/screen-created-modal.component';
@@ -177,6 +180,7 @@ import { ScreenshotPipe } from './pipes/screenshot.pipe';
 import { SearchFieldComponent } from './components_shared/page_components/search-field/search-field.component';
 import { SelectOwnerComponent } from './components_shared/user_components/select-owner/select-owner.component';
 import { SidebarComponent } from './components_shared/page_components/sidebar/sidebar.component';
+import { SingleActivityTabComponent } from './pages_shared/single-activity-tab/single-activity-tab.component';
 import { SingleAdvertiserComponent } from './pages_shared/single-advertiser/single-advertiser.component';
 import { SingleBillingsComponent } from './pages_shared/single-billings/single-billings.component';
 import { SingleContentComponent } from './pages_shared/single-content/single-content.component';
@@ -240,15 +244,16 @@ import {
 	MatStepperModule,
 	MatTableModule,
 	MatTabsModule,
-	MatTooltipModule
+	MatTooltipModule,
+	MatSnackBarModule
 } from '@angular/material';
 
 const ngComponents = [
 	AddCardComponent,
+	AddContentComponent,
 	AddFillerContentComponent,
 	AddFillerFeedsComponent,
 	AddFillerGroupComponent,
-	AddContentComponent,
 	AdvertiserViewComponent,
 	AssignLicenseModalComponent,
 	AutocompleteFieldComponent,
@@ -264,7 +269,6 @@ const ngComponents = [
 	CloneScreenComponent,
 	ConfirmTemplateModalComponent,
 	ConfirmationModalComponent,
-	ContentComponent,
 	ContentComponent,
 	ContentScheduleCardComponent,
 	ContentSchedulerComponent,
@@ -296,8 +300,6 @@ const ngComponents = [
 	DataTotalComponent,
 	DealerContentTabComponent,
 	DealerDetailsTabComponent,
-	DeleteFillerFeedsComponent,
-	DeleteFillerGroupComponent,
 	DealerHistoryTabComponent,
 	DealerHostTabComponent,
 	DealerInvoicesTabComponent,
@@ -307,6 +309,8 @@ const ngComponents = [
 	DealersTableComponent,
 	DealersViewComponent,
 	DeleteDealerDialogComponent,
+	DeleteFillerFeedsComponent,
+	DeleteFillerGroupComponent,
 	DeletePlaylistComponent,
 	DemoZoneComponent,
 	DmaTabComponent,
@@ -318,20 +322,19 @@ const ngComponents = [
 	EditSingleHostComponent,
 	EditableFieldModalComponent,
 	ErrorMessageComponent,
-	ErrorMessageComponent,
 	ExpansionPanelComponent,
+	ExpiredContentsComponent,
 	ExportsTabComponent,
 	FailAnimationComponent,
 	FeedDemoComponent,
 	FeedInfoComponent,
 	FeedMediaComponent,
-	FeedMediaComponent,
 	FeedsPageActionButtonsComponent,
-	FilenamePipe,
 	FileSizePipe,
-	FillersComponent,
+	FilenamePipe,
 	FillerDemoComponent,
 	FillerFormComponent,
+	FillersComponent,
 	FilterLabelsComponent,
 	FooterComponent,
 	GenerateFeedComponent,
@@ -358,16 +361,13 @@ const ngComponents = [
 	MediaLibraryOptionsComponent,
 	MediaModalComponent,
 	MediaPlaywhereComponent,
-	MediaPlaywhereComponent,
 	MediaViewerComponent,
-	QuickMoveComponent,
 	NavbarComponent,
 	NewAdminComponent,
 	NewAdvertiserComponent,
 	NewDealerAdminComponent,
 	NewDealerComponent,
 	NewHostUserComponent,
-	SpacerSetupComponent,
 	NewSubDealerComponent,
 	NewTechrepComponent,
 	NewZoneComponent,
@@ -385,20 +385,19 @@ const ngComponents = [
 	PlayLocationItemComponent,
 	PlayWhereComponent,
 	PlaylistContentComponent,
-	PlaylistContentComponent,
 	PlaylistContentPanelComponent,
 	PlaylistContentSchedulingDialogComponent,
 	PlaylistCreatedModalComponent,
 	PlaylistDemoComponent,
 	PlaylistEditModalComponent,
 	PlaylistHostComponent,
-	PlaylistHostComponent,
-	PlaylistHostComponent,
 	PlaylistInfoComponent,
 	PlaylistMediaComponent,
 	PlaylistMediaThumbnailComponent,
 	ProfileSettingComponent,
 	PushUpdateComponent,
+	QuickMoveComponent,
+	RemoteTerminalComponent,
 	RenameModalComponent,
 	SanitizePipe,
 	ScreenCreatedModalComponent,
@@ -407,9 +406,9 @@ const ngComponents = [
 	ScreenLicenseComponent,
 	ScreenshotPipe,
 	SearchFieldComponent,
-	SearchFieldComponent,
 	SelectOwnerComponent,
 	SidebarComponent,
+	SingleActivityTabComponent,
 	SingleAdvertiserComponent,
 	SingleBillingsComponent,
 	SingleContentComponent,
@@ -421,6 +420,7 @@ const ngComponents = [
 	SingleTemplateComponent,
 	SingleUserComponent,
 	SliderFormComponent,
+	SpacerSetupComponent,
 	SpinnerComponent,
 	SubstringPipe,
 	SuccessAnimationComponent,
@@ -441,21 +441,18 @@ const ngComponents = [
 	ViewSchedulesComponent,
 	WarningAnimationComponent,
 	WarningPopupComponent,
-	WarningPopupComponent,
 	WeatherDemoComponent,
 	WeatherFormComponent,
 	WysiwygComponent,
 	ZoneExpansionPanelComponent,
 	ZoneListComponent,
-	ContentSchedulerFormComponent,
-	AddContentComponent,
-	BasicSettingsComponent
+    FillerMainViewComponent,
+    QuickMoveComponent
 ];
 
 const MaterialModules = [
 	MatAutocompleteModule,
 	MatButtonModule,
-	MatButtonToggleModule,
 	MatButtonToggleModule,
 	MatCardModule,
 	MatCheckboxModule,
@@ -470,13 +467,13 @@ const MaterialModules = [
 	MatMenuModule,
 	MatMomentDateModule,
 	MatNativeDateModule,
-	MatNativeDateModule,
 	MatPaginatorModule,
 	MatProgressBarModule,
 	MatProgressSpinnerModule,
 	MatRadioModule,
 	MatSelectModule,
 	MatSlideToggleModule,
+	MatSnackBarModule,
 	MatStepperModule,
 	MatTableModule,
 	MatTabsModule,
@@ -487,7 +484,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES, QuickMoveComponent],
+	declarations: [ngComponents, DIRECTIVES],
 	entryComponents: [
 		AddCardComponent,
 		AddFillerContentComponent,
@@ -558,6 +555,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		FormsModule,
 		HttpClientModule,
 		MaterialModules,
+		MomentDateModule,
 		NgbModule,
 		NgxPaginationModule,
 		ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),

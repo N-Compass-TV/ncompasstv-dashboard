@@ -150,17 +150,15 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		this._type.setValue(data);
 	}
 
-	onSelectDate(value: moment.Moment, type: string): void {
+	onSelectDate(value: string, type: string): void {
 		if (!type) return;
 
-		let date = value.format('YYYY-MM-DD');
-
 		if (type === 'end') {
-			this.end_date = date;
+			this.end_date = value;
 			return;
 		}
 
-		this.start_date = date;
+		this.start_date = value;
 	}
 
 	onSelectAllDays(): void {
@@ -408,8 +406,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 		if (mode === 'create' || content_ids.length > 1) {
 			this.type = this.types.filter((type) => type.name === 'Default Play')[0];
-			this.start_date = new Date();
-			this.end_date = moment().add(5, 'years');
+			this.start_date = moment().format('YYYY-MM-DD');
+			this.end_date = moment().add(5, 'years').format('YYYY-MM-DD');
 			this.onSelectAllDays();
 			this.setPlayTimeToAllDay();
 			return;
@@ -428,8 +426,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 			this.has_alternate_week_set = this.alternate_week > 0;
 
 			if (schedules.length > 1) {
-				this.start_date = new Date();
-				this.end_date = moment().add(5, 'years');
+				this.start_date = moment().format('YYYY-MM-DD');
+				this.end_date = moment().add(5, 'years').format('YYYY-MM-DD');
 			}
 
 			this.days = days;

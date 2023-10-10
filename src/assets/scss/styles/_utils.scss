@@ -185,7 +185,7 @@
 
 .xxsm-text {
 	font-size: $xxsm !important;
-}
+} 
 
 .x-sm-text {
 	font-size: 9px !important;
@@ -198,12 +198,21 @@
 .md-text {
 	font-size: $md !important;
 }
+
 .normal-text {
 	font-size: $normal !important;
 }
 
+.lg-text {
+	font-size: $lg !important;
+}
+
 .xlg-text {
 	font-size: $xlg !important;
+}
+
+.line-height-xlg {
+	line-height: $xlg;
 }
 
 //Overflows
@@ -235,4 +244,8 @@
 
 .mr-15 {
 	margin-right: 0.33rem !important;
+}
+
+.fs-normal {
+	font-size: $normal;
 }
