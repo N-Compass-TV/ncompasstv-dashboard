@@ -57,10 +57,10 @@ export class ContentSchedulerComponent implements OnInit, OnDestroy, AfterViewIn
 		if (this.hasExistingSchedule) {
 			const { playTimeStart, playTimeEnd, from, to, alternateWeek, days } = this.contents[0];
 
-			// intentianal delay because it takes a while to load the existing data
+			// intentional delay because it takes a while to load the existing data
 			setTimeout(() => {
 				this._playlist.receiveExistingScheduleData.emit({ playTimeStart, playTimeEnd, from, to, alternateWeek, days, type: 3 });
-			}, 1000);
+			}, 0);
 
 			return;
 		}

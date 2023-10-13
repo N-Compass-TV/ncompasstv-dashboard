@@ -44,16 +44,26 @@ export class BasicSettingsComponent implements OnInit, OnDestroy {
 		// if the frequency value is 22 or 33 then parse it to 2 or 3 to comply with the form values
 		const parsedFrequency = content && this.parseFrequencyValueToString(content.frequency);
 
-		this.basicSettings = this._formBuilder.group({
-			duration: [
-				{
-					value: content ? parseFormValue(content.duration) : 20,
-					disabled: !this.bulk_setting && this._video.transform(content.fileType)
-				}
-			],
-			frequency: [parseFormValue(parsedFrequency) || 0],
-			isFullScreen: content ? parseFormValue(content.isFullScreen) : 0
-		});
+		this.basicSettings = this.bulk_setting
+			? this._formBuilder.group({
+					duration: [
+						{
+							value: content ? parseFormValue(content.duration) : 20,
+							disabled: !this.bulk_setting && this._video.transform(content.fileType)
+						}
+					],
+					isFullScreen: content ? parseFormValue(content.isFullScreen) : 0
+			  })
+			: this._formBuilder.group({
+					duration: [
+						{
+							value: content ? parseFormValue(content.duration) : 20,
+							disabled: !this.bulk_setting && this._video.transform(content.fileType)
+						}
+					],
+					frequency: [parseFormValue(parsedFrequency) || 0],
+					isFullScreen: content ? parseFormValue(content.isFullScreen) : 0
+			  });
 
 		if (this.isChildFrequency) this.basicSettings.get('frequency').disable();
 		this.changed.emit({ ...this.basicSettings.value, isFullScreen: this.basicSettings.controls['isFullScreen'].value.isFullScreen ? 1 : 0 });

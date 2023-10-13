@@ -612,6 +612,10 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 					// update the total number of contents on the breakdown
 					const indexForTotalCount = this.playlistContentBreakdown.findIndex((c) => c.label === 'Content Count');
 					this.playlistContentBreakdown[indexForTotalCount].total = this.playlistContents.length;
+
+					// Reset
+					this.selectedPlaylistContents = [];
+					this.enabledPlaylistContentControls = [...this.playlistContentControls];
 				},
 				error: (e) => console.log('Error removing playlist contentes', e)
 			});
@@ -805,7 +809,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			delete c.schedule;
 
 			// set the API calls for contents that have updated frequencies
-			if (c.frequency !== 0) {
+			if (c && c.frequency > 0) {
 				// if frequency is 1 then revert
 				if (c.frequency === 1) requests.push(this._playlist.revert_frequency(c.playlistContentId));
 				// else update the frequency
@@ -831,11 +835,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 					this.savingPlaylist = false;
 					this.selectedPlaylistContents = [];
 					this.playlistContentsToSave = [];
-
-					if (savingPlaylist) {
-						this.playlistSequenceUpdates = [];
-						this.sortablejsTriggered.next(false);
-					}
+					this.enabledPlaylistContentControls = [...this.playlistContentControls];
 
 					this.setBulkControlsState();
 
@@ -871,6 +871,12 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 					}, 0);
 
 					if (updateFrequencyCount > 0) this.playlistRouteInit();
+
+					if (savingPlaylist) {
+						this.playlistSequenceUpdates = [];
+						this.sortablejsTriggered.next(false);
+						this.playlistRouteInit();
+					}
 				}
 			});
 	}

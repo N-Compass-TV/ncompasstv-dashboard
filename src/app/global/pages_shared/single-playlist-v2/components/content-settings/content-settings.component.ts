@@ -69,8 +69,8 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		this.getPlaylistContentWhitelistData();
 		this.subscribeToContentSchedulerFormChanges();
+		this.getPlaylistContentWhitelistData();
 
 		/** Set initial state of prev and next buttons */
 		if (this.contentData.index === 0) this.prevDisabled = true;
@@ -85,7 +85,6 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 	private getPlaylistContentWhitelistData() {
 		if (this.contentData.bulkSet || (this.contentData && !this.contentData.hostLicenses)) {
 			this.loadingWhitelistedLicenses = false;
-
 			return;
 		}
 
