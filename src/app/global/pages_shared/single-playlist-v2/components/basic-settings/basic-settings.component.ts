@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, OnDestroy, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { API_CONTENT_V2 } from 'src/app/global/models';
 import { IsvideoPipe } from 'src/app/global/pipes';
@@ -44,28 +44,22 @@ export class BasicSettingsComponent implements OnInit, OnDestroy {
 		// if the frequency value is 22 or 33 then parse it to 2 or 3 to comply with the form values
 		const parsedFrequency = content && this.parseFrequencyValueToString(content.frequency);
 
-		this.basicSettings = this.bulk_setting
-			? this._formBuilder.group({
-					duration: [
-						{
-							value: content ? parseFormValue(content.duration) : 20,
-							disabled: !this.bulk_setting && this._video.transform(content.fileType)
-						}
-					],
-					isFullScreen: content ? parseFormValue(content.isFullScreen) : 0
-			  })
-			: this._formBuilder.group({
-					duration: [
-						{
-							value: content ? parseFormValue(content.duration) : 20,
-							disabled: !this.bulk_setting && this._video.transform(content.fileType)
-						}
-					],
-					frequency: [parseFormValue(parsedFrequency) || 0],
-					isFullScreen: content ? parseFormValue(content.isFullScreen) : 0
-			  });
+		this.basicSettings = this._formBuilder.group({
+			duration: [
+				{
+					value: content ? parseFormValue(content.duration) : 20,
+					disabled: !this.bulk_setting && this._video.transform(content.fileType)
+				}
+			],
+			isFullScreen: content ? parseFormValue(content.isFullScreen) : 0
+		});
 
-		if (this.isChildFrequency) this.basicSettings.get('frequency').disable();
+		if (!this.bulk_setting) {
+			const frequencyCtrl = new FormControl(parseFormValue(parsedFrequency) || 0);
+			this.basicSettings.addControl('frequency', frequencyCtrl);
+			if (this.isChildFrequency) this.basicSettings.get('frequency').disable();
+		}
+
 		this.changed.emit({ ...this.basicSettings.value, isFullScreen: this.basicSettings.controls['isFullScreen'].value.isFullScreen ? 1 : 0 });
 		this.subscribeToFormChanges();
 		this.formReady = true;
