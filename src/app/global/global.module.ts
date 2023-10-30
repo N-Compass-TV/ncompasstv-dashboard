@@ -6,13 +6,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
-import { EditorModule } from '@tinymce/tinymce-angular';
 import { AddCardComponent } from './pages_shared/profile-setting/payment-setting/add-card/add-card.component';
+import { AddContentComponent } from './pages_shared/single-playlist-v2/components/add-content/add-content.component';
 import { AddFillerContentComponent } from './pages_shared/fillers/components/add-filler-content/add-filler-content.component';
 import { AddFillerFeedsComponent } from './pages_shared/fillers/components/add-filler-content/components/add-filler-feeds/add-filler-feeds.component';
 import { AddFillerGroupComponent } from './pages_shared/fillers/components/add-filler-group/add-filler-group.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
-import { AddContentComponent } from './pages_shared/single-playlist-v2/components/add-content/add-content.component';
 import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AutocompleteFieldComponent } from './components_shared/page_components/autocomplete-field/autocomplete-field.component';
@@ -77,14 +76,15 @@ import { DeleteFillerGroupComponent } from './pages_shared/fillers/components/de
 import { DeletePlaylistComponent } from './components_shared/playlist_components/delete-playlist/delete-playlist.component';
 import { DemoZoneComponent } from './components_shared/zone_components/demo-zone/demo-zone.component';
 import { DmaTabComponent } from './components_shared/locator_components/dma-tab/dma-tab.component';
-import { DropdownMultipleSelectionFieldComponent } from './components_shared/page_components/dropdown-multiple-selection-field/dropdown-multiple-selection-field.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DropdownMultipleSelectionFieldComponent } from './components_shared/page_components/dropdown-multiple-selection-field/dropdown-multiple-selection-field.component';
 import { EditFeedComponent } from './components_shared/feed_components/edit-feed/edit-feed.component';
 import { EditFillerGroupComponent } from './pages_shared/fillers/components/edit-filler-group/edit-filler-group.component';
 import { EditSingleAdvertiserComponent } from './pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from './pages_shared/edit-single-dealer/edit-single-dealer.component';
 import { EditSingleHostComponent } from './pages_shared/edit-single-host/edit-single-host.component';
 import { EditableFieldModalComponent } from './components_shared/page_components/editable-field-modal/editable-field-modal.component';
+import { EditorModule } from '@tinymce/tinymce-angular';
 import { ErrorMessageComponent } from './components_shared/page_components/error-message/error-message.component';
 import { ExpansionPanelComponent } from './components_shared/data_components/expansion-panel/expansion-panel.component';
 import { ExpiredContentsComponent } from './pages_shared/expired-contents/expired-contents.component';
@@ -94,13 +94,13 @@ import { FeedDemoComponent } from './components_shared/feed_components/feed-demo
 import { FeedInfoComponent } from './components_shared/feed_components/feed-info/feed-info.component';
 import { FeedMediaComponent } from './components_shared/feed_components/feed-media/feed-media.component';
 import { FeedsPageActionButtonsComponent } from './components_shared/data_components/data-table/components/feeds-page-action-buttons/feeds-page-action-buttons.component';
-import { FilenamePipe } from './pipes/filename.pipe';
 import { FileSizePipe } from './pipes/filesize.pipe';
-import { FillersComponent } from './pages_shared/fillers/fillers.component';
+import { FilenamePipe } from './pipes/filename.pipe';
 import { FillerDemoComponent } from './components_shared/feed_components/filler-demo/filler-demo.component';
 import { FillerFormComponent } from './components_shared/feed_components/filler-form/filler-form.component';
-import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
 import { FillerMainViewComponent } from './pages_shared/fillers/components/filler-main-view/filler-main-view.component';
+import { FillersComponent } from './pages_shared/fillers/fillers.component';
+import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
 import { GridViewLicenseComponent } from './components_shared/license_components/grid-view-license/grid-view-license.component';
@@ -130,14 +130,12 @@ import { MediaModalComponent } from './components_shared/media_components/media-
 import { MediaPlaywhereComponent } from './components_shared/playlist_components/media-playwhere/media-playwhere.component';
 import { MediaViewerComponent } from './components_shared/media_components/media-viewer/media-viewer.component';
 import { MonthDayFormatDirective } from './directives/month-day-format/month-day-format.directive';
-import { QuickMoveComponent } from './pages_shared/single-playlist-v2/components/quick-move/quick-move.component';
 import { NavbarComponent } from './components_shared/page_components/navbar/navbar.component';
 import { NewAdminComponent } from './components_shared/user_components/user-forms/new-admin/new-admin.component';
 import { NewAdvertiserComponent } from './components_shared/user_components/user-forms/new-advertiser/new-advertiser.component';
 import { NewDealerAdminComponent } from './components_shared/user_components/user-forms/new-dealer-admin/new-dealer-admin.component';
 import { NewDealerComponent } from './components_shared/user_components/user-forms/new-dealer/new-dealer.component';
 import { NewHostUserComponent } from './components_shared/user_components/user-forms/new-host-user/new-host-user.component';
-import { SpacerSetupComponent } from './pages_shared/single-playlist-v2/components/spacer-setup/spacer-setup.component';
 import { NewSubDealerComponent } from './components_shared/user_components/user-forms/new-sub-dealer/new-sub-dealer.component';
 import { NewTechrepComponent } from './components_shared/user_components/user-forms/new-techrep/new-techrep.component';
 import { NewZoneComponent } from './components_shared/zone_components/new-zone/new-zone.component';
@@ -169,6 +167,7 @@ import { PlaylistMediaComponent } from './components_shared/playlist_components/
 import { PlaylistMediaThumbnailComponent } from './components_shared/playlist_components/playlist-media-thumbnail/playlist-media-thumbnail.component';
 import { ProfileSettingComponent } from './pages_shared/profile-setting/profile-setting.component';
 import { PushUpdateComponent } from './components_shared/playlist_components/push-update/push-update.component';
+import { QuickMoveComponent } from './pages_shared/single-playlist-v2/components/quick-move/quick-move.component';
 import { RemoteTerminalComponent } from './components_shared/tools_component/remote-terminal/remote-terminal.component';
 import { RenameModalComponent } from './components_shared/media_components/rename-modal/rename-modal.component';
 import { SanitizePipe } from './pipes/sanitize.pipe';
@@ -192,6 +191,7 @@ import { SingleScreenComponent } from './pages_shared/single-screen/single-scree
 import { SingleTemplateComponent } from './pages_shared/single-template/single-template.component';
 import { SingleUserComponent } from './pages_shared/single-user/single-user.component';
 import { SliderFormComponent } from './components_shared/feed_components/slider-form/slider-form.component';
+import { SpacerSetupComponent } from './pages_shared/single-playlist-v2/components/spacer-setup/spacer-setup.component';
 import { SpinnerComponent } from './components_shared/page_components/spinner/spinner.component';
 import { SubstringPipe } from './pipes/substring.pipe';
 import { SuccessAnimationComponent } from './components_shared/page_components/success-animation/success-animation.component';
@@ -203,6 +203,7 @@ import { TransactionTabComponent } from './pages_shared/profile-setting/transact
 import { UnassignHostLicenseComponent } from './components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { UnassignLicenseComponent } from './components_shared/screen_components/unassign-license/unassign-license.component';
 import { UpcomingInstallModalComponent } from './pages_shared/upcoming-install-modal/upcoming-install-modal.component';
+import { UpdateProfilePhotoComponent } from './components_shared/update-profile-photo/update-profile-photo.component';
 import { UserSettingComponent } from './pages_shared/profile-setting/user-setting/user-setting.component';
 import { UserSortModalComponent } from './components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { UserTypeComponent } from './components_shared/user_components/user-type/user-type.component';
@@ -241,11 +242,11 @@ import {
 	MatRadioModule,
 	MatSelectModule,
 	MatSlideToggleModule,
+	MatSnackBarModule,
 	MatStepperModule,
 	MatTableModule,
 	MatTabsModule,
-	MatTooltipModule,
-	MatSnackBarModule
+	MatTooltipModule
 } from '@angular/material';
 
 const ngComponents = [
@@ -300,6 +301,8 @@ const ngComponents = [
 	DataTotalComponent,
 	DealerContentTabComponent,
 	DealerDetailsTabComponent,
+	DeleteFillerFeedsComponent,
+	DeleteFillerGroupComponent,
 	DealerHistoryTabComponent,
 	DealerHostTabComponent,
 	DealerInvoicesTabComponent,
@@ -322,6 +325,7 @@ const ngComponents = [
 	EditSingleHostComponent,
 	EditableFieldModalComponent,
 	ErrorMessageComponent,
+	ErrorMessageComponent,
 	ExpansionPanelComponent,
 	ExpiredContentsComponent,
 	ExportsTabComponent,
@@ -329,7 +333,9 @@ const ngComponents = [
 	FeedDemoComponent,
 	FeedInfoComponent,
 	FeedMediaComponent,
+	FeedMediaComponent,
 	FeedsPageActionButtonsComponent,
+	FilenamePipe,
 	FileSizePipe,
 	FilenamePipe,
 	FillerDemoComponent,
@@ -361,6 +367,7 @@ const ngComponents = [
 	MediaLibraryOptionsComponent,
 	MediaModalComponent,
 	MediaPlaywhereComponent,
+	MediaPlaywhereComponent,
 	MediaViewerComponent,
 	NavbarComponent,
 	NewAdminComponent,
@@ -391,6 +398,8 @@ const ngComponents = [
 	PlaylistDemoComponent,
 	PlaylistEditModalComponent,
 	PlaylistHostComponent,
+	PlaylistHostComponent,
+	PlaylistHostComponent,
 	PlaylistInfoComponent,
 	PlaylistMediaComponent,
 	PlaylistMediaThumbnailComponent,
@@ -405,6 +414,7 @@ const ngComponents = [
 	ScreenItemComponent,
 	ScreenLicenseComponent,
 	ScreenshotPipe,
+	SearchFieldComponent,
 	SearchFieldComponent,
 	SelectOwnerComponent,
 	SidebarComponent,
@@ -441,6 +451,7 @@ const ngComponents = [
 	ViewSchedulesComponent,
 	WarningAnimationComponent,
 	WarningPopupComponent,
+	WarningPopupComponent,
 	WeatherDemoComponent,
 	WeatherFormComponent,
 	WysiwygComponent,
@@ -458,6 +469,7 @@ const MaterialModules = [
 	MatCheckboxModule,
 	MatChipsModule,
 	MatDatepickerModule,
+	MatDatepickerModule,
 	MatDialogModule,
 	MatDividerModule,
 	MatExpansionModule,
@@ -467,11 +479,13 @@ const MaterialModules = [
 	MatMenuModule,
 	MatMomentDateModule,
 	MatNativeDateModule,
+	MatNativeDateModule,
 	MatPaginatorModule,
 	MatProgressBarModule,
 	MatProgressSpinnerModule,
 	MatRadioModule,
 	MatSelectModule,
+	MatSnackBarModule,
 	MatSlideToggleModule,
 	MatSnackBarModule,
 	MatStepperModule,
@@ -484,7 +498,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES],
+	declarations: [ngComponents, DIRECTIVES, FillerMainViewComponent, UpdateProfilePhotoComponent],
 	entryComponents: [
 		AddCardComponent,
 		AddFillerContentComponent,
