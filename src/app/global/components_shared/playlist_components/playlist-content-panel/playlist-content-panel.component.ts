@@ -86,7 +86,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	incoming_blacklist_licenses = [];
 	search_control = new FormControl();
 	bulk_toggle: boolean;
-
 	statusFilterOptions = this._statusFilterOptions;
 
 	private selected_contents: { playlistContentId: string; contentId: string; classification: any }[];
@@ -139,6 +138,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		});
 
 		this.getCurrentAssetCount();
+
+		// ensure that all content are initially ordered by sequence
+		this.playlist_contents = [...this.fixSequences()];
 	}
 
 	ngOnDestroy() {

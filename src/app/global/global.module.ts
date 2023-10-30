@@ -12,14 +12,17 @@ import { AddFillerContentComponent } from './pages_shared/fillers/components/add
 import { AddFillerFeedsComponent } from './pages_shared/fillers/components/add-filler-content/components/add-filler-feeds/add-filler-feeds.component';
 import { AddFillerGroupComponent } from './pages_shared/fillers/components/add-filler-group/add-filler-group.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
+import { AddContentComponent } from './pages_shared/single-playlist-v2/components/add-content/add-content.component';
 import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AutocompleteFieldComponent } from './components_shared/page_components/autocomplete-field/autocomplete-field.component';
 import { BannerComponent } from './components_shared/page_components/banner/banner.component';
+import { BasicSettingsComponent } from './pages_shared/single-playlist-v2/components/basic-settings/basic-settings.component';
 import { BreadcrumbsModule } from 'ng6-breadcrumbs';
 import { BulkEditBusinessHoursComponent } from './components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import { BulkOptionsComponent } from './components_shared/playlist_components/bulk-options/bulk-options.component';
 import { BulkPlaywhereComponent } from './components_shared/playlist_components/bulk-playwhere/bulk-playwhere.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { CategoryModalComponent } from './components_shared/category_components/category-modal/category-modal.component';
 import { ChangeTemplateComponent } from './components_shared/screen_components/change-template/change-template.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
@@ -29,7 +32,11 @@ import { CloneScreenComponent } from './components_shared/screen_components/clon
 import { ColorPickerModule } from 'ngx-color-picker';
 import { ConfirmTemplateModalComponent } from './components_shared/template_components/confirm-template-modal/confirm-template-modal.component';
 import { ConfirmationModalComponent } from './components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { ContentComponent } from './pages_shared/single-playlist-v2/components/content/content.component';
 import { ContentScheduleCardComponent } from './components_shared/playlist_components/content-schedule-cards/content-schedule-card.component';
+import { ContentSchedulerComponent } from './pages_shared/single-playlist-v2/components/content-scheduler/content-scheduler.component';
+import { ContentSchedulerFormComponent } from './pages_shared/single-playlist-v2/components/content-scheduler-form/content-scheduler-form.component';
+import { ContentSettingsComponent } from './pages_shared/single-playlist-v2/components/content-settings/content-settings.component';
 import { ContentsTabComponent } from './components_shared/reports_components/contents-tab/contents-tab.component';
 import { CreateAdvertiserComponent } from './pages_shared/create-advertiser/create-advertiser.component';
 import { CreateCustomHostFieldsComponent } from './pages_shared/create-custom-host-fields/create-custom-host-fields.component';
@@ -49,11 +56,13 @@ import { DataCardCountComponent } from './components_shared/data_components/data
 import { DataCardGraphComponent } from './components_shared/data_components/data-card-graph/data-card-graph.component';
 import { DataGraphComponent } from './components_shared/data_components/data-graph/data-graph.component';
 import { DataGraphCompareComponent } from './components_shared/data_components/data-graph-compare/data-graph-compare.component';
+import { DataGraphComponent } from './components_shared/data_components/data-graph/data-graph.component';
 import { DataQuickStatsComponent } from './components_shared/data_components/data-quick-stats/data-quick-stats.component';
 import { DataStatisticsCardComponent } from './components_shared/data_components/data-statistics-card/data-statistics-card.component';
 import { DataStatisticsCardWithPickerComponent } from './components_shared/data_components/data-statistics-card-with-picker/data-statistics-card-with-picker.component';
 import { DataTotalComponent } from './components_shared/data_components/data-total/data-total.component';
 import { DataTableComponent } from './components_shared/data_components/data-table/data-table.component';
+import { DataTotalComponent } from './components_shared/data_components/data-total/data-total.component';
 import { DealerContentTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-content-tab/dealer-content-tab.component';
 import { DealerDetailsTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-details-tab/dealer-details-tab.component';
 import { DealerHistoryTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-history-tab/dealer-history-tab.component';
@@ -64,6 +73,9 @@ import { DealerViewComponent } from './components_shared/locator_components/deal
 import { DealersViewComponent } from './pages_shared/single-billings/dealers-view/dealers-view.component';
 import { DealersTableComponent } from './components_purpose-built/dealers-table/dealers-table.component';
 import { DealerSettingComponent } from './pages_shared/profile-setting/dealer-setting/dealer-setting.component';
+import { DealerViewComponent } from './components_shared/locator_components/dealer-view/dealer-view.component';
+import { DealersTableComponent } from './components_purpose-built/dealers-table/dealers-table.component';
+import { DealersViewComponent } from './pages_shared/single-billings/dealers-view/dealers-view.component';
 import { DefaultDateFormatDirective } from './directives/default-date-format/default-date-format.directive';
 import { DeleteDealerDialogComponent } from './pages_shared/edit-single-dealer/delete-dealer-dialog/delete-dealer-dialog.component';
 import { DeleteFillerFeedsComponent } from './pages_shared/fillers/components/delete-filler-feeds/delete-filler-feeds.component';
@@ -73,6 +85,7 @@ import { DemoZoneComponent } from './components_shared/zone_components/demo-zone
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DmaTabComponent } from './components_shared/locator_components/dma-tab/dma-tab.component';
 import { DropdownMultipleSelectionFieldComponent } from './components_shared/page_components/dropdown-multiple-selection-field/dropdown-multiple-selection-field.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { EditFeedComponent } from './components_shared/feed_components/edit-feed/edit-feed.component';
 import { EditFillerGroupComponent } from './pages_shared/fillers/components/edit-filler-group/edit-filler-group.component';
 import { EditSingleAdvertiserComponent } from './pages_shared/edit-single-advertiser/edit-single-advertiser.component';
@@ -94,6 +107,9 @@ import { FillersComponent } from './pages_shared/fillers/fillers.component';
 import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
 import { FillerFormComponent } from './components_shared/feed_components/filler-form/filler-form.component';
 import { FillerDemoComponent } from './components_shared/feed_components/filler-demo/filler-demo.component';
+import { FillerFormComponent } from './components_shared/feed_components/filler-form/filler-form.component';
+import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
+import { FillerMainViewComponent } from './pages_shared/fillers/components/filler-main-view/filler-main-view.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
 import { GridViewLicenseComponent } from './components_shared/license_components/grid-view-license/grid-view-license.component';
@@ -108,12 +124,14 @@ import { IsFeedPipe } from './pipes/is-feed.pipe';
 import { IsimagePipe } from './pipes/isimage.pipe';
 import { IsvideoPipe } from './pipes/isvideo.pipe';
 import { LicenseModalComponent } from './components_shared/license_components/license-modal/license-modal.component';
+import { LicenseViewComponent } from './components_shared/locator_components/license-view/license-view.component';
 import { LicensesTabReportsComponent } from './components_shared/reports_components/licenses-tab-reports/licenses-tab-reports.component';
 import { ListItemComponent } from './components_shared/data_components/list-item/list-item.component';
 import { LittleSpinnerComponent } from './components_shared/page_components/little-spinner/little-spinner.component';
 import { LocatorComponent } from './pages_shared/locator/locator.component';
-import { MatMomentDateModule, MomentDateModule } from '@angular/material-moment-adapter';
+import { LocatorComponentComponent } from './components_purpose-built/locator-component/locator-component.component';
 import { MatFileUploadModule } from 'angular-material-fileupload';
+import { MatMomentDateModule, MomentDateModule } from '@angular/material-moment-adapter';
 import { MediaComponent } from './components_shared/media_components/media/media.component';
 import { MediaLibraryComponent } from './pages_shared/media-library/media-library.component';
 import { MediaLibraryOptionsComponent } from './components_shared/media_components/media-library-options/media-library-options.component';
@@ -121,12 +139,14 @@ import { MediaModalComponent } from './components_shared/media_components/media-
 import { MediaPlaywhereComponent } from './components_shared/playlist_components/media-playwhere/media-playwhere.component';
 import { MediaViewerComponent } from './components_shared/media_components/media-viewer/media-viewer.component';
 import { MonthDayFormatDirective } from './directives/month-day-format/month-day-format.directive';
+import { QuickMoveComponent } from './pages_shared/single-playlist-v2/components/quick-move/quick-move.component';
 import { NavbarComponent } from './components_shared/page_components/navbar/navbar.component';
 import { NewAdminComponent } from './components_shared/user_components/user-forms/new-admin/new-admin.component';
 import { NewAdvertiserComponent } from './components_shared/user_components/user-forms/new-advertiser/new-advertiser.component';
 import { NewDealerAdminComponent } from './components_shared/user_components/user-forms/new-dealer-admin/new-dealer-admin.component';
 import { NewDealerComponent } from './components_shared/user_components/user-forms/new-dealer/new-dealer.component';
 import { NewHostUserComponent } from './components_shared/user_components/user-forms/new-host-user/new-host-user.component';
+import { SpacerSetupComponent } from './pages_shared/single-playlist-v2/components/spacer-setup/spacer-setup.component';
 import { NewSubDealerComponent } from './components_shared/user_components/user-forms/new-sub-dealer/new-sub-dealer.component';
 import { NewTechrepComponent } from './components_shared/user_components/user-forms/new-techrep/new-techrep.component';
 import { NewZoneComponent } from './components_shared/zone_components/new-zone/new-zone.component';
@@ -143,6 +163,8 @@ import { OptionsComponent } from './components_shared/playlist_components/option
 import { OrdersComponent } from './pages_shared/orders/orders.component';
 import { PaginationFieldComponent } from './components_shared/page_components/pagination-field/pagination-field.component';
 import { PaymentSettingComponent } from './pages_shared/profile-setting/payment-setting/payment-setting.component';
+import { PlayLocationComponent } from './pages_shared/single-playlist-v2/components/play-location/play-location.component';
+import { PlayLocationItemComponent } from './pages_shared/single-playlist-v2/components/play-location-item/play-location-item.component';
 import { PlayWhereComponent } from './components_shared/playlist_components/play-where/play-where.component';
 import { PlaylistContentComponent } from './components_shared/playlist_components/playlist-content/playlist-content.component';
 import { PlaylistContentPanelComponent } from './components_shared/playlist_components/playlist-content-panel/playlist-content-panel.component';
@@ -174,6 +196,7 @@ import { SingleContentComponent } from './pages_shared/single-content/single-con
 import { SingleDealerComponent } from './pages_shared/single-dealer/single-dealer.component';
 import { SingleDealerSidebarComponent } from './components_purpose-built/single-dealer-sidebar/single-dealer-sidebar.component';
 import { SinglePlaylistComponent } from './pages_shared/single-playlist/single-playlist.component';
+import { SinglePlaylistV2Component } from './pages_shared/single-playlist-v2/single-playlist-v2.component';
 import { SingleScreenComponent } from './pages_shared/single-screen/single-screen.component';
 import { SingleTemplateComponent } from './pages_shared/single-template/single-template.component';
 import { SingleUserComponent } from './pages_shared/single-user/single-user.component';
@@ -186,11 +209,16 @@ import { TemplateZonesComponent } from './components_shared/template_components/
 import { ThumbnailCardComponent } from './components_shared/media_components/thumbnail-card/thumbnail-card.component';
 import { TransactionTabComponent } from './pages_shared/profile-setting/transaction-tab/transaction-tab.component';
 import { ToolsComponent } from './pages_shared/tools/tools.component';
+import { TransactionTabComponent } from './pages_shared/profile-setting/transaction-tab/transaction-tab.component';
 import { UnassignHostLicenseComponent } from './components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { UnassignLicenseComponent } from './components_shared/screen_components/unassign-license/unassign-license.component';
+import { UpcomingInstallModalComponent } from './pages_shared/upcoming-install-modal/upcoming-install-modal.component';
+import { UserSettingComponent } from './pages_shared/profile-setting/user-setting/user-setting.component';
 import { UserSortModalComponent } from './components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { UserTypeComponent } from './components_shared/user_components/user-type/user-type.component';
+import { ViewCardsComponent } from './pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
 import { ViewDmaHostComponent } from './components_shared/data_components/data-table/dialogs/view-dma-host/view-dma-host.component';
+import { ViewFillersGroupComponent } from './pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
 import { ViewSchedulesComponent } from './components_shared/playlist_components/view-schedules/view-schedules.component';
 import { WarningAnimationComponent } from './components_shared/page_components/warning-animation/warning-animation.component';
 import { WarningPopupComponent } from './components_shared/page_components/warning-popup/warning-popup.component';
@@ -205,12 +233,14 @@ import { ViewCardsComponent } from './pages_shared/profile-setting/payment-setti
 import { ViewFillersGroupComponent } from './pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
 import { LocatorComponentComponent } from './components_purpose-built/locator-component/locator-component.component';
 import { WysiwygComponent } from './components_purpose-built/wysiwyg/wysiwyg.component';
-
-// const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
+import { ZoneExpansionPanelComponent } from './pages_shared/single-template/components/zone-expansion-panel/zone-expansion-panel.component';
+import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
 
 // Material Theme Module
 import {
 	MatAutocompleteModule,
+	MatButtonModule,
+	MatButtonToggleModule,
 	MatCardModule,
 	MatCheckboxModule,
 	MatChipsModule,
@@ -230,12 +260,24 @@ import {
 	MatPaginatorModule,
 	MatRadioModule,
 	MatDatepickerModule,
-	MatNativeDateModule,
-	MatProgressBarModule,
-	MatTooltipModule,
+	MatDialogModule,
+	MatDividerModule,
+	MatExpansionModule,
 	MatIconModule,
-	MatButtonToggleModule,
-	MatSnackBar,
+	MatInputModule,
+	MatListModule,
+	MatMenuModule,
+	MatNativeDateModule,
+	MatPaginatorModule,
+	MatProgressBarModule,
+	MatProgressSpinnerModule,
+	MatRadioModule,
+	MatSelectModule,
+	MatSlideToggleModule,
+	MatStepperModule,
+	MatTableModule,
+	MatTabsModule,
+	MatTooltipModule,
 	MatSnackBarModule
 } from '@angular/material';
 import { FillerMainViewComponent } from './pages_shared/fillers/components/filler-main-view/filler-main-view.component';
@@ -243,6 +285,7 @@ import { UpdateProfilePhotoComponent } from './components_shared/update-profile-
 
 const ngComponents = [
 	AddCardComponent,
+	AddContentComponent,
 	AddFillerContentComponent,
 	AddFillerFeedsComponent,
 	AddFillerGroupComponent,
@@ -250,6 +293,7 @@ const ngComponents = [
 	AssignLicenseModalComponent,
 	AutocompleteFieldComponent,
 	BannerComponent,
+	BasicSettingsComponent,
 	BulkEditBusinessHoursComponent,
 	BulkOptionsComponent,
 	BulkPlaywhereComponent,
@@ -260,7 +304,11 @@ const ngComponents = [
 	CloneScreenComponent,
 	ConfirmTemplateModalComponent,
 	ConfirmationModalComponent,
+	ContentComponent,
 	ContentScheduleCardComponent,
+	ContentSchedulerComponent,
+	ContentSchedulerFormComponent,
+	ContentSettingsComponent,
 	ContentsTabComponent,
 	CreateAdvertiserComponent,
 	CreateCustomHostFieldsComponent,
@@ -298,6 +346,8 @@ const ngComponents = [
 	DealersTableComponent,
 	DealersViewComponent,
 	DeleteDealerDialogComponent,
+	DeleteFillerFeedsComponent,
+	DeleteFillerGroupComponent,
 	DeletePlaylistComponent,
 	DemoZoneComponent,
 	DmaTabComponent,
@@ -321,9 +371,10 @@ const ngComponents = [
 	FeedsPageActionButtonsComponent,
 	FilenamePipe,
 	FileSizePipe,
-	FillersComponent,
+	FilenamePipe,
 	FillerDemoComponent,
 	FillerFormComponent,
+	FillersComponent,
 	FilterLabelsComponent,
 	FooterComponent,
 	GenerateFeedComponent,
@@ -371,6 +422,8 @@ const ngComponents = [
 	OrdersComponent,
 	PaginationFieldComponent,
 	PaymentSettingComponent,
+	PlayLocationComponent,
+	PlayLocationItemComponent,
 	PlayWhereComponent,
 	PlaylistContentComponent,
 	PlaylistContentPanelComponent,
@@ -386,6 +439,7 @@ const ngComponents = [
 	PlaylistMediaThumbnailComponent,
 	ProfileSettingComponent,
 	PushUpdateComponent,
+	QuickMoveComponent,
 	RemoteTerminalComponent,
 	RenameModalComponent,
 	SanitizePipe,
@@ -405,10 +459,12 @@ const ngComponents = [
 	SingleDealerComponent,
 	SingleDealerSidebarComponent,
 	SinglePlaylistComponent,
+	SinglePlaylistV2Component,
 	SingleScreenComponent,
 	SingleTemplateComponent,
 	SingleUserComponent,
 	SliderFormComponent,
+	SpacerSetupComponent,
 	SpinnerComponent,
 	SubstringPipe,
 	SuccessAnimationComponent,
@@ -434,7 +490,9 @@ const ngComponents = [
 	WeatherFormComponent,
 	WysiwygComponent,
 	ZoneExpansionPanelComponent,
-	ZoneListComponent
+	ZoneListComponent,
+    FillerMainViewComponent,
+    QuickMoveComponent
 ];
 
 const MaterialModules = [
@@ -463,10 +521,12 @@ const MaterialModules = [
 	MatSelectModule,
 	MatSnackBarModule,
 	MatSlideToggleModule,
+	MatSnackBarModule,
 	MatStepperModule,
 	MatTableModule,
 	MatTabsModule,
-	MatTooltipModule
+	MatTooltipModule,
+	MomentDateModule
 ];
 
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
@@ -478,6 +538,8 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		AddFillerContentComponent,
 		AddFillerFeedsComponent,
 		AddFillerGroupComponent,
+		AddCardComponent,
+		AddContentComponent,
 		AssignLicenseModalComponent,
 		BulkEditBusinessHoursComponent,
 		BulkOptionsComponent,
@@ -490,6 +552,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		ConfirmTemplateModalComponent,
 		ConfirmationModalComponent,
 		CreateEntryComponent,
+		ContentSettingsComponent,
 		CreateFeedComponent,
 		DeleteDealerDialogComponent,
 		DeleteFillerFeedsComponent,
@@ -508,6 +571,8 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		MediaModalComponent,
 		MediaPlaywhereComponent,
 		MediaViewerComponent,
+		QuickMoveComponent,
+		SpacerSetupComponent,
 		NewZoneModalComponent,
 		OptionsComponent,
 		PlaylistContentSchedulingDialogComponent,
