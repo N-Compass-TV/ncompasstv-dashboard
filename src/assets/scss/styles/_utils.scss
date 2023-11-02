@@ -9,8 +9,7 @@
 }
 
 .theme-container {
-	max-width: 1650px;
-	margin: auto;
+	padding: 0 30px;
 }
 
 .word-break {
@@ -163,6 +162,10 @@
 // .my-4 {
 //     margin-bottom: 1.5rem !important;
 // }
+
+.mx-30 {
+	margin-inline: -30px;
+}
 
 //paddings
 // .p-0 {
