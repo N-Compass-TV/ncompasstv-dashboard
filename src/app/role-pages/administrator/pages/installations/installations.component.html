@@ -52,7 +52,9 @@
 			</div>
 		</div>
 
-		<div class="col-lg-12 custom-mat-tab mt-5 p-0">
+		<hr class="my-4" />
+
+		<div class="col-lg-12 custom-mat-tab p-0">
 			<mat-tab-group dynamicHeight #tabGroup animationDuration="0ms" (selectedTabChange)="resetCurrentFilters($event)">
 				<ng-container *ngFor="let tab of tabs">
 					<mat-tab [label]="tab.label">
