@@ -126,8 +126,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		}
 
 		this.enabledPlaylistContentControls = [...this.playlistContentControls];
-		this.hostURL = `/` + role + `/hosts/`;
-		this.licenseURL = `/` + role + `/licenses/`;
+		this.hostURL = `/${role}/hosts/`;
+		this.licenseURL = `/${role}/licenses/`;
 		this.setDefaultViewButton();
 	}
 
