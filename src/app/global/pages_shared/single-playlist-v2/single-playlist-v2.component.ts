@@ -108,7 +108,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		private _dialog: MatDialog,
 		private _playlist: SinglePlaylistService,
 		private _isVideo: IsvideoPipe
-	) {
+	) {}
+
+	ngOnInit() {
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
 			query: 'client=Dashboard__SinglePlaylistComponent'
@@ -116,9 +118,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 		this._socket.on('connect', () => {});
 		this._socket.on('disconnect', () => {});
-	}
-
-	ngOnInit() {
 		this.playlistRouteInit();
 
 		let role = this.currentRole;
