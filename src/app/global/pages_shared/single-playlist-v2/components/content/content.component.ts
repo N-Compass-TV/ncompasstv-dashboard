@@ -25,6 +25,7 @@ export class ContentComponent implements OnInit, OnDestroy {
 	@Input() detailed_view_mode = false;
 	@Input() move_enabled: Subject<boolean> = new Subject<boolean>();
 	@Input() swapping: boolean;
+	@Input() is_frequency_enabled = true;
 	@Output() control_click = new EventEmitter();
 	@Output() content_selected = new EventEmitter();
 	canSetFrequencyBorder = false;
@@ -42,8 +43,8 @@ export class ContentComponent implements OnInit, OnDestroy {
 		if (this.content) {
 			this.prepareThumbnails();
 			this.subscribeToMoveButton();
-			this.isParentFrequency = this.content.frequency === 22 || this.content.frequency === 33;
-			this.isChildFrequency = !this.isParentFrequency && this.content.frequency !== 0;
+			this.isParentFrequency = (this.is_frequency_enabled && this.content.frequency === 22) || this.content.frequency === 33;
+			this.isChildFrequency = this.is_frequency_enabled && !this.isParentFrequency && this.content.frequency !== 0;
 			this.subscribeToContentHover();
 		}
 	}
@@ -82,7 +83,7 @@ export class ContentComponent implements OnInit, OnDestroy {
 	}
 
 	public getFrequencyInfo() {
-		if (!this.isParentFrequency && !this.isChildFrequency) return;
+		if ((!this.isParentFrequency && !this.isChildFrequency) || !this.is_frequency_enabled) return;
 		const frequency = this.content.frequency;
 		const parsedFrequency = this.isParentFrequency ? (frequency === 22 ? 2 : 3) : frequency;
 		let result = this.isParentFrequency ? 'Parent' : 'Child';

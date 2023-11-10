@@ -7,7 +7,7 @@
 				<div class="row align-items-center">
 					<div class="col-lg-7">
 						<h3 class="m-0">Media Library</h3>
-						<p class="sm-text">Select assets you wish to add to your playlist</p>
+						<p class="sm-text">Select assets you wish to {{ mode }} to your playlist</p>
 					</div>
 
 					<div class="col-lg-5">
@@ -43,6 +43,7 @@
 											[controls]="false"
 											[selected]="selectedContents.includes(assets[count + i])"
 											[default_width]="false"
+											[is_frequency_enabled]="false"
 											(content_selected)="contentSelected(assets[count + i], $event)">
 										</app-content>
 

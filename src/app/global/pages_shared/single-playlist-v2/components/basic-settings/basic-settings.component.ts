@@ -60,7 +60,7 @@ export class BasicSettingsComponent implements OnInit, OnDestroy {
 			if (this.isChildFrequency) this.basicSettings.get('frequency').disable();
 		}
 
-		this.changed.emit({ ...this.basicSettings.value, isFullScreen: this.basicSettings.controls['isFullScreen'].value.isFullScreen ? 1 : 0 });
+		this.changed.emit({ ...this.basicSettings.value, isFullScreen: this.basicSettings.controls['isFullScreen'].value ? 1 : 0 });
 		this.subscribeToFormChanges();
 		this.formReady = true;
 	}
@@ -88,5 +88,3 @@ export class BasicSettingsComponent implements OnInit, OnDestroy {
 		return `${result}`;
 	}
 }
-
-// 1. Default to bulk settings where playlist_content will be accepting an array of API_CONTENT

@@ -1,16 +1,15 @@
 import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
-import { Sortable } from 'sortablejs';
 import { FormControl } from '@angular/forms';
 import { Subject, forkJoin } from 'rxjs';
+import { Sortable } from 'sortablejs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
 import {
 	API_CONTENT,
 	API_HOST,
-	API_LICENSE,
 	API_LICENSE_PROPS,
 	API_SCREEN_OF_PLAYLIST,
 	API_UPDATED_PLAYLIST_CONTENT,
@@ -28,7 +27,9 @@ import {
 	PlaylistViewOptions,
 	PlaylistViewOptionActions,
 	PlaylistFilterActions,
-	PlaylistPrimaryControlActions
+	PlaylistPrimaryControlActions,
+	PLAYLIST_SETTING_ACTIONS as pSettingAction,
+	PLAYLIST_SETTING_BUTTONS
 } from './constants';
 
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types';
@@ -44,7 +45,7 @@ import { SavePlaylistContentUpdate } from './models';
 import { AddPlaylistContent } from './class/AddPlaylistContent';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { environment } from 'src/environments/environment';
-import { PlaylistDemoComponent, ViewSchedulesComponent } from '../../components_shared/playlist_components';
+import { ClonePlaylistComponent, PlaylistDemoComponent, PlaylistEditModalComponent } from '../../components_shared/playlist_components';
 
 @Component({
 	selector: 'app-single-playlist-v2',
@@ -54,6 +55,7 @@ import { PlaylistDemoComponent, ViewSchedulesComponent } from '../../components_
 })
 export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
+
 	assets: API_CONTENT_V2[] = [];
 	contentStatusBreakdown = [];
 	currentFilters: { type: string; status: string; keyword: string } = { type: null, status: null, keyword: null };
@@ -77,11 +79,13 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	playlistControls = PlaylistPrimaryControls;
 	playlistDescription = 'Getting playlist data';
 	playlistFilters = PlaylistFiltersDropdown;
-	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] };
+	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
+	playlistLicenseIds: string[] = [];
 	playlistName = 'Please wait';
 	playlistScreenTable: any;
 	playlistScreens: API_SCREEN_OF_PLAYLIST[] = [];
 	playlistSequenceUpdates: PlaylistContent[] = [];
+	playlistSettings = PLAYLIST_SETTING_BUTTONS;
 	playlistSortableOrder: string[] = [];
 	playlistViews = PlaylistViewOptions;
 	savingPlaylist = false;
@@ -125,6 +129,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this.enabledPlaylistContentControls = [...this.playlistContentControls];
 		this.hostURL = `/` + role + `/hosts/`;
 		this.licenseURL = `/` + role + `/licenses/`;
+		this.setDefaultViewButton();
 	}
 
 	ngOnDestroy(): void {
@@ -149,6 +154,28 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	public addToLicenseToPush(e: { checked: boolean }, licenseId: string) {
 		if (e.checked && !this.licensesToUpdate.includes(licenseId)) this.licensesToUpdate.push({ licenseId: licenseId });
 		else this.licensesToUpdate = this.licensesToUpdate.filter((i) => i.licenseId !== licenseId);
+	}
+
+	public contentControlClicked(e: { playlistContent: any; action: string }, index: number) {
+		switch (e.action) {
+			case pcActions.remove:
+				this.showRemoveContentDialog(e.playlistContent);
+				break;
+			case pcActions.edit:
+				this.playlistContentSettings([e.playlistContent], false, index);
+				break;
+			case pcActions.fullscreen:
+				this.setFullscreenProperty(e.playlistContent);
+				break;
+			case pcActions.quickMove:
+				this.playlistContentQuickMove(e.playlistContent);
+				break;
+			case pcActions.swapContent:
+				this.showAddContentDialog(e.playlistContent);
+				break;
+			default:
+				break;
+		}
 	}
 
 	public filterContent(filterType: string, filterValue: string) {
@@ -216,26 +243,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this.playlistContents = [...result];
 	}
 
-	public contentControlClicked(e: { playlistContent: any; action: string }, index: number) {
-		switch (e.action) {
-			case pcActions.remove:
-				this.showRemoveContentDialog(e.playlistContent);
-				break;
-			case pcActions.edit:
-				this.playlistContentSettings([e.playlistContent], false, index);
-				break;
-			case pcActions.fullscreen:
-				this.setFullscreenProperty(e.playlistContent);
-				break;
-			case pcActions.quickMove:
-				this.playlistContentQuickMove(e.playlistContent);
-				break;
-			case pcActions.swapContent:
-				this.showAddContentDialog(e.playlistContent);
-				break;
-			default:
-				break;
-		}
+	private getAllLicenseIds() {
+		// return this.playlistHostLicenses
 	}
 
 	private getAssets() {
@@ -348,6 +357,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this._playlist.getPlaylistHosts(playlistId).subscribe({
 			next: (res) => {
 				this.playlistHostLicenses = res;
+				const result = res.filter(({ licenses }) => licenses.length > 0).map(({ licenses }) => licenses.map((license) => license.licenseId));
+				this.playlistLicenseIds = [].concat(...result);
 
 				/** Send signal */
 				this._playlist.hostsReady(res);
@@ -460,32 +471,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		else this.enabledPlaylistContentControls = [...this.playlistContentControls];
 	}
 
-	public pushUpdateToSelectedLicenses() {
-		this.warningModal(
-			'warning',
-			'Push Playlist Updates',
-			`You are about to push playlist updates to ${this.licensesToUpdate.length} licenses?`,
-			`Playlist Update will be pushed on ${this.licensesToUpdate.length} licenses. Click OK to Continue.`,
-			'update',
-			this.licensesToUpdate
-		);
-	}
-
-	/**
-	 * Use this function to modify the playlist contents, e.g. set the sequence or set the schedule status
-	 * @param data: API_CONTENT_V2[]
-	 * @returns API_CONTENT_V2[]
-	 */
-	private preparePlaylistContents(data: API_CONTENT_V2[]) {
-		return data.map((content, index) => {
-			return {
-				...content,
-				seq: index + 1,
-				scheduleStatus: this._playlist.getScheduleStatus(content)
-			};
-		});
-	}
-
 	private playlistContentSettings(playlistContents: API_CONTENT_V2[], bulkSet = false, index?: number) {
 		const hasExistingSchedule = playlistContents.length === 1 && playlistContents[0].type === 3;
 		const scheduleType = bulkSet ? 1 : playlistContents[0].type;
@@ -507,6 +492,15 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 				next: (res: { contentUpdates: PlaylistContent[]; blacklistUpdates: BlacklistUpdates }) => {
 					if (!res) return;
 
+					res.contentUpdates = res.contentUpdates.map((content) => {
+						const originalContent = playlistContents.find((c) => c.playlistContentId === content.playlistContentId);
+
+						// testing this out bruh
+						// if (originalContent.frequency / content.frequency === 11) delete content.frequency;
+						// if (originalContent.frequency / content.frequency === 11) content.frequency = originalContent.frequency;
+
+						return content;
+					});
 					/** Store updates for saving */
 					res.contentUpdates.forEach((p) => this.playlistContentsToSave.push(p.playlistContentId));
 
@@ -568,6 +562,66 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		});
 	}
 
+	public playlistSettingClicked(action: string) {
+		switch (action) {
+			case pSettingAction.edit:
+				this.showEditPlaylistDialog();
+				break;
+			case pSettingAction.clone:
+				this.showClonePlaylistDialog();
+				break;
+			case pSettingAction.pushUpdates:
+				this.pushUpdateToAllLicenses();
+				break;
+			default:
+		}
+	}
+
+	/**
+	 * Use this function to modify the playlist contents, e.g. set the sequence or set the schedule status
+	 * @param data: API_CONTENT_V2[]
+	 * @returns API_CONTENT_V2[]
+	 */
+	private preparePlaylistContents(data: API_CONTENT_V2[]) {
+		return data.map((content, index) => {
+			return {
+				...content,
+				seq: index + 1,
+				scheduleStatus: this._playlist.getScheduleStatus(content)
+			};
+		});
+	}
+
+	private pushUpdateToAllLicenses() {
+		const title = 'Push Playlist Updates';
+		const message = 'You are about to update all the licenses using this playlist. Proceed?';
+		const returnMsg = 'Updates sent';
+
+		this.showConfirmationDialog('warning', 'update', title, message, returnMsg).subscribe({
+			next: (response: string | boolean) => {
+				if (typeof response === 'boolean' && !response) return;
+
+				if (response === 'update') {
+					this.playlistLicenseIds.forEach((id) => {
+						this._socket.emit('D_update_player', id);
+					});
+					this.playlistRouteInit();
+				}
+			}
+		});
+	}
+
+	public pushUpdateToSelectedLicenses() {
+		this.warningModal(
+			'warning',
+			'Push Playlist Updates',
+			`You are about to push playlist updates to ${this.licensesToUpdate.length} licenses?`,
+			`Playlist Update will be pushed on ${this.licensesToUpdate.length} licenses. Click OK to Continue.`,
+			'update',
+			this.licensesToUpdate
+		);
+	}
+
 	private rearrangePlaylist(updates: any[], moveAndSave: boolean = false) {
 		updates.forEach((p, index) => {
 			if (this.playlistSequenceUpdates.filter((i: PlaylistContent) => i.playlistContentId == p).length) {
@@ -621,6 +675,14 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			});
 	}
 
+	private searchFormInit() {
+		this.searchForm.valueChanges.pipe(debounceTime(1000)).subscribe({
+			next: (keyword: string) => {
+				this.filterContent('search', keyword);
+			}
+		});
+	}
+
 	private setBulkControlsState() {
 		this.playlistControls = this.playlistControls.map((p) => {
 			/** Add Bulk Button Actions Here */
@@ -632,12 +694,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		});
 	}
 
-	private searchFormInit() {
-		this.searchForm.valueChanges.pipe(debounceTime(1000)).subscribe({
-			next: (keyword: string) => {
-				this.filterContent('search', keyword);
-			}
-		});
+	private setDefaultViewButton() {
+		const index = this.playlistViews.findIndex((v) => v.label === 'Grid View');
+		this.playlistViews[index].is_selected = true;
 	}
 
 	private setFullscreenProperty(p: API_CONTENT_V2) {
@@ -657,6 +716,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	}
 
 	private showAddContentDialog(contentToSwap?: API_CONTENT_V2) {
+		const mode = typeof contentToSwap === 'undefined' ? 'add' : 'swap';
+
 		const configs = {
 			disableClose: true,
 			data: {
@@ -665,7 +726,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 				floatingAssets: this.floatingAssets,
 				hostLicenses: this.playlistHostLicenses,
 				isDealer: this.isDealer,
-				playlistContentId: contentToSwap ? contentToSwap.playlistContentId : null,
+				playlistContentId: mode === 'swap' ? contentToSwap.playlistContentId : null,
 				playlistId: this.playlist.playlistId
 			}
 		};
@@ -678,7 +739,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 					// closed or cancelled the dialog
 					if (typeof response === 'undefined') return;
 
-					if (typeof contentToSwap === 'undefined') {
+					if (mode === 'add') {
 						this.addContents(response as AddPlaylistContent);
 						return;
 					}
@@ -686,6 +747,47 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 					this.swapContent(response as API_CONTENT, contentToSwap);
 				}
 			});
+	}
+
+	private showClonePlaylistDialog() {
+		const config = { disableClose: true, data: { playlist: this.playlist }, width: '600px' };
+		const dialog: MatDialogRef<ClonePlaylistComponent> = this._dialog.open(ClonePlaylistComponent, config);
+		dialog.componentInstance.playlistVersion = 2;
+	}
+
+	private showConfirmationDialog(
+		confirmationType: 'success' | 'warning' | 'error',
+		actionType: string,
+		title: string,
+		message: string,
+		returnMsg: string
+	) {
+		const DEFAULT_WIDTH = '500px';
+		const DEFAULT_HEIGHT = '350px';
+
+		const data = {
+			status: confirmationType,
+			action: actionType,
+			data: title,
+			message,
+			return_msg: returnMsg
+		};
+
+		const configs: MatDialogConfig = { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, disableClose: true, data };
+
+		return this._dialog.open(ConfirmationModalComponent, configs).afterClosed();
+	}
+
+	private showEditPlaylistDialog() {
+		const config = { disableClose: true, data: { playlist: this.playlist }, width: '600px' };
+		const dialog = this._dialog.open(PlaylistEditModalComponent, config);
+
+		dialog.afterClosed().subscribe({
+			next: (response: boolean) => {
+				if (!response) return;
+				this.playlistRouteInit();
+			}
+		});
 	}
 
 	private showRemoveContentDialog(content?: API_CONTENT_V2) {
@@ -706,13 +808,20 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		};
 
 		const configs: MatDialogConfig = { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, disableClose: true, data };
-		const idsToDelete = typeof content === 'undefined' ? this.selectedPlaylistContents : [content.playlistContentId];
+		let idsToDelete = typeof content === 'undefined' ? this.selectedPlaylistContents : [content.playlistContentId];
 
 		this._dialog
 			.open(ConfirmationModalComponent, configs)
 			.afterClosed()
 			.subscribe((response: string | boolean) => {
 				if (!response) return;
+
+				const childContentsToDelete = this.playlistContents
+					.filter((c) => c.parentId && idsToDelete.includes(c.parentId))
+					.map((c) => c.playlistContentId);
+
+				idsToDelete = idsToDelete.concat(childContentsToDelete);
+
 				this.removePlaylistContents(idsToDelete);
 			});
 	}
@@ -796,12 +905,13 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 	private savePlaylistContentUpdates(data: SavePlaylistContentUpdate, savingPlaylist = true) {
 		let updateFrequencyCount = 0;
+		let updateParentFrequencyCount = 0;
 		const toUpdate: PlaylistContentUpdate = {
 			playlistId: this.playlist.playlistId,
 			playlistContentsLicenses: savingPlaylist ? this.playlistSequenceUpdates : data.contentUpdates
 		};
 
-		const requests = [this._playlist.updatePlaylistContent(toUpdate)];
+		const requests = [];
 		const schedulesToUpdate = data.contentUpdates.filter((c) => typeof c.schedule !== 'undefined').map((c) => c.schedule);
 
 		toUpdate.playlistContentsLicenses = data.contentUpdates.map((c) => {
@@ -809,7 +919,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			delete c.schedule;
 
 			// set the API calls for contents that have updated frequencies
-			if (c && c.frequency > 0) {
+			if (c && typeof c.frequency !== 'undefined' && c.frequency > 0) {
 				// if frequency is 1 then revert
 				if (c.frequency === 1) requests.push(this._playlist.revert_frequency(c.playlistContentId));
 				// else update the frequency
@@ -817,6 +927,10 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 				updateFrequencyCount++;
 			}
+
+			const originalContent = this.playlistContents.find((original) => original.playlistContentId === c.playlistContentId);
+			const isParentFrequency = originalContent.frequency === 33 || originalContent.frequency === 22;
+			if (isParentFrequency) updateParentFrequencyCount++;
 
 			return c;
 		});
@@ -828,55 +942,65 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 		this.savingPlaylist = savingPlaylist;
 
-		forkJoin(requests)
+		this._playlist
+			.updatePlaylistContent(toUpdate)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe({
 				next: () => {
-					this.savingPlaylist = false;
-					this.selectedPlaylistContents = [];
-					this.playlistContentsToSave = [];
-					this.enabledPlaylistContentControls = [...this.playlistContentControls];
+					forkJoin(requests)
+						.pipe(takeUntil(this._unsubscribe))
+						.subscribe({
+							next: () => {
+								this.savingPlaylist = false;
+								this.selectedPlaylistContents = [];
+								this.playlistContentsToSave = [];
+								this.enabledPlaylistContentControls = [...this.playlistContentControls];
 
-					this.setBulkControlsState();
+								this.setBulkControlsState();
 
-					this.playlistContents = this.playlistContents
-						.map((p) => {
-							const updateObj = toUpdate.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
-							const mapped = updateObj ? { ...p, ...updateObj } : p;
-							return mapped;
-						})
-						.map((c) => {
-							// map to update the content array schedules after submitting to the server
-							// this is assuming that all requests will be successful
-							// maybe refactor this in the near future to use zip instead of forkJoin
+								this.playlistContents = this.playlistContents
+									.map((p) => {
+										const updateObj = toUpdate.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
+										const mapped = updateObj ? { ...p, ...updateObj } : p;
+										return mapped;
+									})
+									.map((c) => {
+										// map to update the content array schedules after submitting to the server
+										// this is assuming that all requests will be successful
+										// maybe refactor this in the near future to use zip instead of forkJoin
 
-							schedulesToUpdate.forEach((toUpdate) => {
-								if (c.playlistContentsScheduleId === toUpdate.playlistContentsScheduleId) {
-									Object.keys(toUpdate).forEach((key) => {
-										c[key] = toUpdate[key];
-										c.scheduleStatus = this._playlist.getScheduleStatus(toUpdate);
+										schedulesToUpdate.forEach((toUpdate) => {
+											if (c.playlistContentsScheduleId === toUpdate.playlistContentsScheduleId) {
+												Object.keys(toUpdate).forEach((key) => {
+													c[key] = toUpdate[key];
+													c.scheduleStatus = this._playlist.getScheduleStatus(toUpdate);
+												});
+											}
+										});
+
+										return c;
+									})
+									.sort((a, b) => {
+										const order = this.playlistSortableOrder;
+										return order.indexOf(a.playlistContentId) - order.indexOf(b.playlistContentId);
 									});
+
+								setTimeout(() => {
+									this.sortableJSInit();
+								}, 0);
+
+								if (updateFrequencyCount > 0 || updateParentFrequencyCount > 0) this.playlistRouteInit();
+
+								if (savingPlaylist) {
+									this.playlistSequenceUpdates = [];
+									this.sortablejsTriggered.next(false);
+									this.playlistRouteInit();
 								}
-							});
-
-							return c;
-						})
-						.sort((a, b) => {
-							const order = this.playlistSortableOrder;
-							return order.indexOf(a.playlistContentId) - order.indexOf(b.playlistContentId);
+							}
 						});
-
-					setTimeout(() => {
-						this.sortableJSInit();
-					}, 0);
-
-					if (updateFrequencyCount > 0) this.playlistRouteInit();
-
-					if (savingPlaylist) {
-						this.playlistSequenceUpdates = [];
-						this.sortablejsTriggered.next(false);
-						this.playlistRouteInit();
-					}
+				},
+				error: (e) => {
+					console.log('Error updating playlist content', e);
 				}
 			});
 	}
@@ -923,7 +1047,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 					this._socket.emit('D_update_player', p.licenseId);
 				});
 
-				this.ngOnInit();
+				this.playlistRouteInit();
 			}
 		});
 	}

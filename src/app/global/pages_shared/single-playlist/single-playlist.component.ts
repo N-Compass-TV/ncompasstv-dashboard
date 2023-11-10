@@ -106,6 +106,7 @@ export class SinglePlaylistComponent implements OnInit {
 	}
 
 	clonePlaylist() {
+		console.log('playlist?', this.playlist);
 		this._dialog.open(ClonePlaylistComponent, {
 			width: '600px',
 			data: this.playlist

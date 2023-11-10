@@ -3,7 +3,7 @@ import { BaseService } from 'src/app/global/services/base.service';
 import { AddPlaylistContent } from '../class/AddPlaylistContent';
 import { PlaylistContentUpdate } from '../type/PlaylistContentUpdate';
 import { Observable, Subject } from 'rxjs';
-import { API_CONTENT_V2, API_PLAYLIST_V2, PlaylistContentSchedule, UI_CONTENT_SCHEDULE } from 'src/app/global/models';
+import { API_CONTENT_V2, API_HOST, API_LICENSE_PROPS, API_PLAYLIST_V2, PlaylistContentSchedule, UI_CONTENT_SCHEDULE } from 'src/app/global/models';
 import * as moment from 'moment';
 import { ContentFetch } from '../models/ContentFetch';
 
@@ -70,7 +70,7 @@ export class SinglePlaylistService extends BaseService {
 		return this.getRequest(`playlistsv2?playlistid=${playlistId}`);
 	}
 
-	getPlaylistHosts(playlistId: string) {
+	getPlaylistHosts(playlistId: string): Observable<{ host: API_HOST; licenses: API_LICENSE_PROPS[] }[]> {
 		return this.getRequest(`playlistsv2/gethostlicenses?playlistid=${playlistId}`).map((data: any) => data.hostLicenses);
 	}
 
@@ -190,7 +190,7 @@ export class SinglePlaylistService extends BaseService {
 	}
 
 	swapPlaylistContent(data: any) {
-		return this.postRequest(`playlistsv2/swapcontent`, data);
+		return this.postRequest('playlistsv2/content/swap/parent', data);
 	}
 
 	updateContentSchedule(data: { playlistContentsScheduleId?: string; type: number }[]) {

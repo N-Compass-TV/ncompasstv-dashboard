@@ -1,8 +1,6 @@
 <div
 	*ngIf="content"
 	class="playlistv2-content box-shadow w-100"
-	(mouseenter)="setHoveredBaseFrequency(content)"
-	(mouseleave)="unsetHoveredBaseFrequency()"
 	[ngClass]="{
 		'grid-dimension': !detailed_view_mode,
 		'inactive-schedule': content.scheduleStatus === 'inactive',
@@ -29,22 +27,28 @@
 			</div>
 
 			<ng-container *ngIf="content.frequency">
-				<i class="fas fa-chess-queen text-warning mr-15" *ngIf="content.frequency > 10; else child_icon"></i>
+				<i class="frequency-icon fas fa-chess-queen text-warning mr-15" *ngIf="content.frequency > 10; else grid_child_icon"></i>
 
-				<ng-template #child_icon>
-					<i class="fas fa-chess-pawn text-warning mr-15"></i>
+				<ng-template #grid_child_icon>
+					<i class="frequency-icon fas fa-chess-pawn text-warning mr-15"></i>
 				</ng-template>
 			</ng-container>
 
-			<div class="checkbox-selector pt-1" *ngIf="selectable">
-				<input
-					type="checkbox"
-					[(ngModel)]="selected"
-					[ngModelOptions]="{ standalone: true }"
-					[checked]="selected"
-					(change)="content_selected.emit($event)" />
-			</div>
+			<ng-container *ngIf="!isChildFrequency">
+				<div class="checkbox-selector pt-1" *ngIf="selectable" [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
+					<input
+						type="checkbox"
+						[(ngModel)]="selected"
+						[ngModelOptions]="{ standalone: true }"
+						[checked]="selected"
+						(change)="content_selected.emit($event)" />
+				</div>
+			</ng-container>
 		</section>
+
+		<ng-container *ngIf="isParentFrequency || isChildFrequency">
+			<div class="frequency-overlay" (mouseenter)="setHoveredBaseFrequency(content)" (mouseleave)="unsetHoveredBaseFrequency()"></div>
+		</ng-container>
 
 		<section class="playlistv2-content__thumbnail" [ngClass]="!controls && 'no-controls'" [matTooltip]="getFrequencyInfo()">
 			<img
@@ -53,29 +57,28 @@
 				[alt]="content.fileName | slice : 0 : 15 || content.title | slice : 0 : 15" />
 		</section>
 
-		<section class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white" *ngIf="controls">
+		<section
+			class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white"
+			*ngIf="controls"
+			[ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
 			<div class="index flex-even">
 				<span class="index-font mr-2">{{ index }}</span>
 			</div>
-			<ng-container *ngIf="!isChildFrequency">
-				<div class="playlist-content-controls">
-					<ng-container *ngFor="let c of playlistContentControls; let i = index">
-						<button
-							*ngIf="enabled_controls.includes(c.action)"
-							class="naked-btn"
-							[ngClass]="i < playlistContentControls.length - 1 && 'mr-15'"
-							[matTooltip]="c.label"
-							(click)="control_click.emit({ playlistContent: content, action: c.action })">
-							<span class="xsm-text">
-								<i
-									class="{{ c.icon }}"
-									[ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-green-2' : c.colorClass">
-								</i>
-							</span>
-						</button>
-					</ng-container>
-				</div>
-			</ng-container>
+			<div class="playlist-content-controls">
+				<ng-container *ngFor="let c of playlistContentControls; let i = index">
+					<button
+						*ngIf="enabled_controls.includes(c.action)"
+						class="naked-btn"
+						[ngClass]="i < playlistContentControls.length - 1 && 'mr-15'"
+						[matTooltip]="c.label"
+						(click)="control_click.emit({ playlistContent: content, action: c.action })">
+						<span class="xsm-text">
+							<i class="{{ c.icon }}" [ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-green-2' : c.colorClass">
+							</i>
+						</span>
+					</button>
+				</ng-container>
+			</div>
 		</section>
 	</ng-container>
 
@@ -87,18 +90,31 @@
 					[src]="content.thumbnail | sanitize"
 					[alt]="content.fileName | slice : 0 : 15 || content.title | slice : 0 : 15" />
 			</div>
+			<ng-container *ngIf="isParentFrequency || isChildFrequency">
+				<div class="frequency-overlay" (mouseenter)="setHoveredBaseFrequency(content)" (mouseleave)="unsetHoveredBaseFrequency()"></div>
+			</ng-container>
 			<div
 				class="playlistv2__content-list-details"
 				[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
-				[class.future-schedule]="content.scheduleStatus === 'future'">
-				<div class="upper__details mb-3">
+				[class.future-schedule]="content.scheduleStatus === 'future'"
+				[class.frequency-hover]="canSetFrequencyBorder">
+				<div class="upper__details mb-3 align-items-center">
 					<div class="upper__details-text">
-						<span class="upper__details-title">{{ content.fileName || content.title | nohandle | slice : 0 : 40 }}</span>
+						<span class="upper__details-title">
+							{{ content.fileName || content.title | nohandle | slice : 0 : 40 }}
+						</span>
 						<span class="upper__details-date">Uploaded {{ content.dateCreated | date : 'mediumDate' }}</span>
 					</div>
 
-					<div class="checkbox-selector pt-1">
-						<input type="checkbox" (change)="content_selected.emit()" />
+					<div class="checkbox-selector pt-1" [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
+						<ng-container *ngIf="content.frequency">
+							<i class="frequency-icon fas fa-chess-queen text-warning" *ngIf="content.frequency > 10; else grid_child_icon"></i>
+
+							<ng-template #grid_child_icon>
+								<i class="frequency-icon fas fa-chess-pawn text-warning mr-15"></i>
+							</ng-template>
+						</ng-container>
+						<input *ngIf="!isChildFrequency" type="checkbox" (change)="content_selected.emit()" />
 					</div>
 				</div>
 
@@ -175,7 +191,7 @@
 						</div>
 					</div>
 
-					<div class="playlist-content-controls">
+					<div class="playlist-content-controls" [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
 						<ng-container *ngFor="let c of playlistContentControls; let i = index">
 							<button
 								*ngIf="enabled_controls.includes(c.action)"

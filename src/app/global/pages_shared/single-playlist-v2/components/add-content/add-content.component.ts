@@ -24,6 +24,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 	gridCount = 8;
 	hasImageAndFeed: boolean;
 	markedContent: API_CONTENT_V2;
+	mode = 'add';
 	newContentsSettings: AddPlaylistContent = new AddPlaylistContent();
 	noData: boolean = false;
 	pageLimit: number = 0;
@@ -72,6 +73,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 
 		this.subscribeToContentScheduleFormChanges();
 		this.searchInit();
+		this.mode = typeof this._dialog_data.playlistContentId === 'undefined' ? 'add' : 'swap';
 	}
 
 	ngOnDestroy(): void {
