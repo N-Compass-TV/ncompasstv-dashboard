@@ -767,8 +767,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		const data = {
 			status: confirmationType,
 			action: actionType,
-			data: title,
-			message,
+			data: message,
+			message: title,
 			return_msg: returnMsg
 		};
 
