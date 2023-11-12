@@ -893,6 +893,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 				this.playlistContentsToSave = [];
 
 				setTimeout(() => {
+					this.playlistRouteInit();
 					this.sortableJSInit();
 				}, 0);
 			},
