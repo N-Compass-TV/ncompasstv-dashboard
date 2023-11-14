@@ -16,8 +16,10 @@ import { IsvideoPipe } from 'src/app/global/pipes';
 	providers: [IsvideoPipe]
 })
 export class ContentSettingsComponent implements OnInit, OnDestroy {
-	currentIndex: number = 0;
-	hasImageAndFeed;
+	content: API_CONTENT_V2 = this.contentData.playlistContents[0];
+	currentIndex = 0;
+	hasImageAndFeed: boolean;
+	isChildFrequency = this.content.frequency === 0 || this.content.frequency === 22 || this.content.frequency === 33;
 	playlistContent: SavePlaylistContentUpdate = {
 		contentUpdates: [],
 		blacklistUpdates: {
@@ -27,9 +29,9 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 	};
 	toggleAll = new Subject<void>();
 	loadingWhitelistedLicenses = true;
-	nextDisabled: boolean = false;
-	prevDisabled: boolean = false;
-	updatingView: boolean = false;
+	nextDisabled = false;
+	prevDisabled = false;
+	updatingView = false;
 	whitelistedLicenses: string[] = [];
 	whitelistedHosts: string[] = [];
 	blacklist: BlacklistUpdates = {
@@ -37,7 +39,6 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 		licenses: []
 	};
 
-	playlistContentScheduleId = this.contentData.playlistContents[0].playlistContentsScheduleId;
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
@@ -82,6 +83,19 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
+	public convertDayFormat(days: any) {
+		const daysOfWeek = ['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'];
+		const convertedDays = [];
+
+		for (const n of days) {
+			if (n >= 0 && n <= 6) convertedDays.push(daysOfWeek[n]);
+		}
+
+		if (convertedDays[0] == 'S') convertedDays.push(convertedDays.shift());
+
+		return convertedDays.join(', ');
+	}
+
 	private getPlaylistContentWhitelistData() {
 		if (this.contentData.bulkSet || (this.contentData && !this.contentData.hostLicenses)) {
 			this.loadingWhitelistedLicenses = false;
@@ -102,6 +116,10 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 				this.whitelistedHosts = res.licensePlaylistContents.map((i) => i.hostId);
 			}
 		});
+	}
+
+	public getPlayTimesText(start: string, end: string) {
+		return start && end ? `${start} - ${end}` : '--';
 	}
 
 	public licensesToBlacklist(licenseIds: string[]) {
@@ -157,7 +175,8 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 
 	private updateDialogData() {
 		const playlistContent = this.contentData.allContents[this.currentIndex];
-
+		this.content = playlistContent;
+		this.isChildFrequency = this.content.frequency === 0 || this.content.frequency === 22 || this.content.frequency === 33;
 		this.contentData.playlistContents = [playlistContent];
 		this.contentData.hasExistingSchedule = playlistContent && playlistContent.type === 3;
 		this.contentData.scheduleType = playlistContent.type;
@@ -214,5 +233,9 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 				});
 			}
 		});
+	}
+
+	public setFrequencyIcon(data: number) {
+		return data > 0 && data > 10 ? 'fa-chess-queen' : 'fa-chess-pawn';
 	}
 }

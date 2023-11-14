@@ -48,10 +48,15 @@ export class BasicSettingsComponent implements OnInit, OnDestroy {
 			duration: [
 				{
 					value: content ? parseFormValue(content.duration) : 20,
-					disabled: !this.bulk_setting && this._video.transform(content.fileType)
+					disabled: (!this.bulk_setting && this._video.transform(content.fileType)) || this.isChildFrequency
 				}
 			],
-			isFullScreen: content ? parseFormValue(content.isFullScreen) : 0
+			isFullScreen: [
+				{
+					value: content ? parseFormValue(content.isFullScreen) : 0,
+					disabled: this.isChildFrequency
+				}
+			]
 		});
 
 		if (!this.bulk_setting) {

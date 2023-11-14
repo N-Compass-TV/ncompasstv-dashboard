@@ -64,21 +64,25 @@
 			<div class="index flex-even">
 				<span class="index-font mr-2">{{ index }}</span>
 			</div>
-			<div class="playlist-content-controls">
-				<ng-container *ngFor="let c of playlistContentControls; let i = index">
-					<button
-						*ngIf="enabled_controls.includes(c.action)"
-						class="naked-btn"
-						[ngClass]="i < playlistContentControls.length - 1 && 'mr-15'"
-						[matTooltip]="c.label"
-						(click)="control_click.emit({ playlistContent: content, action: c.action })">
-						<span class="xsm-text">
-							<i class="{{ c.icon }}" [ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-green-2' : c.colorClass">
-							</i>
-						</span>
-					</button>
-				</ng-container>
-			</div>
+			<ng-container *ngIf="!isChildFrequency">
+				<div class="playlist-content-controls">
+					<ng-container *ngFor="let c of playlistContentControls; let i = index">
+						<button
+							*ngIf="enabled_controls.includes(c.action)"
+							class="naked-btn"
+							[ngClass]="i < playlistContentControls.length - 1 && 'mr-15'"
+							[matTooltip]="c.label"
+							(click)="control_click.emit({ playlistContent: content, action: c.action })">
+							<span class="xsm-text">
+								<i
+									class="{{ c.icon }}"
+									[ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-green-2' : c.colorClass">
+								</i>
+							</span>
+						</button>
+					</ng-container>
+				</div>
+			</ng-container>
 		</section>
 	</ng-container>
 
@@ -192,20 +196,22 @@
 					</div>
 
 					<div class="playlist-content-controls" [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
-						<ng-container *ngFor="let c of playlistContentControls; let i = index">
-							<button
-								*ngIf="enabled_controls.includes(c.action)"
-								class="naked-btn text-center"
-								[ngClass]="i < playlistContentControls.length - 1 && 'mr-3'"
-								[matTooltip]="c.label"
-								(click)="control_click.emit({ playlistContent: content, action: c.action })">
-								<span class="md-text">
-									<i
-										class="{{ c.icon }}"
-										[ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-primary' : c.colorClass">
-									</i>
-								</span>
-							</button>
+						<ng-container *ngIf="!isChildFrequency">
+							<ng-container *ngFor="let c of playlistContentControls; let i = index">
+								<button
+									*ngIf="enabled_controls.includes(c.action)"
+									class="naked-btn text-center"
+									[ngClass]="i < playlistContentControls.length - 1 && 'mr-3'"
+									[matTooltip]="c.label"
+									(click)="control_click.emit({ playlistContent: content, action: c.action })">
+									<span class="md-text">
+										<i
+											class="{{ c.icon }}"
+											[ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-primary' : c.colorClass">
+										</i>
+									</span>
+								</button>
+							</ng-container>
 						</ng-container>
 					</div>
 				</div>
