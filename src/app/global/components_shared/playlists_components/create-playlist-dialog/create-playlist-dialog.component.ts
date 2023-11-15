@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/internal/operators';
 import { forkJoin, Observable, Subject } from 'rxjs';
 
@@ -30,7 +31,7 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(private _dealer: DealerService) {}
+	constructor(private _dealer: DealerService, private _dialogRef: MatDialogRef<CreatePlaylistDialogComponent>) {}
 
 	ngOnInit() {
 		if (!this.dealerId) this.getDealers(); // if dealer user is logged in then do not load dealers
@@ -51,8 +52,7 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 	createPlaylist() {
 		const formValue = this.createPlaylistForm.value;
 		const newPlaylistData = { type: 'unset', assets: [], ...formValue };
-		console.log('form ?', this.createPlaylistForm);
-		// this._dialogRef.close(newPlaylistData);
+		this._dialogRef.close(newPlaylistData);
 	}
 
 	dealerSelected(dealerId: string) {

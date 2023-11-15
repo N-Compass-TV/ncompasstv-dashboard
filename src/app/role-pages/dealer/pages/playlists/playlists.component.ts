@@ -239,7 +239,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 				next: ({ playlist }) => {
 					this.showResponseDialog('success', 'Success', 'Your changes have been saved').subscribe({
 						next: () => {
-							const newPlaylistUrl = `/${this.roleRoute}/playlists/v2/${playlist.playlistId}`;
+							const newPlaylistUrl = `/${this.roleRoute}/playlists/${playlist.playlistId}`;
 							// this._router.navigateByUrl(newPlaylistUrl); // just in case they want to be navigated to the playlist page instead
 							window.open(newPlaylistUrl, '_blank');
 							this.getTotalCount();
