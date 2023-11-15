@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
-import { API_BLOCKLIST_CONTENT, API_CONTENT, API_SWAP_CONTENT_RESPONSE, CREATE_PLAYLIST } from 'src/app/global/models';
+import { API_BLOCKLIST_CONTENT, API_CONTENT, API_SWAP_CONTENT_RESPONSE, CREATE_PLAYLIST, PAGING } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
 
@@ -42,7 +42,7 @@ export class PlaylistService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_playlist}` + '?page=' + `${page}` + '&search=' + `${key}`);
 	}
 
-	get_all_playlists(page, key, column?, order?) {
+	get_all_playlists(page: number, key: string, column?: string, order?: string): Observable<{ paging: PAGING }> {
 		const base = `${this.getters.api_get_all_playlist}`;
 		const params = this.setUrlParams({ page, search: key, sortColumn: column, sortOrder: order }, false, true);
 		const url = `${base}${params}`;

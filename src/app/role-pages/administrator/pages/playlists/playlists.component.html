@@ -83,7 +83,7 @@
 									[table_columns]="playlist_table_column"
 									[new_table]="true"
 									[paging_details]="paging_data"
-									(page_triggered)="pageRequested($event)"
+									(page_triggered)="getPlaylists($event)"
 									[playlist_delete]="true"
 									(update_info)="fromDelete()"
 									(export_playlist)="exportPlaylist($event)"

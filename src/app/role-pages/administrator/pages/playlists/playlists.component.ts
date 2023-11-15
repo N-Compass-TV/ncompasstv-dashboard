@@ -8,7 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
 import { AuthService, PlaylistService } from 'src/app/global/services';
-import { CREATE_PLAYLIST, UI_TABLE_PLAYLIST } from 'src/app/global/models';
+import { API_PLAYLIST, CREATE_PLAYLIST, UI_TABLE_PLAYLIST } from 'src/app/global/models';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { CreatePlaylistDialogComponent } from 'src/app/global/components_shared/playlists_components/create-playlist-dialog/create-playlist-dialog.component';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -36,23 +36,8 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 	workbook: any;
 	workbook_generation = false;
 	worksheet: any;
-
-	playlist_table_column = [
-		{ name: '#', sortable: false, no_export: true },
-		{ name: 'Playlist Name', sortable: true, column: 'Name' },
-		{ name: 'Publish Date', sortable: true, column: 'DateCreated' },
-		{ name: 'Assigned To', sortable: true, column: 'BusinessName' }
-	];
-
-	playlist_table_column_for_export = [
-		{ name: 'Host Name', key: 'hostName' },
-		{ name: 'Content Title', key: 'title' },
-		{ name: 'Screen Name', key: 'screenName' },
-		{ name: 'Template', key: 'templateName' },
-		{ name: 'Zone', key: 'zoneName' },
-		{ name: 'Duration', key: 'duration' },
-		{ name: 'File Type', key: 'fileType' }
-	];
+	playlist_table_column = this._playlistTableColumns;
+	playlist_table_column_for_export = this._playlistExportColumns;
 
 	protected _socket: any;
 	protected _unsubscribe = new Subject<void>();
@@ -69,7 +54,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.initializeSocketConnection();
 		this.getTotalPlaylist();
-		this.pageRequested(1);
+		this.getPlaylists(1);
 	}
 
 	ngOnDestroy(): void {
@@ -77,12 +62,40 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
+	exportPlaylist(data: any) {
+		const header = [];
+		this.workbook_generation = true;
+		this.workbook = new Workbook();
+		this.workbook.creator = 'NCompass TV';
+		this.workbook.useStyles = true;
+		this.workbook.created = new Date();
+		this.worksheet = this.workbook.addWorksheet('Dealers');
+
+		Object.keys(this.playlist_table_column_for_export).forEach((key) => {
+			if (this.playlist_table_column_for_export[key].name && !this.playlist_table_column_for_export[key].no_export) {
+				header.push({
+					header: this.playlist_table_column_for_export[key].name,
+					key: this.playlist_table_column_for_export[key].key,
+					width: 50,
+					style: { font: { name: 'Arial', bold: true } }
+				});
+			}
+		});
+
+		this.worksheet.columns = header;
+		this.getDataForExport(data);
+	}
+
+	filterData(keyword = '') {
+		this.search_data = keyword;
+		this.getPlaylists(1);
+	}
+
 	fromDelete() {
-		// this.searching = true;
 		this.ngOnInit();
 	}
 
-	pageRequested(page) {
+	getPlaylists(page: number) {
 		this.searching = true;
 		this.playlist_data = [];
 
@@ -91,51 +104,95 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data) => {
 				this.initial_load = false;
-				this.paging_data = data.paging;
-				if (data.paging.entities.length > 0) {
-					this.playlist_data = this.playlist_mapToUI(data.paging.entities);
-					this.filtered_data = this.playlist_mapToUI(data.paging.entities);
-				} else {
-					if (this.search_data.length > 0) {
-						this.filtered_data = [];
-						this.no_playlist = false;
-					} else {
-						this.no_playlist = true;
-					}
-				}
 				this.searching = false;
+				this.paging_data = data.paging;
+
+				if (data.paging.entities.length <= 0) {
+					if (this.search_data.length <= 0) {
+						this.no_playlist = true;
+						return;
+					}
+
+					this.filtered_data = [];
+					this.no_playlist = false;
+					return;
+				}
+
+				const getPlaylistResult = this.mapToPlaylistTable(data.paging.entities);
+				this.playlist_data = [...getPlaylistResult];
+				this.filtered_data = [...getPlaylistResult];
 			});
 	}
 
-	getColumnsAndOrder(data) {
+	getColumnsAndOrder(data: { column: string; order: string }) {
 		this.sort_column = data.column;
 		this.sort_order = data.order;
-		this.pageRequested(1);
+		this.getPlaylists(1);
 	}
 
 	getTotalPlaylist() {
 		this._playlist
 			.get_playlists_total()
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data: any) => {
-				this.playlists_details = {
-					basis: data.total,
-					basis_label: 'Playlist(s)',
-					good_value: data.totalActive,
-					good_value_label: 'Active',
-					bad_value: data.totalInActive,
-					bad_value_label: 'Inactive',
-					new_this_week_value: data.newPlaylistsThisWeek,
-					new_this_week_value_label: 'Playlist(s)',
-					new_this_week_value_description: 'New this week',
-					new_last_week_value: data.newPlaylistsLastWeek,
-					new_last_week_value_label: 'Playlist(s)',
-					new_last_week_value_description: 'New last week'
-				};
+			.subscribe({
+				next: (data) => {
+					this.playlists_details = {
+						basis: data.total,
+						basis_label: 'Playlist(s)',
+						good_value: data.totalActive,
+						good_value_label: 'Active',
+						bad_value: data.totalInActive,
+						bad_value_label: 'Inactive',
+						new_this_week_value: data.newPlaylistsThisWeek,
+						new_this_week_value_label: 'Playlist(s)',
+						new_this_week_value_description: 'New this week',
+						new_last_week_value: data.newPlaylistsLastWeek,
+						new_last_week_value_label: 'Playlist(s)',
+						new_last_week_value_description: 'New last week'
+					};
+				}
 			});
 	}
 
-	playlist_mapToUI(data) {
+	getDataForExport(data: { id: string; name: string }): void {
+		this._playlist
+			.export_playlist(data.id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe({
+				next: (response) => {
+					if ('message' in response) {
+						this.showResponseDialog('error', 'Export Failed', 'Could not retreive data, please contact customer support');
+						return;
+					}
+
+					const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+					this.playlist_to_export = response.playlistContents;
+
+					this.playlist_to_export.forEach((item, i) => {
+						this.modifyItem(item);
+						this.worksheet.addRow(item).font = {
+							bold: false
+						};
+					});
+
+					let rowIndex = 1;
+
+					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+					}
+
+					this.workbook.xlsx.writeBuffer().then((file: any) => {
+						const blob = new Blob([file], { type: EXCEL_TYPE });
+						const filename = data.name + '.xlsx';
+						saveAs(blob, filename);
+					});
+
+					this.workbook_generation = false;
+				}
+			});
+	}
+
+	mapToPlaylistTable(data: API_PLAYLIST[]) {
 		let count = this.paging_data.pageStart;
 		return data.map((p) => {
 			return new UI_TABLE_PLAYLIST(
@@ -149,71 +206,9 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	filterData(data) {
-		if (data) {
-			this.search_data = data;
-			this.pageRequested(1);
-		} else {
-			this.search_data = '';
-			this.pageRequested(1);
-		}
-	}
-
-	getDataForExport(data): void {
-		let filter = data;
-
-		this._playlist
-			.export_playlist(filter.id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data) => {
-				if (!data.message) {
-					const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-					this.playlist_to_export = data.playlistContents;
-					this.playlist_to_export.forEach((item, i) => {
-						this.modifyItem(item);
-						this.worksheet.addRow(item).font = {
-							bold: false
-						};
-					});
-					let rowIndex = 1;
-					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-					}
-					this.workbook.xlsx.writeBuffer().then((file: any) => {
-						const blob = new Blob([file], { type: EXCEL_TYPE });
-						const filename = filter.name + '.xlsx';
-						saveAs(blob, filename);
-					});
-					this.workbook_generation = false;
-				}
-			});
-	}
-
 	modifyItem(item) {
 		item.duration = item.duration != null ? item.duration + ' s' : '20 s';
 		item.fileType = this._titlecase.transform(item.fileType);
-	}
-
-	exportPlaylist(data) {
-		this.workbook_generation = true;
-		const header = [];
-		this.workbook = new Workbook();
-		this.workbook.creator = 'NCompass TV';
-		this.workbook.useStyles = true;
-		this.workbook.created = new Date();
-		this.worksheet = this.workbook.addWorksheet('Dealers');
-		Object.keys(this.playlist_table_column_for_export).forEach((key) => {
-			if (this.playlist_table_column_for_export[key].name && !this.playlist_table_column_for_export[key].no_export) {
-				header.push({
-					header: this.playlist_table_column_for_export[key].name,
-					key: this.playlist_table_column_for_export[key].key,
-					width: 50,
-					style: { font: { name: 'Arial', bold: true } }
-				});
-			}
-		});
-		this.worksheet.columns = header;
-		this.getDataForExport(data);
 	}
 
 	onPushAllLicenseUpdates(licenseIds: string[]): void {
@@ -248,7 +243,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 							// this._router.navigateByUrl(newPlaylistUrl); // just in case they want to be navigated to the playlist page instead
 							window.open(newPlaylistUrl, '_blank');
 							this.getTotalPlaylist();
-							this.pageRequested(1);
+							this.getPlaylists(1);
 						}
 					});
 				},
@@ -279,5 +274,26 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 
 	protected get roleRoute() {
 		return this._auth.roleRoute;
+	}
+
+	protected get _playlistExportColumns() {
+		return [
+			{ name: 'Host Name', key: 'hostName' },
+			{ name: 'Content Title', key: 'title' },
+			{ name: 'Screen Name', key: 'screenName' },
+			{ name: 'Template', key: 'templateName' },
+			{ name: 'Zone', key: 'zoneName' },
+			{ name: 'Duration', key: 'duration' },
+			{ name: 'File Type', key: 'fileType' }
+		];
+	}
+
+	protected get _playlistTableColumns() {
+		return [
+			{ name: '#', sortable: false, no_export: true },
+			{ name: 'Playlist Name', sortable: true, column: 'Name' },
+			{ name: 'Publish Date', sortable: true, column: 'DateCreated' },
+			{ name: 'Assigned To', sortable: true, column: 'BusinessName' }
+		];
 	}
 }
