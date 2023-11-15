@@ -146,7 +146,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 				next: (res) => {
 					this.playlistRouteInit();
 				},
-				error: (err) => console.log('Error adding contents to playlist', err)
+				error: (err) => console.error('Error adding contents to playlist', err)
 			});
 	}
 
@@ -661,7 +661,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 					this.selectedPlaylistContents = [];
 					this.enabledPlaylistContentControls = [...this.playlistContentControls];
 				},
-				error: (e) => console.log('Error removing playlist contentes', e)
+				error: (e) => console.error('Error removing playlist contentes', e)
 			});
 	}
 
@@ -889,7 +889,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 				}, 0);
 			},
 			error: (err) => {
-				console.log(err);
+				console.error(err);
 			}
 		});
 	}
@@ -991,7 +991,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 						});
 				},
 				error: (e) => {
-					console.log('Error updating playlist content', e);
+					console.error('Error updating playlist content', e);
 				}
 			});
 	}
