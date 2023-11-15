@@ -1,18 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
 import { DatePipe, TitleCasePipe } from '@angular/common';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { Router } from '@angular/router';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
-import { environment } from 'src/environments/environment';
 import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import * as io from 'socket.io-client';
 
+import { environment } from 'src/environments/environment';
 import { AuthService, PlaylistService } from 'src/app/global/services';
 import { API_PLAYLIST, CREATE_PLAYLIST, UI_TABLE_PLAYLIST } from 'src/app/global/models';
-import { MatDialog, MatDialogConfig } from '@angular/material';
 import { CreatePlaylistDialogComponent } from 'src/app/global/components_shared/playlists_components/create-playlist-dialog/create-playlist-dialog.component';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-playlists',
