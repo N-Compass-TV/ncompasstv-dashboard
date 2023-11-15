@@ -43,6 +43,7 @@ import { CreateFeedComponent } from './components_shared/feed_components/create-
 import { CreateFillerFeedComponent } from './pages_shared/fillers/components/create-filler-feed/create-filler-feed.component';
 import { CreateHostComponent } from './pages_shared/create-host/create-host.component';
 import { CreatePlaylistComponent } from './pages_shared/create-playlist/create-playlist.component';
+import { CreatePlaylistDialogComponent } from './components_shared/playlists_components/create-playlist-dialog/create-playlist-dialog.component';
 import { CreatePlaylistContentComponent } from './components_shared/playlist_components/create-playlist-content/create-playlist-content.component';
 import { CreateScreenComponent } from './pages_shared/create-screen/create-screen.component';
 import { CreateUserComponent } from './pages_shared/create-user/create-user.component';
@@ -283,6 +284,7 @@ const ngComponents = [
 	CreateFillerFeedComponent,
 	CreateHostComponent,
 	CreatePlaylistComponent,
+	CreatePlaylistDialogComponent,
 	CreatePlaylistContentComponent,
 	CreateScreenComponent,
 	CreateUserComponent,
@@ -520,6 +522,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		CreateEntryComponent,
 		ContentSettingsComponent,
 		CreateFeedComponent,
+		CreatePlaylistDialogComponent,
 		DeleteDealerDialogComponent,
 		DeleteFillerFeedsComponent,
 		DeleteFillerGroupComponent,
