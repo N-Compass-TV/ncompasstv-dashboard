@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/internal/operators';
 import { forkJoin, Observable, Subject } from 'rxjs';
-import { MatDialogRef } from '@angular/material';
 
-import { DealerService, PlaylistService } from 'src/app/global/services';
+import { DealerService } from 'src/app/global/services';
 import { API_DEALER, PAGING } from 'src/app/global/models';
 
 @Component({
@@ -13,9 +12,11 @@ import { API_DEALER, PAGING } from 'src/app/global/models';
 	styleUrls: ['./create-playlist-dialog.component.scss']
 })
 export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
+	@Input() businessName = null;
+	@Input() dealerId = null;
 	createPlaylistForm: FormGroup;
 	dealers: API_DEALER[] = [];
-	dealerSearchControl = new FormControl('');
+	dealerSearchControl = new FormControl(this.dealerId ? this.dealerId : '');
 	dealersDataPaging: PAGING;
 	filteredDealers: Observable<API_DEALER[]>;
 	formFields = this._fields;
@@ -29,14 +30,10 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(
-		private _dealer: DealerService,
-		private _dialogRef: MatDialogRef<CreatePlaylistDialogComponent>,
-		private _playlist: PlaylistService
-	) {}
+	constructor(private _dealer: DealerService) {}
 
 	ngOnInit() {
-		this.getDealers();
+		if (!this.dealerId) this.getDealers(); // if dealer user is logged in then do not load dealers
 		this.initializeForm();
 	}
 
@@ -54,20 +51,8 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 	createPlaylist() {
 		const formValue = this.createPlaylistForm.value;
 		const newPlaylistData = { type: 'unset', assets: [], ...formValue };
-		this._dialogRef.close(newPlaylistData);
-
-		// return this._playlist
-		// 	.create_playlist(newPlaylistData)
-		// 	.pipe(takeUntil(this._unsubscribe))
-		// 	.subscribe({
-		// 		next: () => {
-		// 			this._dialogRef.close('success');
-		// 		},
-		// 		error: (e) => {
-		// 			console.error('Error creating playlist', e);
-		// 			this._dialogRef.close('error');
-		// 		}
-		// 	});
+		console.log('form ?', this.createPlaylistForm);
+		// this._dialogRef.close(newPlaylistData);
 	}
 
 	dealerSelected(dealerId: string) {
@@ -75,10 +60,6 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 		this.hasSelectedDealer = true;
 		this.createPlaylistForm.get('dealerId').setValue(dealerId);
 		this.dealerSearchControl.disable();
-	}
-
-	private closeCreatePlaylistDialog() {
-		this._dialogRef.close();
 	}
 
 	private getDealers(page = 1) {
@@ -132,10 +113,16 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 		const configs = {};
 
 		this._fields.forEach((field) => {
-			configs[field.name] = new FormControl(field.value);
-			if (field.is_required) (configs[field.name] as FormControl).setValidators(Validators.required);
-			if (typeof field.max_length !== 'undefined') (configs[field.name] as FormControl).setValidators(Validators.maxLength(field.max_length));
+			let validators = [];
+			if (field.is_required) validators.push(Validators.required);
+			if (field.max_length) validators.push(Validators.maxLength(field.max_length));
+			configs[field.name] = new FormControl(field.value, validators);
 		});
+
+		if (this.dealerId) {
+			this.dealerSearchControl.setValue(this.businessName);
+			this.dealerSearchControl.disable();
+		}
 
 		this.createPlaylistForm = new FormGroup(configs);
 		this.isFormReady = true;
@@ -157,9 +144,9 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 
 	protected get _fields() {
 		return [
-			{ name: 'playlistName', label: 'Name', type: 'text', value: null, is_required: true, is_hidden: false, max_length: 50 },
-			{ name: 'playlistDescription', label: 'Description', type: 'text', value: null, is_required: true, is_hidden: false, max_length: 100 },
-			{ name: 'dealerId', label: 'Dealer', type: 'autocomplete', value: null }
+			{ name: 'playlistName', label: 'Name', type: 'text', value: null, is_required: true, max_length: 50 },
+			{ name: 'playlistDescription', label: 'Description', type: 'text', value: null, is_required: true, max_length: 100 },
+			{ name: 'dealerId', label: 'Dealer', type: 'autocomplete', value: this.dealerId ? this.dealerId : null, is_required: true }
 		];
 	}
 }

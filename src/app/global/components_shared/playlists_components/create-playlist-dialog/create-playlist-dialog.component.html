@@ -26,15 +26,17 @@
 											[placeholder]="field.label"
 											[matAutocomplete]="dealerAutocomplete"
 											[formControl]="dealerSearchControl" />
-										<button
-											mat-button
-											*ngIf="dealerSearchControl.value"
-											matSuffix
-											mat-icon-button
-											aria-label="Clear"
-											(click)="clearDealerSelection()">
-											<mat-icon>close</mat-icon>
-										</button>
+										<ng-container *ngIf="!dealerId">
+											<button
+												mat-button
+												*ngIf="dealerSearchControl.value"
+												matSuffix
+												mat-icon-button
+												aria-label="Clear"
+												(click)="clearDealerSelection()">
+												<mat-icon>close</mat-icon>
+											</button>
+										</ng-container>
 									</div>
 									<mat-autocomplete #dealerAutocomplete="matAutocomplete">
 										<mat-option
@@ -57,7 +59,9 @@
 				<!-- SUBMIT BUTTON -->
 				<div mat-dialog-actions class="actions-container">
 					<div class="d-flex flex-even align-items-center">
-						<button mat-button mat-raised-button class="theme-btn submit _primary" type="submit">Submit</button>
+						<button mat-button mat-raised-button class="theme-btn submit _primary" type="submit" [disabled]="createPlaylistForm.invalid">
+							Submit
+						</button>
 						<button mat-button mat-raised-button class="theme-btn btn-danger" [mat-dialog-close]="'close'">Close</button>
 					</div>
 				</div>
