@@ -96,6 +96,5 @@ export class SpacerSetupComponent implements OnInit {
 
 	public licenseIdToggled(licenseIds: string[]) {
 		this.assignedLicenses = licenseIds;
-		console.log('=>', this.assignedLicenses);
 	}
 }

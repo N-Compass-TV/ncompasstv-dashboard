@@ -35,7 +35,6 @@ export class PlaylistDemoComponent implements OnInit {
 			this.in_modal = true;
 
 			if (this._dialog_data.playlistContents) {
-				console.log(this._dialog_data);
 				this.playlist_content = this.playlist_mapToUI(this._dialog_data.playlistContents);
 				this.checkFileType(this.count);
 				return;
