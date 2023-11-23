@@ -144,9 +144,9 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 
 	protected get _fields() {
 		return [
-			{ name: 'playlistName', label: 'Name', type: 'text', value: null, is_required: true, max_length: 50 },
+			{ name: 'playlistName', label: 'Playlist Name', type: 'text', value: null, is_required: true, max_length: 50 },
 			{ name: 'playlistDescription', label: 'Description', type: 'text', value: null, is_required: true, max_length: 100 },
-			{ name: 'dealerId', label: 'Dealer', type: 'autocomplete', value: this.dealerId ? this.dealerId : null, is_required: true }
+			{ name: 'dealerId', label: 'Assign to Dealer', type: 'autocomplete', value: this.dealerId ? this.dealerId : null, is_required: true }
 		];
 	}
 }

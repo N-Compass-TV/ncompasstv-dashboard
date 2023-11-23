@@ -216,9 +216,8 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 	}
 
 	showCreatePlaylistDialog() {
-		const width = '500px';
-		const height = '390px';
-		const configs: MatDialogConfig = { width, height, disableClose: true };
+		const width = '576px';
+		const configs: MatDialogConfig = { width, disableClose: true };
 
 		this._dialog
 			.open(CreatePlaylistDialogComponent, configs)
