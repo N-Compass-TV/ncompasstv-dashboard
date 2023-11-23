@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/co
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { Subject, forkJoin } from 'rxjs';
+import { Observable, Subject, forkJoin } from 'rxjs';
 import { Sortable } from 'sortablejs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
@@ -16,7 +16,8 @@ import {
 	API_CONTENT_V2,
 	API_PLAYLIST_V2,
 	UI_ROLE_DEFINITION_TEXT,
-	UI_PLAYLIST_SCREENS_NEW
+	UI_PLAYLIST_SCREENS_NEW,
+	PlaylistContentSchedule
 } from 'src/app/global/models';
 
 import {
@@ -612,6 +613,60 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		);
 	}
 
+	private realignAfterUpdate(
+		toUpdate: PlaylistContentUpdate,
+		schedulesToUpdate: PlaylistContentSchedule[],
+		updateFrequencyCount: number,
+		updateParentFrequencyCount: number,
+		savingPlaylist: boolean
+	) {
+		this.savingPlaylist = false;
+		this.selectedPlaylistContents = [];
+		this.playlistContentsToSave = [];
+		this.enabledPlaylistContentControls = [...this.playlistContentControls];
+
+		this.setBulkControlsState();
+
+		this.playlistContents = this.playlistContents
+			.map((p) => {
+				const updateObj = toUpdate.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
+				const mapped = updateObj ? { ...p, ...updateObj } : p;
+				return mapped;
+			})
+			.map((c) => {
+				// map to update the content array schedules after submitting to the server
+				// this is assuming that all requests will be successful
+				// maybe refactor this in the near future to use zip instead of forkJoin
+
+				schedulesToUpdate.forEach((toUpdate) => {
+					if (c.playlistContentsScheduleId === toUpdate.playlistContentsScheduleId) {
+						Object.keys(toUpdate).forEach((key) => {
+							c[key] = toUpdate[key];
+							c.scheduleStatus = this._playlist.getScheduleStatus(toUpdate);
+						});
+					}
+				});
+
+				return c;
+			})
+			.sort((a, b) => {
+				const order = this.playlistSortableOrder;
+				return order.indexOf(a.playlistContentId) - order.indexOf(b.playlistContentId);
+			});
+
+		setTimeout(() => {
+			this.sortableJSInit();
+		}, 0);
+
+		if (updateFrequencyCount > 0 || updateParentFrequencyCount > 0) this.playlistRouteInit();
+
+		if (savingPlaylist) {
+			this.playlistSequenceUpdates = [];
+			this.sortablejsTriggered.next(false);
+			this.playlistRouteInit();
+		}
+	}
+
 	private rearrangePlaylist(updates: any[], moveAndSave: boolean = false) {
 		updates.forEach((p, index) => {
 			if (this.playlistSequenceUpdates.filter((i: PlaylistContent) => i.playlistContentId == p).length) {
@@ -895,6 +950,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	}
 
 	private savePlaylistContentUpdates(data: SavePlaylistContentUpdate, savingPlaylist = true) {
+		let combinedRequests: Observable<any[]> = null;
 		let updateFrequencyCount = 0;
 		let updateParentFrequencyCount = 0;
 		const toUpdate: PlaylistContentUpdate = {
@@ -932,63 +988,24 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		if (schedulesToUpdate.length > 0) requests.push(this._playlist.updateContentSchedule(schedulesToUpdate));
 
 		this.savingPlaylist = savingPlaylist;
+		combinedRequests = forkJoin(requests).pipe(takeUntil(this._unsubscribe));
 
 		this._playlist
 			.updatePlaylistContent(toUpdate)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe({
 				next: () => {
-					forkJoin(requests)
-						.pipe(takeUntil(this._unsubscribe))
-						.subscribe({
-							next: () => {
-								this.savingPlaylist = false;
-								this.selectedPlaylistContents = [];
-								this.playlistContentsToSave = [];
-								this.enabledPlaylistContentControls = [...this.playlistContentControls];
+					if (requests.length <= 0) {
+						this.realignAfterUpdate(toUpdate, schedulesToUpdate, updateFrequencyCount, updateParentFrequencyCount, savingPlaylist);
+						return;
+					}
 
-								this.setBulkControlsState();
-
-								this.playlistContents = this.playlistContents
-									.map((p) => {
-										const updateObj = toUpdate.playlistContentsLicenses.find((u) => u.playlistContentId === p.playlistContentId);
-										const mapped = updateObj ? { ...p, ...updateObj } : p;
-										return mapped;
-									})
-									.map((c) => {
-										// map to update the content array schedules after submitting to the server
-										// this is assuming that all requests will be successful
-										// maybe refactor this in the near future to use zip instead of forkJoin
-
-										schedulesToUpdate.forEach((toUpdate) => {
-											if (c.playlistContentsScheduleId === toUpdate.playlistContentsScheduleId) {
-												Object.keys(toUpdate).forEach((key) => {
-													c[key] = toUpdate[key];
-													c.scheduleStatus = this._playlist.getScheduleStatus(toUpdate);
-												});
-											}
-										});
-
-										return c;
-									})
-									.sort((a, b) => {
-										const order = this.playlistSortableOrder;
-										return order.indexOf(a.playlistContentId) - order.indexOf(b.playlistContentId);
-									});
-
-								setTimeout(() => {
-									this.sortableJSInit();
-								}, 0);
-
-								if (updateFrequencyCount > 0 || updateParentFrequencyCount > 0) this.playlistRouteInit();
-
-								if (savingPlaylist) {
-									this.playlistSequenceUpdates = [];
-									this.sortablejsTriggered.next(false);
-									this.playlistRouteInit();
-								}
-							}
-						});
+					combinedRequests.subscribe({
+						next: () => {
+							this.realignAfterUpdate(toUpdate, schedulesToUpdate, updateFrequencyCount, updateParentFrequencyCount, savingPlaylist);
+						},
+						error: (e) => console.error('Error executing combined playlist update requests', e)
+					});
 				},
 				error: (e) => {
 					console.error('Error updating playlist content', e);
