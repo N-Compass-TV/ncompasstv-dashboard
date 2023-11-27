@@ -15,6 +15,7 @@ import { API_DEALER, PAGING } from 'src/app/global/models';
 export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 	@Input() businessName = null;
 	@Input() dealerId = null;
+	@Input() isCurrentUserDealerAdmin = false;
 	createPlaylistForm: FormGroup;
 	dealers: API_DEALER[] = [];
 	dealerSearchControl = new FormControl(this.dealerId ? this.dealerId : '');
@@ -59,7 +60,7 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 		this.selectedDealerId = dealerId;
 		this.hasSelectedDealer = true;
 		this.createPlaylistForm.get('dealerId').setValue(dealerId);
-		this.dealerSearchControl.disable();
+		// this.dealerSearchControl.disable();
 	}
 
 	private getDealers(page = 1) {
@@ -70,23 +71,28 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 			.get_dealers_with_page_minified(page, '', pageSize)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe({
-				next: (data) => {
-					if (data.message) {
+				next: (response) => {
+					if (response.message) {
 						this.isLoadingDealers = false;
 						return;
 					}
 
-					const dealers = data.paging.entities as API_DEALER[];
-					this.dealers = [...dealers];
-
+					this.dealers = [...(response.paging.entities as API_DEALER[])];
 					let remainingRequests: Observable<{ paging?: PAGING; message?: string }>[] = [];
-					const currentPage = data.paging.page;
-					const lastPage = data.paging.pages;
+					const { page, pages } = response.paging;
+					const currentPage = page;
+					const lastPage = pages;
 
-					if (currentPage < lastPage) {
-						for (let i = currentPage; i < lastPage; i++) {
-							remainingRequests.push(this._dealer.get_dealers_with_page_minified(i + 1, '', pageSize));
-						}
+					// if result only has one page of data then proceed to set dealers data
+					if (currentPage >= lastPage) {
+						this.setDealersData();
+						return;
+					}
+
+					// else loop through the remaining requests
+
+					for (let i = currentPage; i < lastPage; i++) {
+						remainingRequests.push(this._dealer.get_dealers_with_page_minified(i + 1, '', pageSize));
 					}
 
 					forkJoin(remainingRequests)
@@ -97,9 +103,7 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 									this.dealers = this.dealers.concat(r.paging.entities);
 								});
 
-								this.subscribeToDealerSearch();
-								this.isLoadingDealers = false;
-								this.hasLoadedDealers = true;
+								this.setDealersData();
 							}
 						});
 				},
@@ -126,6 +130,25 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 
 		this.createPlaylistForm = new FormGroup(configs);
 		this.isFormReady = true;
+	}
+
+	private setDealersData() {
+		const dealerData = this.dealers[0];
+		this.dealerId = dealerData.dealerId;
+		this.isLoadingDealers = false;
+		this.hasLoadedDealers = true;
+
+		// if the user logged in is a dealer admin
+		// then set the dealer data assigned to them
+		if (this.isCurrentUserDealerAdmin) {
+			const dealerAdminDealerId = dealerData.dealerId;
+			this.dealerSelected(dealerAdminDealerId);
+			this.dealerSearchControl.setValue(dealerData.businessName);
+			this.dealerSearchControl.disable();
+			return;
+		}
+
+		this.subscribeToDealerSearch();
 	}
 
 	private subscribeToDealerSearch() {

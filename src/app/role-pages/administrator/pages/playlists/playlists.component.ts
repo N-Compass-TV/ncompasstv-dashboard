@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe, TitleCasePipe } from '@angular/common';
 import { MatDialog, MatDialogConfig } from '@angular/material';
-import { Router } from '@angular/router';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 import { takeUntil } from 'rxjs/operators';
@@ -47,7 +46,6 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		private _playlist: PlaylistService,
 		private _date: DatePipe,
 		private _dialog: MatDialog,
-		private _router: Router,
 		private _titlecase: TitleCasePipe
 	) {}
 
@@ -218,16 +216,15 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 	showCreatePlaylistDialog() {
 		const width = '576px';
 		const configs: MatDialogConfig = { width, disableClose: true };
+		const dialog = this._dialog.open(CreatePlaylistDialogComponent, configs);
+		dialog.componentInstance.isCurrentUserDealerAdmin = this.isCurrentUserDealerAdmin;
 
-		this._dialog
-			.open(CreatePlaylistDialogComponent, configs)
-			.afterClosed()
-			.subscribe({
-				next: (response) => {
-					if (!response || response === 'close') return;
-					this.createPlaylist(response);
-				}
-			});
+		dialog.afterClosed().subscribe({
+			next: (response) => {
+				if (!response || response === 'close') return;
+				this.createPlaylist(response);
+			}
+		});
 	}
 
 	private createPlaylist(data: CREATE_PLAYLIST) {
@@ -269,6 +266,10 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		let data = { status: type, message: title, data: message };
 		const config = { disableClose: true, width: '500px', data };
 		return this._dialog.open(ConfirmationModalComponent, config).afterClosed();
+	}
+
+	protected get isCurrentUserDealerAdmin() {
+		return this._auth.current_role === 'dealeradmin';
 	}
 
 	protected get roleRoute() {
