@@ -113,19 +113,21 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 			return data;
 		});
 
-		let parsedPlayTimeStart: any = moment(playTimeStart, 'hh:mm A').format('HH:mm:ss').split(':');
-		parsedPlayTimeStart = { hour: parsedPlayTimeStart[0], minute: parsedPlayTimeStart[1], second: parsedPlayTimeStart[2] };
-
-		let parsedPlayTimeEnd: any = moment(playTimeEnd, 'hh:mm A').format('HH:mm:ss').split(':');
-		parsedPlayTimeEnd = { hour: parsedPlayTimeEnd[0], minute: parsedPlayTimeEnd[1], second: parsedPlayTimeEnd[2] };
+		const parsePlayTime = (data: string) => {
+			// should be parsed to 24-hour format before assigning to timepicker
+			const timeParsed = moment(data, 'hh:mm A').format('HH:mm').split(':');
+			const hour = parseFloat(timeParsed[0]);
+			const minute = parseFloat(timeParsed[1]);
+			return { hour, minute, second: 0 };
+		};
 
 		this.form.patchValue({
 			startDate,
 			endDate,
 			days: parsedDays,
 			alternateWeek,
-			playTimeStart: parsedPlayTimeStart,
-			playTimeEnd: parsedPlayTimeEnd
+			playTimeStartData: parsePlayTime(playTimeStart),
+			playTimeEndData: parsePlayTime(playTimeEnd)
 		});
 	}
 
