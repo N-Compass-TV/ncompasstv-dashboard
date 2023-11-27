@@ -314,7 +314,13 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 	private getPlaylistData(playlistId: string) {
 		this._playlist.getPlaylistData(playlistId).subscribe({
-			next: (data: API_PLAYLIST_V2) => {
+			next: (response) => {
+				if ('message' in response) {
+					this.playlist = null;
+					return;
+				}
+
+				const data = response as API_PLAYLIST_V2;
 				const { playlist, playlistContents } = data;
 				const { playlistName, playlistDescription } = playlist;
 

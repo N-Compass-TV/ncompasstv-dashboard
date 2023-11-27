@@ -66,7 +66,7 @@ export class SinglePlaylistService extends BaseService {
 		this.hostLoaded.next(hosts);
 	}
 
-	getPlaylistData(playlistId: string): Observable<API_PLAYLIST_V2> {
+	getPlaylistData(playlistId: string): Observable<API_PLAYLIST_V2 | { message?: string }> {
 		return this.getRequest(`playlistsv2?playlistid=${playlistId}`);
 	}
 
