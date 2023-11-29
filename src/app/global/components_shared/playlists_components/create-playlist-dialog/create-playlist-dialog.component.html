@@ -26,13 +26,14 @@
 											[placeholder]="field.label"
 											[matAutocomplete]="dealerAutocomplete"
 											[formControl]="dealerSearchControl" />
-										<ng-container *ngIf="!dealerId">
+										<ng-container *ngIf="hasSelectedDealer">
 											<button
-												mat-button
 												*ngIf="dealerSearchControl.value"
 												matSuffix
+												mat-button
 												mat-icon-button
 												aria-label="Clear"
+												class="autocomplete-clear-btn"
 												(click)="clearDealerSelection()">
 												<mat-icon>close</mat-icon>
 											</button>

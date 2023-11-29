@@ -15,7 +15,6 @@ import { API_DEALER, PAGING } from 'src/app/global/models';
 export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 	@Input() businessName = null;
 	@Input() dealerId = null;
-	@Input() isCurrentUserDealerAdmin = false;
 	createPlaylistForm: FormGroup;
 	dealers: API_DEALER[] = [];
 	dealerSearchControl = new FormControl(this.dealerId ? this.dealerId : '');
@@ -45,9 +44,10 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 	}
 
 	clearDealerSelection() {
+		this.dealerSearchControl.enable();
 		this.dealerSearchControl.setValue('');
 		this.createPlaylistForm.get('dealerId').setValue(null);
-		this.dealerSearchControl.enable();
+		this.hasSelectedDealer = false;
 	}
 
 	createPlaylist() {
@@ -60,7 +60,6 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 		this.selectedDealerId = dealerId;
 		this.hasSelectedDealer = true;
 		this.createPlaylistForm.get('dealerId').setValue(dealerId);
-		// this.dealerSearchControl.disable();
 	}
 
 	private getDealers(page = 1) {
@@ -137,17 +136,6 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
 		this.dealerId = dealerData.dealerId;
 		this.isLoadingDealers = false;
 		this.hasLoadedDealers = true;
-
-		// if the user logged in is a dealer admin
-		// then set the dealer data assigned to them
-		if (this.isCurrentUserDealerAdmin) {
-			const dealerAdminDealerId = dealerData.dealerId;
-			this.dealerSelected(dealerAdminDealerId);
-			this.dealerSearchControl.setValue(dealerData.businessName);
-			this.dealerSearchControl.disable();
-			return;
-		}
-
 		this.subscribeToDealerSearch();
 	}
 

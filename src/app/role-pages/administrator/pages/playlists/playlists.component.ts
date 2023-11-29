@@ -217,7 +217,6 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		const width = '576px';
 		const configs: MatDialogConfig = { width, disableClose: true };
 		const dialog = this._dialog.open(CreatePlaylistDialogComponent, configs);
-		dialog.componentInstance.isCurrentUserDealerAdmin = this.isCurrentUserDealerAdmin;
 
 		dialog.afterClosed().subscribe({
 			next: (response) => {
@@ -266,10 +265,6 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		let data = { status: type, message: title, data: message };
 		const config = { disableClose: true, width: '500px', data };
 		return this._dialog.open(ConfirmationModalComponent, config).afterClosed();
-	}
-
-	protected get isCurrentUserDealerAdmin() {
-		return this._auth.current_role === 'dealeradmin';
 	}
 
 	protected get roleRoute() {
