@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { UI_ROLE_DEFINITION } from 'src/app/global/models';
-import { AuthService, ContentService, FilestackService } from 'src/app/global/services';
+import { AuthService, ContentService, DealerService, FilestackService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { MediaModalComponent } from '../../components_shared/media_components/media-modal/media-modal.component';
 import { RenameModalComponent } from '../../components_shared/media_components/rename-modal/rename-modal.component';
@@ -21,6 +21,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 	assigned_users: any;
 	data_to_upload: any = [];
 	dealer_field_disabled: boolean = true;
+	dealers: { id: string; value: string }[] = [];
 	duplicate_files: any = [];
 	eventsSubject: Subject<void> = new Subject<void>();
 	filestack_client: any;
@@ -43,11 +44,22 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _auth: AuthService, private _content: ContentService, private _dialog: MatDialog, private _filestack: FilestackService) {}
+	constructor(
+		private _auth: AuthService,
+		private _content: ContentService,
+		private _dealer: DealerService,
+		private _dialog: MatDialog,
+		private _filestack: FilestackService
+	) {}
 
 	ngOnInit() {
 		this.filestack_client = filestack.init(environment.third_party.filestack_api_key);
 		const roleId = this._auth.current_user_value.role_id;
+
+		// Get dealer, host, advertiser list ahead of time
+		this.getDealers();
+		// Get Hosts
+		// Get Advertisers
 
 		if (roleId === UI_ROLE_DEFINITION.dealer || roleId === UI_ROLE_DEFINITION['sub-dealer']) {
 			this.is_dealer = true;
@@ -66,21 +78,25 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 	}
 
 	assignContent() {
-		let dialogRef = this._dialog.open(MediaModalComponent, {
-			width: '768px',
-			panelClass: 'app-media-modal',
-			disableClose: true
-		});
-
-		dialogRef.afterClosed().subscribe((r) => {
-			this.assigned_users = r;
-			this.loading_overlay = true;
-			if (r != false) {
-				this.uploadContent();
-			} else {
-				this.loading_overlay = false;
-			}
-		});
+		this._dialog
+			.open(MediaModalComponent, {
+				data: {
+					dealers: this.dealers
+				},
+				width: '768px',
+				panelClass: 'app-media-modal',
+				disableClose: true
+			})
+			.afterClosed()
+			.subscribe((r) => {
+				this.assigned_users = r;
+				this.loading_overlay = true;
+				if (r != false) {
+					this.uploadContent();
+				} else {
+					this.loading_overlay = false;
+				}
+			});
 	}
 
 	displayStats(e): void {
@@ -127,6 +143,21 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 				(error) => {
 					console.error(error);
 				}
+			);
+	}
+
+	getDealers(): void {
+		this._dealer
+			.export_dealers()
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { dealerId: string; businessName: string }[]) => {
+					this.dealers = response.map((dealer) => ({
+						id: dealer.dealerId,
+						value: dealer.businessName
+					}));
+				},
+				(error) => console.error(error)
 			);
 	}
 

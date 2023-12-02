@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { API_ADVERTISER, API_CONTENT, API_HOST, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_ADVERTISER, API_CONTENT, API_HOST, PAGING, UI_AUTOCOMPLETE, UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
@@ -19,6 +19,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	advertiser_name = '';
 	assign_data = { dealer: '', host: '', advertiser: '' };
 	dealers: any = [];
+	dealer_autocomplete: UI_AUTOCOMPLETE;
 	dealer_name = '';
 	dealers_data: any = [];
 	host_name = '';
@@ -28,7 +29,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	initial_load_host = false;
 	initial_load_advertiser = false;
 	is_dealer = false;
-	is_edit: any;
+	is_edit = false;
 	is_floating = false;
 	loading_data = true;
 	loading_advertiser_data = false;
@@ -64,7 +65,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public data_before_modal: any,
+		@Inject(MAT_DIALOG_DATA) public _dialog_data: { dealers: { dealerId: string; businessName: string }[]; is_edit: boolean },
 		private _advertiser: AdvertiserService,
 		private _auth: AuthService,
 		private _content: ContentService,
@@ -73,12 +74,11 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		private _host: HostService
 	) {
 		this.optimize_video_upload = localStorage.getItem('optimize_video') == 'false' ? false : true;
+		this.dealers = this._dialog_data.dealers;
 	}
 
 	ngOnInit() {
-		this.getDealers(1);
-
-		if (this.data_before_modal) this.is_edit = this.data_before_modal[0].is_edit;
+		if (this._dialog_data) this.is_edit = this._dialog_data.is_edit;
 		else this.is_edit = false;
 
 		const roleId = this._auth.current_user_value.role_id;
@@ -93,7 +93,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		} else {
 			if (this.is_edit) {
 				this._content
-					.get_content_by_id(this.data_before_modal[1].id)
+					.get_content_by_id(this._dialog_data[1].id)
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						(data) => {
@@ -128,6 +128,8 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 					);
 			}
 		}
+
+		this.setupFormData();
 	}
 
 	ngOnDestroy(): void {
@@ -176,6 +178,10 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	}
 
 	dealerSelected(id: string): void {
+		this.assign_data.dealer = id;
+		console.log(this.assign_data);
+		return;
+
 		this.loading_form = false;
 		this.no_dealer = false;
 		this.assign_data.dealer = id;
@@ -302,6 +308,15 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	searchHostData(keyword: string): void {
 		this.search_host_data = keyword;
 		this.getHostByDealerId(1);
+	}
+
+	setupFormData() {
+		console.log(this.dealers);
+		this.dealer_autocomplete = {
+			label: 'Assign to Dealer',
+			placeholder: 'Type a dealer business name',
+			data: this.dealers
+		};
 	}
 
 	updateData(): void {

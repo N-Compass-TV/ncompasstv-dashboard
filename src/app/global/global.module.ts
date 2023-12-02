@@ -15,6 +15,7 @@ import { AdvertiserViewComponent } from './components_shared/locator_components/
 import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AutocompleteFieldComponent } from './components_shared/page_components/autocomplete-field/autocomplete-field.component';
+import { AutocompleteComponent } from './components_shared/data_components/autocomplete/autocomplete.component';
 import { BannerComponent } from './components_shared/page_components/banner/banner.component';
 import { BreadcrumbsModule } from 'ng6-breadcrumbs';
 import { BulkEditBusinessHoursComponent } from './components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
@@ -250,6 +251,7 @@ const ngComponents = [
 	AdvertiserViewComponent,
 	AssignLicenseModalComponent,
 	AutocompleteFieldComponent,
+	AutocompleteComponent,
 	BannerComponent,
 	BulkEditBusinessHoursComponent,
 	BulkOptionsComponent,
@@ -476,7 +478,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES],
+	declarations: [ngComponents, DIRECTIVES, AutocompleteComponent],
 	entryComponents: [
 		AddCardComponent,
 		AddFillerContentComponent,
