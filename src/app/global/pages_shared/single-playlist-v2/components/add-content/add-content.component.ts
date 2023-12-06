@@ -211,13 +211,17 @@ export class AddContentComponent implements OnInit, OnDestroy {
 		this.selectedContentType = data;
 		this.searching = true;
 		this.currentPage = 1;
+		const currentSearchKey = this.searchInput.value as string;
+		const hasSearchKey = currentSearchKey.length && currentSearchKey.length > 0;
 
 		switch (this.selectedContentType.slug) {
 			case 'dealer-content':
-				this.assets = [...this._dialog_data.assets];
+				if (hasSearchKey) this.getContents(false, 1, 60, currentSearchKey);
+				else this.assets = [...this._dialog_data.assets];
 				break;
 			case 'floating-content':
-				this.assets = [...this.floating_assets];
+				if (hasSearchKey) this.getContents(true, 1, 60, currentSearchKey);
+				else this.assets = [...this.floating_assets];
 				break;
 			// case 'filler-content':
 			// 	break;
@@ -226,6 +230,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 		}
 
 		setTimeout(() => {
+			if (hasSearchKey) return;
 			this.searching = false;
 		}, 350);
 	}
@@ -233,14 +238,15 @@ export class AddContentComponent implements OnInit, OnDestroy {
 	private searchInit() {
 		this.searchInput.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe({
 			next: (searchKey) => {
+				const floating = this.selectedContentType.slug == 'floating-content';
+
 				if (searchKey.length) {
 					this.searching = true;
-					const floating = this.selectedContentType.slug == 'floating-content';
 					this.getContents(floating, null, null, searchKey);
 					return;
 				}
 
-				this.assets = [...this._dialog_data.assets];
+				this.assets = floating ? [...this.floating_assets] : [...this._dialog_data.assets];
 				this.searching = false;
 			}
 		});
