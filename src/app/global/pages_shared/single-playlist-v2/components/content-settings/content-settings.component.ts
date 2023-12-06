@@ -19,13 +19,16 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 	content: API_CONTENT_V2 = this.contentData.playlistContents[0];
 	currentIndex = 0;
 	hasImageAndFeed: boolean;
+	hasWhitelistedAllHostLicenses = false;
 	isChildFrequency = this.content.frequency === 0 || this.content.frequency === 22 || this.content.frequency === 33;
 	playlistContent: SavePlaylistContentUpdate = {
 		contentUpdates: [],
-		blacklistUpdates: {
-			playlistContentId: '',
-			licenses: []
-		}
+		blacklistUpdates: [
+			{
+				playlistContentId: '',
+				licenses: []
+			}
+		]
 	};
 	toggleAll = new Subject<void>();
 	loadingWhitelistedLicenses = true;
@@ -58,7 +61,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.currentIndex = this.contentData.index || 0;
-		this.playlistContent.blacklistUpdates.playlistContentId = this.contentData.playlistContents[0].playlistContentId;
+		this.playlistContent.blacklistUpdates[0].playlistContentId = this.contentData.playlistContents[0].playlistContentId;
 		this.hasImageAndFeed = this.contentData.playlistContents.filter((p) => p.fileType !== 'webm').length > 0;
 
 		this._playlist.hostLoaded$.subscribe({
@@ -76,11 +79,22 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 		/** Set initial state of prev and next buttons */
 		if (this.contentData.index === 0) this.prevDisabled = true;
 		if (this.contentData.index > this.contentData.allContents.length - 1) this.nextDisabled = true;
+
+		if (this.contentData.bulkSet) {
+			const mappedLicenses = this.mappedHostLicenses(this.contentData.hostLicenses);
+			this.licensesToBlacklist(mappedLicenses);
+		}
 	}
 
 	ngOnDestroy(): void {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
+	}
+
+	public checkIfAllHostLicensesWhitelisted(licenseIds: string[]) {
+		const whitelisted = licenseIds;
+		const allHostLicenses = this.mappedHostLicenses(this.contentData.hostLicenses);
+		this.hasWhitelistedAllHostLicenses = whitelisted.length === allHostLicenses.length;
 	}
 
 	public convertDayFormat(days: any) {
@@ -112,8 +126,12 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 					return;
 				}
 
-				this.whitelistedLicenses = res.licensePlaylistContents.map((i) => i.licenseId);
-				this.whitelistedHosts = res.licensePlaylistContents.map((i) => i.hostId);
+				const whitelistedLicenses = res.licensePlaylistContents.map((i) => i.licenseId);
+				const whitelistedHosts = res.licensePlaylistContents.map((i) => i.hostId);
+
+				this.whitelistedLicenses = [...whitelistedLicenses];
+				this.whitelistedHosts = [...whitelistedHosts];
+				this.checkIfAllHostLicensesWhitelisted([...whitelistedLicenses]);
 			}
 		});
 	}
@@ -123,12 +141,32 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 	}
 
 	public licensesToBlacklist(licenseIds: string[]) {
-		this.playlistContent.blacklistUpdates.licenses = licenseIds;
+		this.hasWhitelistedAllHostLicenses = false;
+		// if modifying contents by bulk
+		if (this.contentData.bulkSet) {
+			this.playlistContent.blacklistUpdates = this.contentData.playlistContents.map((c) => {
+				return {
+					playlistContentId: c.playlistContentId,
+					licenses: licenseIds
+				};
+			});
+
+			return;
+		}
+
+		// modifying a single content
+		this.playlistContent.blacklistUpdates = [
+			{
+				playlistContentId: this.contentData.playlistContents[0].playlistContentId,
+				licenses: [...licenseIds]
+			}
+		];
 	}
 
-	public licenseIdToggled(licenseIds: string[]) {
+	public licenseToWhitelist(licenseIds: string[]) {
 		/** Single Playlist Content Edit */
 		if (!this.contentData.bulkSet) {
+			this.playlistContent.blacklistUpdates = [];
 			this.playlistContent.contentUpdates = [
 				{
 					...(this.playlistContent.contentUpdates && this.playlistContent.contentUpdates[0]),
@@ -142,6 +180,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 
 		/** Multiple Playlist Content Edit, Duration applies to non video filetype only */
 		const contentData: any = this.playlistContent.contentUpdates.length ? this.playlistContent.contentUpdates : this.contentData.playlistContents;
+		this.playlistContent.blacklistUpdates = [];
 		this.playlistContent.contentUpdates = contentData.map((p) => {
 			return {
 				...p,
@@ -149,6 +188,13 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 				licenseIds
 			};
 		});
+	}
+
+	private mappedHostLicenses(data: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[]) {
+		return data.reduce((result, i) => {
+			i.licenses.forEach((l) => result.push(l.licenseId));
+			return result;
+		}, []);
 	}
 
 	public prev() {
@@ -171,20 +217,6 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 
 		if (this.currentIndex >= this.contentData.allContents.length - 1) this.nextDisabled = true;
 		if (this.currentIndex > 0) this.prevDisabled = false;
-	}
-
-	private updateDialogData() {
-		const playlistContent = this.contentData.allContents[this.currentIndex];
-		this.content = playlistContent;
-		this.isChildFrequency = this.content.frequency === 0 || this.content.frequency === 22 || this.content.frequency === 33;
-		this.contentData.playlistContents = [playlistContent];
-		this.contentData.hasExistingSchedule = playlistContent && playlistContent.type === 3;
-		this.contentData.scheduleType = playlistContent.type;
-		this.getPlaylistContentWhitelistData();
-
-		setTimeout(() => {
-			this.updatingView = false;
-		}, 400);
 	}
 
 	/**
@@ -237,5 +269,19 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 
 	public setFrequencyIcon(data: number) {
 		return data > 0 && data > 10 ? 'fa-chess-queen' : 'fa-chess-pawn';
+	}
+
+	private updateDialogData() {
+		const playlistContent = this.contentData.allContents[this.currentIndex];
+		this.content = playlistContent;
+		this.isChildFrequency = this.content.frequency === 0 || this.content.frequency === 22 || this.content.frequency === 33;
+		this.contentData.playlistContents = [playlistContent];
+		this.contentData.hasExistingSchedule = playlistContent && playlistContent.type === 3;
+		this.contentData.scheduleType = playlistContent.type;
+		this.getPlaylistContentWhitelistData();
+
+		setTimeout(() => {
+			this.updatingView = false;
+		}, 400);
 	}
 }

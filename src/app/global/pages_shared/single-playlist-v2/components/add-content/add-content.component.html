@@ -179,14 +179,18 @@
 											<p class="sm-text m-0">Select host and licenses you want your contents to play.</p>
 										</div>
 										<div class="toggle-wrapper pt-1 pr-2">
-											<mat-slide-toggle (change)="toggleAll.next($event)"></mat-slide-toggle>
+											<mat-slide-toggle
+												[checked]="hasSelectedAllHostLicenses"
+												(change)="toggleAll.next($event)"></mat-slide-toggle>
 										</div>
 									</div>
 									<div class="play-location-wrapper" *ngIf="playlistHostLicenses.length; else loading">
 										<app-play-location
 											[host_licenses]="playlistHostLicenses"
 											[toggle_all_add_content]="toggleAll.asObservable()"
-											(toggle)="licenseIdToggled($event)"></app-play-location>
+											(to_whitelist)="licenseIdToggled($event)"
+											(to_blacklist)="licenseDeselected()">
+										</app-play-location>
 									</div>
 								</div>
 							</mat-tab>

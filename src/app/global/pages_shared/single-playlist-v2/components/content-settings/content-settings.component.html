@@ -119,7 +119,9 @@
 												</p>
 											</div>
 											<div class="toggle-wrapper pt-1 pr-2">
-												<mat-slide-toggle (change)="toggleAll.next($event)"></mat-slide-toggle>
+												<mat-slide-toggle
+													[checked]="hasWhitelistedAllHostLicenses"
+													(change)="toggleAll.next($event)"></mat-slide-toggle>
 											</div>
 										</div>
 
@@ -130,7 +132,8 @@
 												[whitelisted_licenses]="whitelistedLicenses"
 												[toggle_all]="toggleAll.asObservable()"
 												(to_blacklist)="licensesToBlacklist($event)"
-												(toggle)="licenseIdToggled($event)">
+												(to_whitelist)="licenseToWhitelist($event)"
+												(license_toggled)="checkIfAllHostLicensesWhitelisted($event)">
 											</app-play-location>
 										</div>
 									</div>

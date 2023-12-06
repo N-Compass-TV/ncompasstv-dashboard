@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { API_CONTENT, API_CONTENT_V2, API_HOST, API_LICENSE } from 'src/app/global/models';
+import { API_CONTENT_V2, API_HOST, API_LICENSE_PROPS } from 'src/app/global/models';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
 import { AddPlaylistContent } from '../../class/AddPlaylistContent';
 import { FormControl } from '@angular/forms';
@@ -19,19 +19,20 @@ export class AddContentComponent implements OnInit, OnDestroy {
 	activeEdits: boolean;
 	assets: API_CONTENT_V2[] = [];
 	contentTypesBtnGroup: ButtonGroup[] = CONTENT_TYPE;
-	currentPage: number = 1;
+	currentPage = 1;
 	floating_assets: API_CONTENT_V2[] = [];
 	gridCount = 8;
 	hasImageAndFeed: boolean;
+	hasSelectedAllHostLicenses = false;
 	markedContent: API_CONTENT_V2;
 	mode = 'add';
 	newContentsSettings: AddPlaylistContent = new AddPlaylistContent();
-	noData: boolean = false;
-	pageLimit: number = 0;
-	paginating: boolean = false;
-	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[] = [];
+	noData = false;
+	pageLimit = 0;
+	paginating = false;
+	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[] = [];
 	searchInput: FormControl = new FormControl('');
-	searching: boolean = false;
+	searching = false;
 	selectedContents: API_CONTENT_V2[] = [];
 	selectedContentType: ButtonGroup = this.contentTypesBtnGroup[0];
 	toggleAll = new Subject<void>();
@@ -44,7 +45,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 			floatingAssets: API_CONTENT_V2[];
 			dealerId: string;
 			isDealer: boolean;
-			hostLicenses: { host: API_HOST; licenses: API_LICENSE[] }[];
+			hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
 			playlistContentId: string;
 			playlistId: string;
 		},
@@ -66,7 +67,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 
 		/** Watch Hosts Data Readiness */
 		this._playlist.hostLoaded$.subscribe({
-			next: (res: { host: API_HOST; licenses: API_LICENSE[] }[]) => {
+			next: (res: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[]) => {
 				if (!this.playlistHostLicenses.length && res.length) this.playlistHostLicenses = res;
 			}
 		});
@@ -89,6 +90,12 @@ export class AddContentComponent implements OnInit, OnDestroy {
 				seq: index
 			};
 		});
+	}
+
+	private checkIfAllHostLicensesWhitelisted(licenseIds: string[]) {
+		const whitelisted = licenseIds;
+		const allHostLicenses = this.mappedHostLicenses(this.playlistHostLicenses);
+		this.hasSelectedAllHostLicenses = whitelisted.length === allHostLicenses.length;
 	}
 
 	public contentSelected(content: API_CONTENT_V2, e?: any) {
@@ -159,6 +166,8 @@ export class AddContentComponent implements OnInit, OnDestroy {
 	}
 
 	public licenseIdToggled(licenseIds: string[]) {
+		this.checkIfAllHostLicensesWhitelisted(licenseIds);
+
 		this.newContentsSettings.playlistContentsLicenses = this.newContentsSettings.playlistContentsLicenses.map((c) => {
 			if (!c.licenseIds) c.licenseIds = [];
 
@@ -169,9 +178,20 @@ export class AddContentComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	public licenseDeselected() {
+		this.hasSelectedAllHostLicenses = false;
+	}
+
 	public markContent(content: API_CONTENT_V2) {
 		if (!this._dialog_data.playlistContentId) return;
 		this.markedContent = content;
+	}
+
+	private mappedHostLicenses(data: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[]) {
+		return data.reduce((result, i) => {
+			i.licenses.forEach((l) => result.push(l.licenseId));
+			return result;
+		}, []);
 	}
 
 	public onScroll(e: any): void {

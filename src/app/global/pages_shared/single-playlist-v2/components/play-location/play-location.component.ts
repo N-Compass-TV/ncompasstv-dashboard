@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatSlideToggleChange } from '@angular/material';
 import { Observable } from 'rxjs/internal/Observable';
-import { Subscription } from 'rxjs/internal/Subscription';
 import { API_HOST, API_LICENSE_PROPS } from 'src/app/global/models';
 
 interface HostLicenses {
@@ -20,8 +20,9 @@ export class PlayLocationComponent implements OnInit {
 	@Input() toggle_all_spacer: Observable<void>;
 	@Input() whitelisted_hosts: string[] = [];
 	@Input() whitelisted_licenses: string[] = [];
-	@Output() toggle: EventEmitter<string[]> = new EventEmitter();
-	@Output() to_blacklist: EventEmitter<string[]> = new EventEmitter();
+	@Output() to_whitelist = new EventEmitter<string[]>();
+	@Output() to_blacklist = new EventEmitter<string[]>();
+	@Output() license_toggled = new EventEmitter<string[]>();
 	selectedHostIds = [];
 	selectedLicenseIds = [];
 	blacklistLicences = []; // Licenses that will be removed in the whitelist records
@@ -35,70 +36,102 @@ export class PlayLocationComponent implements OnInit {
 		if (this.toggle_all_spacer) this.toggle_all_spacer.subscribe((e: any) => this.onAllToggled(e));
 	}
 
-	private onAllToggled(e, inAddContent: boolean = false) {
+	private addContent_toggleAllHostLicenses(isChecked: boolean, hostLicenses: HostLicenses) {
+		if (isChecked) {
+			if (!this.selectedHostIds.includes(hostLicenses.host.hostId)) this.selectedHostIds.push(hostLicenses.host.hostId);
+			hostLicenses.licenses.forEach((l) => !this.selectedLicenseIds.includes(l.licenseId) && this.selectedLicenseIds.push(l.licenseId));
+		} else {
+			this.selectedHostIds = this.selectedHostIds.filter((h) => h !== hostLicenses.host.hostId);
+			this.selectedLicenseIds = this.selectedLicenseIds.filter((id) => !hostLicenses.licenses.some((l) => id === l.licenseId));
+		}
+
+		this.to_whitelist.emit(this.selectedLicenseIds);
+	}
+
+	/**
+	 * Toggles all the hosts and their respective licenses
+	 * @param e
+	 * @param inAddContent
+	 */
+	private onAllToggled(e: MatSlideToggleChange, inAddContent: boolean = false) {
 		this.host_licenses.forEach((h) => {
 			if (!inAddContent) {
 				this.toggleAllHostLicenses(e, h);
 				return;
 			}
 
-			this.addContent_toggleAllHostLicenses(e, h);
+			this.addContent_toggleAllHostLicenses(e.checked, h);
 		});
 	}
 
-	public toggleAllHostLicenses(e, hostLicenses: HostLicenses) {
+	/**
+	 * Toggles all the licenses under a host
+	 * @param e
+	 * @param hostLicenses
+	 */
+	public toggleAllHostLicenses(e: MatSlideToggleChange, hostLicenses: HostLicenses) {
 		if (e.checked) {
 			if (!this.selectedHostIds.includes(hostLicenses.host.hostId)) this.selectedHostIds.push(hostLicenses.host.hostId);
 			hostLicenses.licenses.forEach((l) => !this.selectedLicenseIds.includes(l.licenseId) && this.selectedLicenseIds.push(l.licenseId));
 			this.whitelisted_hosts = this.selectedHostIds;
 			this.whitelisted_licenses = this.selectedLicenseIds;
 			this.blacklistLicences = [];
+			this.to_whitelist.emit(this.selectedLicenseIds);
 		} else {
 			this.blacklistLicences = [...this.whitelisted_licenses];
 			this.whitelisted_hosts = [];
 			this.whitelisted_licenses = [];
 			this.selectedHostIds = this.selectedHostIds.filter((h) => h !== hostLicenses.host.hostId);
 			this.selectedLicenseIds = this.selectedLicenseIds.filter((id) => !hostLicenses.licenses.some((l) => id === l.licenseId));
+			this.to_blacklist.emit(this.blacklistLicences);
 		}
 
-		this.to_blacklist.emit(this.blacklistLicences);
-		this.toggle.emit(this.selectedLicenseIds);
+		// informs the content-settings component that a license was toggled
+		// this is used to check if all licenses are toggled
+		this.license_toggled.emit(this.whitelisted_licenses);
 	}
 
-	addContent_toggleAllHostLicenses(e, hostLicenses: HostLicenses) {
-		if (e.checked) {
-			if (!this.selectedHostIds.includes(hostLicenses.host.hostId)) this.selectedHostIds.push(hostLicenses.host.hostId);
-			hostLicenses.licenses.forEach((l) => !this.selectedLicenseIds.includes(l.licenseId) && this.selectedLicenseIds.push(l.licenseId));
-		} else {
-			this.selectedHostIds = this.selectedHostIds.filter((h) => h !== hostLicenses.host.hostId);
-			this.selectedLicenseIds = this.selectedLicenseIds.filter((id) => !hostLicenses.licenses.some((l) => id === l.licenseId));
-		}
-
-		this.toggle.emit(this.selectedLicenseIds);
-	}
-
-	public toggleHostLicense(e, h: HostLicenses, licenseId: string) {
+	/**
+	 * Toggles a license under a host
+	 * @param e
+	 * @param h
+	 * @param licenseId
+	 */
+	public toggleHostLicense(e: MatSlideToggleChange, h: HostLicenses, licenseId: string) {
 		if (e.checked) {
 			if (!this.selectedHostIds.includes(h.host.hostId)) this.selectedHostIds.push(h.host.hostId);
 			if (!this.selectedLicenseIds.includes(licenseId)) this.selectedLicenseIds.push(licenseId);
-			this.removeToBlacklist(licenseId);
+			this.removeFromBlacklist(licenseId);
+			this.to_whitelist.emit(this.getAllCurrentWhitelisted);
 		} else {
 			this.selectedLicenseIds = this.selectedLicenseIds.filter((sl) => sl !== licenseId);
 			if (!h.licenses.some((l) => this.selectedLicenseIds.includes(l.licenseId)))
 				this.selectedHostIds = this.selectedHostIds.filter((id) => id !== h.host.hostId);
 
 			this.addtoBlacklist(licenseId);
+			this.to_blacklist.emit(this.blacklistLicences);
 		}
 
-		this.to_blacklist.emit(this.blacklistLicences);
-		this.toggle.emit(this.selectedLicenseIds);
+		// informs the content-settings component that a license was toggled
+		// this is used to check if all licenses are whitelisted
+		this.license_toggled.emit(this.getAllCurrentWhitelisted);
 	}
 
-	private removeToBlacklist(licenseId: string) {
+	private removeFromBlacklist(licenseId: string) {
 		this.blacklistLicences = this.blacklistLicences.filter((i) => i != licenseId);
 	}
 
 	private addtoBlacklist(licenseId: string) {
 		if (!this.blacklistLicences.filter((i) => i == licenseId).length) this.blacklistLicences.push(licenseId);
+	}
+
+	/**
+	 * Returns all the license that are considered whitelisted
+	 * That includes all newly selected licenses for whitelisting
+	 */
+	private get getAllCurrentWhitelisted() {
+		const whitelisted = Array.from(this.whitelisted_licenses);
+		const forWhitelisting = Array.from(this.selectedLicenseIds);
+		return [...new Set(whitelisted.concat(forWhitelisting))];
 	}
 }

@@ -60,6 +60,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	assets: API_CONTENT_V2[] = [];
 	contentStatusBreakdown = [];
 	currentFilters: { type: string; status: string; keyword: string } = { type: null, status: null, keyword: null };
+	isInMarkedAllState = false;
 	detailedViewMode = false;
 	enabledPlaylistContentControls = [];
 	feedCount = 0;
@@ -417,12 +418,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		}
 	}
 
-	private markAll() {
-		this.selectedPlaylistContents = this.playlistContents.map((i) => i.playlistContentId);
-		this.enabledPlaylistContentControls = [];
-		this.setBulkControlsState();
-	}
-
 	private movePlaylistContent(playlistContentId: string, seq: number) {
 		// Get source index and the playlist content to move
 		const playlistContentSrcIndex = this.playlistContents.findIndex((i: PlaylistContent) => playlistContentId == i.playlistContentId);
@@ -495,8 +490,11 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			.open(ContentSettingsComponent, configs)
 			.afterClosed()
 			.subscribe({
-				next: (res: { contentUpdates: PlaylistContent[]; blacklistUpdates: BlacklistUpdates }) => {
+				next: (res: { contentUpdates: PlaylistContent[]; blacklistUpdates: BlacklistUpdates[] }) => {
 					if (!res) return;
+
+					// ensure that the mark all button is set to false after saving data
+					if (bulkSet && this.isInMarkedAllState) this.toggleMarkAllButton(false);
 
 					/** Store updates for saving */
 					res.contentUpdates.forEach((p) => this.playlistContentsToSave.push(p.playlistContentId));
@@ -526,7 +524,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	public playlistControlClicked(e: { action: string }) {
 		switch (e.action) {
 			case pActions.markAll:
-				this.markAll();
+				this.toggleMarkAllButton();
 				break;
 			case pActions.addContent:
 				this.showAddContentDialog();
@@ -926,21 +924,14 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		/** Save and Update View */
 		this._playlist.swapPlaylistContent(playlistContentToSwap).subscribe({
 			next: (res: { content: API_CONTENT_V2; plContent: API_UPDATED_PLAYLIST_CONTENT }) => {
-				this.playlistContents = this.playlistContents.map((p) => {
-					if (p.playlistContentId == playlistContent.playlistContentId) {
-						return {
-							...playlistContent,
-							...res.content,
-							...res.plContent
-						};
-					}
-
-					return p;
-				});
-
-				this.playlistContents = this.playlistContents.sort(
-					(a, b) => this.playlistSortableOrder.indexOf(a.playlistContentId) - this.playlistSortableOrder.indexOf(b.playlistContentId)
-				);
+				this.playlistContents = this.playlistContents
+					.map((content) => {
+						const swapped = { ...playlistContent, ...res.content, ...res.plContent };
+						return playlistContent.playlistContentId === content.playlistContentId ? swapped : content;
+					})
+					.sort(
+						(a, b) => this.playlistSortableOrder.indexOf(a.playlistContentId) - this.playlistSortableOrder.indexOf(b.playlistContentId)
+					);
 
 				this.playlistContentsToSave = [];
 
@@ -988,7 +979,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			return c;
 		});
 
-		if (data.blacklistUpdates && data.blacklistUpdates.licenses.length) requests.push(this._playlist.removeWhitelist([data.blacklistUpdates]));
+		if (data.blacklistUpdates && data.blacklistUpdates.length) requests.push(this._playlist.removeWhitelist(data.blacklistUpdates));
 
 		// api call to update content schedule
 		if (schedulesToUpdate.length > 0) requests.push(this._playlist.updateContentSchedule(schedulesToUpdate));
@@ -1017,6 +1008,20 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 					console.error('Error updating playlist content', e);
 				}
 			});
+	}
+
+	private toggleMarkAllButton(value = null) {
+		// if value is set for the mark button then use it, else just negate the value
+		this.isInMarkedAllState = value ? value : !this.isInMarkedAllState;
+		const allContentIds = this.playlistContents.map((i) => i.playlistContentId);
+		const index = this.playlistControls.findIndex((c) => c.label.toLowerCase() === (this.isInMarkedAllState ? 'mark all' : 'unmark all'));
+		const currentLabel = this.isInMarkedAllState ? 'Unmark All' : 'Mark All';
+		const currentIcon = this.isInMarkedAllState ? 'fas fa-times text-danger' : 'fas fa-check';
+		this.playlistControls[index].label = currentLabel;
+		this.playlistControls[index].icon = currentIcon;
+		this.selectedPlaylistContents = this.isInMarkedAllState ? allContentIds : [];
+		this.enabledPlaylistContentControls = this.isInMarkedAllState ? [] : [...this.playlistContentControls];
+		this.setBulkControlsState();
 	}
 
 	public viewButtonClicked(action: string) {

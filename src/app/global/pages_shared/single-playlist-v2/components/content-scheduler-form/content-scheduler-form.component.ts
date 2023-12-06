@@ -100,6 +100,11 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 		alternateWeekControl.setValue(this.alternateWeek);
 	}
 
+	private convertDateControlToISOString(form: FormGroup, controlName: string) {
+		const controlValue = form.value[controlName];
+		if (typeof controlValue === 'object') form.get(controlName).setValue((controlValue as Date).toISOString(), { emitEvent: false });
+	}
+
 	private setExistingScheduleFormValues(data: PlaylistContentSchedule) {
 		const { playTimeStart, playTimeEnd, from, to, alternateWeek, days } = data;
 		this.alternateWeek = alternateWeek;
@@ -147,6 +152,9 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 
 		form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe({
 			next: () => {
+				this.convertDateControlToISOString(form, 'startDate');
+				this.convertDateControlToISOString(form, 'endDate');
+
 				this._playlist.schedulerFormUpdated.emit(form.value);
 
 				const playStart = form.value.playTimeStartData as NgbTimeStruct;
