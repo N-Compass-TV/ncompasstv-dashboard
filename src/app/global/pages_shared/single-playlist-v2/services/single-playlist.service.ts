@@ -189,8 +189,10 @@ export class SinglePlaylistService extends BaseService {
 		return this.postRequest(url, body);
 	}
 
-	swapPlaylistContent(data: any) {
-		return this.postRequest('playlistsv2/content/swap/parent', data);
+	swapPlaylistContent(data: { contentId: string; playlistContentId: string; duration: number }, isFrequency = false) {
+		const frequencyEndpoint = 'playlistsv2/content/swap/parent';
+		const endpoint = isFrequency ? frequencyEndpoint : 'playlistsv2/swapcontent';
+		return this.postRequest(endpoint, data);
 	}
 
 	updateContentSchedule(data: { playlistContentsScheduleId?: string; type: number }[]) {

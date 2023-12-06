@@ -912,6 +912,13 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	}
 
 	private swapContent(newContent: API_CONTENT, playlistContent: API_CONTENT_V2) {
+		const isParentFrequency = (data: number) => {
+			if (typeof data === 'undefined' || !data) return false;
+			return data === 33 || data === 22;
+		};
+
+		const isFrequencySwap = isParentFrequency(playlistContent.frequency);
+
 		const playlistContentToSwap = {
 			contentId: newContent.contentId,
 			playlistContentId: playlistContent.playlistContentId,
@@ -922,7 +929,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this.playlistContentsToSave.push(playlistContent.playlistContentId);
 
 		/** Save and Update View */
-		this._playlist.swapPlaylistContent(playlistContentToSwap).subscribe({
+		this._playlist.swapPlaylistContent(playlistContentToSwap, isFrequencySwap).subscribe({
 			next: (res: { content: API_CONTENT_V2; plContent: API_UPDATED_PLAYLIST_CONTENT }) => {
 				this.playlistContents = this.playlistContents
 					.map((content) => {
