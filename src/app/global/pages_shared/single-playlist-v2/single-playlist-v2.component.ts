@@ -79,6 +79,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	playlistContents: API_CONTENT_V2[];
 	playlistContentsToSave = [];
 	playlistControls = PlaylistPrimaryControls;
+    playlistDataNotFound = false;
 	playlistDescription = 'Getting playlist data';
 	playlistFilters = PlaylistFiltersDropdown;
 	playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
@@ -318,6 +319,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 			next: (response) => {
 				if ('message' in response) {
 					this.playlist = null;
+                    this.playlistDataNotFound = true;
 					return;
 				}
 

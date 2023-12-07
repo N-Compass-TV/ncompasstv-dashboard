@@ -216,7 +216,7 @@
 	</ng-container>
 
 	<ng-template #playlistNotFound>
-		<div class="loader text-center py-5 d-flex align-items-center vh-50">
+		<div class="loader text-center py-5 d-flex align-items-center vh-50" *ngIf="playlistDataNotFound; else spinner">
 			<div class="w-100">
 				<h3 class="mt-4 mb-2">Playlist Not Found</h3>
 				<p class="sm-text">The playlist you are trying to access does not exist</p>
