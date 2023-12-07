@@ -118,7 +118,13 @@
 								<i class="frequency-icon fas fa-chess-pawn text-warning mr-15"></i>
 							</ng-template>
 						</ng-container>
-						<input *ngIf="!isChildFrequency" type="checkbox" (change)="content_selected.emit()" />
+						<input
+							*ngIf="!isChildFrequency"
+							type="checkbox"
+							[(ngModel)]="selected"
+							[ngModelOptions]="{ standalone: true }"
+							[checked]="selected"
+							(change)="content_selected.emit($event)" />
 					</div>
 				</div>
 
