@@ -84,15 +84,15 @@ export const PlaylistFiltersDropdown = [
 
 export const PlaylistViewOptions = [
 	{
-		label: 'Detailed View',
-		action: PlaylistViewOptionActions.detailedView,
-		icon: 'fas fa-info',
-		is_selected: false
-	},
-	{
 		label: 'Grid View',
 		action: PlaylistViewOptionActions.gridView,
 		icon: 'fas fa-th',
+		is_selected: false
+	},
+	{
+		label: 'Detailed View',
+		action: PlaylistViewOptionActions.detailedView,
+		icon: 'fas fa-info',
 		is_selected: false
 	},
 	{
