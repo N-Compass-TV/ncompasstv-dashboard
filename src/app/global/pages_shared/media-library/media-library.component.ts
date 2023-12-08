@@ -17,6 +17,7 @@ import { RenameModalComponent } from '../../components_shared/media_components/r
 	styleUrls: ['./media-library.component.scss']
 })
 export class MediaLibraryComponent implements OnInit, OnDestroy {
+	advertisers: { id: string; value: string }[] = [];
 	advertiser_field_disabled: boolean = true;
 	assigned_users: any;
 	data_to_upload: any = [];
@@ -25,6 +26,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 	duplicate_files: any = [];
 	eventsSubject: Subject<void> = new Subject<void>();
 	filestack_client: any;
+	hosts: { id: string; value: string }[] = [];
 	host_field_disabled: boolean = true;
 	loading_overlay: boolean = false;
 	modified_data: any = [];
@@ -56,10 +58,8 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 		this.filestack_client = filestack.init(environment.third_party.filestack_api_key);
 		const roleId = this._auth.current_user_value.role_id;
 
-		// Get dealer, host, advertiser list ahead of time
+		// Get dealers
 		this.getDealers();
-		// Get Hosts
-		// Get Advertisers
 
 		if (roleId === UI_ROLE_DEFINITION.dealer || roleId === UI_ROLE_DEFINITION['sub-dealer']) {
 			this.is_dealer = true;
@@ -81,7 +81,9 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 		this._dialog
 			.open(MediaModalComponent, {
 				data: {
-					dealers: this.dealers
+					dealers: this.dealers,
+					hosts: this.hosts,
+					advertisers: this.advertisers
 				},
 				width: '768px',
 				panelClass: 'app-media-modal',

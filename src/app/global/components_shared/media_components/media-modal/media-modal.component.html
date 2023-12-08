@@ -16,88 +16,53 @@
 				<span class="text-muted md-text">Set as Floating Content</span>
 			</div>
 
+			<!-- Dealer -->
 			<div class="dealer-autocomplete-field">
 				<app-autocomplete [field_data]="dealer_autocomplete" (value_selected)="dealerSelected($event)"></app-autocomplete>
 			</div>
 
-			<!-- Dealer -->
-			<!-- <app-autocomplete-field
-				(data_value)="dealerSelected($event)"
-				[disabled]="is_floating || dealers.length == 0 || is_dealer"
-				[data_reference]="dealers_data"
-				[key_of_value]="'dealerId'"
-				[label]="'Choose A Dealer'"
-				[placeholder]="'Choose A Dealer'"
-				[primary_keyword]="'businessName'"
-				[search_keyword]="'dealer'"
-				[initial_value]="dealer_name"
-				[disabled]="is_dealer"
-				[paging]="paging"
-				(call_next_page)="searchBoxTrigger($event)"
-				(searched)="searchData($event)"
-				[loading_data]="loading_data"
-				[loading_search]="loading_search"
-				[new_value]="dealer_name"
-			>
-			</app-autocomplete-field> -->
-
 			<!-- Host -->
-			<div class="position-relative">
-				<!-- <app-autocomplete-field
-					(data_value)="hostSelected($event)"
-					[data_reference]="hosts_data"
-					[disabled]="is_floating || hosts.length == 0"
-					[key_of_value]="'hostId'"
-					[label]="'Choose A Host'"
-					[placeholder]="'Choose A Host'"
-					[primary_keyword]="'name'"
-					[search_keyword]="'name'"
-					[paging]="paging_host"
-					(call_next_page)="hostSearchBoxTrigger($event)"
-					(searched)="searchHostData($event)"
-					[loading_data]="loading_host_data"
-					[loading_search]="loading_search_host"
-					[initial_load]="initial_load_host"
-					[initial_value]="host_name"
-					[reset_value]="to_empty"
-				>
-				</app-autocomplete-field>
+			<div class="host-autocomplete-field">
+				<app-autocomplete
+					*ngIf="host_autocomplete.data.length; else dummyInput"
+					[field_data]="host_autocomplete"
+					(value_selected)="hostSelected($event)"></app-autocomplete>
 
-				<div class="form-spinner" *ngIf="loading_form">
-					<app-little-spinner></app-little-spinner>
-				</div>
-				<div class="no-data-found" *ngIf="no_host_found">
-					<span class="text-muted">No Host Available</span>
-				</div> -->
+				<ng-template #dummyInput>
+					<div class="position-relative">
+						<mat-form-field appearance="fill" class="w-100">
+							<mat-label>No Host Available</mat-label>
+							<input type="text" matInput [disabled]="true" />
+						</mat-form-field>
+
+						<div class="dummy-indicators">
+							<app-spinner [diameter]="30" *ngIf="getting_host_advertiser"> </app-spinner>
+							<h6 *ngIf="no_host_found" class="text-danger">No Host Found</h6>
+						</div>
+					</div>
+				</ng-template>
 			</div>
 
 			<!-- Advertiser -->
-			<div class="position-relative">
-				<!-- <app-autocomplete-field
-					(data_value)="advertiserSelected($event)"
-					[data_reference]="advertiser_data"
-					[disabled]="is_floating || advertisers.length == 0"
-					[key_of_value]="'id'"
-					[label]="'Choose An Advertiser'"
-					[placeholder]="'Choose An Advertiser'"
-					[primary_keyword]="'name'"
-					[search_keyword]="'name'"
-					[initial_value]="advertiser_name"
-					[paging]="paging_advertiser"
-					(call_next_page)="advertiserSearchBoxTrigger($event)"
-					(searched)="searchAdvertiserData($event)"
-					[loading_data]="loading_advertiser_data"
-					[loading_search]="loading_search_advertiser"
-					[initial_load]="initial_load_advertiser"
-					[reset_value]="to_empty"
-				>
-				</app-autocomplete-field>
-				<div class="form-spinner" *ngIf="loading_form">
-					<app-little-spinner></app-little-spinner>
-				</div>
-				<div class="no-data-found" *ngIf="no_advertiser_found">
-					<span class="text-muted">No Advertiser Available</span>
-				</div> -->
+			<div class="advertiser-autocomplete-field">
+				<app-autocomplete
+					*ngIf="advertiser_autocomplete.data.length; else dummyInput1"
+					[field_data]="advertiser_autocomplete"
+					(value_selected)="advertiserSelected($event)"></app-autocomplete>
+
+				<ng-template #dummyInput1>
+					<div class="position-relative">
+						<mat-form-field appearance="fill" class="w-100">
+							<mat-label>No Advertiser Available</mat-label>
+							<input type="text" matInput [disabled]="true" />
+						</mat-form-field>
+
+						<div class="dummy-indicators">
+							<app-spinner [diameter]="30" *ngIf="getting_host_advertiser"> </app-spinner>
+							<h6 *ngIf="no_advertiser_found" class="text-danger">No Advertiser Found</h6>
+						</div>
+					</div>
+				</ng-template>
 			</div>
 
 			<div *ngIf="!is_edit; else edit_button">

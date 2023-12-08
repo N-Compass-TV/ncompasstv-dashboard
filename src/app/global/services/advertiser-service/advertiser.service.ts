@@ -15,6 +15,11 @@ export class AdvertiserService extends BaseService {
 		return this.postRequest(url, data);
 	}
 
+    export_advertiser(id: string) {
+		const url = `${this.getters.export_advertisers}${id}`;
+		return this.getRequest(url);
+	}
+
 	get_advertisers(filters: API_FILTERS): Observable<{ advertisers: API_ADVERTISER[]; paging: PAGING }> {
 		const base = `${this.getters.api_get_advertisers}`;
 		const params = this.setUrlParams(filters, false, true);

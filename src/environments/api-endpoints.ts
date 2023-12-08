@@ -189,6 +189,7 @@ export const API_ENDPOINTS = {
 		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
+        export_advertisers: 'advertiser/export?dealer_id=',
 		export_dealer_licenses: 'license/exportbydealer',
 		export_dealers: 'dealer/exportdealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
