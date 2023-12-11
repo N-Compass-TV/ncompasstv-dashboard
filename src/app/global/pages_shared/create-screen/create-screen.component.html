@@ -132,28 +132,16 @@
 												*ngFor="let z of zone_playlist_form.get('screenZonePlaylist')['controls']; let i = index"
 												[formGroupName]="i">
 												<mat-label>Select Playlist for {{ z.controls['templateName'].value }}</mat-label>
-												<input
-													matInput
-													type="text"
-													formControlName="zonePlaylist"
-													placeholder="Select Playlist for {{ z.controls['templateName'].value }}"
-													[matAutocomplete]="auto" />
-												<mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-													<mat-option *ngFor="let p of playlist" [value]="p.playlist.playlistId">
-														{{ p.playlist.playlistName }}
-													</mat-option>
-												</mat-autocomplete>
-												<!-- <mat-label>Select Playlist for {{ z.controls['templateName'].value }}</mat-label>
-                                                <mat-select formControlName="zonePlaylist">
-                                                    <div>
-                                                        <mat-option *ngFor="let p of playlist" [value]="p.playlist.playlistId"
-                                                            [attr.data-zone-id]="z.templateZoneId">
-                                                            {{ p.playlist.playlistName }}
-                                                        </mat-option>
-                                                    </div>
-
-                                                    
-                                                </mat-select> -->
+												<mat-select formControlName="zonePlaylist">
+													<div>
+														<mat-option
+															*ngFor="let p of playlist"
+															[value]="p.playlist.playlistId"
+															[attr.data-zone-id]="z.templateZoneId">
+															{{ p.playlist.playlistName }}
+														</mat-option>
+													</div>
+												</mat-select>
 											</mat-form-field>
 										</ng-container>
 									</form>
