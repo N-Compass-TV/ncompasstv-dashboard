@@ -186,7 +186,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',
@@ -339,6 +339,7 @@ export const API_ENDPOINTS = {
 		api_update_weather_feed: 'feed/update/weather',
 		content_protection: 'content/setProtection',
 		content_schedule: 'playlistcontentsschedule/update',
+		content_schedule_v2: 'playlistsv2/UpdatePlaylistContentsSchedule',
 		content_to_filler: 'content/setfiller',
 		dealer_credit_card_details: 'billing/update/CreditCard',
 		dealer_status: 'dealer/updatestatus',
@@ -403,5 +404,8 @@ export const API_ENDPOINTS = {
 	},
 	upsert: {
 		release_notes: 'ReleaseNote/upsert'
+	},
+	v2: {
+		playlist: 'playlistsv2'
 	}
 };

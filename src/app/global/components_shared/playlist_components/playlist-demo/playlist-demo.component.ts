@@ -33,8 +33,14 @@ export class PlaylistDemoComponent implements OnInit {
 	ngOnInit() {
 		if (this._dialog_data) {
 			this.in_modal = true;
-			this.playlist_id = this._dialog_data;
 
+			if (this._dialog_data.playlistContents) {
+				this.playlist_content = this.playlist_mapToUI(this._dialog_data.playlistContents);
+				this.checkFileType(this.count);
+				return;
+			}
+
+			this.playlist_id = this._dialog_data;
 			this.getPlaylistById();
 		} else {
 			if (this.passed_playlist_content) {

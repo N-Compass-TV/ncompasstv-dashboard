@@ -8,15 +8,13 @@ import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 	styleUrls: ['./spinner.component.scss']
 })
 export class SpinnerComponent implements OnInit {
-
 	// Spinner Config
 	mode: ProgressSpinnerMode = 'determinate';
 	value: number = 40;
 	@Input() diameter: number;
+	@Input() message: string;
 
-	constructor() { }
+	constructor() {}
 
-	ngOnInit() {
-	}
-
+	ngOnInit() {}
 }

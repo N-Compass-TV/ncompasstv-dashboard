@@ -20,9 +20,7 @@ import { TechnicalModule } from './role-pages/technical/technical.module';
 import { ViewContentListModule } from './global/components_shared/playlist_components/view-content-list/view-content-list.module';
 
 @NgModule({
-	declarations: [
-		AppComponent,
-	],
+	declarations: [AppComponent],
 	imports: [
 		BrowserModule,
 		BrowserAnimationsModule,
@@ -33,18 +31,13 @@ import { ViewContentListModule } from './global/components_shared/playlist_compo
 		HostOwnerModule,
 		AdvertiserModule,
 		TechnicalModule,
-        SubDealerModule,
+		SubDealerModule,
 		UserLoginModule,
 		AppRoutingModule,
 		ReassignDealerModule,
-		ViewContentListModule,
+		ViewContentListModule
 	],
-	providers: [
-		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
-		AuthService, 
-		AuthGuard
-	],
+	providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }, AuthService, AuthGuard],
 	bootstrap: [AppComponent]
 })
-
-export class AppModule { }
+export class AppModule {}
