@@ -264,6 +264,7 @@ export const API_ENDPOINTS = {
 		api_new_content_history_log: 'playlists/logcontenthistory',
 		api_fieldgroup_value_create: 'fieldgroupdvalue/create',
 		api_save_activity: 'activity/log',
+		api_playlist_whitelist_migration: 'playlistsv2/whitelistingmigration',
 		content_schedule: 'playlistcontentsschedule/create',
 		dealer_tag: 'tag/dealer/create',
 		host_s3_files: 'host/saveS3Files',

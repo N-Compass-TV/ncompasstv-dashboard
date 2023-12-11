@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { fromEvent, Observable, Subject } from 'rxjs';
@@ -64,9 +65,11 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	currentStatusFilter: { key: string; label: string };
 	currentFileTypeFilter = 'all';
 	has_selected_content_with_schedule = false;
+	is_administrator = this._auth.current_role === 'administrator';
 	is_loading = false;
 	is_bulk_selecting = false;
 	list_view_mode = false;
+	migrationLoading = false;
 	updated_playlist_content: API_UPDATED_PLAYLIST_CONTENT[];
 	playlist_order: string[] = [];
 	playlist_changes_data: any;
@@ -97,7 +100,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		private _confirmation_dialog: ConfirmationDialogService,
 		private _content: ContentService,
 		private _dialog: MatDialog,
-		private _playlist: PlaylistService
+		private _playlist: PlaylistService,
+		private _router: Router
 	) {}
 
 	ngOnInit() {
@@ -402,6 +406,48 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	onSetSchedule(): void {
 		this.showContentScheduleDialog();
+	}
+
+	onSwitchPlaylist(): void {
+		this.migrationLoading = true;
+
+		this._playlist
+			.create_playlist_whitelist_migration(this.playlist_id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe({
+				next: ({ message }) => {
+					if (message === 'Successfully Migrated.') {
+						this.migrationLoading = false;
+						this.openConfirmationModal('success', 'Success!', 'Playlist Successfully Migrated');
+					} else {
+						this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'Migration not successful');
+						this.migrationLoading = false;
+					}
+				},
+				error: (e) => {
+					this.migrationLoading = false;
+					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', e.error.message);
+					console.error('Error', e);
+				}
+			});
+	}
+
+	openConfirmationModal(status, message, data): void {
+		var dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: {
+				status: status,
+				message: message,
+				data: data
+			}
+		});
+
+		dialog.afterClosed().subscribe(() => {
+			if (status === 'success') {
+				this._router.navigate([`/${this.currentRole}/playlists/v2/${this.playlist_id}`], {});
+			}
+		});
 	}
 
 	onViewContentList(): void {
@@ -1065,5 +1111,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	protected get currentUser() {
 		return this._auth.current_user_value;
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 }

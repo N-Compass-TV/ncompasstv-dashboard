@@ -92,6 +92,10 @@ export class PlaylistService extends BaseService {
 		return this.postRequest(this.creators.api_clone_playlist, data);
 	}
 
+	create_playlist_whitelist_migration(id) {
+		return this.postRequest(`${this.creators.api_playlist_whitelist_migration}?playlistId=${id}`, id);
+	}
+
 	bulk_whitelist(data) {
 		return this.postRequest(this.deleters.api_bulk_remove_in_blacklist, data);
 	}
