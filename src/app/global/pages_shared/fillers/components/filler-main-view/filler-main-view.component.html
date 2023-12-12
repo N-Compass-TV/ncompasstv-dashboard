@@ -102,27 +102,23 @@
 					</div>
 				</div>
 				<div class="col-lg-2 mb-4" *ngFor="let group of filler_data; let i = index">
-					<div class="bg-white p-3 full-width text-center br-5 box-shadowing">
-						<div class="album-preview" [ngClass]="no_preview ? 'hidden' : ''" *ngIf="selected_preview_index == i">
-							<div class="row mt-3 no-gutters" *ngIf="!initial_loading; else filler_loader">
-								<div class="col-lg-12 px-2" *ngIf="!no_preview_available; else no_prev">
-									<div class="items" *ngFor="let filler of selected_preview" [ngStyle]="{ width: '50%', height: '90px' }">
-										<div *ngIf="filler.fileType | isFeed; else imagePrev">
-											<object [attr.data]="filler.url | sanitize" class="full-width"></object>
-										</div>
-										<ng-template #imagePrev>
-											<img class="cover-bg full-width" [src]="filler.url" />
-										</ng-template>
-									</div>
-								</div>
-							</div>
+                    <!-- Card Component -->
+					<div class="bg-white p-3 full-width text-center br-5 box-shadowing position-relative overflow-hidden"> <!-- Added position-relative and overflow-hidden -->
+						<div class="album-preview p-3" [ngClass]="no_preview ? 'hidden' : ''" *ngIf="selected_preview_index == i"> 
+                            <div class="items-wrapper mb-3">
+                                <div class="items" *ngFor="let filler of selected_preview">
+                                    <img class="cover-bg w-100 h-100" [src]="'assets/media-files/no-ss.png'"  *ngIf="filler.fileType | isFeed; else imagePrev" /> <!-- Todo: thumbnail for object/feed -->
+                                    
+                                    <ng-template #imagePrev>
+                                        <img class="cover-bg w-100 h-100" [src]="filler.url" />
+                                    </ng-template>
+                                </div>
+                            </div>
 							<!-- To fixed buttoncontainer at the bottom , even when data is loading-->
-							<div class="position-absolute bottom-0 full-width mb-2">
-								<div class="d-flex px-2 justify-content-end">
-									<button class="theme-btn _cool mr-2" (click)="navigateToFillerGroup(group.fillerGroupId)">View</button>
-									<button class="theme-btn _caution" (click)="hidePreview()">Close</button>
-								</div>
-							</div>
+                            <div class="d-flex">
+                                <button class="theme-btn _cool flex-even mr-2" (click)="navigateToFillerGroup(group.fillerGroupId)">View</button>
+                                <button class="theme-btn _caution flex-even" (click)="hidePreview()">Close</button>
+                            </div>
 						</div>
 						<div class="row">
 							<div class="col-lg-12 text-center text-primary uppercase">
@@ -186,6 +182,7 @@
 							</div>
 						</div>
 					</div>
+                    <!-- Card Component -->
 				</div>
 			</div>
 			<div class="row" *ngIf="filler_group.hasNextPage">

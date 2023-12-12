@@ -238,9 +238,17 @@
 	top: 0px;
 	z-index: 10;
 	box-shadow: 5px 5px 15px $gray_dark;
+
+    .items-wrapper {
+        height: 160px;
+    }
+
 	.items {
-		display: inline-flex;
+		display: inline-block;
+        height: 80px;
+        width: 50%;
 	}
+
 	.controls {
 		position: absolute;
 		bottom: 10px;
