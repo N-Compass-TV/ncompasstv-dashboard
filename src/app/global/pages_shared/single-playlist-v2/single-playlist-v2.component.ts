@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { Observable, Subject, forkJoin } from 'rxjs';
 import { Sortable } from 'sortablejs';
@@ -91,6 +91,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 	playlistSettings = PLAYLIST_SETTING_BUTTONS;
 	playlistSortableOrder: string[] = [];
 	playlistViews = PlaylistViewOptions;
+    role = '';
 	savingPlaylist = false;
 	screenTableColumns = ['#', 'Screen Title', 'Dealer', 'Host', 'Type', 'Template', 'Created By'];
 	screens: API_SCREEN_OF_PLAYLIST[];
@@ -109,8 +110,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		private _activatedRoute: ActivatedRoute,
 		private _auth: AuthService,
 		private _dialog: MatDialog,
+		private _isVideo: IsvideoPipe,
 		private _playlist: SinglePlaylistService,
-		private _isVideo: IsvideoPipe
+        private _router: Router
 	) {}
 
 	ngOnInit() {
@@ -123,14 +125,14 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this._socket.on('disconnect', () => {});
 		this.playlistRouteInit();
 
-		let role = this.currentRole;
-		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-			role = UI_ROLE_DEFINITION_TEXT.administrator;
+		this.role = this.currentRole;
+		if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.role = UI_ROLE_DEFINITION_TEXT.administrator;
 		}
 
 		this.enabledPlaylistContentControls = [...this.playlistContentControls];
-		this.hostURL = `/${role}/hosts/`;
-		this.licenseURL = `/${role}/licenses/`;
+		this.hostURL = `/${this.role}/hosts/`;
+		this.licenseURL = `/${this.role}/licenses/`;
 		this.setDefaultViewButton();
 	}
 
@@ -245,10 +247,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 		this.playlistContents = [...result];
 	}
 
-	private getAllLicenseIds() {
-		// return this.playlistHostLicenses
-	}
-
 	private getAssets() {
 		const requests = [];
 
@@ -316,12 +314,17 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
 	private getPlaylistData(playlistId: string) {
 		this._playlist.getPlaylistData(playlistId).subscribe({
-			next: (response) => {
+			next: (response: API_PLAYLIST_V2) => {
 				if ('message' in response) {
 					this.playlist = null;
                     this.playlistDataNotFound = true;
 					return;
 				}
+
+                if (!response.playlist.isMigrated) {
+                    // Redirect playlist to v1 page if not migrated yet
+                    this._router.navigate([`${this.role}/playlists/${response.playlist.playlistId}`])
+                }
 
 				const data = response as API_PLAYLIST_V2;
 				const { playlist, playlistContents } = data;

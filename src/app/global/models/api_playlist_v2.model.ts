@@ -12,6 +12,7 @@ export interface API_PLAYLIST_V2 {
 		playlistId: string;
 		playlistName: string;
 		totalContents: number;
+        isMigrated: number;
 	};
 	playlistContents: API_CONTENT_V2[];
 }

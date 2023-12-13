@@ -196,7 +196,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 			return new UI_TABLE_PLAYLIST(
 				{ value: p.playlistId, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: p.name, link: '/administrator/playlists/' + p.playlistId, editable: false, hidden: false, new_tab_link: true },
+				{ value: p.name, link: p.isMigrated ? `/administrator/playlists/v2/${p.playlistId}` : `/administrator/playlists/${p.playlistId}`, editable: false, hidden: false, new_tab_link: true },
 				{ value: this._date.transform(p.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false },
 				{ value: p.businessName, link: '/administrator/dealers/' + p.dealerId, editable: false, hidden: false, new_tab_link: true },
 				{ value: p.totalScreens > 0 ? true : false, link: null, hidden: true }
@@ -235,7 +235,6 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 					this.showResponseDialog('success', 'Success', 'Your changes have been saved').subscribe({
 						next: () => {
 							const newPlaylistUrl = `/${this.roleRoute}/playlists/v2/${playlist.playlistId}`;
-							// this._router.navigateByUrl(newPlaylistUrl); // just in case they want to be navigated to the playlist page instead
 							window.open(newPlaylistUrl, '_blank');
 							this.getTotalPlaylist();
 							this.getPlaylists(1);
@@ -244,12 +243,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 				},
 				error: (e) => {
 					console.error('Error creating playlist', e);
-
-					this.showResponseDialog('error', 'Error Saving Playlist', 'Something went wrong, please contact customer support').subscribe({
-						next: () => {
-							// maybe send logging here?
-						}
-					});
+					this.showResponseDialog('error', 'Error Saving Playlist', 'Something went wrong, please contact customer support').subscribe();
 				}
 			});
 	}

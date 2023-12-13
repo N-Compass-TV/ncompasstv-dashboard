@@ -293,6 +293,13 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 					},
 					{
 						path: 'v2/:data',
+						component: SinglePlaylistV2Component,
+                        data: {
+							breadcrumb: 'Single Playlist'
+						}
+					},
+					{
+						path: 'v2/:data/:breadcrumb',
 						component: SinglePlaylistV2Component
 					},
 					{

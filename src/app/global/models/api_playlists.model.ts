@@ -7,4 +7,5 @@ export interface API_PLAYLIST {
 	name: string;
 	playlistId: string;
 	totalScreens: number;
+    isMigrated: number;
 }
