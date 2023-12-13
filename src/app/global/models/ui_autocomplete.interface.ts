@@ -1,7 +1,7 @@
 export interface UI_AUTOCOMPLETE {
 	label: string;
 	placeholder: string;
-	data: { id: string; value: any }[];
+	data: UI_AUTOCOMPLETE_DATA[];
     disabled?: boolean;
 }
 
