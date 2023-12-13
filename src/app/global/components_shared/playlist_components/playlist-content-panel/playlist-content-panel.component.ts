@@ -416,24 +416,25 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe({
 				next: ({ message }) => {
+                    this.migrationLoading = false;
+
 					if (message === 'Successfully Migrated.') {
-						this.migrationLoading = false;
 						this.openConfirmationModal('success', 'Success!', 'Playlist Successfully Migrated');
-					} else {
-						this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'Migration not successful');
-						this.migrationLoading = false;
-					}
+                        return;
+                    }
+
+                    this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'Migration not successful');
 				},
 				error: (e) => {
-					this.migrationLoading = false;
-					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', e.error.message);
 					console.error('Error', e);
+					this.migrationLoading = false;
+					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', '');
 				}
 			});
 	}
 
 	openConfirmationModal(status, message, data): void {
-		var dialog = this._dialog.open(ConfirmationModalComponent, {
+		this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
 			data: {
@@ -441,9 +442,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				message: message,
 				data: data
 			}
-		});
-
-		dialog.afterClosed().subscribe(() => {
+		}).afterClosed().subscribe(() => {
 			if (status === 'success') {
 				this._router.navigate([`/${this.currentRole}/playlists/v2/${this.playlist_id}`], {});
 			}

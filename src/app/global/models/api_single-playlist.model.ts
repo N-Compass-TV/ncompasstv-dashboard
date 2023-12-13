@@ -22,6 +22,7 @@ export class API_SINGLE_PLAYLIST_INFO {
     playlistType: string;
     businessName: string;
     dateCreated: string;
+    isMigrated: number;
 }
 
 export class API_CONTENT_BLACKLISTED_CONTENTS {

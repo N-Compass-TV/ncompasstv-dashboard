@@ -323,7 +323,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
                 if (!response.playlist.isMigrated) {
                     // Redirect playlist to v1 page if not migrated yet
-                    this._router.navigate([`${this.role}/playlists/${response.playlist.playlistId}`])
+                    this._router.navigate([`${this.role}/playlists/${response.playlist.playlistId}`]);
+                    return;
                 }
 
 				const data = response as API_PLAYLIST_V2;
