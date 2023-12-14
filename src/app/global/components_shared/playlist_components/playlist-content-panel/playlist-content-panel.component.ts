@@ -409,44 +409,30 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	onSwitchPlaylist(): void {
-		this.migrationLoading = true;
-
-		this._playlist
-			.create_playlist_whitelist_migration(this.playlist_id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe({
-				next: ({ message }) => {
-                    this.migrationLoading = false;
-
-					if (message === 'Successfully Migrated.') {
-						this.openConfirmationModal('success', 'Success!', 'Playlist Successfully Migrated');
-                        return;
-                    }
-
-                    this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'Migration not successful');
-				},
-				error: (e) => {
-					console.error('Error', e);
-					this.migrationLoading = false;
-					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', '');
-				}
-			});
+		this.openConfirmationModal('warning', 'Switching to Playlist V2', 'You are about to switch to playlist V2, this action is irreversible.');
 	}
 
 	openConfirmationModal(status, message, data): void {
-		this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: {
-				status: status,
-				message: message,
-				data: data
-			}
-		}).afterClosed().subscribe(() => {
-			if (status === 'success') {
-				this._router.navigate([`/${this.currentRole}/playlists/v2/${this.playlist_id}`], {});
-			}
-		});
+		this._dialog
+			.open(ConfirmationModalComponent, {
+				width: '500px',
+				height: '350px',
+				data: {
+					status: status,
+					message: message,
+					data: data
+				}
+			})
+			.afterClosed()
+			.subscribe((response) => {
+				if (status === 'success') {
+					this._router.navigate([`/${this.currentRole}/playlists/v2/${this.playlist_id}`], {});
+				}
+
+				if (status === 'warning' && response) {
+					this.switchToV2();
+				}
+			});
 	}
 
 	onViewContentList(): void {
@@ -744,6 +730,31 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	saveOrderChanges(): void {
 		this.savePlaylistChanges(this.structureUpdatedPlaylist());
+	}
+
+	switchToV2() {
+		this.migrationLoading = true;
+
+		this._playlist
+			.create_playlist_whitelist_migration(this.playlist_id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe({
+				next: ({ message }) => {
+					this.migrationLoading = false;
+
+					if (message === 'Successfully Migrated.') {
+						this.openConfirmationModal('success', 'Success!', 'Playlist Successfully Migrated');
+						return;
+					}
+
+					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'Migration not successful');
+				},
+				error: (e) => {
+					console.error('Error', e);
+					this.migrationLoading = false;
+					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', '');
+				}
+			});
 	}
 
 	/**
