@@ -31,15 +31,17 @@ export class AutocompleteComponent implements OnInit {
 	}
 
 	ngAfterViewInit() {
-		if (this.field_data.initial_value && this.field_data.initial_value.length) {
-			this.autoCompleteControl.setValue(this.field_data.initial_value[0]);
-		}
+		this.setupDefaults();
 	}
 
 	ngOnChanges() {
-		// For autocomplete to change value without reloading the page upon saved
-		this.field_data = this.field_data;
-		this.ngAfterViewInit();
+		this.setupDefaults();
+	}
+
+	setupDefaults() {
+		if (this.field_data.initial_value && this.field_data.initial_value.length) {
+			this.autoCompleteControl.setValue(this.field_data.initial_value[0]);
+		}
 	}
 
 	displayOption(option: any): string {

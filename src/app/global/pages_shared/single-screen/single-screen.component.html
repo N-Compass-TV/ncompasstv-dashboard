@@ -51,7 +51,7 @@
 					</div>
 					<p class="mb-3 sm-text">Below are the zones of {{ screen.assigned_template }} template. Click a zone to edit its playlist.</p>
 				</div>
-				<mat-accordion>
+				<mat-accordion *ngIf="screen && screen.screen_zone_playlist && playlist_dropdown.length == screen.screen_zone_playlist.length">
 					<mat-expansion-panel *ngFor="let z of screen.screen_zone_playlist; index as i">
 						<mat-expansion-panel-header>
 							<mat-panel-title class="font-weight-medium"> {{ z.screen_template.name | titlecase }} Zone </mat-panel-title>
@@ -76,7 +76,7 @@
 						</mat-expansion-panel-header>
 						<app-autocomplete
 							[field_data]="playlist_dropdown[i]"
-							*ngIf="playlist_dropdown[i].data.length > 0"
+							*ngIf="playlist_dropdown[i] && playlist_dropdown[i].data.length > 0"
 							(value_selected)="playlistSelected($event.id, z.screen_template.zone_id)">
 						</app-autocomplete>
 					</mat-expansion-panel>
