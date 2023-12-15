@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-import { UI_AUTOCOMPLETE, UI_AUTOCOMPLETE_DATA } from 'src/app/global/models';
+import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
+import { UI_AUTOCOMPLETE } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-autocomplete',
@@ -13,32 +13,34 @@ export class AutocompleteComponent implements OnInit {
 	@Input() field_data: UI_AUTOCOMPLETE = {
 		label: 'Label',
 		placeholder: 'Type anything',
-		data: [],
-		initial_value: []
+		data: []
 	};
-
 	@Output() value_selected: EventEmitter<{ id: string; value: string }> = new EventEmitter();
 	@Output() no_data_found: EventEmitter<string> = new EventEmitter();
 
 	autoCompleteControl = new FormControl();
 	filteredOptions!: Observable<any[]>;
 
-	constructor() {}
-
 	ngOnInit() {
 		this.filteredOptions = this.autoCompleteControl.valueChanges.pipe(
 			startWith(''),
+			debounceTime(1000),
+			distinctUntilChanged(),
 			map((keyword) => this._filter(keyword))
 		);
 	}
 
 	ngAfterViewInit() {
-		if (this.field_data.initial_value != null) {
+		if (this.field_data.initial_value && this.field_data.initial_value.length) {
 			this.autoCompleteControl.setValue(this.field_data.initial_value[0]);
 		}
 	}
 
 	displayOption(option: any): string {
+		if (option && option.display) {
+			return option.display;
+		}
+
 		return option ? option.value : '';
 	}
 
@@ -57,6 +59,7 @@ export class AutocompleteComponent implements OnInit {
 				filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
 			}
 		}
+
 		return filterResult;
 	}
 
