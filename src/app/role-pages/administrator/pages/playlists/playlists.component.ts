@@ -192,14 +192,19 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 
 	mapToPlaylistTable(data: API_PLAYLIST[]) {
 		let count = this.paging_data.pageStart;
+
 		return data.map((p) => {
+			let playlistUrl = `/administrator/playlists/`;
+			playlistUrl += p.isMigrated ? `v2/${p.playlistId}` : p.playlistId;
+
 			return new UI_TABLE_PLAYLIST(
 				{ value: p.playlistId, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: p.name, link: p.isMigrated ? `/administrator/playlists/v2/${p.playlistId}` : `/administrator/playlists/${p.playlistId}`, editable: false, hidden: false, new_tab_link: true },
+				{ value: p.name, link: playlistUrl, editable: false, hidden: false, new_tab_link: true },
 				{ value: this._date.transform(p.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false },
-				{ value: p.businessName, link: '/administrator/dealers/' + p.dealerId, editable: false, hidden: false, new_tab_link: true },
-				{ value: p.totalScreens > 0 ? true : false, link: null, hidden: true }
+				{ value: p.businessName, link: `/administrator/dealers/${p.dealerId}`, editable: false, hidden: false, new_tab_link: true },
+				{ value: p.totalScreens > 0 ? true : false, link: null, hidden: true },
+				{ value: p.totalContents, hidden: false }
 			);
 		});
 	}
@@ -282,7 +287,8 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 			{ name: '#', sortable: false, no_export: true },
 			{ name: 'Playlist Name', sortable: true, column: 'Name' },
 			{ name: 'Publish Date', sortable: true, column: 'DateCreated' },
-			{ name: 'Assigned To', sortable: true, column: 'BusinessName' }
+			{ name: 'Assigned To', sortable: true, column: 'BusinessName' },
+			{ name: 'Contents', sortable: false, column: 'ContentCount' }
 		];
 	}
 }

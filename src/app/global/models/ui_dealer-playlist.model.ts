@@ -1,20 +1,27 @@
 export class UI_DEALER_PLAYLIST {
-    playlist_id: object;
-    count: object;
-    name: object;
-    playlist_desc: object;
-    date_created: object;
-    allow_export: object;
+	playlist_id: object;
+	count: object;
+	name: object;
+	playlist_desc: object;
+	date_created: object;
+	allow_export: object;
+	content_count: object;
 
-    constructor(
-        playlistId: object, count: object, name: object, playlistDescription: object, 
-        dateCreated: object, allow_export?: object,
-    ) {
-        this.playlist_id = playlistId;
-        this.count = count;
-        this.name = name;
-        this.playlist_desc = playlistDescription;
-        this.date_created = dateCreated;
-        this.allow_export = allow_export;
-    }
+	constructor(
+		playlistId: object,
+		count: object,
+		name: object,
+		playlistDescription: object,
+		dateCreated: object,
+		allow_export?: object,
+		content_count?: object
+	) {
+		this.playlist_id = playlistId;
+		this.count = count;
+		this.name = name;
+		this.playlist_desc = playlistDescription;
+		this.date_created = dateCreated;
+		this.allow_export = allow_export;
+		this.content_count = content_count;
+	}
 }

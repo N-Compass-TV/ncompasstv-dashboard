@@ -42,7 +42,7 @@ export class SinglePlaylistComponent implements OnInit {
 	playlist_screens: API_SCREEN_OF_PLAYLIST[] = [];
 	playlist_screen_table: any;
 	playlist_updating: boolean = true;
-    role: any;
+	role: any;
 	title: string;
 
 	_socket: any;
@@ -57,7 +57,7 @@ export class SinglePlaylistComponent implements OnInit {
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _playlist: PlaylistService,
-        private _router: Router
+		private _router: Router
 	) {}
 
 	ngOnInit() {
@@ -251,11 +251,11 @@ export class SinglePlaylistComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				([playlistResponse, screenResponse]) => {
-                    if (playlistResponse.playlist.isMigrated) {
-                        // Redirect playlist to v2 page if already
-                        this._router.navigate([`${this.role}/playlists/v2/${playlistResponse.playlist.playlistId}`])
-                        return;
-                    }
+					if (playlistResponse.playlist.isMigrated) {
+						// Redirect playlist to v2 page if already
+						this._router.navigate([`${this.role}/playlists/v2/${playlistResponse.playlist.playlistId}`]);
+						return;
+					}
 
 					this.setpageData(playlistResponse);
 					this.playlist_screens = screenResponse.screens;
@@ -307,7 +307,9 @@ export class SinglePlaylistComponent implements OnInit {
 	}
 
 	protected get isAdmin() {
-		return this._auth.current_role === 'administrator';
+		const current = this._auth.current_role;
+		const adminRoles: string[] = Object.values(UI_ROLE_DEFINITION_TEXT).filter((role) => role.includes('admin'));
+		return adminRoles.includes(current);
 	}
 
 	protected get isDealer() {

@@ -1,5 +1,5 @@
 <mat-card class="p-4 position-relative">
-	<div class="d-flex align-items-end flex-column" *ngIf="is_administrator">
+	<div class="d-flex align-items-end flex-column" *ngIf="has_playlist_privileges">
 		<button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="onSwitchPlaylist()">
 			Switch to Playlist V2
 			<span class="fas fa-photo-video ml-2 sm-text"></span>

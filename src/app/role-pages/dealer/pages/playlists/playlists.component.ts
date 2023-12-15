@@ -10,7 +10,7 @@ import * as io from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { AuthService, PlaylistService } from 'src/app/global/services';
 import { CreatePlaylistDialogComponent } from 'src/app/global/components_shared/playlists_components/create-playlist-dialog/create-playlist-dialog.component';
-import { CREATE_PLAYLIST, UI_DEALER_PLAYLIST } from 'src/app/global/models';
+import { API_PLAYLIST, CREATE_PLAYLIST, UI_DEALER_PLAYLIST } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -35,13 +35,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 	workbook_generation = false;
 	worksheet: any;
 
-	playlist_table_column = [
-		'#',
-		'Name',
-		'Description',
-		'Creation Date'
-		// 'Last Update'
-	];
+	playlist_table_column = ['#', 'Name', 'Description', 'Creation Date', 'Total Contents'];
 
 	playlist_table_column_for_export = [
 		{ name: 'Host Name', key: 'hostName' },
@@ -124,16 +118,21 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	playlist_mapToUI(data): UI_DEALER_PLAYLIST[] {
+	playlist_mapToUI(data: API_PLAYLIST[]): UI_DEALER_PLAYLIST[] {
 		let count = this.paging_data.pageStart;
+
 		return data.map((playlist) => {
+			let playlistUrl = `/dealer/playlists/`;
+			playlistUrl += playlist.isMigrated ? `v2/${playlist.playlistId}` : playlist.playlistId;
+
 			return new UI_DEALER_PLAYLIST(
 				{ value: playlist.playlistId, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: playlist.name, link: '/dealer/playlists/' + playlist.playlistId, editable: false, hidden: false, new_tab_link: true },
+				{ value: playlist.name, link: playlistUrl, editable: false, hidden: false, new_tab_link: true },
 				{ value: this._title.transform(playlist.description), link: null, editable: false, hidden: false },
 				{ value: this._date.transform(playlist.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false },
-				{ value: playlist.totalScreens > 0 ? true : false, link: null, hidden: true }
+				{ value: playlist.totalScreens > 0 ? true : false, link: null, hidden: true },
+				{ value: playlist.totalContents, hidden: false }
 			);
 		});
 	}

@@ -1,32 +1,32 @@
-import { Component, Input, OnInit, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { takeUntil } from 'rxjs/operators';
-import { fromEvent, Observable, Subject } from 'rxjs';
-import { Sortable } from 'sortablejs';
+import { Router } from '@angular/router';
 import * as moment from 'moment-timezone';
+import { Observable, Subject, fromEvent } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Sortable } from 'sortablejs';
 
-import { BulkOptionsComponent } from '../bulk-options/bulk-options.component';
+import { AuthService, ConfirmationDialogService, ContentService, PlaylistService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
+import { BulkOptionsComponent } from '../bulk-options/bulk-options.component';
 import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-scheduling-dialog/playlist-content-scheduling-dialog.component';
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
-import { AuthService, ConfirmationDialogService, ContentService, PlaylistService } from 'src/app/global/services';
 
 import {
 	API_BLOCKLIST_CONTENT,
 	API_CONTENT,
 	API_CONTENT_BLACKLISTED_CONTENTS,
-	API_UPDATE_PLAYLIST_CONTENT,
-	FREQUENCY,
-	API_UPDATED_PLAYLIST_CONTENT,
-	PLAYLIST_CHANGES,
-	CREDITS_STATUS,
-	CREDITS_TO_SUBMIT,
+	API_CONTENT_DATA,
 	API_CONTENT_HISTORY,
 	API_CONTENT_HISTORY_LIST,
-	API_CONTENT_DATA
+	API_UPDATED_PLAYLIST_CONTENT,
+	API_UPDATE_PLAYLIST_CONTENT,
+	CREDITS_STATUS,
+	CREDITS_TO_SUBMIT,
+	FREQUENCY,
+	PLAYLIST_CHANGES
 } from 'src/app/global/models';
 
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from 'src/app/global/constants/file-types';
@@ -65,7 +65,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	currentStatusFilter: { key: string; label: string };
 	currentFileTypeFilter = 'all';
 	has_selected_content_with_schedule = false;
-	is_administrator = this._auth.current_role === 'administrator';
+	has_playlist_privileges = false;
 	is_loading = false;
 	is_bulk_selecting = false;
 	list_view_mode = false;
@@ -105,6 +105,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
+		this.has_playlist_privileges = this.is_admin || this.is_dealer;
 		this._contentsBackup = Array.from(this.playlist_contents);
 		this.subscribeToSearch();
 		this.playlist_content_backup = this._contentsBackup;
@@ -1117,10 +1118,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			{ label: 'In Queue', key: 'future' },
 			{ label: 'Inactive', key: 'inactive' }
 		];
-	}
-
-	protected get currentUser() {
-		return this._auth.current_user_value;
 	}
 
 	protected get currentRole() {
