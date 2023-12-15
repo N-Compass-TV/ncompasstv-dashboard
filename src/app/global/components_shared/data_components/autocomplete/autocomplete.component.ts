@@ -31,6 +31,14 @@ export class AutocompleteComponent implements OnInit {
 	}
 
 	ngAfterViewInit() {
+		this.setupDefaults();
+	}
+
+	ngOnChanges() {
+		this.setupDefaults();
+	}
+
+	setupDefaults() {
 		if (this.field_data.initial_value && this.field_data.initial_value.length) {
 			this.autoCompleteControl.setValue(this.field_data.initial_value[0]);
 		}
