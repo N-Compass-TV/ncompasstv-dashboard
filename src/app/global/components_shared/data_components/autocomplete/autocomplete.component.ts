@@ -38,6 +38,12 @@ export class AutocompleteComponent implements OnInit {
 		}
 	}
 
+	ngOnChanges() {
+		// For autocomplete to change value without reloading the page upon saved
+		this.field_data = this.field_data;
+		this.ngAfterViewInit();
+	}
+
 	displayOption(option: any): string {
 		return option ? option.value : '';
 	}
