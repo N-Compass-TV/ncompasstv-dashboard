@@ -366,8 +366,6 @@ export class SingleScreenComponent implements OnInit {
 				]
 			});
 		});
-
-		console.log(this.playlist_dropdown);
 	}
 
 	// Get Host By Dealer
@@ -803,8 +801,6 @@ export class SingleScreenComponent implements OnInit {
 		if (data.screen.screenTypeId != null) screen.type = data.screen.screenTypeId;
 
 		if (data.host.notes && data.host.notes.trim().length > 0) screen.notes = data.host.notes;
-
-		console.log('SCREEN', screen);
 		return screen;
 	}
 
