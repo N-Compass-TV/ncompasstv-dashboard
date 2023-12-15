@@ -13,7 +13,8 @@ export class AutocompleteComponent implements OnInit {
 	@Input() field_data: UI_AUTOCOMPLETE = {
 		label: 'Label',
 		placeholder: 'Type anything',
-		data: []
+		data: [],
+		initial_value: []
 	};
 
 	@Output() value_selected: EventEmitter<{ id: string; value: string }> = new EventEmitter();
