@@ -16,6 +16,7 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 })
 export class SingleUserComponent implements OnInit, OnDestroy {
 	@ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
+	advertiser_id: string;
 	bg_role: any;
 	dealers_form = this._form.group({ dealers: [[], Validators.required] });
 	dealer_filter_control = new FormControl(null);
@@ -23,6 +24,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	dealers_list: API_DEALER[] = [];
 	has_loaded_dealers_list = false;
 	has_loaded_assigned_dealers = false;
+	host_id: string;
 	info_form: FormGroup;
 	info_form_disabled = false;
 	info_form_fields = this._formFields;
@@ -329,9 +331,13 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 				(response: any) => {
 					if ('message' in response) return;
 					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = response[0].dealerId;
+					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.advertiser) this.advertiser_id = response[0].id;
+					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.host) this.host_id = response[0].hostId;
+
 					const userData = response as API_USER_DATA;
 					this.is_dealer_admin = userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
 					this.dealer_admin_user_id = userData.userId;
+
 					this.setPageData(userData);
 					this.getUserSelectedRole(userData);
 				},
@@ -380,9 +386,16 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	goToProfile() {
-		// Currently for dealers only
-		const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/dealers/${this.dealer_id}`], {}));
-		window.open(url, '_blank');
+		if (this.dealer_id) {
+			const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/dealers/${this.dealer_id}`], {}));
+			window.open(url, '_blank');
+		} else if (this.advertiser_id) {
+			const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/advertisers/${this.advertiser_id}`], {}));
+			window.open(url, '_blank');
+		} else {
+			const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/hosts/${this.host_id}`], {}));
+			window.open(url, '_blank');
+		}
 	}
 
 	private initializeForms(): void {
