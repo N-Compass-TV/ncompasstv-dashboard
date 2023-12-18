@@ -7,7 +7,7 @@ import { first } from 'rxjs/operators';
 
 import { AuthService } from '../../../global/services/auth-service/auth.service';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../global/models/ui_role-definition.model';
-import { USER_LOGIN } from 'src/app/global/models/api_user.model';
+import { USER_LOCALSTORAGE, USER_LOGIN } from 'src/app/global/models/api_user.model';
 import { UpcomingInstallModalComponent } from '../../../global/pages_shared/upcoming-install-modal/upcoming-install-modal.component';
 import { MatDialog } from '@angular/material';
 import * as moment from 'moment';
@@ -82,7 +82,8 @@ export class LoginFormComponent implements OnInit {
 			.pipe(first())
 			.subscribe(
 				(response: USER_LOGIN) => {
-					const user_data = {
+					// Setup Local Storage Data
+					const user_data: USER_LOCALSTORAGE = {
 						user_id: response.userId,
 						firstname: response.firstName,
 						lastname: response.lastName,
@@ -91,33 +92,15 @@ export class LoginFormComponent implements OnInit {
 						jwt: { token: response.token, refreshToken: response.refreshToken }
 					};
 
-					if (response.userRole.roleName === 'Sub Dealer') user_data.roleInfo.permission = response.userRole.permission;
+					// Save Local Storage Data
 					localStorage.setItem('current_user', JSON.stringify(user_data));
 					localStorage.setItem('current_token', JSON.stringify(user_data.jwt));
-					this._auth.startRefreshTokenTimer();
-					this.redirectToPage(response.userRole.roleId);
-					if (
-						response.userRole.roleId === UI_ROLE_DEFINITION.administrator ||
-						response.userRole.roleId === UI_ROLE_DEFINITION.dealeradmin ||
-						response.userRole.roleId === UI_ROLE_DEFINITION.tech
-					) {
-						//Show Modal
-						let item = JSON.parse(localStorage.getItem('installation_ischecked'));
-						if (item) {
-							let isNextDay = this.compareTime(item.timestamp, moment().toDate());
-							if (isNextDay) {
-								this.openUpcomingInstallModal();
-							} else {
-								if (!item.value) {
-									this.openUpcomingInstallModal();
-								}
-							}
-						} else {
-							this.openUpcomingInstallModal();
-						}
-					}
 
-					this.getUserCookie(user_data.user_id);
+					// Set User Cookie
+					setTimeout(() => {
+						alert('Login Successful!');
+						this.onSuccessfulUserLogin(response);
+					}, 5000);
 				},
 				(error) => {
 					this.show_overlay = false;
@@ -127,13 +110,30 @@ export class LoginFormComponent implements OnInit {
 			);
 	}
 
-	getUserCookie(userId: string) {
-		this._auth.get_user_cookie(userId).subscribe(
-			() => {},
-			(error) => {
-				console.error(error);
+	onSuccessfulUserLogin(user: USER_LOGIN) {
+		if (user.userRole.roleName === 'Sub Dealer') user.roleInfo.permission = user.userRole.permission;
+		this._auth.startRefreshTokenTimer();
+		this.redirectToPage(user.userRole.roleId);
+		if (
+			user.userRole.roleId === UI_ROLE_DEFINITION.administrator ||
+			user.userRole.roleId === UI_ROLE_DEFINITION.dealeradmin ||
+			user.userRole.roleId === UI_ROLE_DEFINITION.tech
+		) {
+			//Show Modal
+			let item = JSON.parse(localStorage.getItem('installation_ischecked'));
+			if (item) {
+				let isNextDay = this.compareTime(item.timestamp, moment().toDate());
+				if (isNextDay) {
+					this.openUpcomingInstallModal();
+				} else {
+					if (!item.value) {
+						this.openUpcomingInstallModal();
+					}
+				}
+			} else {
+				this.openUpcomingInstallModal();
 			}
-		);
+		}
 	}
 
 	compareTime(dateString: any, now: any) {

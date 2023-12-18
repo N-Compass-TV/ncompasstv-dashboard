@@ -11,6 +11,7 @@ import { environment } from '../../../../environments/environment';
 export class HttpErrorInterceptor implements HttpInterceptor {
 	private refreshingInProgress: boolean;
 	private accessTokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+	private errorCatched: boolean = false;
 
 	constructor(private authService: AuthService, private _dialog: MatDialog) {}
 	intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -19,21 +20,11 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 		return next.handle(this.addAuthorizationHeader(request, token)).pipe(
 			retry(4),
 			catchError((error) => {
-				// in case of 401 http error
-				if (error instanceof HttpErrorResponse && error.status === 401) {
-					const currentToken = localStorage.getItem('current_token');
+				console.log('ERROR:', error);
 
-					// if there are tokens then send refresh token request
-					if (currentToken) {
-						return this.refreshToken(request, next);
-					}
-
-					// otherwise logout and redirect to login page
-					this.authService.logout();
-				}
-
-				// in case of 403 http error (refresh token failed)
-				if (error instanceof HttpErrorResponse && error.status === 403) {
+				// In case of 401/403 http error (renewed jwt token due to another login session of the same account)
+				if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
+					if (this.errorCatched == true) return;
 					this.showWarningModal('logout', '', 'You have logged in elsewhere causing your session to be ended.', '', 'OK');
 				}
 
@@ -81,6 +72,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 	}
 
 	private showWarningModal(status: string, message: string, data: any, return_msg: string, action: string): void {
+		this.errorCatched = true;
+
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '300px',
