@@ -53,7 +53,7 @@ export class UserService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_user_by_id(userId: string): Observable<{ user?: API_USER_DATA; message?: string }> {
+	get_user_by_id(userId: string): Observable<{ user?: API_USER_DATA; dealer?: any; host?: any; advertiser?: any; message?: string }> {
 		const url = `${this.getters.api_get_user_by_id}?user_id=${userId}`;
 
 		return this.getRequest(url).map(
@@ -64,10 +64,13 @@ export class UserService extends BaseService {
 				user?: API_USER_DATA;
 				message?: string;
 			}) => {
-				const result =
-					'dealer' || 'advertiser' || 'host' in response
-						? { ...response.user, ...response.dealer, ...response.advertiser, ...response.host }
-						: { user: response.user };
+				let result: any = {};
+
+				if ('user' in response) result = { ...response.user };
+				if ('dealer' in response) result = response.dealer.length && { ...result, dealer: response.dealer[0] };
+				if ('advertiser' in response) result = response.advertiser.length && { ...result, advertiser: response.advertiser[0] };
+				if ('host' in response) result = response.host.length && { ...result, host: response.host[0] };
+
 				return result;
 			}
 		);

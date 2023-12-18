@@ -22,6 +22,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	dealer_filter_control = new FormControl(null);
 	dealer_id: string = '';
 	dealers_list: API_DEALER[] = [];
+	forms_ready: boolean = false;
 	has_loaded_dealers_list = false;
 	has_loaded_assigned_dealers = false;
 	host_id: string;
@@ -78,20 +79,18 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	private getUserData() {
+		// For Dealer or SubDealer Accounts
 		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
 			this.setPageData(this._helper.singleUserData);
+			this.getUserSelectedRole(this._helper.singleUserData);
 			this.initializeForms();
 			this.is_initial_load = false;
 			this.is_loading = false;
 			return;
 		}
 
-		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			this.getUserById(this._params.snapshot.params.data).add(() => {
-				this.initializeForms();
-				this.is_loading = false;
-			});
-		});
+		// For Admin
+		this.getUserById(this._params.snapshot.params.data);
 	}
 
 	ngOnDestroy() {
@@ -324,22 +323,26 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	private getUserById(id: string) {
+		this.is_loading = false;
+
 		return this._user
 			.get_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {
 					if ('message' in response) return;
-					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = response[0].dealerId;
-					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.advertiser) this.advertiser_id = response[0].id;
-					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.host) this.host_id = response[0].hostId;
+					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = response.dealer.dealerId;
+					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.advertiser) this.advertiser_id = response.advertiser.id;
+					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.host) this.host_id = response.host.hostId;
 
 					const userData = response as API_USER_DATA;
+					this.user = userData;
 					this.is_dealer_admin = userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
 					this.dealer_admin_user_id = userData.userId;
 
 					this.setPageData(userData);
 					this.getUserSelectedRole(userData);
+					this.initializeForms();
 				},
 				(error) => {
 					console.error(error);
@@ -441,6 +444,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 		// initialize update user form
 		this.info_form = this._form.group(config);
+		this.forms_ready = true;
 	}
 
 	private mapPasswordChanges() {
@@ -476,6 +480,11 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		this.user.permission = permission;
 		this.current_permission = permission;
 		this.is_sub_dealer = roleName === 'Sub Dealer';
+
+		// Setting up ids for dealer account redirects
+		if (data.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = data.dealer.dealerId;
+		if (data.userRoles[0].roleId === UI_ROLE_DEFINITION.advertiser) this.advertiser_id = data.advertiser.id;
+		if (data.userRoles[0].roleId === UI_ROLE_DEFINITION.host) this.host_id = data.host.hostId;
 	}
 
 	private subscribeToUpdateFormChanges(): void {
