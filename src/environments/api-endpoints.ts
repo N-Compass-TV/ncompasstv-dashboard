@@ -354,7 +354,7 @@ export const API_ENDPOINTS = {
 		screen_template: 'screen/change/template',
 		set_content_frequency: 'playlists/setFrequency',
 		set_order_as_viewed: 'ordersviewed/upsert',
-		set_user_cookie: 'user/setcookie?userid=',
+		set_user_cookie: 'user/setcookie',
 		swap_playlist_content: 'playlists/swapcontent',
 		tag: 'tag/update',
 		tag_type: 'tag/updatetype',

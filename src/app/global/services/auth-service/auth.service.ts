@@ -103,12 +103,8 @@ export class AuthService {
 		}
 	}
 
-	set_user_cookie(userId: string) {
-		let httpOptions = {
-			headers: new HttpHeaders({ Authorization: `Bearer ${this.current_user_value.jwt.token}` })
-		};
-
-		return this._http.get(`${environment.base_uri}${environment.update.set_user_cookie}${userId}`, httpOptions);
+	set_user_cookie(jwt: string) {
+		return this._http.post(`${environment.base_uri}${environment.update.set_user_cookie}`, { token: jwt });
 	}
 
 	session_check(status) {

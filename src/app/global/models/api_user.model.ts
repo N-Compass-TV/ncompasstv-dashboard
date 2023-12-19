@@ -130,6 +130,6 @@ export interface USER_LOCALSTORAGE {
 	firstname: string;
 	lastname: string;
 	role_id: string;
-	roleInfo: string;
+	roleInfo: any;
 	jwt: { token: string; refreshToken: string };
 }

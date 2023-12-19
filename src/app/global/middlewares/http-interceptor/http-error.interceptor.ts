@@ -18,14 +18,27 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 		let currentToken = JSON.parse(localStorage.getItem('current_token'));
 		let token = currentToken ? currentToken.token : null;
 		return next.handle(this.addAuthorizationHeader(request, token)).pipe(
-			retry(4),
+			retry(5),
 			catchError((error) => {
-				console.log('ERROR:', error);
-
-				// In case of 401/403 http error (renewed jwt token due to another login session of the same account)
-				if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
+				// in case of 401 http error
+				if (error instanceof HttpErrorResponse && error.status === 401) {
 					if (this.errorCatched == true) return;
-					this.showWarningModal('logout', '', 'You have logged in elsewhere causing your session to be ended.', '', 'OK');
+
+					const currentToken = localStorage.getItem('current_token');
+
+					// if there are tokens then send refresh token request
+					if (currentToken) {
+						return this.refreshToken(request, next);
+					}
+
+					// otherwise logout and redirect to login page
+					this.showWarningModal('logout', '', 'You may have been logged in elsewhere causing your session to be invalid.', '', 'OK');
+				}
+
+				// in case of 403 http error (refresh token failed)
+				if (error instanceof HttpErrorResponse && error.status === 403) {
+					if (this.errorCatched == true) return;
+					this.showWarningModal('logout', '', 'You may have been logged in elsewhere causing your session to be invalid.', '', 'OK');
 				}
 
 				return throwError(error);
@@ -73,7 +86,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
 	private showWarningModal(status: string, message: string, data: any, return_msg: string, action: string): void {
 		this.errorCatched = true;
-
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '300px',
