@@ -59,7 +59,6 @@ export class ThumbnailCardComponent implements OnInit {
 		if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.role = UI_ROLE_DEFINITION_TEXT.administrator;
 		this.route = `/${this.role}/media-library/${this.content_id}`;
 
-		console.log(!this.disconnect_to_socket, this.filetype == 'webm' || this.filetype === 'mp4', this.is_converted == 0);
 		if (!this.disconnect_to_socket && (this.filetype == 'webm' || this.filetype === 'mp4') && this.is_converted == 0) {
 			console.log('HERE');
 			this._socket = io(environment.socket_server, {
@@ -67,12 +66,18 @@ export class ThumbnailCardComponent implements OnInit {
 				query: 'client=Dashboard__ThumbnailCardComponent'
 			});
 
-			this._socket.on('connect', () => {});
+			this._socket.on('connect', () => {
+				console.log('CONENCTED');
+			});
 
-			this._socket.on('disconnect', () => {});
+			this._socket.on('disconnect', () => {
+				console.log('DISCONNECTED');
+			});
 
 			this._socket.on('video_converted', (data) => {
+				console.log('VIDEO CONVERTED 1', data);
 				if (data == this.uuid) {
+					console.log('VIDEO CONVERTED');
 					this.is_converted = 1;
 					this.converted.emit(true);
 				}
