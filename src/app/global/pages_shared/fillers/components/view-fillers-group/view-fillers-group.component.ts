@@ -37,6 +37,7 @@ export class ViewFillersGroupComponent implements OnInit {
 	selected_license_index: string;
 	sorting_order: string = '';
 	sorting_column: string = '';
+	thumb_no_socket: boolean = true;
 	title = 'Fillers Library';
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -72,6 +73,13 @@ export class ViewFillersGroupComponent implements OnInit {
 			.subscribe((data: any) => {
 				if (!data.message) {
 					this.filler_group_pagination = data.paging;
+
+					//ADD A SCREENSHOTURL SINCE IT IS NOT PROVIDED IN THE API RETURN
+					data.paging.entities.map((data) => {
+						if (data.fileType == 'webm') data.screenshotURL = data.url.substring(0, data.url.lastIndexOf('.')) + '.jpg';
+						else data.screenshotURL = data.url;
+					});
+
 					if (page > 1) {
 						data.paging.entities.map((data) => {
 							this.filler_group_contents.push(data);
@@ -199,6 +207,16 @@ export class ViewFillersGroupComponent implements OnInit {
 					this.selectFillerFeeds(data.fillerFeeds[0], 0);
 				}
 			});
+	}
+
+	videoConverted(e) {
+		console.log('E', e);
+		this.filler_group_contents.find((i) => {
+			if (i.uuid == e) {
+				i.isConverted = 1;
+				return;
+			}
+		});
 	}
 
 	selectFillerFeeds(data, index) {
