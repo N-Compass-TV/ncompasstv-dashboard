@@ -186,14 +186,13 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',
 		export_dealers: 'dealer/exportdealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
 		export_hosts: 'host/exportbydealer?dealerid=',
-		get_user_cookie: 'user/setcookie?userid=',
 		host_files: 'host/GetHostFilesByType',
 		host_place_images: 'googleapi/GetLogoByPlaceId',
 		license_by_tags: 'license/getByTags',
@@ -225,7 +224,8 @@ export const API_ENDPOINTS = {
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
 		validate_weather_zip: 'feed/weather/validate?zipcode=',
 		validate_rss_url: 'feed/news/validate?url=',
-		validate_feed_url: 'feed/validate/url'
+		validate_feed_url: 'feed/validate/url',
+		export_advertiser: 'advertiser/export?dealer_id='
 	},
 	create: {
 		add_credit_card: 'billing/add/creditcard',
@@ -317,6 +317,7 @@ export const API_ENDPOINTS = {
 		api_update_fillers_content: 'filler/content/upsert',
 		api_update_generated_feed: 'feed/edit',
 		api_update_host: 'host/updatehost',
+		api_update_host_ticket: 'support/',
 		api_update_license_boot_delay: 'license/bootdelay',
 		api_update_internet_info: 'license/updateinternetinfo',
 		api_update_news_slide_feed: 'feed/update/news',
@@ -355,6 +356,7 @@ export const API_ENDPOINTS = {
 		screen_template: 'screen/change/template',
 		set_content_frequency: 'playlists/setFrequency',
 		set_order_as_viewed: 'ordersviewed/upsert',
+		set_user_cookie: 'user/setcookie',
 		swap_playlist_content: 'playlists/swapcontent',
 		tag: 'tag/update',
 		tag_type: 'tag/updatetype',
@@ -392,6 +394,7 @@ export const API_ENDPOINTS = {
 		api_remove_screen: 'screen/removebyscreenid',
 		api_remove_screen_license: 'screen/unassignlicense',
 		api_remove_host_licenses: 'license/unassignhost',
+		api_remove_host_ticket: 'support/',
 		delete_dealer: 'dealer/delete',
 		host: 'host/delete',
 		host_file_amazon_s3: 'host/AmazonS3Delete',

@@ -87,7 +87,7 @@
 								<app-thumbnail-card
 									(click)="gotoFileURL(data.url)"
 									[content_id]="data.fillerContentId"
-									[disconnect_to_socket]="false"
+									[disconnect_to_socket]="thumb_no_socket"
 									[file_url]="data.url"
 									[filename]="data.title"
 									[filetype]="data.fileType"
@@ -96,7 +96,8 @@
 									[is_converted]="data.isConverted"
 									[is_view_only]="false"
 									[is_filler]="true"
-									(filler_delete)="deleteContent(data.fillerContentId)"></app-thumbnail-card>
+									(filler_delete)="deleteContent(data.fillerContentId)"
+									(converted)="videoConverted($event)"></app-thumbnail-card>
 							</div>
 						</div>
 					</div>

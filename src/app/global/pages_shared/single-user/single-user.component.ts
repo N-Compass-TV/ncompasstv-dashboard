@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog, MatSelect } from '@angular/material';
+import { MatDialog, MatSelect, MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject, Subscription } from 'rxjs';
@@ -16,11 +16,16 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 })
 export class SingleUserComponent implements OnInit, OnDestroy {
 	@ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
+	advertiser_id: string;
+	bg_role: any;
 	dealers_form = this._form.group({ dealers: [[], Validators.required] });
 	dealer_filter_control = new FormControl(null);
+	dealer_id: string = '';
 	dealers_list: API_DEALER[] = [];
+	forms_ready: boolean = false;
 	has_loaded_dealers_list = false;
 	has_loaded_assigned_dealers = false;
+	host_id: string;
 	info_form: FormGroup;
 	info_form_disabled = false;
 	info_form_fields = this._formFields;
@@ -56,13 +61,14 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private _auth: AuthService,
+		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _router: Router,
-		private _user: UserService,
-		private _dealer: DealerService
+		private _snackbar: MatSnackBar,
+		private _user: UserService
 	) {}
 
 	ngOnInit() {
@@ -73,20 +79,18 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	private getUserData() {
+		// For Dealer or SubDealer Accounts
 		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
 			this.setPageData(this._helper.singleUserData);
+			this.getUserSelectedRole(this._helper.singleUserData);
 			this.initializeForms();
 			this.is_initial_load = false;
 			this.is_loading = false;
 			return;
 		}
 
-		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() =>
-			this.getUserById(this._params.snapshot.params.data).add(() => {
-				this.initializeForms();
-				this.is_loading = false;
-			})
-		);
+		// For Admin
+		this.getUserById(this._params.snapshot.params.data);
 	}
 
 	ngOnDestroy() {
@@ -129,7 +133,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		}
 
 		this.selected_dealers_control.value.length = 0;
-		this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+		if (this.dealerMultiSelect) this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
 	}
 
 	onDelete(userId: string): void {
@@ -319,21 +323,82 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	private getUserById(id: string) {
+		this.is_loading = false;
+
 		return this._user
 			.get_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response) => {
+				(response: any) => {
 					if ('message' in response) return;
+					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = response.dealer.dealerId;
+					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.advertiser) this.advertiser_id = response.advertiser.id;
+					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.host) this.host_id = response.host.hostId;
+
 					const userData = response as API_USER_DATA;
+					this.user = userData;
 					this.is_dealer_admin = userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
 					this.dealer_admin_user_id = userData.userId;
+
 					this.setPageData(userData);
+					this.getUserSelectedRole(userData);
+					this.initializeForms();
 				},
 				(error) => {
 					console.error(error);
 				}
 			);
+	}
+
+	getUserSelectedRole(data) {
+		switch (data.userRoles[0].roleId) {
+			case UI_ROLE_DEFINITION.dealer:
+				this.bg_role = '#8ec641';
+				break;
+			case UI_ROLE_DEFINITION.dealeradmin:
+				this.bg_role = '#1abc9c';
+				break;
+			case UI_ROLE_DEFINITION.host:
+				this.bg_role = '#17a2b8';
+				break;
+			case UI_ROLE_DEFINITION.advertiser:
+				this.bg_role = '#fd7e14';
+				break;
+			default:
+				this.bg_role = '#1c2731';
+		}
+	}
+
+	copyPassword(val) {
+		const selBox = document.createElement('textarea');
+		selBox.style.position = 'fixed';
+		selBox.style.left = '0';
+		selBox.style.top = '0';
+		selBox.style.opacity = '0';
+		selBox.value = val;
+		document.body.appendChild(selBox);
+		selBox.focus();
+		selBox.select();
+		document.execCommand('copy');
+		document.body.removeChild(selBox);
+
+		// Snackbar
+		this._snackbar.open(`Copied to clipboard!`, '', {
+			duration: 1500
+		});
+	}
+
+	goToProfile() {
+		if (this.dealer_id) {
+			const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/dealers/${this.dealer_id}`], {}));
+			window.open(url, '_blank');
+		} else if (this.advertiser_id) {
+			const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/advertisers/${this.advertiser_id}`], {}));
+			window.open(url, '_blank');
+		} else {
+			const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/hosts/${this.host_id}`], {}));
+			window.open(url, '_blank');
+		}
 	}
 
 	private initializeForms(): void {
@@ -379,6 +444,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 		// initialize update user form
 		this.info_form = this._form.group(config);
+		this.forms_ready = true;
 	}
 
 	private mapPasswordChanges() {
@@ -414,6 +480,11 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		this.user.permission = permission;
 		this.current_permission = permission;
 		this.is_sub_dealer = roleName === 'Sub Dealer';
+
+		// Setting up ids for dealer account redirects
+		if (data.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = data.dealer.dealerId;
+		if (data.userRoles[0].roleId === UI_ROLE_DEFINITION.advertiser) this.advertiser_id = data.advertiser.id;
+		if (data.userRoles[0].roleId === UI_ROLE_DEFINITION.host) this.host_id = data.host.hostId;
 	}
 
 	private subscribeToUpdateFormChanges(): void {
