@@ -73,7 +73,6 @@ export class ThumbnailCardComponent implements OnInit {
                     this.is_converted = 1;
                     this.converted.emit(true);
                 }
-
                 this.ngOnInit();
             });
         }
