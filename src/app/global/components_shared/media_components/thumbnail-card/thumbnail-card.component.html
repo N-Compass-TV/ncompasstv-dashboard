@@ -48,7 +48,7 @@
     <img [src]="image_uri" *ngIf="filetype === 'webm' && file_url && is_converted == 1" alt="thumbnail" />
 
     <!-- alternate preview -->
-    <img [src]="!is_filler ? (image_uri | sanitize) : getAlternatePreview(image_uri)" *ngIf="filetype | isFeed" alt="thumbnail" />
+    <img [src]="image_uri | sanitize" *ngIf="filetype | isFeed" alt="thumbnail" />
 
     <div class="thumbnail-title">
         <div class="d-flex">
