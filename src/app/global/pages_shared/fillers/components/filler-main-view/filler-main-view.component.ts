@@ -105,17 +105,6 @@ export class FillerMainViewComponent implements OnInit {
 			.subscribe((data: any) => {
 				this.initial_loading = false;
 				if (!data.message) {
-					switch (data.length) {
-						case 1:
-							this.dimension = '160px';
-							break;
-						case 2:
-							this.dimension = '130px';
-							break;
-						default:
-							this.dimension = '95px';
-							break;
-					}
 					data.map((fillers) => {
 						if (fillers.fileType == 'webm') {
 							let lastIndex = fillers.url.lastIndexOf('.');

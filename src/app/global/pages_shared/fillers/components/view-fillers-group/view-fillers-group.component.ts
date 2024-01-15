@@ -11,275 +11,286 @@ import { CreateFillerFeedComponent } from '../create-filler-feed/create-filler-f
 import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 @Component({
-	selector: 'app-view-fillers-group',
-	templateUrl: './view-fillers-group.component.html',
-	styleUrls: ['./view-fillers-group.component.scss']
+    selector: 'app-view-fillers-group',
+    templateUrl: './view-fillers-group.component.html',
+    styleUrls: ['./view-fillers-group.component.scss'],
 })
 export class ViewFillersGroupComponent implements OnInit {
-	filler_group_contents: any = [];
-	filler_group_pagination: any = [];
-	filler_group_data: any;
-	filler_group_id: string;
-	isActiveTab = 0;
-	is_loading = true;
-	loading_playing_where = false;
-	no_search_result = false;
-	playing_where: any = [];
-	playing_where_selected: any = [];
-	playlist_selected: any = [];
-	host_selected: any = [];
-	restricted: boolean = false;
-	search_keyword: string;
-	selected_filler: string;
-	selected_filler_feed_index: string;
-	selected_playlist_index: string;
-	selected_host_index: string;
-	selected_license_index: string;
-	sorting_order: string = '';
-	sorting_column: string = '';
-	title = 'Fillers Library';
+    filler_group_contents: any = [];
+    filler_group_pagination: any = [];
+    filler_group_data: any;
+    filler_group_id: string;
+    isActiveTab = 0;
+    is_loading = true;
+    loading_playing_where = false;
+    no_search_result = false;
+    playing_where: any = [];
+    playing_where_selected: any = [];
+    playlist_selected: any = [];
+    host_selected: any = [];
+    restricted: boolean = false;
+    search_keyword: string;
+    selected_filler: string;
+    selected_filler_feed_index: string;
+    selected_playlist_index: string;
+    selected_host_index: string;
+    selected_license_index: string;
+    sorting_order: string = '';
+    sorting_column: string = '';
+    thumb_no_socket: boolean = true;
+    title = 'Fillers Library';
 
-	protected _unsubscribe: Subject<void> = new Subject<void>();
+    protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(
-		private _filler: FillerService,
-		private _params: ActivatedRoute,
-		private _dialog: MatDialog,
-		private _auth: AuthService,
-		private _user: UserService
-	) {}
+    constructor(private _filler: FillerService, private _params: ActivatedRoute, private _dialog: MatDialog, private _auth: AuthService, private _user: UserService) {}
 
-	ngOnInit() {
-		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => (this.filler_group_id = this._params.snapshot.params.data));
-		this.getFillerGroupContents(this.filler_group_id);
-		this.getFillerGroupDetails(this.filler_group_id);
-	}
+    ngOnInit() {
+        this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => (this.filler_group_id = this._params.snapshot.params.data));
+        this.getFillerGroupContents(this.filler_group_id);
+        this.getFillerGroupDetails(this.filler_group_id);
+    }
 
-	getFillerGroupDetails(id) {
-		this._filler
-			.get_filler_group_by_id(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response) => {
-				this.filler_group_data = response.data[0];
-			})
-			.add(() => this.allowedToDelete());
-	}
+    getFillerGroupDetails(id) {
+        this._filler
+            .get_filler_group_by_id(id)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((response) => {
+                this.filler_group_data = response.data[0];
+            })
+            .add(() => this.allowedToDelete());
+    }
 
-	getFillerGroupContents(id, page?) {
-		this._filler
-			.get_filler_group_contents(id, this.search_keyword, page, 30, this.sorting_column, this.sorting_order)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data: any) => {
-				if (!data.message) {
-					this.filler_group_pagination = data.paging;
-					if (page > 1) {
-						data.paging.entities.map((data) => {
-							this.filler_group_contents.push(data);
-						});
-					} else {
-						this.filler_group_contents = data.paging.entities;
-						this.no_search_result = false;
-					}
-				} else {
-					this.filler_group_pagination = [];
-					if (this.search_keyword != '') this.no_search_result = true;
-					else {
-						this.filler_group_contents = [];
-						this.no_search_result = false;
-					}
-				}
-			})
-			.add(() => {
-				this.is_loading = false;
-			});
-	}
+    getFillerGroupContents(id, page?) {
+        this._filler
+            .get_filler_group_contents(id, this.search_keyword, page, 30, this.sorting_column, this.sorting_order)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((data: any) => {
+                if (!data.message) {
+                    this.filler_group_pagination = data.paging;
 
-	gotoFileURL(url) {
-		let new_url = url.replace(/ /g, '+');
-		window.open(new_url, '_blank');
-	}
+                    //ADD A SCREENSHOTURL SINCE IT IS NOT PROVIDED IN THE API RETURN
+                    data.paging.entities.map((data) => {
+                        if (data.fileType == 'webm') data.screenshotURL = data.url.substring(0, data.url.lastIndexOf('.')) + '.jpg';
+                        else data.screenshotURL = data.url;
+                    });
 
-	addFillerContent(group) {
-		this._dialog
-			.open(AddFillerContentComponent, {
-				width: '500px',
-				data: {
-					group: group,
-					all_media: this.filler_group_contents
-				}
-			})
-			.afterClosed()
-			.subscribe(() => {
-				this.ngOnInit();
-			});
-	}
+                    if (page > 1) {
+                        data.paging.entities.map((data) => {
+                            this.filler_group_contents.push(data);
+                        });
+                    } else {
+                        this.filler_group_contents = data.paging.entities;
+                        this.no_search_result = false;
+                    }
+                } else {
+                    this.filler_group_pagination = [];
+                    if (this.search_keyword != '') this.no_search_result = true;
+                    else {
+                        this.filler_group_contents = [];
+                        this.no_search_result = false;
+                    }
+                }
+            })
+            .add(() => {
+                this.is_loading = false;
+            });
+    }
 
-	createFillerFeed(group, single_filler) {
-		this._dialog
-			.open(CreateFillerFeedComponent, {
-				width: '500px',
-				data: {
-					group: group
-				}
-			})
-			.afterClosed()
-			.subscribe(() => {
-				this.ngOnInit();
-			});
-	}
+    gotoFileURL(url) {
+        let new_url = url.replace(/ /g, '+');
+        window.open(new_url, '_blank');
+    }
 
-	splitOriginalFilename(name) {
-		return name.substring(name.indexOf('_') + 1);
-	}
+    addFillerContent(group) {
+        this._dialog
+            .open(AddFillerContentComponent, {
+                width: '500px',
+                data: {
+                    group: group,
+                    all_media: this.filler_group_contents,
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
+                this.ngOnInit();
+            });
+    }
 
-	deleteContent(id) {
-		this.selected_filler = id;
-		this.warningModal('warning', 'Delete Filler', 'Are you sure you want to delete this filler?', '', 'delete', true);
-	}
+    createFillerFeed(group, single_filler) {
+        this._dialog
+            .open(CreateFillerFeedComponent, {
+                width: '500px',
+                data: {
+                    group: group,
+                },
+            })
+            .afterClosed()
+            .subscribe(() => {
+                this.ngOnInit();
+            });
+    }
 
-	private warningModal(status: string, message: string, data: string, return_msg: string, action: string, todelete?: boolean): void {
-		this._dialog.closeAll();
+    splitOriginalFilename(name) {
+        return name.substring(name.indexOf('_') + 1);
+    }
 
-		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: {
-				status,
-				message,
-				data,
-				return_msg,
-				action,
-				delete: todelete
-			}
-		});
+    deleteContent(id) {
+        this.selected_filler = id;
+        this.warningModal('warning', 'Delete Filler', 'Are you sure you want to delete this filler?', '', 'delete', true);
+    }
 
-		dialogRef.afterClosed().subscribe((result) => {
-			if (result == 'delete') {
-				this._filler
-					.delete_filler_contents(this.selected_filler)
-					.pipe(takeUntil(this._unsubscribe))
-					.subscribe((data: any) => {
-						this.warningModal('success', 'Delete Filler', 'Filler Content ' + data.message, '', '', false);
-						this.ngOnInit();
-					});
-			}
-			this.ngOnInit();
-		});
-	}
+    private warningModal(status: string, message: string, data: string, return_msg: string, action: string, todelete?: boolean): void {
+        this._dialog.closeAll();
 
-	onSearchFiller(keyword) {
-		this.is_loading = true;
-		if (keyword) this.search_keyword = keyword;
-		else this.search_keyword = '';
-		this.getFillerGroupContents(this.filler_group_id, 1);
-	}
+        const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+            width: '500px',
+            height: '350px',
+            data: {
+                status,
+                message,
+                data,
+                return_msg,
+                action,
+                delete: todelete,
+            },
+        });
 
-	sortFillerGroup(order) {
-		this.is_loading = true;
-		this.sorting_column = 'Title';
-		this.sorting_order = order;
-		this.getFillerGroupContents(this.filler_group_id, 1);
-	}
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result == 'delete') {
+                this._filler
+                    .delete_filler_contents(this.selected_filler)
+                    .pipe(takeUntil(this._unsubscribe))
+                    .subscribe((data: any) => {
+                        this.warningModal('success', 'Delete Filler', 'Filler Content ' + data.message, '', '', false);
+                        this.ngOnInit();
+                    });
+            }
+            this.ngOnInit();
+        });
+    }
 
-	clearFilter() {
-		this.is_loading = true;
-		this.sorting_column = '';
-		this.sorting_order = '';
-		this.getFillerGroupContents(this.filler_group_id, 1);
-	}
+    onSearchFiller(keyword) {
+        this.is_loading = true;
+        if (keyword) this.search_keyword = keyword;
+        else this.search_keyword = '';
+        this.getFillerGroupContents(this.filler_group_id, 1);
+    }
 
-	getFillerGroupPlayingWhere(id) {
-		this._filler
-			.get_filler_group_playing_where(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data: any) => {
-				this.loading_playing_where = false;
-				if (data.fillerFeeds.length > 0) {
-					this.playing_where = data.fillerFeeds;
-					this.selectFillerFeeds(data.fillerFeeds[0], 0);
-				}
-			});
-	}
+    sortFillerGroup(order) {
+        this.is_loading = true;
+        this.sorting_column = 'Title';
+        this.sorting_order = order;
+        this.getFillerGroupContents(this.filler_group_id, 1);
+    }
 
-	selectFillerFeeds(data, index) {
-		this.selected_filler_feed_index = index;
-		if (data.playlists && data.playlists.length) {
-			this.playing_where_selected = data.playlists;
-			this.selectPlaylist(this.playing_where_selected[0], 0);
-		} else {
-			this.playing_where_selected = [];
-			this.playlist_selected = [];
-			this.host_selected = [];
-		}
-	}
+    clearFilter() {
+        this.is_loading = true;
+        this.sorting_column = '';
+        this.sorting_order = '';
+        this.getFillerGroupContents(this.filler_group_id, 1);
+    }
 
-	selectPlaylist(data, index) {
-		this.selected_playlist_index = index;
-		if (data.hosts && data.hosts.length) {
-			this.playlist_selected = data.hosts;
-			this.selectHost(this.playlist_selected[0], 0);
-		} else {
-			this.playlist_selected = [];
-			this.host_selected = [];
-		}
-	}
+    getFillerGroupPlayingWhere(id) {
+        this._filler
+            .get_filler_group_playing_where(id)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((data: any) => {
+                this.loading_playing_where = false;
+                if (data.fillerFeeds.length > 0) {
+                    this.playing_where = data.fillerFeeds;
+                    this.selectFillerFeeds(data.fillerFeeds[0], 0);
+                }
+            });
+    }
 
-	selectHost(data, index) {
-		this.selected_host_index = index;
-		if (data.licenses) {
-			this.host_selected = data.licenses;
-			this.selectLicenses(this.host_selected[0], 0);
-		} else {
-			this.host_selected = [];
-		}
-	}
+    videoConverted(e) {
+        this.filler_group_contents.find((i) => {
+            if (i.uuid == e) {
+                i.isConverted = 1;
+                return;
+            }
+        });
+    }
 
-	selectLicenses(data, index) {
-		this.selected_license_index = index;
-	}
+    selectFillerFeeds(data, index) {
+        this.selected_filler_feed_index = index;
+        if (data.playlists && data.playlists.length) {
+            this.playing_where_selected = data.playlists;
+            this.selectPlaylist(this.playing_where_selected[0], 0);
+        } else {
+            this.playing_where_selected = [];
+            this.playlist_selected = [];
+            this.host_selected = [];
+        }
+    }
 
-	onTabChanged(tab) {
-		this.isActiveTab = tab;
-		switch (tab) {
-			case 1:
-				this.getFillerGroupPlayingWhere(this.filler_group_id);
-				this.loading_playing_where = true;
-				break;
-			default:
-		}
-	}
+    selectPlaylist(data, index) {
+        this.selected_playlist_index = index;
+        if (data.hosts && data.hosts.length) {
+            this.playlist_selected = data.hosts;
+            this.selectHost(this.playlist_selected[0], 0);
+        } else {
+            this.playlist_selected = [];
+            this.host_selected = [];
+        }
+    }
 
-	allowedToDelete() {
-		if (this._isDealer || this._isSubDealer) {
-			if (this.filler_group_data.createdBy != this._auth.current_user_value.user_id) this.restricted = true;
-			else this.restricted = false;
-		} else if (this._isAdmin || this._isDealerAdmin) {
-			this._user
-				.get_user_role_by_id(this.filler_group_data.createdBy)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe((data: any) => {
-					if (UI_ROLE_DEFINITION.dealer in data.role) this.restricted = true;
-					else this.restricted = false;
+    selectHost(data, index) {
+        this.selected_host_index = index;
+        if (data.licenses) {
+            this.host_selected = data.licenses;
+            this.selectLicenses(this.host_selected[0], 0);
+        } else {
+            this.host_selected = [];
+        }
+    }
 
-					if (this._isDealerAdmin && UI_ROLE_DEFINITION.administrator in data.role) this.restricted = true;
-					if (this._isAdmin && UI_ROLE_DEFINITION.dealeradmin in data.role) this.restricted = true;
-				});
-		}
-	}
+    selectLicenses(data, index) {
+        this.selected_license_index = index;
+    }
 
-	protected get _isAdmin() {
-		return this._auth.current_role === 'administrator';
-	}
+    onTabChanged(tab) {
+        this.isActiveTab = tab;
+        switch (tab) {
+            case 1:
+                this.getFillerGroupPlayingWhere(this.filler_group_id);
+                this.loading_playing_where = true;
+                break;
+            default:
+        }
+    }
 
-	protected get _isDealerAdmin() {
-		return this._auth.current_role === 'dealeradmin';
-	}
+    allowedToDelete() {
+        if (this._isDealer || this._isSubDealer) {
+            if (this.filler_group_data.createdBy != this._auth.current_user_value.user_id) this.restricted = true;
+            else this.restricted = false;
+        } else if (this._isAdmin || this._isDealerAdmin) {
+            this._user
+                .get_user_role_by_id(this.filler_group_data.createdBy)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe((data: any) => {
+                    if (UI_ROLE_DEFINITION.dealer in data.role) this.restricted = true;
+                    else this.restricted = false;
 
-	protected get _isDealer() {
-		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer;
-	}
+                    if (this._isDealerAdmin && UI_ROLE_DEFINITION.administrator in data.role) this.restricted = true;
+                    if (this._isAdmin && UI_ROLE_DEFINITION.dealeradmin in data.role) this.restricted = true;
+                });
+        }
+    }
 
-	protected get _isSubDealer() {
-		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer'];
-	}
+    protected get _isAdmin() {
+        return this._auth.current_role === 'administrator';
+    }
+
+    protected get _isDealerAdmin() {
+        return this._auth.current_role === 'dealeradmin';
+    }
+
+    protected get _isDealer() {
+        return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer;
+    }
+
+    protected get _isSubDealer() {
+        return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer'];
+    }
 }
