@@ -62,7 +62,7 @@ export class ViewFillersGroupComponent implements OnInit {
 
     getFillerGroupContents(id, page?) {
         this._filler
-            .get_filler_group_contents(id, this.search_keyword, page, 36, this.sorting_column, this.sorting_order)
+            .get_filler_group_contents(id, this.search_keyword, page, 27, this.sorting_column, this.sorting_order)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
                 if ('message' in data) {
@@ -77,21 +77,15 @@ export class ViewFillersGroupComponent implements OnInit {
 
                 this.filler_group_pagination = data.paging;
 
-                //ADD A SCREENSHOTURL SINCE IT IS NOT PROVIDED IN THE API RETURN
+                //add a screenshoturl since it is not provided yet in the api return
                 data.paging.entities.map((data) => {
                     if (data.fileType == 'webm') data.screenshotURL = data.url.substring(0, data.url.lastIndexOf('.')) + '.jpg';
                     else data.screenshotURL = data.url;
                 });
 
-                //push is used to concat new data to previous data if page 2 onwards, since the pagination in fillers is on append type
-                if (page > 1) {
-                    data.paging.entities.map((data) => {
-                        this.filler_group_contents.push(data);
-                    });
-                } else {
-                    this.filler_group_contents = data.paging.entities;
-                    this.no_search_result = false;
-                }
+                const results = data.paging.entities;
+                this.filler_group_contents = page > 1 ? this.filler_group_contents.concat(results) : [...results];
+                this.no_search_result = false;
             })
             .add(() => {
                 this.is_loading = false;
