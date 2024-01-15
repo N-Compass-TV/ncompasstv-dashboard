@@ -93,10 +93,6 @@ export class ThumbnailCardComponent implements OnInit {
         this.content_to_delete.emit({ toadd: event.checked, id: content_id });
     }
 
-    getAlternatePreview(url) {
-        return 'this.src="https://cdn.filestackcontent.com/ALjKIdQzT1uQvACcqMCnQz/urlscreenshot=delay:6000/resize=height:200/" + url"';
-    }
-
     deleteMedia(event): void {
         this.warningModal('warning', 'Delete Content', 'Are you sure you want to delete this content?', this.return_mes, 'delete');
         event.stopPropagation();
