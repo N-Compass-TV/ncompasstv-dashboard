@@ -62,33 +62,35 @@ export class ViewFillersGroupComponent implements OnInit {
 
     getFillerGroupContents(id, page?) {
         this._filler
-            .get_filler_group_contents(id, this.search_keyword, page, 30, this.sorting_column, this.sorting_order)
+            .get_filler_group_contents(id, this.search_keyword, page, 36, this.sorting_column, this.sorting_order)
             .pipe(takeUntil(this._unsubscribe))
-            .subscribe((data: any) => {
-                if (!data.message) {
-                    this.filler_group_pagination = data.paging;
-
-                    //ADD A SCREENSHOTURL SINCE IT IS NOT PROVIDED IN THE API RETURN
-                    data.paging.entities.map((data) => {
-                        if (data.fileType == 'webm') data.screenshotURL = data.url.substring(0, data.url.lastIndexOf('.')) + '.jpg';
-                        else data.screenshotURL = data.url;
-                    });
-
-                    if (page > 1) {
-                        data.paging.entities.map((data) => {
-                            this.filler_group_contents.push(data);
-                        });
-                    } else {
-                        this.filler_group_contents = data.paging.entities;
-                        this.no_search_result = false;
-                    }
-                } else {
+            .subscribe((data) => {
+                if ('message' in data) {
                     this.filler_group_pagination = [];
                     if (this.search_keyword != '') this.no_search_result = true;
                     else {
                         this.filler_group_contents = [];
                         this.no_search_result = false;
                     }
+                    return;
+                }
+
+                this.filler_group_pagination = data.paging;
+
+                //ADD A SCREENSHOTURL SINCE IT IS NOT PROVIDED IN THE API RETURN
+                data.paging.entities.map((data) => {
+                    if (data.fileType == 'webm') data.screenshotURL = data.url.substring(0, data.url.lastIndexOf('.')) + '.jpg';
+                    else data.screenshotURL = data.url;
+                });
+
+                //push is used to concat new data to previous data if page 2 onwards, since the pagination in fillers is on append type
+                if (page > 1) {
+                    data.paging.entities.map((data) => {
+                        this.filler_group_contents.push(data);
+                    });
+                } else {
+                    this.filler_group_contents = data.paging.entities;
+                    this.no_search_result = false;
                 }
             })
             .add(() => {
@@ -106,7 +108,7 @@ export class ViewFillersGroupComponent implements OnInit {
             .open(AddFillerContentComponent, {
                 width: '500px',
                 data: {
-                    group: group,
+                    group,
                     all_media: this.filler_group_contents,
                 },
             })
@@ -121,7 +123,7 @@ export class ViewFillersGroupComponent implements OnInit {
             .open(CreateFillerFeedComponent, {
                 width: '500px',
                 data: {
-                    group: group,
+                    group,
                 },
             })
             .afterClosed()
