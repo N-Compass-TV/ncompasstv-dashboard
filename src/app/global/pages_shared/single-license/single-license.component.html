@@ -1,11 +1,19 @@
-<div class="theme-container">
-    <div class="popup" *ngIf="show_popup" [ngClass]="setPopupBackground()">{{ popup_message }} <span class="fas fa-times" (click)="dismissPopup()"></span></div>
-    <div class="d-flex align-items-center mb-2 content-section">
-        <div class="flex-even">
-            <div class="alias-container">
-                <ng-container *ngIf="license_data">
-                    <h1 class="page-title mb-1" *ngIf="!enable_edit_alias; else edit_alias">{{ title }}</h1>
-                    <mat-icon class="edit-alias" *ngIf="!enable_edit_alias && !is_view_only" (click)="activateEdit(true)" matTooltip="Edit license alias"> edit </mat-icon>
+<div class="theme-container" *ngIf="host && timezone && businessName; else loaderMain">
+	<div class="popup" *ngIf="show_popup" [ngClass]="setPopupBackground()">
+		{{ popup_message }} <span class="fas fa-times" (click)="dismissPopup()"></span>
+	</div>
+	<div class="d-flex align-items-center mb-2 content-section">
+		<div class="flex-even">
+			<div class="alias-container">
+				<ng-container *ngIf="license_data">
+					<h1 class="page-title mb-1" *ngIf="!enable_edit_alias; else edit_alias">{{ title }}</h1>
+					<mat-icon
+						class="edit-alias"
+						*ngIf="!enable_edit_alias && !is_view_only"
+						(click)="activateEdit(true)"
+						matTooltip="Edit license alias">
+						edit
+					</mat-icon>
 
                     <ng-template #edit_alias>
                         <form class="edit-alias-form" [formGroup]="update_alias">
@@ -1227,6 +1235,12 @@
             <div class="captions mt-3">No License Activity</div>
         </div>
     </div>
+</ng-template>
+
+<ng-template #loaderMain>
+	<div class="h-80 d-flex justify-content-center align-items-center">
+		<app-spinner></app-spinner>
+	</div>
 </ng-template>
 
 <ng-template #loaderSmall>
