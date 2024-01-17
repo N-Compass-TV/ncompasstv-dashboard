@@ -8,6 +8,7 @@ import { ConfirmationModalComponent } from '../../../components_shared/page_comp
 import { environment } from 'src/environments/environment';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AuthService, ContentService } from 'src/app/global/services';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-thumbnail-card',
@@ -50,17 +51,12 @@ export class ThumbnailCardComponent implements OnInit {
     protected _socket: any;
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private _auth: AuthService, private _dialog: MatDialog, private _content: ContentService) {}
+    constructor(private _auth: AuthService, private _dialog: MatDialog, private _content: ContentService, private router: Router) {}
 
     ngOnInit() {
         if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.role = UI_ROLE_DEFINITION_TEXT.administrator;
         this.route = `/${this.role}/media-library/${this.content_id}`;
-
-        if (
-            !this.disconnect_to_socket &&
-            (this.filetype == 'webm' || this.filetype === 'mp4') &&
-            this.is_converted == 0
-        ) {
+        if (!this.disconnect_to_socket && (this.filetype == 'webm' || this.filetype === 'mp4') && this.is_converted == 0) {
             this._socket = io(environment.socket_server, {
                 transports: ['websocket'],
                 query: 'client=Dashboard__ThumbnailCardComponent',
@@ -75,7 +71,6 @@ export class ThumbnailCardComponent implements OnInit {
                     this.is_converted = 1;
                     this.converted.emit(true);
                 }
-
                 this.ngOnInit();
             });
         }
@@ -97,21 +92,21 @@ export class ThumbnailCardComponent implements OnInit {
     }
 
     deleteMedia(event): void {
-        this.warningModal(
-            'warning',
-            'Delete Content',
-            'Are you sure you want to delete this content?',
-            this.return_mes,
-            'delete'
-        );
+        this.warningModal('warning', 'Delete Content', 'Are you sure you want to delete this content?', this.return_mes, 'delete');
         event.stopPropagation();
+    }
+
+    deleteFiller() {
+        this.filler_delete.emit(true);
+    }
+
+    routeToMedia(filename) {
+        if (!this.is_filler) this.router.navigate([`/${this.route}`, filename]);
     }
 
     getMp4Thumbnail() {
         try {
-            fetch(
-                `https://cdn.filestackcontent.com/video_convert=preset:thumbnail,thumbnail_offset:5/${this.handle}`
-            ).then(async (res) => {
+            fetch(`https://cdn.filestackcontent.com/video_convert=preset:thumbnail,thumbnail_offset:5/${this.handle}`).then(async (res) => {
                 const { data } = await res.json();
                 this.mp4_thumb = data.url;
             });
@@ -123,13 +118,7 @@ export class ThumbnailCardComponent implements OnInit {
     }
 
     private deleteContentLogs() {
-        this.warningModal(
-            'warning',
-            'Delete Content Logs',
-            'Do you want to delete all the logs of this content',
-            '',
-            'delete-logs'
-        );
+        this.warningModal('warning', 'Delete Content Logs', 'Do you want to delete all the logs of this content', '', 'delete-logs');
     }
 
     private warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
