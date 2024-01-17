@@ -91,7 +91,7 @@
                     <div class="bg-white p-3 full-width text-center br-5 box-shadowing position-relative overflow-hidden">
                         <!-- Added position-relative and overflow-hidden -->
                         <div class="album-preview p-3" [ngClass]="no_preview ? 'hidden' : ''" *ngIf="selected_preview_index == i">
-                            <div class="items-wrapper mb-3" *ngIf="!no_preview_available && !initial_loading; else loading">
+                            <div class="items-wrapper text-left mb-3" *ngIf="!no_preview_available && !initial_loading; else loading">
                                 <div class="items" *ngFor="let filler of selected_preview">
                                     <img class="cover-bg w-100 h-100" [src]="'assets/media-files/feeds.jpg'" *ngIf="filler.fileType | isFeed; else imagePrev" title="Feeds" />
                                     <!-- Todo: thumbnail for object/feed -->
