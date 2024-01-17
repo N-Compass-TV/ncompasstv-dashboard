@@ -27,7 +27,6 @@ export class ThumbnailCardComponent implements OnInit {
     @Input() image_uri: string;
     @Input() is_checked: boolean;
     @Input() is_converted: number;
-    @Input() is_filler: boolean = false;
     @Input() is_fullscreen: number;
     @Input() is_protected: number;
     @Input() is_scheduled_content = false;
@@ -39,7 +38,6 @@ export class ThumbnailCardComponent implements OnInit {
     @Output() converted: EventEmitter<boolean> = new EventEmitter();
     @Output() deleted: EventEmitter<boolean> = new EventEmitter();
     @Output() content_to_delete = new EventEmitter();
-    @Output() filler_delete = new EventEmitter();
 
     fs_screenshot: string = `${environment.third_party.filestack_screenshot}`;
     is_admin = this._isAdmin;
