@@ -1,236 +1,233 @@
 <div
-	*ngIf="content"
-	class="playlistv2-content box-shadow w-100"
-	[ngClass]="{
-		'grid-dimension': !detailed_view_mode,
-		'inactive-schedule': content.scheduleStatus === 'inactive',
-		'future-schedule': content.scheduleStatus === 'future'
-	}">
-	<ng-container *ngIf="!detailed_view_mode; else detailed_view">
-		<section
-			class="playlistv2-content__header d-flex align-items-center px-2"
-			[matTooltip]="content.fileName || content.title | nohandle"
-			[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
-			[class.future-schedule]="content.scheduleStatus === 'future'"
-			[class.frequency-hover]="canSetFrequencyBorder">
-			<div class="content-filename-wrapper flex-even">
-				<span
-					class="xsm-text text-primary fas mr-1"
-					[ngClass]="{
-						'fa-image': content.fileType | isimage,
-						'fa-video': content.fileType | isvideo,
-						'fa-rss': content.fileType | isFeed
-					}">
-				</span>
+    *ngIf="content"
+    class="playlistv2-content box-shadow w-100"
+    [ngClass]="{
+        'grid-dimension': !detailed_view_mode,
+        'inactive-schedule': content.scheduleStatus === 'inactive',
+        'future-schedule': content.scheduleStatus === 'future'
+    }"
+>
+    <ng-container *ngIf="!detailed_view_mode; else detailed_view">
+        <section
+            class="playlistv2-content__header px-2"
+            [matTooltip]="content.fileName || content.title | nohandle"
+            [class.inactive-schedule]="content.scheduleStatus === 'inactive'"
+            [class.future-schedule]="content.scheduleStatus === 'future'"
+            [class.frequency-hover]="canSetFrequencyBorder"
+        >
+            <div class="content-filename-wrapper d-flex align-items-center justify-content-between">
+                <div class="name d-flex align-items-center">
+                    <span
+                        class="xsm-text text-primary fas mr-1"
+                        [ngClass]="{
+                            'fa-image': content.fileType | isimage,
+                            'fa-video': content.fileType | isvideo,
+                            'fa-rss': content.fileType | isFeed
+                        }"
+                    >
+                    </span>
 
-				<span class="font-weight-bold text-primary xsm-text">{{ content.fileName || content.title | nohandle | slice : 0 : 8 }}</span>
-			</div>
+                    <span class="content-name font-weight-bold text-primary xsm-text">{{ content.fileName || content.title | nohandle | slice : 0 : 8 }}</span>
+                </div>
 
-			<ng-container *ngIf="content.frequency">
-				<i class="frequency-icon fas fa-chess-queen text-warning mr-15" *ngIf="content.frequency > 10; else grid_child_icon"></i>
+                <div class="checkbox-wrapper d-flex align-items-center">
+                    <i
+                        class="frequency-icon text-warning mr-15 push-right"
+                        *ngIf="content.frequency"
+                        [ngClass]="content.frequency > 10 ? 'fas fa-chess-queen' : 'fas fa-chess-pawn'"
+                    ></i>
 
-				<ng-template #grid_child_icon>
-					<i class="frequency-icon fas fa-chess-pawn text-warning mr-15"></i>
-				</ng-template>
-			</ng-container>
+                    <input
+                        class="push-right"
+                        type="checkbox"
+                        *ngIf="selectable && !isChildFrequency"
+                        [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }"
+                        [(ngModel)]="selected"
+                        [ngModelOptions]="{ standalone: true }"
+                        [checked]="selected"
+                        (change)="content_selected.emit($event)"
+                    />
+                </div>
+            </div>
+        </section>
 
-			<ng-container *ngIf="!isChildFrequency">
-				<div class="checkbox-selector pt-1" *ngIf="selectable" [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
-					<input
-						type="checkbox"
-						[(ngModel)]="selected"
-						[ngModelOptions]="{ standalone: true }"
-						[checked]="selected"
-						(change)="content_selected.emit($event)" />
-				</div>
-			</ng-container>
-		</section>
+        <ng-container *ngIf="isParentFrequency || isChildFrequency">
+            <div class="frequency-overlay" (mouseenter)="setHoveredBaseFrequency(content)" (mouseleave)="unsetHoveredBaseFrequency()"></div>
+        </ng-container>
 
-		<ng-container *ngIf="isParentFrequency || isChildFrequency">
-			<div class="frequency-overlay" (mouseenter)="setHoveredBaseFrequency(content)" (mouseleave)="unsetHoveredBaseFrequency()"></div>
-		</ng-container>
+        <section class="playlistv2-content__thumbnail" [ngClass]="!controls && 'no-controls'" [matTooltip]="getFrequencyInfo()">
+            <img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName | slice : 0 : 15 || content.title | slice : 0 : 15" />
+        </section>
 
-		<section class="playlistv2-content__thumbnail" [ngClass]="!controls && 'no-controls'" [matTooltip]="getFrequencyInfo()">
-			<img
-				class="image-w-100"
-				[src]="content.thumbnail | sanitize"
-				[alt]="content.fileName | slice : 0 : 15 || content.title | slice : 0 : 15" />
-		</section>
+        <section
+            *ngIf="controls"
+            class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white"
+            [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }"
+        >
+            <div class="index flex-even">
+                <span class="index-font mr-2">{{ index }}</span>
+            </div>
+            <ng-container *ngIf="!isChildFrequency">
+                <div class="playlist-content-controls">
+                    <ng-container *ngFor="let c of playlistContentControls; let i = index">
+                        <button
+                            *ngIf="enabled_controls.includes(c.action)"
+                            class="naked-btn"
+                            [ngClass]="i < playlistContentControls.length - 1 && 'mr-15'"
+                            [matTooltip]="c.label"
+                            (click)="control_click.emit({ playlistContent: content, action: c.action })"
+                        >
+                            <span class="xsm-text">
+                                <i class="{{ c.icon }}" [ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-green-2' : c.colorClass"> </i>
+                            </span>
+                        </button>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </section>
+    </ng-container>
 
-		<section
-			class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white"
-			*ngIf="controls"
-			[ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
-			<div class="index flex-even">
-				<span class="index-font mr-2">{{ index }}</span>
-			</div>
-			<ng-container *ngIf="!isChildFrequency">
-				<div class="playlist-content-controls">
-					<ng-container *ngFor="let c of playlistContentControls; let i = index">
-						<button
-							*ngIf="enabled_controls.includes(c.action)"
-							class="naked-btn"
-							[ngClass]="i < playlistContentControls.length - 1 && 'mr-15'"
-							[matTooltip]="c.label"
-							(click)="control_click.emit({ playlistContent: content, action: c.action })">
-							<span class="xsm-text">
-								<i
-									class="{{ c.icon }}"
-									[ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-green-2' : c.colorClass">
-								</i>
-							</span>
-						</button>
-					</ng-container>
-				</div>
-			</ng-container>
-		</section>
-	</ng-container>
+    <ng-template #detailed_view>
+        <div class="playlistv2__content-list">
+            <div class="playlistv2__content-list-thumbnail border-right">
+                <img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName | slice : 0 : 15 || content.title | slice : 0 : 15" />
+            </div>
+            <ng-container *ngIf="isParentFrequency || isChildFrequency">
+                <div class="frequency-overlay" (mouseenter)="setHoveredBaseFrequency(content)" (mouseleave)="unsetHoveredBaseFrequency()"></div>
+            </ng-container>
+            <div
+                class="playlistv2__content-list-details"
+                [class.inactive-schedule]="content.scheduleStatus === 'inactive'"
+                [class.future-schedule]="content.scheduleStatus === 'future'"
+                [class.frequency-hover]="canSetFrequencyBorder"
+            >
+                <div class="upper__details mb-3">
+                    <div class="upper__details-text">
+                        <span class="upper__details-title">
+                            {{ content.fileName || content.title | nohandle | slice : 0 : 40 }}
+                        </span>
+                        <span class="upper__details-date">Uploaded {{ content.dateCreated | date : "mediumDate" }}</span>
+                    </div>
 
-	<ng-template #detailed_view>
-		<div class="playlistv2__content-list">
-			<div class="playlistv2__content-list-thumbnail border-right">
-				<img
-					class="image-w-100"
-					[src]="content.thumbnail | sanitize"
-					[alt]="content.fileName | slice : 0 : 15 || content.title | slice : 0 : 15" />
-			</div>
-			<ng-container *ngIf="isParentFrequency || isChildFrequency">
-				<div class="frequency-overlay" (mouseenter)="setHoveredBaseFrequency(content)" (mouseleave)="unsetHoveredBaseFrequency()"></div>
-			</ng-container>
-			<div
-				class="playlistv2__content-list-details"
-				[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
-				[class.future-schedule]="content.scheduleStatus === 'future'"
-				[class.frequency-hover]="canSetFrequencyBorder">
-				<div class="upper__details mb-3">
-					<div class="upper__details-text">
-						<span class="upper__details-title">
-							{{ content.fileName || content.title | nohandle | slice : 0 : 40 }}
-						</span>
-						<span class="upper__details-date">Uploaded {{ content.dateCreated | date : 'mediumDate' }}</span>
-					</div>
+                    <div class="checkbox-selector pt-1" [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
+                        <ng-container *ngIf="content.frequency">
+                            <i class="frequency-icon fas fa-chess-queen text-warning" *ngIf="content.frequency > 10; else grid_child_icon"></i>
 
-					<div class="checkbox-selector pt-1" [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
-						<ng-container *ngIf="content.frequency">
-							<i class="frequency-icon fas fa-chess-queen text-warning" *ngIf="content.frequency > 10; else grid_child_icon"></i>
+                            <ng-template #grid_child_icon>
+                                <i class="frequency-icon fas fa-chess-pawn text-warning mr-15"></i>
+                            </ng-template>
+                        </ng-container>
+                        <input
+                            *ngIf="!isChildFrequency"
+                            type="checkbox"
+                            [(ngModel)]="selected"
+                            [ngModelOptions]="{ standalone: true }"
+                            [checked]="selected"
+                            (change)="content_selected.emit($event)"
+                        />
+                    </div>
+                </div>
 
-							<ng-template #grid_child_icon>
-								<i class="frequency-icon fas fa-chess-pawn text-warning mr-15"></i>
-							</ng-template>
-						</ng-container>
-						<input
-							*ngIf="!isChildFrequency"
-							type="checkbox"
-							[(ngModel)]="selected"
-							[ngModelOptions]="{ standalone: true }"
-							[checked]="selected"
-							(change)="content_selected.emit($event)" />
-					</div>
-				</div>
+                <div class="middle__details mb-2">
+                    <div class="d-flex playlist-content-schedule" *ngIf="content.type === 3; else not_custom_scheduled">
+                        <div class="playlist-content-schedule__date-range flex-even" *ngIf="content.from && content.to">
+                            <p class="xsm-text">
+                                <span class="fas fa-calendar mr-2"></span>
+                                <span>Date Range</span>
+                                <br />
+                                {{ content.from && content.to ? (content.from | date : "shortDate") + " - " + (content.to | date : "shortDate") : "--" }}
+                            </p>
+                        </div>
+                        <div class="playlist-content-schedule__days flex-even" *ngIf="content.days">
+                            <p class="xsm-text">
+                                <span class="fas fa-calendar-check mr-2"></span>
+                                <span>Days</span>
+                                <br />
+                                {{ content.days ? convertDayFormat(content.days) : "--" }}
+                            </p>
+                        </div>
+                        <div class="playlist-content-schedule__time-range flex-even" *ngIf="content.playTimeStart && content.playTimeEnd">
+                            <p class="xsm-text">
+                                <span class="fas fa-clock mr-2"></span>
+                                <span>Time Range</span>
+                                <br />
+                                {{ getPlayTimesText() }}
+                            </p>
+                        </div>
+                    </div>
 
-				<div class="middle__details mb-2">
-					<div class="d-flex playlist-content-schedule" *ngIf="content.type === 3; else not_custom_scheduled">
-						<div class="playlist-content-schedule__date-range flex-even" *ngIf="content.from && content.to">
-							<p class="xsm-text">
-								<span class="fas fa-calendar mr-2"></span>
-								<span>Date Range</span>
-								<br />
-								{{
-									content.from && content.to
-										? (content.from | date : 'shortDate') + ' - ' + (content.to | date : 'shortDate')
-										: '--'
-								}}
-							</p>
-						</div>
-						<div class="playlist-content-schedule__days flex-even" *ngIf="content.days">
-							<p class="xsm-text">
-								<span class="fas fa-calendar-check mr-2"></span>
-								<span>Days</span>
-								<br />
-								{{ content.days ? convertDayFormat(content.days) : '--' }}
-							</p>
-						</div>
-						<div class="playlist-content-schedule__time-range flex-even" *ngIf="content.playTimeStart && content.playTimeEnd">
-							<p class="xsm-text">
-								<span class="fas fa-clock mr-2"></span>
-								<span>Time Range</span>
-								<br />
-								{{ getPlayTimesText() }}
-							</p>
-						</div>
-					</div>
+                    <ng-template #not_custom_scheduled>
+                        <div class="playlist-content-schedule__default" *ngIf="content.type === 1">
+                            <p class="xsm-text">
+                                <span class="fas fa-calendar mr-2"></span>
+                                <br />
+                                Default Play
+                            </p>
+                        </div>
 
-					<ng-template #not_custom_scheduled>
-						<div class="playlist-content-schedule__default" *ngIf="content.type === 1">
-							<p class="xsm-text">
-								<span class="fas fa-calendar mr-2"></span>
-								<br />
-								Default Play
-							</p>
-						</div>
+                        <div class="playlist-content-schedule__default" *ngIf="content.type === 2">
+                            <p class="xsm-text">
+                                <span class="fas fa-ban mr-2"></span>
+                                <br />
+                                Do Not Play
+                            </p>
+                        </div>
+                    </ng-template>
+                </div>
 
-						<div class="playlist-content-schedule__default" *ngIf="content.type === 2">
-							<p class="xsm-text">
-								<span class="fas fa-ban mr-2"></span>
-								<br />
-								Do Not Play
-							</p>
-						</div>
-					</ng-template>
-				</div>
+                <div class="lower__details">
+                    <div class="lower__details-left">
+                        <div class="text-details">
+                            <span
+                                class="filetype-icon md-text text-primary fas mr-1"
+                                [ngClass]="{
+                                    'fa-image': content.fileType | isimage,
+                                    'fa-video': content.fileType | isvideo,
+                                    'fa-rss': content.fileType | isFeed
+                                }"
+                            >
+                            </span>
 
-				<div class="lower__details">
-					<div class="lower__details-left">
-						<div class="text-details">
-							<span
-								class="md-text text-primary fas mr-1"
-								[ngClass]="{
-									'fa-image': content.fileType | isimage,
-									'fa-video': content.fileType | isvideo,
-									'fa-rss': content.fileType | isFeed
-								}">
-							</span>
+                            <span>
+                                <ng-container *ngIf="content.fileType | isimage">Image</ng-container>
+                                <ng-container *ngIf="content.fileType | isvideo">Video</ng-container>
+                                <ng-container *ngIf="content.fileType | isFeed">Feed</ng-container>
+                            </span>
+                        </div>
 
-							<span *ngIf="content.fileType | isimage">image</span>
-							<span *ngIf="content.fileType | isvideo">video</span>
-							<span *ngIf="content.fileType | isFeed">feed</span>
-						</div>
+                        <div class="time-details">
+                            <span class="md-text"><i class="fas fa-clock"></i> {{ content.duration || 0 }}s</span>
+                        </div>
+                    </div>
 
-						<div class="time-details">
-							<span class="md-text"><i class="fas fa-clock"></i> {{ content.duration || 0 }}s</span>
-						</div>
-					</div>
+                    <div class="playlist-content-controls" [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
+                        <ng-container *ngIf="!isChildFrequency">
+                            <ng-container *ngFor="let c of playlistContentControls; let i = index">
+                                <button
+                                    *ngIf="enabled_controls.includes(c.action)"
+                                    class="naked-btn text-center"
+                                    [ngClass]="i < playlistContentControls.length - 1 && 'mr-3'"
+                                    [matTooltip]="c.label"
+                                    (click)="control_click.emit({ playlistContent: content, action: c.action })"
+                                >
+                                    <span class="md-text">
+                                        <i class="{{ c.icon }}" [ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-primary' : c.colorClass"> </i>
+                                    </span>
+                                </button>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
 
-					<div class="playlist-content-controls" [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
-						<ng-container *ngIf="!isChildFrequency">
-							<ng-container *ngFor="let c of playlistContentControls; let i = index">
-								<button
-									*ngIf="enabled_controls.includes(c.action)"
-									class="naked-btn text-center"
-									[ngClass]="i < playlistContentControls.length - 1 && 'mr-3'"
-									[matTooltip]="c.label"
-									(click)="control_click.emit({ playlistContent: content, action: c.action })">
-									<span class="md-text">
-										<i
-											class="{{ c.icon }}"
-											[ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-primary' : c.colorClass">
-										</i>
-									</span>
-								</button>
-							</ng-container>
-						</ng-container>
-					</div>
-				</div>
-			</div>
-		</div>
-	</ng-template>
-
-	<div class="saving-overlay" *ngIf="saving">
-		<div class="loader-wrapper">
-			<app-spinner [diameter]="30"></app-spinner>
-			<h5 class="mt-2">
-				<strong>Saving...</strong>
-			</h5>
-		</div>
-	</div>
+    <div class="saving-overlay" *ngIf="saving">
+        <div class="loader-wrapper">
+            <app-spinner [diameter]="30"></app-spinner>
+            <h5 class="mt-2">
+                <strong>Saving...</strong>
+            </h5>
+        </div>
+    </div>
 </div>

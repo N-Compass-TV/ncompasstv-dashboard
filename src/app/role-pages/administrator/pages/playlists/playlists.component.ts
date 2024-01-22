@@ -196,7 +196,15 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 			return new UI_TABLE_PLAYLIST(
 				{ value: p.playlistId, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: p.name, link: p.isMigrated ? `/administrator/playlists/v2/${p.playlistId}` : `/administrator/playlists/${p.playlistId}`, editable: false, hidden: false, new_tab_link: true },
+				{
+					value: p.name,
+					data_label: 'playlist_name',
+					is_migrated: p.isMigrated,
+					link: p.isMigrated ? `/administrator/playlists/v2/${p.playlistId}` : `/administrator/playlists/${p.playlistId}`,
+					editable: false,
+					hidden: false,
+					new_tab_link: true
+				},
 				{ value: this._date.transform(p.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false },
 				{ value: p.businessName, link: '/administrator/dealers/' + p.dealerId, editable: false, hidden: false, new_tab_link: true },
 				{ value: p.totalScreens > 0 ? true : false, link: null, hidden: true }
