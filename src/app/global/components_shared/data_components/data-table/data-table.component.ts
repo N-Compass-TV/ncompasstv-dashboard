@@ -378,11 +378,8 @@ export class DataTableComponent implements OnInit {
     deletePlaylist(id): void {
         this._playlist.get_playlist_by_id(id).subscribe(
             (data) => {
-                if (data.screens.length == 0) {
-                    this.warningModal('warning', 'Delete Playlist', 'Are you sure you want to delete this playlist?', '', 'playlist_delete', id);
-                } else {
-                    this.playlistDelete(id);
-                }
+                if (data.screens.length == 0) this.warningModal('warning', 'Delete Playlist', 'Are you sure you want to delete this playlist?', '', 'playlist_delete', id);
+                else this.playlistDelete(id);
             },
             (error) => {
                 console.error(error);
