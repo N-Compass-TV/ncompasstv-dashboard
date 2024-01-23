@@ -1,10 +1,12 @@
 <div
     *ngIf="content"
     class="playlistv2-content box-shadow w-100"
+    [class.frequency-hover]="canSetFrequencyBorder"
     [ngClass]="{
         'grid-dimension': !detailed_view_mode,
         'inactive-schedule': content.scheduleStatus === 'inactive',
-        'future-schedule': content.scheduleStatus === 'future'
+        'future-schedule': content.scheduleStatus === 'future',
+        'is-scheduled': content.scheduleStatus === 'scheduled'
     }"
 >
     <ng-container *ngIf="!detailed_view_mode; else detailed_view">
@@ -13,6 +15,7 @@
             [matTooltip]="content.fileName || content.title | nohandle"
             [class.inactive-schedule]="content.scheduleStatus === 'inactive'"
             [class.future-schedule]="content.scheduleStatus === 'future'"
+            [class.is-scheduled]="content.scheduleStatus === 'scheduled'"
             [class.frequency-hover]="canSetFrequencyBorder"
         >
             <div class="content-filename-wrapper h-100 d-flex align-items-center justify-content-between">
@@ -72,7 +75,7 @@
                         <button
                             *ngIf="enabled_controls.includes(c.action)"
                             class="naked-btn"
-                            [ngClass]="i < playlistContentControls.length - 1 && 'mr-1'"
+                            [ngClass]="i < playlistContentControls.length - 1 && 'mr-15'"
                             [matTooltip]="c.label"
                             (click)="control_click.emit({ playlistContent: content, action: c.action })"
                         >
@@ -88,7 +91,7 @@
 
     <ng-template #detailed_view>
         <div class="playlistv2__content-list">
-            <div class="playlistv2__content-list-thumbnail border-right">
+            <div class="playlistv2__content-list-thumbnail">
                 <img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName | slice : 0 : 15 || content.title | slice : 0 : 15" />
             </div>
             <ng-container *ngIf="isParentFrequency || isChildFrequency">
@@ -98,6 +101,7 @@
                 class="playlistv2__content-list-details"
                 [class.inactive-schedule]="content.scheduleStatus === 'inactive'"
                 [class.future-schedule]="content.scheduleStatus === 'future'"
+                [class.is-scheduled]="content.scheduleStatus === 'scheduled'"
                 [class.frequency-hover]="canSetFrequencyBorder"
             >
                 <div class="upper__details mb-3">
@@ -110,7 +114,7 @@
 
                     <div class="checkbox-selector pt-1" [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
                         <ng-container *ngIf="content.frequency">
-                            <i class="frequency-icon fas fa-chess-queen text-warning" *ngIf="content.frequency > 10; else grid_child_icon"></i>
+                            <i class="frequency-icon fas fa-chess-queen text-warning mr-2" *ngIf="content.frequency > 10; else grid_child_icon"></i>
 
                             <ng-template #grid_child_icon>
                                 <i class="frequency-icon fas fa-chess-pawn text-warning mr-1"></i>
@@ -177,7 +181,7 @@
                 <div class="lower__details">
                     <div class="lower__details-left">
                         <div class="text-details">
-                            <span
+                            <i
                                 class="filetype-icon md-text text-primary fas mr-1"
                                 [ngClass]="{
                                     'fa-image': content.fileType | isimage,
@@ -185,7 +189,7 @@
                                     'fa-rss': content.fileType | isFeed
                                 }"
                             >
-                            </span>
+                            </i>
 
                             <span>
                                 <ng-container *ngIf="content.fileType | isimage">Image</ng-container>

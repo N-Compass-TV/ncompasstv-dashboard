@@ -23,6 +23,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
     currentPage = 1;
     floating_assets: API_CONTENT_V2[] = [];
     fetchContent$: Observable<any>;
+    gettingHostData = true;
     gridCount = 8;
     hasImageAndFeed: boolean;
     hasSelectedAllHostLicenses = false;
@@ -30,6 +31,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
     mode = 'add';
     newContentsSettings: AddPlaylistContent = new AddPlaylistContent();
     noData = this._dialog_data.assets.length === 0;
+    noHostData = false;
     pageLimit = 0;
     paginating = false;
     playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[] = [];
@@ -58,6 +60,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
         this.assets = [...this._dialog_data.assets];
         this.floating_assets = [...this._dialog_data.floatingAssets];
         this.playlistHostLicenses = this._dialog_data.hostLicenses ? [...this._dialog_data.hostLicenses] : [];
+        this.noHostData = !this.playlistHostLicenses.length;
         this.newContentsSettings.playlistId = this._dialog_data.playlistId;
 
         /** Watch Contents Readiness */
@@ -70,7 +73,9 @@ export class AddContentComponent implements OnInit, OnDestroy {
         /** Watch Hosts Data Readiness */
         this._playlist.hostLoaded$.subscribe({
             next: (res: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[]) => {
+                this.gettingHostData = false;
                 if (!this.playlistHostLicenses.length && res.length) this.playlistHostLicenses = res;
+                else this.noHostData = true;
             },
         });
 

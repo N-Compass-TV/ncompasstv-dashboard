@@ -221,7 +221,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
             switch (filter) {
                 case 'active':
-                    return c.scheduleStatus === 'active';
+                    return c.scheduleStatus === 'active' || c.scheduleStatus === 'scheduled';
                 case 'inactive':
                     return c.scheduleStatus === 'inactive';
                 case 'in-queue':
@@ -491,7 +491,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
             allContents: this.playlistContents,
             index,
         };
-        const configs: MatDialogConfig = { width: '1270px', disableClose: true, data };
+        const configs: MatDialogConfig = { width: '1300px', disableClose: true, data };
 
         this._dialog
             .open(ContentSettingsComponent, configs)

@@ -30,7 +30,6 @@ export class BasicSettingsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.initializeForm();
-        console.log('pLength =>', this.playlist_content.length);
     }
 
     ngOnDestroy(): void {

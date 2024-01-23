@@ -1,5 +1,6 @@
 .playlistv2-content {
     position: relative;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
     .frequency-overlay {
         position: absolute;
@@ -17,6 +18,10 @@
 
         &.future-schedule {
             box-shadow: 0 0 20px rgba(218, 125, 10);
+        }
+
+        &.is-scheduled {
+            box-shadow: 0 0 20px rgb(118, 201, 10);
         }
     }
 
@@ -74,9 +79,20 @@
             }
         }
 
+        &.is-scheduled {
+            background: rgb(118, 201, 10) !important;
+
+            .content-filename-wrapper {
+                span {
+                    color: black !important;
+                }
+            }
+        }
+
         // grid view
         &.frequency-hover {
-            background: rgb(5, 106, 122, 0.9) !important;
+            background: rgb(6, 75, 153) !important;
+            box-shadow: 0 0 20px rgba(6, 75, 153);
 
             .content-filename-wrapper {
                 span {
@@ -126,6 +142,7 @@
             flex-direction: column;
             width: 80%;
             padding: 10px 13px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
             &.inactive-schedule {
                 border-right: 5px solid rgba(170, 35, 51);
@@ -135,10 +152,18 @@
                 border-right: 5px solid rgba(218, 125, 10);
             }
 
+            &.is-scheduled {
+                border-right: 5px solid rgb(118, 201, 10);
+            }
+
             // detailed view
             &.frequency-hover {
-                background: rgb(9, 22, 53, 0.9) !important;
+                background: rgba(3, 19, 34, 0.9) !important;
                 color: white;
+
+                i.fa-expand-arrows-alt.text-black {
+                    color: white;
+                }
 
                 .upper__details {
                     &-title {
@@ -152,17 +177,7 @@
 
                 .lower__details {
                     span {
-                        &.filetype-icon {
-                            color: white !important;
-                        }
-                    }
-
-                    .time-details {
-                        span {
-                            i {
-                                color: white !important;
-                            }
-                        }
+                        color: white !important;
                     }
                 }
             }
@@ -194,10 +209,6 @@
             .checkbox-selector {
                 display: flex;
                 align-items: flex-start;
-
-                i {
-                    margin-right: 20px;
-                }
 
                 input {
                     margin-top: 0;
@@ -244,6 +255,10 @@
         top: 0;
         width: 100%;
     }
+
+    &.grid-dimension.frequency-hover {
+        box-shadow: 0 0 20px rgba(6, 75, 153);
+    }
 }
 
 .index-font {
@@ -258,4 +273,8 @@
 
 .push-right {
     margin-left: auto;
+}
+
+.mr-15 {
+    margin-right: 0.4em;
 }
