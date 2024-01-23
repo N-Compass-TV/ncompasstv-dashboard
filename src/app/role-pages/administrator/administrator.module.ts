@@ -43,6 +43,7 @@ import { BillingsViewComponent } from './pages/dealers/billings-view/billings-vi
 import { DmaViewComponent } from './pages/hosts/dma-view/dma-view.component';
 import { InvoiceViewComponent } from './pages/dealers/invoice-view/invoice-view.component';
 import { ReleaseNotesModule } from './pages/release-notes/release-notes.module';
+import { PlacerDataComponent } from './pages/hosts/placer-data/placer-data.component';
 
 @NgModule({
 	declarations: [
@@ -63,7 +64,8 @@ import { ReleaseNotesModule } from './pages/release-notes/release-notes.module';
 		UpdateComponent,
 		BillingsViewComponent,
 		DmaViewComponent,
-		InvoiceViewComponent
+		InvoiceViewComponent,
+		PlacerDataComponent
 	],
 	imports: [
 		CommonModule,
