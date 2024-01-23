@@ -48,6 +48,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA)
         public contentData: {
             playlistContents: API_CONTENT_V2[];
+            playlistContentLength: number;
             hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
             bulkSet: boolean;
             hasExistingSchedule: boolean;

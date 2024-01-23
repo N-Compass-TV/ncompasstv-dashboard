@@ -54,9 +54,9 @@
                 </ng-template>
 
                 <!-- Playlist Content Basic Info -- Frequency/Fullscreen/Duration -->
-                <div class="row mb-3" *ngIf="!contentData.bulkSet">
+                <div class="d-flex mb-3" *ngIf="!contentData.bulkSet">
                     <!-- Playlist Content Basic Info -->
-                    <div class="col-lg-8">
+                    <div class="flex-even">
                         <div class="playlist-content-basic-info d-flex flex-column">
                             <div class="d-flex">
                                 <h5 class="m-0 font-weight-bold">
@@ -71,7 +71,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 text-right">
+                    <div class="text-right">
                         <span
                             class="text-primary fas mr-1"
                             [ngClass]="{
@@ -88,6 +88,7 @@
                     [bulk_setting]="contentData.bulkSet"
                     [has_image_and_feed]="hasImageAndFeed"
                     [playlist_content]="contentData.playlistContents"
+                    [playlist_content_length]="contentData.playlistContents.length"
                     (changed)="playlistContentModified($event)"
                 ></app-basic-settings>
             </div>
@@ -97,16 +98,6 @@
             <div class="col-lg-6">
                 <ng-container *ngIf="content.frequency !== 2 && content.frequency !== 3; else childSchedule">
                     <mat-tab-group mat-stretch-tabs>
-                        <mat-tab label="Content Schedule">
-                            <div class="mt-3 pb-2">
-                                <app-content-scheduler
-                                    [contents]="contentData.playlistContents"
-                                    [hasExistingSchedule]="contentData.hasExistingSchedule"
-                                    [scheduleType]="contentData.scheduleType"
-                                >
-                                </app-content-scheduler>
-                            </div>
-                        </mat-tab>
                         <mat-tab label="Play Where">
                             <ng-container *ngIf="!loadingWhitelistedLicenses; else loading">
                                 <ng-container *ngIf="contentData.hostLicenses.length > 0; else noLicenses">
@@ -138,6 +129,16 @@
                                     </div>
                                 </ng-container>
                             </ng-container>
+                        </mat-tab>
+                        <mat-tab label="Content Schedule">
+                            <div class="mt-3 pb-2">
+                                <app-content-scheduler
+                                    [contents]="contentData.playlistContents"
+                                    [hasExistingSchedule]="contentData.hasExistingSchedule"
+                                    [scheduleType]="contentData.scheduleType"
+                                >
+                                </app-content-scheduler>
+                            </div>
                         </mat-tab>
                     </mat-tab-group>
                 </ng-container>
@@ -218,6 +219,8 @@
     </ng-template>
 
     <ng-template #noLicenses>
-        <p>No licenses available</p>
+        <div class="py-5 text-center">
+            <h4>No Licenses Available</h4>
+        </div>
     </ng-template>
 </div>

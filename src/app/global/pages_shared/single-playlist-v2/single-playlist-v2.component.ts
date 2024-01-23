@@ -483,6 +483,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         const scheduleType = bulkSet ? 1 : playlistContents[0].type;
         const data = {
             playlistContents,
+            playlistContentLength: this.playlistContents.length,
             hostLicenses: this.playlistHostLicenses,
             bulkSet,
             hasExistingSchedule,

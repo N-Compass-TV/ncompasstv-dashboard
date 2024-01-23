@@ -15,10 +15,10 @@
             [class.future-schedule]="content.scheduleStatus === 'future'"
             [class.frequency-hover]="canSetFrequencyBorder"
         >
-            <div class="content-filename-wrapper d-flex align-items-center justify-content-between">
-                <div class="name d-flex align-items-center">
+            <div class="content-filename-wrapper h-100 d-flex align-items-center justify-content-between">
+                <div class="d-flex name align-items-center">
                     <span
-                        class="xsm-text text-primary fas mr-1"
+                        class="sm-text text-primary fas mr-1 d-block"
                         [ngClass]="{
                             'fa-image': content.fileType | isimage,
                             'fa-video': content.fileType | isvideo,
@@ -26,13 +26,12 @@
                         }"
                     >
                     </span>
-
-                    <span class="content-name font-weight-bold text-primary xsm-text">{{ content.fileName || content.title | nohandle | slice : 0 : 8 }}</span>
+                    <span class="content-name d-block font-weight-bold text-primary xsm-text">{{ content.fileName || content.title | nohandle | slice : 0 : 8 }}</span>
                 </div>
 
                 <div class="checkbox-wrapper d-flex align-items-center">
                     <i
-                        class="frequency-icon text-warning mr-15 push-right"
+                        class="frequency-icon text-warning mr-1 push-right"
                         *ngIf="content.frequency"
                         [ngClass]="content.frequency > 10 ? 'fas fa-chess-queen' : 'fas fa-chess-pawn'"
                     ></i>
@@ -73,7 +72,7 @@
                         <button
                             *ngIf="enabled_controls.includes(c.action)"
                             class="naked-btn"
-                            [ngClass]="i < playlistContentControls.length - 1 && 'mr-15'"
+                            [ngClass]="i < playlistContentControls.length - 1 && 'mr-1'"
                             [matTooltip]="c.label"
                             (click)="control_click.emit({ playlistContent: content, action: c.action })"
                         >
@@ -114,7 +113,7 @@
                             <i class="frequency-icon fas fa-chess-queen text-warning" *ngIf="content.frequency > 10; else grid_child_icon"></i>
 
                             <ng-template #grid_child_icon>
-                                <i class="frequency-icon fas fa-chess-pawn text-warning mr-15"></i>
+                                <i class="frequency-icon fas fa-chess-pawn text-warning mr-1"></i>
                             </ng-template>
                         </ng-container>
                         <input
