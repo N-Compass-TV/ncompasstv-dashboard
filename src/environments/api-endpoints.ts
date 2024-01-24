@@ -23,7 +23,8 @@ export const API_ENDPOINTS = {
 		api_get_checklist: 'installationchecklists/getallitems',
 		api_get_checklist_titles: 'installationchecklists/getall',
 		api_get_checklist_by_license_id: 'installationchecklists/getlicensechecklist?licenseid=',
-		api_get_content: 'content/findall',
+		api_get_cities_state: 'citiesStateData/getall',
+        api_get_content: 'content/findall',
 		api_get_content_summary: 'content/getalllimitedfields',
 		api_get_content_metrics: 'contentplaysdaily/getcontentmetricsbydealer',
 		api_get_categories: 'category/getall',
@@ -189,6 +190,8 @@ export const API_ENDPOINTS = {
 		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
+        export_advertiser: 'advertiser/export?dealer_id=',
+        export_all_advertiser: 'advertiser/ExportAll',
 		export_dealer_licenses: 'license/exportbydealer',
 		export_dealers: 'dealer/exportdealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
@@ -318,6 +321,7 @@ export const API_ENDPOINTS = {
 		api_update_fillers_content: 'filler/content/upsert',
 		api_update_generated_feed: 'feed/edit',
 		api_update_host: 'host/updatehost',
+        api_update_host_ticket: 'support/',
 		api_update_license_boot_delay: 'license/bootdelay',
 		api_update_internet_info: 'license/updateinternetinfo',
 		api_update_news_slide_feed: 'feed/update/news',
@@ -357,6 +361,7 @@ export const API_ENDPOINTS = {
 		screen_template: 'screen/change/template',
 		set_content_frequency: 'playlists/setFrequency',
 		set_order_as_viewed: 'ordersviewed/upsert',
+        set_user_cookie: 'user/setcookie',
 		swap_playlist_content: 'playlists/swapcontent',
 		tag: 'tag/update',
 		tag_type: 'tag/updatetype',
@@ -364,8 +369,6 @@ export const API_ENDPOINTS = {
 		toggle_credits: 'playlists/enableCredits',
 		tv_brand: 'license/Update/TvBrand',
 		user_email_settings: 'user/updateemailsettings',
-
-		//DEALER ADMIN
 		dealeradmin_update_user: 'dealeradmin/user/update'
 	},
 	delete: {
@@ -394,6 +397,7 @@ export const API_ENDPOINTS = {
 		api_remove_screen: 'screen/removebyscreenid',
 		api_remove_screen_license: 'screen/unassignlicense',
 		api_remove_host_licenses: 'license/unassignhost',
+        api_remove_host_ticket: 'support/',
 		delete_dealer: 'dealer/delete',
 		host: 'host/delete',
 		host_file_amazon_s3: 'host/AmazonS3Delete',

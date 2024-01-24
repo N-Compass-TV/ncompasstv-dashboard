@@ -1,16 +1,17 @@
 <div
-	class="content-schedule-card box-shadow d-flex align-items-center rounded"
-	[class.future-schedule]="content.scheduleStatus === 'future'"
-	[class.inactive-schedule]="content.scheduleStatus === 'inactive'">
-	<div class="card-thumbnail border-right">
-		<img [src]="content.thumbnail" alt="thumbnail" />
-	</div>
-	<div class="info-content p-2">
-		<h5 class="font-weight-bold mb-2" matTooltip="{{ content.title }}" [matTooltipPosition]="'above'" matTooltipClass="prevent-tooltip-truncate">
-			{{ index + 1 }} - {{ content.title | substring : 20 }}
-		</h5>
-		<p class="mb-1 sm-text"><span class="fas fa-calendar mr-2"></span>{{ schedule.date ? schedule.date : '--' }}</p>
-		<p class="mb-1 sm-text"><span class="fas fa-calendar-check mr-2"></span>{{ schedule.days ? schedule.days : '--' }}</p>
-		<p class="sm-text"><span class="fas fa-clock mr-2"></span>{{ schedule.time ? schedule.time : '--' }}</p>
-	</div>
+    class="content-schedule-card box-shadow d-flex align-items-center rounded"
+    [class.future-schedule]="content.scheduleStatus === 'future'"
+    [class.inactive-schedule]="content.scheduleStatus === 'inactive'"
+>
+    <div class="card-thumbnail border-right">
+        <img [src]="content.thumbnail" alt="thumbnail" />
+    </div>
+    <div class="info-content p-2">
+        <h5 class="font-weight-bold mb-2" matTooltip="{{ content.title }}" [matTooltipPosition]="'above'" matTooltipClass="prevent-tooltip-truncate">
+            {{ index + 1 }} - {{ content.title | substring : 20 }}
+        </h5>
+        <p class="mb-1 sm-text"><span class="fas fa-calendar mr-2"></span>{{ schedule.date ? schedule.date : "--" }}</p>
+        <p class="mb-1 sm-text"><span class="fas fa-calendar-check mr-2"></span>{{ schedule.days ? schedule.days : "--" }}</p>
+        <p class="sm-text"><span class="fas fa-clock mr-2"></span>{{ schedule.time ? schedule.time : "--" }}</p>
+    </div>
 </div>
