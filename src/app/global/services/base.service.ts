@@ -37,6 +37,11 @@ export class BaseService {
         plain?: boolean,
         global?: boolean
 	): Observable<any> {
+        if (!options) {
+            options.global = false;
+            options.plain = false;
+        }
+
 		let headers: any = isApplicationRequestOnly ? this.applicationOnlyHeaders : this.headers;
 		let baseUri = this.baseUri;
 
