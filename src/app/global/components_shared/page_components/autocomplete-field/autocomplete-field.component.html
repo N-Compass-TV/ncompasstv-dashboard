@@ -38,7 +38,7 @@
 			</div>
 		</div>
 		<div *ngIf="!loading_search && !disabled" class="skip-blur">
-			<ul class="m-0 p-0 playlist-search text-dark list-unstyled" *ngIf="data_reference.length > 0 && !initial_load; else no_results">
+			<ul class="m-0 playlist-search-padding text-dark list-unstyled" *ngIf="data_reference.length > 0 && !initial_load; else no_results">
 				<li
 					class="cursor-pointer p-3"
 					*ngFor="let s of search_result"
