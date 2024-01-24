@@ -57,6 +57,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
+        const playlistContentId = this._dialog_data.playlistContentId;
         this.assets = [...this._dialog_data.assets];
         this.floating_assets = [...this._dialog_data.floatingAssets];
         this.playlistHostLicenses = this._dialog_data.hostLicenses ? [...this._dialog_data.hostLicenses] : [];
@@ -81,7 +82,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
 
         this.subscribeToContentScheduleFormChanges();
         this.searchInit();
-        this.mode = typeof this._dialog_data.playlistContentId === 'undefined' ? 'add' : 'swap';
+        this.mode = typeof playlistContentId === 'undefined' || !playlistContentId ? 'add' : 'swap';
     }
 
     ngOnDestroy(): void {
