@@ -97,13 +97,11 @@ export class ReleaseNotesViewComponent implements OnInit {
     }
 
     warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
-        const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+        this._dialog.open(ConfirmationModalComponent, {
             width: '500px',
             height: '350px',
             data: { status, message, data, return_msg, action }
-        });
-
-        dialogRef.afterClosed().subscribe((result) => {
+        }).afterClosed().subscribe((result) => {
             if (result === 'delete-release-note') {
                 this._release.deleteNote(id).pipe(takeUntil(this._unsubscribe))
                     .subscribe(
