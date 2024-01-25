@@ -50,9 +50,8 @@ export class ReleaseNotesViewComponent implements OnInit {
 
     onAdd(): void {
         const config = { width: '1000px', height: '750px', disableClose: true };
-        const dialog = this._dialog.open(CreateUpdateDialogComponent, config);
-
-        dialog.afterClosed().subscribe((response: boolean | API_RELEASE_NOTE) => {
+        this._dialog.open(CreateUpdateDialogComponent, config)
+        .afterClosed().subscribe((response: boolean | API_RELEASE_NOTE) => {
 
             if (!response) return;
             const data = response as API_RELEASE_NOTE;
