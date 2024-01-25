@@ -506,6 +506,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                     /** Store updates for saving */
                     res.contentUpdates.forEach((p) => this.playlistContentsToSave.push(p.playlistContentId));
 
+                    /** Save Playlist Data */
                     this.savePlaylistContentUpdates(res, false);
                 },
             });

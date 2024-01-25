@@ -41,6 +41,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
         playlistContentId: '',
         licenses: [],
     };
+    allowBulkScheduleSet = false;
 
     protected _unsubscribe = new Subject<void>();
 
@@ -90,6 +91,10 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this._unsubscribe.next();
         this._unsubscribe.complete();
+    }
+
+    public bulkScheduleSetAllow() {
+        this.allowBulkScheduleSet = true;
     }
 
     public checkIfAllHostLicensesWhitelisted(licenseIds: string[]) {

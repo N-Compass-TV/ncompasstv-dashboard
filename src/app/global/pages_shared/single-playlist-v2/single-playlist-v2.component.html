@@ -38,12 +38,12 @@
                                         <button
                                             mat-button
                                             mat-raised-button
-                                            class="theme-btn"
-                                            [ngClass]="i < playlistControls.length - 1 && 'mr-2'"
+                                            class="theme-btn {{c.className || ''}}"
+                                            [ngClass]="{'mr-2': i < playlistControls.length - 1}"
                                             [disabled]="c.disabled"
                                             (click)="playlistControlClicked(c)"
                                         >
-                                            <i class="{{ c.icon }} mr-3 text-green"></i>
+                                            <i class="{{ c.icon }} mr-3"></i>
                                             <small class="font-weight-bold">{{ c.label }}</small>
                                         </button>
                                     </ng-container>
@@ -63,8 +63,8 @@
                                                             <div class="content-filters" *ngFor="let p of playlistFilters; let i = index" [ngClass]="i == 0 && 'mr-3'">
                                                                 <button mat-button mat-raised-button class="theme-btn" [matMenuTriggerFor]="menu">
                                                                     <i class="{{ p.icon }} mr-3 text-green"></i>
-                                                                    <small class="font-weight-bold mr-2"
-                                                                        >{{ p.label }}
+                                                                    <small class="font-weight-bold mr-2">
+                                                                        {{ p.label }}
 
                                                                         <ng-container *ngIf="p.label === 'Content Type' && currentFilters.type">
                                                                             : {{ currentFilters.type | titlecase }}
@@ -98,8 +98,7 @@
                                                                 *ngFor="let p of playlistViews; let i = index"
                                                                 (click)="viewButtonClicked(p.action)"
                                                                 [ngClass]="i !== playlistViews.length - 1 && 'mr-3'"
-                                                                [class.selected]="p.is_selected"
-                                                            >
+                                                                [class.selected]="p.is_selected">
                                                                 <i class="{{ p.icon }} mr-3 text-green"></i>
                                                                 <small class="font-weight-bold mr-1">{{ p.label }}</small>
                                                             </button>
@@ -126,8 +125,7 @@
                                             id="{{ 'drg_' + c.playlistContentId }}"
                                             [ngClass]="detailedViewMode ? 'col-lg-4' : 'col-lg-1-5'"
                                             *ngFor="let c of playlistContents; let i = index"
-                                            [attr.data-id]="c.playlistContentId"
-                                        >
+                                            [attr.data-id]="c.playlistContentId">
                                             <div class="m-1">
                                                 <app-content
                                                     [content]="c"
@@ -138,8 +136,7 @@
                                                     [saving]="playlistContentsToSave.includes(c.playlistContentId)"
                                                     [selected]="selectedPlaylistContents.includes(c.playlistContentId)"
                                                     (control_click)="contentControlClicked($event, i)"
-                                                    (content_selected)="playlistContentSelected(c.playlistContentId)"
-                                                >
+                                                    (content_selected)="playlistContentSelected(c.playlistContentId)">
                                                 </app-content>
                                             </div>
                                         </div>

@@ -103,11 +103,11 @@
     }
 
     .playlistv2-content__thumbnail {
-        background: #404040;
+        background: #111111;
         height: 80px;
 
         img {
-            object-fit: cover;
+            object-fit: contain;
             object-position: center;
         }
 

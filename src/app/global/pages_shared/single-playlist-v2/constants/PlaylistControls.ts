@@ -22,24 +22,24 @@ export const PlaylistPrimaryControls = [
 	{
 		label: 'Mark All',
 		action: PlaylistPrimaryControlActions.markAll,
-		icon: 'fas fa-check',
+		icon: 'fas fa-check text-green',
 		disabled: true
 	},
 	{
 		label: 'Add Content',
 		action: PlaylistPrimaryControlActions.addContent,
-		icon: 'fas fa-spinner fa-spin',
+		icon: 'fas fa-spinner fa-spin text-green',
 		disabled: true
 	},
 	{
 		label: 'New Spacer',
 		action: PlaylistPrimaryControlActions.newSpacer,
-		icon: 'fas fa-plus'
+		icon: 'fas fa-plus text-green'
 	},
 	{
 		label: 'Bulk Modify',
 		action: PlaylistPrimaryControlActions.bulkModify,
-		icon: 'fas fa-cog',
+		icon: 'fas fa-cog text-green',
 		disabled: true
 	},
 	{
@@ -51,7 +51,8 @@ export const PlaylistPrimaryControls = [
 	{
 		label: 'Save Changes',
 		action: PlaylistPrimaryControlActions.savePlaylist,
-		icon: 'fas fa-save',
+		icon: 'fas fa-save text-dark',
+        className: 'bg-primary',
 		disabled: true
 	}
 ];
@@ -69,7 +70,7 @@ export const PlaylistFiltersDropdown = [
 		]
 	},
 	{
-		label: 'Content Status',
+		label: 'Content Schedule Status',
 		action: PlaylistFilterActions.contentStatus,
 		icon: 'fas fa-calendar-alt',
 		items: [
