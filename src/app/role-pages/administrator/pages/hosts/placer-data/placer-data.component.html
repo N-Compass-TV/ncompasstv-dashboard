@@ -1,6 +1,21 @@
-<div *ngIf="!initial_load_dma; else loader">
+<div *ngIf="!initial_load_placer; else loader">
     <div class="flex mt-3">
         <div class="flex-even">
+            <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="assignee" [disabled]="hide_all_license">
+                <span class="button-label">Assignee</span>
+                <span class="fas fa-user xsm-text"></span>
+            </button>
+            <mat-menu #assignee="matMenu">
+                <button class="md-text" mat-menu-item (click)="filterTable('1', 'Assigned')"><span class="fas fa-user text-gray mr-3"></span>Assigned</button>
+                <button class="md-text" mat-menu-item (click)="filterTable('2', 'Unassigned')"><span class="fas fa-user-slash text-gray mr-3"></span>Unassigned</button>
+            </mat-menu>
+            <ng-container>
+                <mat-form-field class="mx-2">
+                    <input matInput [matDatepicker]="dp" placeholder="Month and Year" [ngModel]="date" />
+                    <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                    <mat-datepicker #dp startView="multi-year" (monthSelected)="chosenMonthHandler($event, dp)" panelClass="example-month-picker"> </mat-datepicker>
+                </mat-form-field>
+            </ng-container>
             <button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary mr-2" (click)="exportTable()" [disabled]="workbook_generation" title="Export to CSV">
                 <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                 <span class="ml-2 button_text_animation">{{ !workbook_generation ? "Export" : "Generating CSV" }}</span>
@@ -8,17 +23,41 @@
         </div>
         <div class="search-field-container">
             <app-search-field
-                [form_title]="'Search via Rank, Name or Code'"
-                [placeholder]="'Example: 501'"
-                [data_reference]="dma_data"
-                [primary_keyword]="'dmaRank'"
-                [secondary_keyword]="'dmaCode'"
+                [form_title]="'Search via Placer Id, Placer Name or Hostname'"
+                [placeholder]="'Example: N-Compass TV Host'"
+                [data_reference]="placer_data"
+                [primary_keyword]="'placerName'"
+                [secondary_keyword]="'placerId'"
                 (searched)="filterData($event)"
                 [api_search]="true"
-                [allow_one]="true"
             ></app-search-field>
         </div>
     </div>
+
+    <ng-container *ngIf="filter.assignee_label || filter.date_label">
+        <div class="flex p-2 mb-4 bg-gray-2">
+            <div class="flex-even d-inline-flex">
+                <div class="pt-2 pill" *ngIf="filter.assignee_label">
+                    Assignee: <strong>{{ filter.assignee_label }}</strong>
+                </div>
+                <div class="pt-2 pill" *ngIf="filter.date_label">
+                    Date Selected: <strong>{{ filter.date_label }}</strong>
+                </div>
+                <div class="p-2">
+                    <p class="sm-text">
+                        Showing <span class="text-danger">{{ paging_data.pageSize ? paging_data.pageSize : 0 }}</span> out of
+                        <span class="text-danger">{{ total_placer }}</span> placer records.
+                    </p>
+                </div>
+            </div>
+            <div class="text-right">
+                <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+                    <span class="button-label"> Clear Filter </span>
+                    <span class="fas fa-times ml-2 sm-text"></span>
+                </button>
+            </div>
+        </div>
+    </ng-container>
 
     <div class="flex">
         <div class="full-width">
@@ -30,6 +69,10 @@
                         [new_table]="true"
                         [paging_details]="paging_data"
                         (page_triggered)="getPlacerData($event)"
+                        (to_sort_column)="getColumnsAndOrder($event)"
+                        [active_tab]="sort_column"
+                        [sort_column]="sort_column"
+                        [sort_order]="sort_order"
                     >
                     </app-data-table>
                 </mat-card>

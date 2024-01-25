@@ -139,7 +139,7 @@ export const API_ENDPOINTS = {
         api_get_notifications: 'notification/getbyreceiverid?receiver_id=',
         api_get_all_notifications: 'notification/getall',
         api_get_dealer_notifications: 'notification/getbydealerid?dealer_id=',
-        api_get_placer: 'placer/getall',
+        api_get_placer: 'placer/dump',
         api_get_playlist: 'playlists/getall',
         api_get_playlist_by_content: 'playlists/GetPlaylistsByContentId?contentid=',
         api_get_all_playlist: 'playlists/getplaylistswithscreens',
