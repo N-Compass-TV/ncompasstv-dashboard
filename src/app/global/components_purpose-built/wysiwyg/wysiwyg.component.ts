@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input} from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -11,6 +11,7 @@ export class WysiwygComponent implements OnInit {
     @Output() tynimce_value: EventEmitter<any> = new EventEmitter;
     @Input() description;
     apiKey: string;
+    editor_has_been_loaded: boolean = false;
 
 	constructor() {}
 
@@ -22,7 +23,11 @@ export class WysiwygComponent implements OnInit {
         }
     }
 
+    editorInit() {
+        this.editor_has_been_loaded = true;
+    }
+
     getValue($event) {
         this.tynimce_value.emit($event.editor.getContent());
     }
-}
+ }

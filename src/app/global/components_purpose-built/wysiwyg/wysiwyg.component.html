@@ -2,7 +2,10 @@
 	<editor
 		[(ngModel)]="tinymce_content"
 		[apiKey]="apiKey"
-        (onKeyUp)="getValue($event)" (onChange)="getValue($event)" (onPastePostProcess)="getValue($event)"
+        (onKeyUp)="getValue($event)"
+        (onChange)="getValue($event)"
+        (onPastePostProcess)="getValue($event)"
+        (onPostRender)="editorInit($event)"
 		[init]="{
 			selector: 'textarea',
 			height: 500,
@@ -22,4 +25,10 @@
 	></editor>
 
 	<!-- <button (click)="saveEditorContent()">Save</button> -->
+</div>
+<div
+    *ngIf="!editor_has_been_loaded"
+    class="py-4 white-bg h-400"
+>
+    <app-spinner></app-spinner>
 </div>

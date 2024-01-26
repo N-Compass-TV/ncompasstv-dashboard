@@ -24,7 +24,7 @@
                                 <div class="col-4 text-center">{{ release.dateCreated }}</div>
                                 <div class="col-4 text-right">
                                     <i class="clickable text-gray fa fa-edit mr-3" title="Edit Note" (click)="onEdit($event, release.releaseNoteId)"></i>
-                                    <i class="clickable color-danger fas fa-trash" title="Delete Note" (click)="onDelete($event, release.releaseNoteId)"></i>
+                                    <i class="clickable text-danger fas fa-trash" title="Delete Note" (click)="onDelete($event, release.releaseNoteId)"></i>
                                 </div>
                             </mat-panel-title>
                             <ng-template #non_admin_panel_title>
@@ -34,7 +34,7 @@
                                 </mat-panel-title>
                             </ng-template>
                         </mat-expansion-panel-header>
-                        <div #dataContainer class="content-section pt-0 pl-4"></div>
+                        <div #dataContainer class="content-section p-4"></div>
                     </mat-expansion-panel>
                 </mat-accordion>
             </div>
