@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PlacerDataComponent } from './placer-data.component';
+import { PlacerComponent } from './placer.component';
 
-describe('PlacerDataComponent', () => {
-  let component: PlacerDataComponent;
-  let fixture: ComponentFixture<PlacerDataComponent>;
+describe('PlacerComponent', () => {
+  let component: PlacerComponent;
+  let fixture: ComponentFixture<PlacerComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PlacerDataComponent ]
+      declarations: [ PlacerComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PlacerDataComponent);
+    fixture = TestBed.createComponent(PlacerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

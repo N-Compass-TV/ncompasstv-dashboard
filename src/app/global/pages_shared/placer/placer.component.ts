@@ -1,23 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { PlacerService } from 'src/app/global/services';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
+import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 
 import * as moment from 'moment';
+import { Moment } from 'moment';
 import { FormControl } from '@angular/forms';
 
 import { UI_PLACER_DATA } from 'src/app/global/models';
+import { PlacerService, HostService } from 'src/app/global/services';
 
 @Component({
-    selector: 'app-placer-data',
-    templateUrl: './placer-data.component.html',
-    styleUrls: ['./placer-data.component.scss'],
-    providers: [DatePipe],
+    selector: 'app-placer',
+    templateUrl: './placer.component.html',
+    styleUrls: ['./placer.component.scss'],
 })
-export class PlacerDataComponent implements OnInit {
+export class PlacerComponent implements OnInit {
+    @Input() host_id: string = '';
+
     placer_table_column = [
         { name: '#', sortable: false, no_export: true },
         { name: 'Placer Id', key: 'placerId' },
@@ -39,7 +42,10 @@ export class PlacerDataComponent implements OnInit {
     filter: any = {
         assignee: '0',
         assignee_label: '',
+        date: '',
+        date_label: '',
     };
+    host_name: string = '';
     initial_load_placer: boolean = false;
     placer_to_export: any[] = [];
     paging_data: any;
@@ -54,12 +60,44 @@ export class PlacerDataComponent implements OnInit {
     workbook_generation = false;
     worksheet: any;
 
+    private pickerDate;
+    @ViewChild('picker', { static: false }) datePicker: MatDatepicker<any>;
+
     protected _unsubscribe = new Subject<void>();
 
-    constructor(private _placer: PlacerService, private _date: DatePipe) {}
+    constructor(private _placer: PlacerService, private _date: DatePipe, private _host: HostService) {}
 
     ngOnInit() {
-        this.getPlacerData(1);
+        if (this.host_id != '') {
+            this._host
+                .get_host_by_id(this.host_id)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe((data) => {
+                    this.host_name = data.host.name;
+                });
+        }
+        this.checkForApiToCall();
+    }
+
+    private checkForApiToCall(page?, for_export?) {
+        if (this.host_id != '') this.getPlacerForHost(1, for_export);
+        else this.getPlacerData(1, for_export);
+    }
+
+    private getPlacerForHost(page, is_export?) {
+        if (!is_export) this.searching_placer_data = true;
+        this._placer
+            .get_single_host_placer(this.host_id, page, this.search_keyword, this.sort_column, this.sort_order, this.filter.assignee, this.filter.date, 15)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((data) => {
+                this.searching_placer_data = false;
+                this.mapData(data, is_export);
+            })
+            .add(() => {
+                if (is_export) {
+                    this.readyForExport();
+                }
+            });
     }
 
     private getPlacerData(page, is_export?) {
@@ -71,44 +109,51 @@ export class PlacerDataComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
                 this.searching_placer_data = false;
-                if (data.message) {
-                    this.placer_data = [];
-                    this.filtered_placer_data = [];
-                    this.paging_data = [];
-                    return;
-                }
-                if (is_export) {
-                    this.placer_to_export = [...data.paging.entities];
-                    this.modifyDataForExport(this.placer_to_export);
-                } else {
-                    this.total_placer = data.paging.totalEntities;
-                    this.paging_data = data.paging;
-                    const mappedData = this.placer_mapToUIFormat(data.paging.entities);
-                    this.placer_data = [...mappedData];
-                    this.filtered_placer_data = [...mappedData];
-                    this.initial_load_placer = false;
-                }
+                this.mapData(data, is_export);
             })
             .add(() => {
-                if (is_export) {
-                    this.placer_to_export.forEach((item) => {
-                        this.worksheet.addRow(item).font = { bold: false };
-                    });
-
-                    let rowIndex = 1;
-                    for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-                        this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-                    }
-
-                    this.workbook.xlsx.writeBuffer().then((file: any) => {
-                        const blob = new Blob([file], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
-                        const filename = 'Placer_Data' + '.xlsx';
-                        saveAs(blob, filename);
-                    });
-
-                    this.workbook_generation = false;
-                }
+                if (is_export) this.readyForExport();
             });
+    }
+
+    private mapData(placer_data, is_export) {
+        if (placer_data.message) {
+            this.placer_data = [];
+            this.filtered_placer_data = [];
+            this.paging_data = [];
+            return;
+        }
+        if (is_export) {
+            this.placer_to_export = [...placer_data.paging.entities];
+            this.modifyDataForExport(this.placer_to_export);
+        } else {
+            this.total_placer = placer_data.paging.totalEntities;
+            this.paging_data = placer_data.paging;
+            const mappedData = this.placer_mapToUIFormat(placer_data.paging.entities);
+            this.placer_data = [...mappedData];
+            this.filtered_placer_data = [...mappedData];
+            this.initial_load_placer = false;
+        }
+    }
+
+    private readyForExport() {
+        console.log('HERE');
+        this.placer_to_export.forEach((item) => {
+            this.worksheet.addRow(item).font = { bold: false };
+        });
+
+        let rowIndex = 1;
+        for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+            this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+        }
+
+        this.workbook.xlsx.writeBuffer().then((file: any) => {
+            const blob = new Blob([file], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+            const filename = this.host_id != '' ? this.host_name + '_placer_data' : 'Placer_Data' + '.xlsx';
+            saveAs(blob, filename);
+        });
+
+        this.workbook_generation = false;
     }
 
     placer_mapToUIFormat(data: any[]) {
@@ -118,7 +163,16 @@ export class PlacerDataComponent implements OnInit {
                 { value: count++, link: null, editable: false, hidden: false },
                 { value: placer.placerId, link: null, editable: false, key: false },
                 { value: placer.placerName, link: null, editable: false, key: false },
-                { value: placer.hostName, link: null, editable: false, key: false },
+                {
+                    value: placer.hostName,
+                    link: placer.hostId ? `/administrator/hosts/${placer.hostId}` : null,
+                    editable: true,
+                    dropdown_edit: true,
+                    key: false,
+                    new_tab_link: true,
+                    label: 'Hosts',
+                    hidden: false,
+                },
                 { value: placer.footTraffic, link: null, editable: false, key: false },
                 { value: placer.averageDwellTime, link: null, editable: false, key: false },
                 { value: placer.month, link: null, editable: false, key: false },
@@ -134,12 +188,12 @@ export class PlacerDataComponent implements OnInit {
     private getColumnsAndOrder(event) {
         this.sort_column = event.column;
         this.sort_order = event.order;
-        this.getPlacerData(1);
+        this.checkForApiToCall();
     }
 
     private filterData(keyword) {
         this.search_keyword = keyword ? keyword : '';
-        this.getPlacerData(1);
+        this.checkForApiToCall();
     }
 
     private exportTable() {
@@ -165,7 +219,7 @@ export class PlacerDataComponent implements OnInit {
     }
 
     private getDataForExport(): void {
-        this.getPlacerData(1, true);
+        this.checkForApiToCall(1, true);
     }
 
     private filterTable(value, label, is_date?) {
@@ -176,7 +230,7 @@ export class PlacerDataComponent implements OnInit {
             this.filter.assignee = value;
             this.filter.assignee_label = label;
         }
-        this.getPlacerData(1);
+        this.checkForApiToCall();
     }
 
     private modifyDataForExport(data) {
@@ -190,19 +244,16 @@ export class PlacerDataComponent implements OnInit {
         this.filter = {
             assignee: '0',
             assignee_label: '',
+            date: '',
+            date_label: '',
         };
-        this.getPlacerData(1);
+        this.pickerDate = '';
+        this.checkForApiToCall();
     }
 
-    chosenMonthHandler(normalizedMonth: moment.Moment, datepicker: any) {
-        // console.log('NY', moment(normalizedYear).format('MMMM YYYY'));
-        // const ctrlValue = moment().month(normalizedMonth);
-        // console.log('NM', ctrlValue);
-        // this.date.setValue(ctrlValue);
-        // // const ctrlValue = this.date.value;
-        // // ctrlValue.month(normalizedMonth.month());
-        this.date.setValue(moment(normalizedMonth).format('MMMM YYYY'));
-        this.filterTable(this.date, this.date.toString(), true);
-        datepicker.close();
+    closeDatePicker(event) {
+        this.pickerDate = event;
+        this.filterTable(moment(event).format('MMMM YYYY'), moment(event).format('MMMM YYYY'), true);
+        this.datePicker.close();
     }
 }
