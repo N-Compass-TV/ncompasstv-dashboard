@@ -65,7 +65,7 @@ export class PlacerComponent implements OnInit {
     workbook_generation = false;
     worksheet: any;
 
-    private pickerDate;
+    pickerDate;
     @ViewChild('picker', { static: false }) datePicker: MatDatepicker<any>;
 
     protected _unsubscribe = new Subject<void>();
@@ -105,7 +105,7 @@ export class PlacerComponent implements OnInit {
             });
     }
 
-    private getPlacerData(page, is_export?) {
+    getPlacerData(page, is_export?) {
         if (!is_export) {
             this.searching_placer_data = true;
         }
@@ -207,18 +207,18 @@ export class PlacerComponent implements OnInit {
         });
     }
 
-    private getColumnsAndOrder(event) {
+    getColumnsAndOrder(event) {
         this.sort_column = event.column;
         this.sort_order = event.order;
         this.checkForApiToCall();
     }
 
-    private filterData(keyword) {
+    filterData(keyword) {
         this.search_keyword = keyword ? keyword : '';
         this.checkForApiToCall();
     }
 
-    private exportTable() {
+    exportTable() {
         this.workbook_generation = true;
         const header = [];
         this.workbook = new Workbook();
@@ -244,7 +244,7 @@ export class PlacerComponent implements OnInit {
         this.checkForApiToCall(1, true);
     }
 
-    private filterTable(value, label, is_date?) {
+    filterTable(value, label, is_date?) {
         if (is_date) {
             this.filter.date = value;
             this.filter.date_label = label;
@@ -266,7 +266,7 @@ export class PlacerComponent implements OnInit {
         if (e) this.ngOnInit();
     }
 
-    private clearFilter() {
+    clearFilter() {
         this.filter = {
             assignee: '0',
             assignee_label: '',
@@ -277,7 +277,7 @@ export class PlacerComponent implements OnInit {
         this.checkForApiToCall();
     }
 
-    private uploadPlacer() {
+    uploadPlacer() {
         const client = filestack.init(environment.third_party.filestack_api_key);
         client.picker(this.filestackOptions).open();
     }
