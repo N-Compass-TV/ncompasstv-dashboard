@@ -37,7 +37,7 @@ export class PlacerComponent implements OnInit {
         { name: 'Uploaded By', key: 'uploadedBy' },
         { name: 'Publication Date', key: 'publicationDate', sortable: true, column: 'PublicationDate' },
         { name: 'Source File', key: 'sourceFile' },
-        { name: 'Action', sortable: false },
+        { name: 'Action', sortable: false, no_export: true },
     ];
 
     date = new FormControl(moment());
