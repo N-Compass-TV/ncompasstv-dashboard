@@ -10,6 +10,7 @@ export class UI_PLACER_DATA {
     upload_by: object;
     publication_date: object;
     source_file: object;
+    placer_dump_id: object;
     constructor(
         index: object,
         placer_id: object,
@@ -21,7 +22,8 @@ export class UI_PLACER_DATA {
         upload_date: object,
         upload_by: object,
         publication_date: object,
-        source_file: object
+        source_file: object,
+        placer_dump_id: object
     ) {
         this.index = index;
         this.placer_id = placer_id;
@@ -34,5 +36,6 @@ export class UI_PLACER_DATA {
         this.upload_by = upload_by;
         this.publication_date = publication_date;
         this.source_file = source_file;
+        this.placer_dump_id = placer_dump_id;
     }
 }

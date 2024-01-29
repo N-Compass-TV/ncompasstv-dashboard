@@ -16,4 +16,22 @@ export class PlacerService extends BaseService {
         const url = `${this.getters.api_get_placer_for_host}${host_id}?page=${page}&search=${keyword}&sortColumn=${sortColumn}&sortOrder=${sortOrder}&filter=${filter}&month=${month}&pageSize=${pageSize}`;
         return this.getRequest(url);
     }
+
+    update_placer_host(hostId: string, placerId: string, placername?: string) {
+        const url = this.updaters.placer_host;
+        const body = { hostId, placerId, placername };
+        return this.postRequest(url, body);
+    }
+
+    delete_placer_dump(id: string) {
+        const url = this.deleters.api_delete_placer_dump;
+        const body = { id };
+        return this.postRequest(url, body);
+    }
+
+    upload_placer(filename: string) {
+        const url = this.creators.placer_upload;
+        const body = { filename };
+        return this.postRequest(url, body);
+    }
 }

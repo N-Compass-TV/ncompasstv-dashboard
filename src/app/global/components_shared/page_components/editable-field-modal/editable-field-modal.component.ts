@@ -17,6 +17,7 @@ export class EditableFieldModalComponent implements OnInit {
     data: string;
     date: any;
     hosts_data: UI_AUTOCOMPLETE[] = [];
+    host_selected: string = '';
     screen_init: string;
     screen_types: Array<any> = [];
     screen_selected: string = null;
@@ -31,7 +32,6 @@ export class EditableFieldModalComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        console.log('DIALOG', this._dialog_data);
         this.status = this._dialog_data.status;
         this.message = this._dialog_data.message;
         this.data = this._dialog_data.data;
@@ -58,7 +58,13 @@ export class EditableFieldModalComponent implements OnInit {
 
     updateField(value: any): void {
         if (this.status.label.includes('Date')) value = moment(this.date).format('MM/DD/YYYY');
-        this.dialogRef.close(value);
+        if (this.status.label === 'Placer Name') {
+            this.dialogRef.close({
+                hostId: this._dialog_data.status.additional_params.hostId,
+                placerId: this._dialog_data.status.additional_params.placer,
+                placername: value,
+            });
+        } else this.dialogRef.close(value);
     }
 
     onSelectDate(value: any): void {
@@ -91,15 +97,14 @@ export class EditableFieldModalComponent implements OnInit {
                         label: 'Select Host',
                         placeholder: 'Ex. NCompass TV Host',
                         data: data,
-                        // initialValue:
-                        //     zone.screen_template.playlist_id && zone.screen_template.playlist_name
-                        //         ? [
-                        //                 {
-                        //                     id: zone.screen_template.playlist_id,
-                        //                     value: zone.screen_template.playlist_name
-                        //                 }
-                        //           ]
-                        //         : []
+                        initialValue: this._dialog_data.status.additional_params.hostId
+                            ? [
+                                  {
+                                      id: this._dialog_data.status.additional_params.hostId,
+                                      value: this._dialog_data.status.additional_params.hostName,
+                                  },
+                              ]
+                            : [],
                     },
                 ];
             })
@@ -107,7 +112,7 @@ export class EditableFieldModalComponent implements OnInit {
     }
 
     setHost(host) {
-        console.log('HOST', host);
+        this.host_selected = host.id;
     }
 
     setScreenType(type) {
@@ -121,6 +126,20 @@ export class EditableFieldModalComponent implements OnInit {
     }
 
     updateDropdown() {
-        this.dialogRef.close(this.screen_selected);
+        if (this.status.dropdown_edit) {
+            switch (this.status.label) {
+                case 'Screen Type':
+                    this.dialogRef.close(this.screen_selected);
+                    break;
+                case 'Hosts':
+                    this.dialogRef.close({
+                        hostId: this.host_selected,
+                        placerId: this._dialog_data.status.additional_params.placer,
+                        placername: this._dialog_data.status.additional_params.placername,
+                    });
+                    break;
+                default:
+            }
+        }
     }
 }

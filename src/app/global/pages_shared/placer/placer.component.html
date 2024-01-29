@@ -79,6 +79,8 @@
                         [active_tab]="sort_column"
                         [sort_column]="sort_column"
                         [sort_order]="sort_order"
+                        (update_info)="reloadPage($event)"
+                        [placer_delete]="true"
                     >
                     </app-data-table>
                 </mat-card>

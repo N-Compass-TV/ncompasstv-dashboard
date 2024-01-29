@@ -10,6 +10,10 @@ import * as moment from 'moment';
 import { Moment } from 'moment';
 import { FormControl } from '@angular/forms';
 
+//UPLOAD TODO COMPONENT SOON
+import * as filestack from 'filestack-js';
+import { environment } from 'src/environments/environment';
+
 import { UI_PLACER_DATA } from 'src/app/global/models';
 import { PlacerService, HostService } from 'src/app/global/services';
 
@@ -33,6 +37,7 @@ export class PlacerComponent implements OnInit {
         { name: 'Uploaded By', key: 'uploadedBy' },
         { name: 'Publication Date', key: 'publicationDate', sortable: true, column: 'PublicationDate' },
         { name: 'Source File', key: 'sourceFile' },
+        { name: 'Action', sortable: false },
     ];
 
     date = new FormControl(moment());
@@ -162,7 +167,17 @@ export class PlacerComponent implements OnInit {
             const table = new UI_PLACER_DATA(
                 { value: count++, link: null, editable: false, hidden: false },
                 { value: placer.placerId, link: null, editable: false, key: false },
-                { value: placer.placerName, link: null, editable: false, key: false },
+                {
+                    value: placer.placerName,
+                    link: null,
+                    editable: true,
+                    key: false,
+                    label: 'Placer Name',
+                    additional_params: {
+                        placer: placer.placerId,
+                        hostId: placer.hostId ? placer.hostId : null,
+                    },
+                },
                 {
                     value: placer.hostName,
                     link: placer.hostId ? `/administrator/hosts/${placer.hostId}` : null,
@@ -172,6 +187,12 @@ export class PlacerComponent implements OnInit {
                     new_tab_link: true,
                     label: 'Hosts',
                     hidden: false,
+                    additional_params: {
+                        placer: placer.placerId,
+                        hostId: placer.hostId ? placer.hostId : null,
+                        hostName: placer.hostName ? placer.hostName : '',
+                        placername: placer.placerName ? placer.placerName : '',
+                    },
                 },
                 { value: placer.footTraffic, link: null, editable: false, key: false },
                 { value: placer.averageDwellTime, link: null, editable: false, key: false },
@@ -179,7 +200,8 @@ export class PlacerComponent implements OnInit {
                 { value: this._date.transform(placer.dateUploaded, 'MMM d, y'), link: null, editable: false, key: false },
                 { value: placer.uploadedBy, link: null, editable: false, key: false },
                 { value: this._date.transform(placer.publicationDate, 'MMM d, y'), link: null, editable: false, key: false },
-                { value: placer.sourceFile, link: null, editable: false, key: false }
+                { value: placer.sourceFile, link: null, editable: false, key: false },
+                { value: placer.placerDumpId, link: null, editable: false, key: false, hidden: true, no_show: true }
             );
             return table;
         });
@@ -240,6 +262,10 @@ export class PlacerComponent implements OnInit {
         });
     }
 
+    reloadPage(e: boolean): void {
+        if (e) this.ngOnInit();
+    }
+
     private clearFilter() {
         this.filter = {
             assignee: '0',
@@ -249,6 +275,43 @@ export class PlacerComponent implements OnInit {
         };
         this.pickerDate = '';
         this.checkForApiToCall();
+    }
+
+    private uploadPlacer() {
+        const client = filestack.init(environment.third_party.filestack_api_key);
+        client.picker(this.filestackOptions).open();
+    }
+
+    protected get filestackOptions(): filestack.PickerOptions {
+        let folder = 'dev';
+        if (environment.production) folder = 'prod';
+        else if (environment.base_uri.includes('stg')) folder = 'staging';
+        else folder = 'dev';
+
+        return {
+            storeTo: {
+                location: 's3',
+                container: 'n-compass-filestack/csv/' + folder,
+                region: 'us-east-2',
+            },
+            accept: ['.csv'],
+            maxFiles: 1,
+            onUploadDone: (response) => {
+                console.log('RESPONSE', response);
+                let filename = response.filesUploaded[0].key;
+                let new_filename = filename.split('csv/' + folder + '/');
+                console.log('NEW', new_filename);
+                this._placer
+                    .upload_placer(new_filename[1])
+                    .pipe(takeUntil(this._unsubscribe))
+                    .subscribe(
+                        () => this.ngOnInit(),
+                        (error) => {
+                            console.error(error);
+                        }
+                    );
+            },
+        };
     }
 
     closeDatePicker(event) {

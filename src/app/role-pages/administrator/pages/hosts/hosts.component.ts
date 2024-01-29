@@ -70,32 +70,11 @@ export class HostsComponent implements OnInit {
         { name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
         { name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
         { name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true },
-        { name: 'Vistar ID', no_show: true, key: 'vistarVenueId' },
-        { name: 'Notes', no_show: true, hidden: true, key: 'notes' },
-        { name: 'Others', no_show: true, hidden: true, key: 'others' },
-    ];
-
-    hosts_table_column_da = [
-        { name: '#', sortable: false, no_export: true },
-        { name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true },
-        { name: 'Host Name', sortable: true, column: 'HostName', key: 'hostName' },
-        { name: 'Category', hidden: true, no_show: true, key: 'category' },
-        { name: 'General Category', hidden: true, no_show: true, key: 'generalCategory' },
-        { name: 'Dealer Name', sortable: true, column: 'BusinessName', key: 'businessName' },
-        { name: 'Address', sortable: true, column: 'Address', key: 'address' },
-        { name: 'City', sortable: true, column: 'City', key: 'city' },
-        { name: 'State', sortable: true, column: 'State', key: 'state' },
-        { name: 'Postal Code', sortable: true, column: 'PostalCode', key: 'postalCode' },
-        { name: 'Timezone', sortable: true, column: 'TimezoneName', key: 'timezoneName' },
-        { name: 'Total Licenses', sortable: true, column: 'TotalLicenses', key: 'totalLicenses' },
-        { name: 'Tags', hidden: true, no_show: true, key: 'tagsToString' },
-        { name: 'Business Hours', sortable: false, key: 'storeHoursParse', hidden: true, no_show: true },
-        { name: 'Total Business Hours', sortable: false, key: 'storeHoursTotal', hidden: true, no_show: true },
-        { name: 'DMA Rank', sortable: false, hidden: true, key: 'dmaRank', no_show: true },
-        { name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
-        { name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
-        { name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
-        { name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true },
+        { name: 'Vistar ID', no_show: true, key: 'vistarVenueId', no_show_to_da: true },
+        { name: 'Notes', no_show: true, hidden: true, key: 'notes', no_show_to_da: true },
+        { name: 'Others', no_show: true, hidden: true, key: 'others', no_show_to_da: true },
+        { name: 'Average Dwell Time', no_show: true, hidden: true, key: 'averageDwellTime', no_show_to_da: true },
+        { name: 'Foot Traffic', no_show: true, hidden: true, key: 'footTraffic', no_show_to_da: true },
     ];
 
     protected _unsubscribe = new Subject<void>();
@@ -422,32 +401,22 @@ export class HostsComponent implements OnInit {
         this.workbook.created = new Date();
         switch (tab) {
             case 'hosts':
-                if (this.is_dealer_admin === true) {
-                    this.worksheet = this.workbook.addWorksheet('Host View');
-                    Object.keys(this.hosts_table_column_da).forEach((key) => {
-                        if (this.hosts_table_column_da[key].name && !this.hosts_table_column_da[key].no_export) {
-                            header.push({
-                                header: this.hosts_table_column_da[key].name,
-                                key: this.hosts_table_column_da[key].key,
-                                width: 30,
-                                style: { font: { name: 'Arial', bold: true } },
-                            });
-                        }
-                    });
-                } else {
-                    this.worksheet = this.workbook.addWorksheet('Host View');
-
-                    Object.keys(this.hosts_table_column).forEach((key) => {
-                        if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
-                            header.push({
-                                header: this.hosts_table_column[key].name,
-                                key: this.hosts_table_column[key].key,
-                                width: 30,
-                                style: { font: { name: 'Arial', bold: true } },
-                            });
-                        }
+                this.worksheet = this.workbook.addWorksheet('Host View');
+                if (this.is_dealer_admin) {
+                    this.hosts_table_column = this.hosts_table_column.filter(function (column) {
+                        return column.no_show_to_da != true;
                     });
                 }
+                Object.keys(this.hosts_table_column).forEach((key) => {
+                    if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
+                        header.push({
+                            header: this.hosts_table_column[key].name,
+                            key: this.hosts_table_column[key].key,
+                            width: 30,
+                            style: { font: { name: 'Arial', bold: true } },
+                        });
+                    }
+                });
                 break;
             default:
         }
@@ -581,6 +550,11 @@ export class HostsComponent implements OnInit {
         data.generalCategory = data.generalCategory ? data.generalCategory : 'Other';
         data.storeHours = data.storeHours;
         data.storeHoursTotal = data.storeHoursTotal;
+        data.placerDump.map((dump) => {
+            data.averageDwellTime =
+                data.averageDwellTime != null ? data.averageDwellTime + '\n' + dump.month + ' - ' + dump.averageDwellTime : dump.month + ' - ' + dump.averageDwellTime;
+            data.footTraffic = data.footTraffic != null ? data.footTraffic + '\n' + dump.month + ' - ' + dump.footTraffic : dump.month + ' - ' + dump.footTraffic;
+        });
 
         if (data.tags && data.tags.length > 0) data.tagsToString = data.tags.join(',');
     }
