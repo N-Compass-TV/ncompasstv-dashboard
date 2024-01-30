@@ -1029,6 +1029,20 @@
                                     </div>
                                 </mat-card>
 
+                                <!-- EMAIL SETTINGS -->
+                                <mat-card class="p-4 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-even">
+                                            <h4>Display Control Settings</h4>
+                                            <p class="sm-text mb-0">Allows the player to control the TV display based on the business hour schedule.</p>
+                                        </div>
+                                        <div class="ml-5 text-right">
+                                            <mat-slide-toggle (change)="onDisplayControlSettingsSet($event)" [checked]="license_data.displayControlSettings == 1 ? true : false">
+                                            </mat-slide-toggle>
+                                        </div>
+                                    </div>
+                                </mat-card>
+
                                 <!-- NOTIFICATION SETTINGS -->
                                 <mat-card class="p-4 mb-3">
                                     <div class="d-flex align-items-center">

@@ -202,7 +202,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.adjustMinimapWidth();
     }
 
-    ngOnInit() {
+ngOnInit() {
         this.hasAdminPrivileges = this.isCurrentUserAdmin || this.isCurrentUserDealerAdmin;
         this.initializeSocketServer();
         this._helper.singleLicensePageCurrentTab = this.current_tab;
@@ -452,6 +452,22 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     }
                 );
         });
+    }
+
+    onDisplayControlSettingsSet(event: { checked: boolean }): void {
+        this._license.set_display_control_settings({
+            licenseId: this.license_id,
+            displayControlSettings: event.checked ? 1 : 0
+        })
+        .pipe(takeUntil(this._unsubscribe))
+        .subscribe(
+            () => {
+                alert(`Display Control Settings ${event.checked ? 'Enabled' : 'Disabled'} for this license`);
+            },
+            (error) => {
+                console.error(error);
+            }
+        );
     }
 
     onFilterContent(type: string, filter: string): void {
@@ -1008,7 +1024,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 (response) => {
                     this.pagingData = response;
 
-                    if (!response.entities || response.entities.length <= 0) return this.hasNoData = true;  
+                    if (!response.entities || response.entities.length <= 0) return this.hasNoData = true;
                     const images = response.entities as API_HOST_FILE[];
                     this.images = [...images];
                 },
@@ -1031,7 +1047,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         setTimeout(() => {
         this.tooltipMessage = 'Copy license key';
         this.showCopiedTooltip = true;
-        }, 1000); 
+        }, 1000);
     }
 
     private getLicenseById() {

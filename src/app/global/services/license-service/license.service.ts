@@ -624,6 +624,10 @@ export class LicenseService extends BaseService {
 		return this.postRequest(this.updaters.api_update_tvdisplay_settings, data);
 	}
 
+    set_display_control_settings(data: {licenseId: string, displayControlSettings: number}) {
+        return this.postRequest(this.updaters.api_update_display_control_settings, data);
+    }
+
 	set_fast_edge_tool_status(data: { licenseId: string; fastEdgeMonitoringTool: number }) {
 		return this.postRequest(this.updaters.api_update_fastedge_tool_settings, data);
 	}
