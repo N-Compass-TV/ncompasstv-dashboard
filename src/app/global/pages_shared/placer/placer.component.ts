@@ -99,16 +99,12 @@ export class PlacerComponent implements OnInit {
                 this.mapData(data, is_export);
             })
             .add(() => {
-                if (is_export) {
-                    this.readyForExport();
-                }
+                if (is_export) this.readyForExport();
             });
     }
 
     getPlacerData(page, is_export?) {
-        if (!is_export) {
-            this.searching_placer_data = true;
-        }
+        if (!is_export) this.searching_placer_data = true;
         this._placer
             .get_all_placer(page, this.search_keyword, this.sort_column, this.sort_order, this.filter.assignee, this.filter.date, is_export ? 0 : 15)
             .pipe(takeUntil(this._unsubscribe))
@@ -142,7 +138,6 @@ export class PlacerComponent implements OnInit {
     }
 
     private readyForExport() {
-        console.log('HERE');
         this.placer_to_export.forEach((item) => {
             this.worksheet.addRow(item).font = { bold: false };
         });
@@ -297,10 +292,8 @@ export class PlacerComponent implements OnInit {
             accept: ['.csv'],
             maxFiles: 1,
             onUploadDone: (response) => {
-                console.log('RESPONSE', response);
                 let filename = response.filesUploaded[0].key;
                 let new_filename = filename.split('csv/' + folder + '/');
-                console.log('NEW', new_filename);
                 this._placer
                     .upload_placer(new_filename[1])
                     .pipe(takeUntil(this._unsubscribe))
