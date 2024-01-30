@@ -140,6 +140,7 @@ export class PlacerComponent implements OnInit {
             this.total_placer = 0;
             return;
         }
+
         if (is_export) {
             this.placer_to_export = [...placer_data.paging.entities];
             this.modifyDataForExport(this.placer_to_export);

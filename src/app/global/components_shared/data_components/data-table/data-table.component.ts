@@ -597,9 +597,8 @@ export class DataTableComponent implements OnInit {
 
 
     editField(fields: any, label: string, value: any): void {
-        let width = '500px';
+        let width = '600px';
         const dialogParams: any = { width, data: { status: fields, message: label, data: value } };
-        if (fields.dropdown_edit) dialogParams.height = '220px';
         const dialog = this._dialog.open(EditableFieldModalComponent, dialogParams);
         const close = dialog.afterClosed().subscribe(
             (response: any) => {
