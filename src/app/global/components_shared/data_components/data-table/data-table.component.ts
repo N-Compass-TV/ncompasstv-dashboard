@@ -378,21 +378,11 @@ export class DataTableComponent implements OnInit {
 
     autoChargeToggle(e) {}
 
-    deleteScreen(id) {
-        this.warningModal('warning', 'Delete Screen', 'Are you sure you want to delete this screen?', '', 'screen_delete', id);
-    }
-
     deletePlaylist(id): void {
         this._playlist.get_playlist_by_id(id).subscribe(
             (data) => {
-                this.warningModal(
-                    'warning',
-                    'Delete Playlist',
-                    'Are you sure you want to delete this playlist?',
-                    '',
-                    data.screens.length ? 'playlist_delete' : 'playlist_delete_normal',
-                    id
-                );
+                if (data.screens.length == 0) this.warningModal('warning', 'Delete Playlist', 'Are you sure you want to delete this playlist?', '', 'playlist_delete', id);
+                else this.playlistDelete(id);
             },
             (error) => {
                 console.error(error);
@@ -448,7 +438,6 @@ export class DataTableComponent implements OnInit {
                         var array_to_delete = [];
                         array_to_delete.push(id);
                         this.licenseDelete(array_to_delete);
-
                         this.createActivity(deleteLicenseActivity);
                         break;
                     case 'playlist_delete':
@@ -460,7 +449,6 @@ export class DataTableComponent implements OnInit {
                     case 'advertiser_delete':
                         this.advertiserDelete(id, 0);
                         this.createActivity(deleteAdvertiser);
-
                         break;
                     case 'advertiser_delete_force':
                         this.advertiserDelete(id, 1);
@@ -474,23 +462,18 @@ export class DataTableComponent implements OnInit {
                                 case 'single-host-images-tab':
                                     this._helper.onRefreshSingleHostImagesTab.next();
                                     break;
-
                                 case 'single-host-documents-tab':
                                     this._helper.onRefreshSingleHostDocumentsTab.next();
                                     break;
                             }
                         });
-
                         break;
-
                     case 'push_update_all_licenses':
                         this.pushAllLicenseUpdates(id);
                         break;
-
                     case 'delete-release-note':
                         this._release.onDeleteNoteFromDataTable.next({ releaseNoteId: id });
                         break;
-
                     case 'ticket_delete':
                         this.ticketDelete(id);
                         break;
@@ -540,6 +523,7 @@ export class DataTableComponent implements OnInit {
         );
     }
 
+
     deletePlacerDump(id): void {
         this._placer.delete_placer_dump(id).subscribe(
             (data) => {
@@ -568,11 +552,8 @@ export class DataTableComponent implements OnInit {
         this.subscription.add(
             this._playlist.remove_playlist(id, 0).subscribe(
                 (data) => {
-                    if (!data.screens) {
-                        this.update_info.emit(true);
-                    } else {
-                        this.deletePlaylistModal({ screens: data.screens, playlist_id: id });
-                    }
+                    if (!data.screens) this.update_info.emit(true);
+                    else this.deletePlaylistModal({ screens: data.screens, playlist_id: id });
                 },
                 (error) => {
                     console.error(error);
@@ -614,20 +595,16 @@ export class DataTableComponent implements OnInit {
         );
     }
 
+
     editField(fields: any, label: string, value: any): void {
         let width = '500px';
-
         const dialogParams: any = { width, data: { status: fields, message: label, data: value } };
-
         if (fields.dropdown_edit) dialogParams.height = '220px';
-
         const dialog = this._dialog.open(EditableFieldModalComponent, dialogParams);
-
         const close = dialog.afterClosed().subscribe(
             (response: any) => {
                 close.unsubscribe();
                 if (!response || response === '--') return;
-
                 switch (label) {
                     case 'License Alias':
                         this.subscription.add(
@@ -668,7 +645,6 @@ export class DataTableComponent implements OnInit {
                                 }
                             )
                         );
-
                     case 'Host Document Alias':
                     case 'Host Photo Alias':
                         this._host
