@@ -13,9 +13,23 @@
             </ng-container>
             <ng-container>
                 <mat-form-field class="mx-2">
-                    <input matInput readonly [matDatepicker]="picker" [(ngModel)]="pickerDate" placeholder="Select Month and Year" />
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker startView="multi-year" [startAt]="pickerDate" (monthSelected)="closeDatePicker($event)"></mat-datepicker>
+                    <input matInput readonly [matDatepicker]="pickerfrom" [(ngModel)]="pickerDateFrom" placeholder="Select Date From" [max]="today" />
+                    <mat-datepicker-toggle matSuffix [for]="pickerfrom"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerfrom startView="multi-year" [startAt]="pickerDateFrom" (monthSelected)="closeDatePickerFrom($event)"></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field class="mx-2">
+                    <input
+                        matInput
+                        readonly
+                        [matDatepicker]="pickerto"
+                        [(ngModel)]="pickerDateTo"
+                        placeholder="Select Date To"
+                        [disabled]="pickerDateFrom == ''"
+                        [min]="pickerDateFrom"
+                        [max]="today"
+                    />
+                    <mat-datepicker-toggle matSuffix [for]="pickerto"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerto startView="multi-year" [startAt]="pickerDateTo" (monthSelected)="closeDatePickerTo($event)"></mat-datepicker>
                 </mat-form-field>
             </ng-container>
             <button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary mr-2" (click)="exportTable()" [disabled]="workbook_generation" title="Export to CSV">
@@ -40,14 +54,16 @@
         </div>
     </div>
 
-    <ng-container *ngIf="filter.assignee_label || filter.date_label">
+    <ng-container *ngIf="filter.assignee_label || filter.date_to_label">
         <div class="flex p-2 mb-4 bg-gray-2">
             <div class="flex-even d-inline-flex">
                 <div class="pt-2 pill" *ngIf="filter.assignee_label">
                     Status: <strong>{{ filter.assignee_label }}</strong>
                 </div>
-                <div class="pt-2 pill" *ngIf="filter.date_label">
-                    Date Selected: <strong>{{ filter.date_label }}</strong>
+                <div class="pt-2 pill" *ngIf="filter.date_to_label">
+                    Date Selected: <strong>{{ filter.date_from_label }}</strong
+                    ><strong><span> -</span></strong
+                    ><strong>{{ filter.date_to_label }}</strong>
                 </div>
                 <div class="p-2">
                     <p class="sm-text">
@@ -74,7 +90,7 @@
                         [table_columns]="placer_table_column"
                         [new_table]="true"
                         [paging_details]="paging_data"
-                        (page_triggered)="getPlacerData($event)"
+                        (page_triggered)="checkForApiToCall($event)"
                         (to_sort_column)="getColumnsAndOrder($event)"
                         [active_tab]="sort_column"
                         [sort_column]="sort_column"

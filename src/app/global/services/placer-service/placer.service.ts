@@ -7,13 +7,13 @@ import { BaseService } from '../base.service';
     providedIn: 'root',
 })
 export class PlacerService extends BaseService {
-    get_all_placer(page: number, keyword: string, sortColumn: string, sortOrder: string, filter: string, month: string, pageSize: number) {
-        const url = `${this.getters.api_get_placer}?page=${page}&search=${keyword}&sortColumn=${sortColumn}&sortOrder=${sortOrder}&filter=${filter}&month=${month}&pageSize=${pageSize}`;
+    get_all_placer(page: number, keyword: string, sortColumn: string, sortOrder: string, filter: string, from: string, to: string, pageSize: number) {
+        const url = `${this.getters.api_get_placer}?page=${page}&search=${keyword}&sortColumn=${sortColumn}&sortOrder=${sortOrder}&filter=${filter}&from=${from}&to=${to}&pageSize=${pageSize}`;
         return this.getRequest(url);
     }
 
-    get_single_host_placer(host_id: string, page: number, keyword: string, sortColumn: string, sortOrder: string, filter: string, month: string, pageSize: number) {
-        const url = `${this.getters.api_get_placer_for_host}${host_id}?page=${page}&search=${keyword}&sortColumn=${sortColumn}&sortOrder=${sortOrder}&filter=${filter}&month=${month}&pageSize=${pageSize}`;
+    get_single_host_placer(host_id: string, page: number, keyword: string, sortColumn: string, sortOrder: string, filter: string, from: string, to: string, pageSize: number) {
+        const url = `${this.getters.api_get_placer_for_host}${host_id}?page=${page}&search=${keyword}&sortColumn=${sortColumn}&sortOrder=${sortOrder}&filter=${filter}&from=${from}&to=${to}&pageSize=${pageSize}`;
         return this.getRequest(url);
     }
 

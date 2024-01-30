@@ -47,8 +47,10 @@ export class PlacerComponent implements OnInit {
     filter: any = {
         assignee: '0',
         assignee_label: '',
-        date: '',
-        date_label: '',
+        date_from: '',
+        date_from_label: '',
+        date_to: '',
+        date_to_label: '',
     };
     host_name: string = '';
     initial_load_placer: boolean = false;
@@ -65,8 +67,11 @@ export class PlacerComponent implements OnInit {
     workbook_generation = false;
     worksheet: any;
 
-    pickerDate;
-    @ViewChild('picker', { static: false }) datePicker: MatDatepicker<any>;
+    today: Date = new Date();
+    pickerDateFrom = '';
+    pickerDateTo = '';
+    @ViewChild('pickerfrom', { static: false }) datePickerFrom: MatDatepicker<any>;
+    @ViewChild('pickerto', { static: false }) datePickerTo: MatDatepicker<any>;
 
     protected _unsubscribe = new Subject<void>();
 
@@ -85,14 +90,24 @@ export class PlacerComponent implements OnInit {
     }
 
     private checkForApiToCall(page?, for_export?) {
-        if (this.host_id != '') this.getPlacerForHost(1, for_export);
-        else this.getPlacerData(1, for_export);
+        if (this.host_id != '') this.getPlacerForHost(page ? page : 1, for_export);
+        else this.getPlacerData(page ? page : 1, for_export);
     }
 
     private getPlacerForHost(page, is_export?) {
         if (!is_export) this.searching_placer_data = true;
         this._placer
-            .get_single_host_placer(this.host_id, page, this.search_keyword, this.sort_column, this.sort_order, this.filter.assignee, this.filter.date, 15)
+            .get_single_host_placer(
+                this.host_id,
+                page,
+                this.search_keyword,
+                this.sort_column,
+                this.sort_order,
+                this.filter.assignee,
+                this.filter.date_from,
+                this.filter.date_to,
+                15
+            )
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
                 this.searching_placer_data = false;
@@ -106,7 +121,7 @@ export class PlacerComponent implements OnInit {
     getPlacerData(page, is_export?) {
         if (!is_export) this.searching_placer_data = true;
         this._placer
-            .get_all_placer(page, this.search_keyword, this.sort_column, this.sort_order, this.filter.assignee, this.filter.date, is_export ? 0 : 15)
+            .get_all_placer(page, this.search_keyword, this.sort_column, this.sort_order, this.filter.assignee, this.filter.date_from, this.filter.date_to, is_export ? 0 : 15)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
                 this.searching_placer_data = false;
@@ -122,6 +137,7 @@ export class PlacerComponent implements OnInit {
             this.placer_data = [];
             this.filtered_placer_data = [];
             this.paging_data = [];
+            this.total_placer = 0;
             return;
         }
         if (is_export) {
@@ -239,15 +255,19 @@ export class PlacerComponent implements OnInit {
         this.checkForApiToCall(1, true);
     }
 
-    filterTable(value, label, is_date?) {
-        if (is_date) {
-            this.filter.date = value;
-            this.filter.date_label = label;
+    filterTable(value, label, is_date_from?, is_date_to?) {
+        if (is_date_from) {
+            this.filter.date_from = value;
+            this.filter.date_from_label = label;
+        } else if (is_date_to) {
+            this.filter.date_to = value;
+            this.filter.date_to_label = label;
         } else {
             this.filter.assignee = value;
             this.filter.assignee_label = label;
         }
-        this.checkForApiToCall();
+
+        if (this.filter.date_to_label || this.filter.assignee_label != '') this.checkForApiToCall();
     }
 
     private modifyDataForExport(data) {
@@ -265,10 +285,13 @@ export class PlacerComponent implements OnInit {
         this.filter = {
             assignee: '0',
             assignee_label: '',
-            date: '',
-            date_label: '',
+            date_to: '',
+            date_to_label: '',
+            date_from: '',
+            date_from_label: '',
         };
-        this.pickerDate = '';
+        this.pickerDateFrom = '';
+        this.pickerDateTo = '';
         this.checkForApiToCall();
     }
 
@@ -307,9 +330,15 @@ export class PlacerComponent implements OnInit {
         };
     }
 
-    closeDatePicker(event) {
-        this.pickerDate = event;
-        this.filterTable(moment(event).format('MMMM YYYY'), moment(event).format('MMMM YYYY'), true);
-        this.datePicker.close();
+    closeDatePickerFrom(event) {
+        this.pickerDateFrom = event;
+        this.filterTable(moment(event).format('MMMM YYYY'), moment(event).format('MMMM YYYY'), true, false);
+        this.datePickerFrom.close();
+    }
+
+    closeDatePickerTo(event) {
+        this.pickerDateTo = event;
+        this.filterTable(moment(event).format('MMMM YYYY'), moment(event).format('MMMM YYYY'), false, true);
+        this.datePickerTo.close();
     }
 }
