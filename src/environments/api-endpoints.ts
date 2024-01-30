@@ -164,6 +164,7 @@ export const API_ENDPOINTS = {
         api_get_stats: 'dealer/getstatistics',
         api_get_support: 'support/getall',
         api_get_timezone: 'timezone/getall',
+        api_get_timezoneByCoordinate: 'https://api.timezonedb.com/v2.1',
         api_get_template_by_dealer_id: 'template/gettemplatebydealerid?dealerid=',
         api_get_template_by_id: 'template/gettemplatebyid?templateId=',
         api_get_templates: 'template/getall',
