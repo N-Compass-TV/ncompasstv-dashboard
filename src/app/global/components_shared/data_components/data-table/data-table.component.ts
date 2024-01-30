@@ -378,6 +378,10 @@ export class DataTableComponent implements OnInit {
 
     autoChargeToggle(e) {}
 
+    deleteScreen(id) {
+        this.warningModal('warning', 'Delete Screen', 'Are you sure you want to delete this screen?', '', 'screen_delete', id);
+    }
+
     deletePlaylist(id): void {
         this._playlist.get_playlist_by_id(id).subscribe(
             (data) => {
