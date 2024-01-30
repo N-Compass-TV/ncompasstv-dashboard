@@ -992,7 +992,7 @@
                                             </p>
                                         </div>
                                         <div class="ml-5 text-right">
-                                            <mat-slide-toggle (change)="disableScreenshot($event)" [checked]="license_data.screenshotSettings == 1 ? true : false">
+                                            <mat-slide-toggle (change)="disableScreenshot($event)" [checked]="license_data.screenshotSettings === 1">
                                             </mat-slide-toggle>
                                         </div>
                                     </div>
@@ -1009,7 +1009,7 @@
                                             </p>
                                         </div>
                                         <div class="ml-5 text-right">
-                                            <mat-slide-toggle (change)="disableSpeedtest($event)" [checked]="license_data.speedtestSettings == 1 ? true : false">
+                                            <mat-slide-toggle (change)="disableSpeedtest($event)" [checked]="license_data.speedtestSettings === 1">
                                             </mat-slide-toggle>
                                         </div>
                                     </div>
@@ -1023,7 +1023,7 @@
                                             <p class="sm-text mb-0">Allows the dealer to receive EMAIL notifications from this license when the device is offline.</p>
                                         </div>
                                         <div class="ml-5 text-right">
-                                            <mat-slide-toggle (change)="onUpdateNotificationSettings($event, 'email')" [checked]="license_data.emailSettings == 1 ? true : false">
+                                            <mat-slide-toggle (change)="onUpdateNotificationSettings($event, 'email')" [checked]="license_data.emailSettings === 1">
                                             </mat-slide-toggle>
                                         </div>
                                     </div>
@@ -1037,7 +1037,7 @@
                                             <p class="sm-text mb-0">Allows the player to control the TV display based on the business hour schedule.</p>
                                         </div>
                                         <div class="ml-5 text-right">
-                                            <mat-slide-toggle (change)="onDisplayControlSettingsSet($event)" [checked]="license_data.displayControlSettings == 1 ? true : false">
+                                            <mat-slide-toggle (change)="onDisplayControlSettingsSet($event)" [checked]="license_data.displayControlSettings === 1">
                                             </mat-slide-toggle>
                                         </div>
                                     </div>
@@ -1053,7 +1053,7 @@
                                         <div class="ml-5 text-right">
                                             <mat-slide-toggle
                                                 (change)="onUpdateNotificationSettings($event, 'notification')"
-                                                [checked]="license_data.notificationSettings == 1 ? true : false"
+                                                [checked]="license_data.notificationSettings === 1"
                                             >
                                             </mat-slide-toggle>
                                         </div>
@@ -1070,7 +1070,7 @@
                                             </p>
                                         </div>
                                         <div class="ml-5 text-right">
-                                            <mat-slide-toggle (change)="disableResource($event)" [checked]="license_data.resourceSettings == 1 ? true : false"> </mat-slide-toggle>
+                                            <mat-slide-toggle (change)="disableResource($event)" [checked]="license_data.resourceSettings === 1"> </mat-slide-toggle>
                                         </div>
                                     </div>
                                 </mat-card>
