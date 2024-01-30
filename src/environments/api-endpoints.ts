@@ -333,6 +333,7 @@ export const API_ENDPOINTS = {
         api_update_speedtest_settings: 'license/speedtestsettings',
         api_update_resource_settings: 'license/resourcesettings',
         api_update_tvdisplay_settings: 'license/tvdisplaysettings',
+        api_update_display_control_settings: 'license/displaycontrolsettings',
         api_update_fastedge_tool_settings: 'license/update/fastedge/monitoringtool',
         api_update_filler_feed: 'feed/update/fillers',
         api_update_slide_feed: 'feed/update/slides',
