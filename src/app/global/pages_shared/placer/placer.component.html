@@ -1,0 +1,106 @@
+<div *ngIf="!initial_load_placer; else loader">
+    <div class="flex mt-3">
+        <div class="flex-even">
+            <ng-container *ngIf="host_id == ''">
+                <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="assignee">
+                    <span class="button-label">Status</span>
+                    <span class="fas fa-user xsm-text"></span>
+                </button>
+                <mat-menu #assignee="matMenu">
+                    <button class="md-text" mat-menu-item (click)="filterTable('1', 'Assigned')"><span class="fas fa-user text-gray mr-3"></span>Assigned</button>
+                    <button class="md-text" mat-menu-item (click)="filterTable('2', 'Unassigned')"><span class="fas fa-user-slash text-gray mr-3"></span>Unassigned</button>
+                </mat-menu>
+            </ng-container>
+            <ng-container>
+                <mat-form-field class="mx-2">
+                    <input matInput readonly [matDatepicker]="picker" [(ngModel)]="pickerDate" placeholder="Select Month and Year" />
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker startView="multi-year" [startAt]="pickerDate" (monthSelected)="closeDatePicker($event)"></mat-datepicker>
+                </mat-form-field>
+            </ng-container>
+            <button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary mr-2" (click)="exportTable()" [disabled]="workbook_generation" title="Export to CSV">
+                <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                <span class="ml-2 button_text_animation">{{ !workbook_generation ? "Export" : "Generating CSV" }}</span>
+            </button>
+            <button mat-button mat-raised-button class="theme-btn pi-control sm-text _cool mr-2" (click)="uploadPlacer()" title="Upload Placer Data" *ngIf="host_id == ''">
+                <span class="fa fa-upload text-white"></span>
+                <span class="ml-2 button_text_animation">Upload Placer Data</span>
+            </button>
+        </div>
+        <div class="search-field-container">
+            <app-search-field
+                [form_title]="'Search via Placer Id, Placer Name or Hostname'"
+                [placeholder]="'Example: N-Compass TV Host'"
+                [data_reference]="placer_data"
+                [primary_keyword]="'placerName'"
+                [secondary_keyword]="'placerId'"
+                (searched)="filterData($event)"
+                [api_search]="true"
+            ></app-search-field>
+        </div>
+    </div>
+
+    <ng-container *ngIf="filter.assignee_label || filter.date_label">
+        <div class="flex p-2 mb-4 bg-gray-2">
+            <div class="flex-even d-inline-flex">
+                <div class="pt-2 pill" *ngIf="filter.assignee_label">
+                    Status: <strong>{{ filter.assignee_label }}</strong>
+                </div>
+                <div class="pt-2 pill" *ngIf="filter.date_label">
+                    Date Selected: <strong>{{ filter.date_label }}</strong>
+                </div>
+                <div class="p-2">
+                    <p class="sm-text">
+                        Showing <span class="text-danger">{{ paging_data.pageSize ? (paging_data.pageSize > total_placer ? total_placer : paging_data.pageSize) : 0 }}</span> out of
+                        <span class="text-danger">{{ total_placer }}</span> placer records.
+                    </p>
+                </div>
+            </div>
+            <div class="text-right">
+                <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+                    <span class="button-label"> Clear Filter </span>
+                    <span class="fas fa-times ml-2 sm-text"></span>
+                </button>
+            </div>
+        </div>
+    </ng-container>
+
+    <div class="flex">
+        <div class="full-width">
+            <ng-container *ngIf="!searching_placer_data; else loader">
+                <mat-card *ngIf="filtered_placer_data.length > 0; else nodata">
+                    <app-data-table
+                        [table_data]="filtered_placer_data"
+                        [table_columns]="placer_table_column"
+                        [new_table]="true"
+                        [paging_details]="paging_data"
+                        (page_triggered)="getPlacerData($event)"
+                        (to_sort_column)="getColumnsAndOrder($event)"
+                        [active_tab]="sort_column"
+                        [sort_column]="sort_column"
+                        [sort_order]="sort_order"
+                        (update_info)="reloadPage($event)"
+                        [placer_delete]="true"
+                    >
+                    </app-data-table>
+                </mat-card>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<ng-template #loader>
+    <div class="py-4 white-bg h-500">
+        <app-spinner></app-spinner>
+    </div>
+</ng-template>
+
+<ng-template #nodata>
+    <div class="flex">
+        <mat-card class="py-5 full-width text-center text-gray">
+            <span class="fa-5x far fa-file-alt mb-4"></span>
+            <h3>No Results Found.</h3>
+            <span>Try adjusting your search to find what you're looking for.</span>
+        </mat-card>
+    </div>
+</ng-template>
