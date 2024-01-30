@@ -48,7 +48,9 @@ export class AddContentComponent implements OnInit, OnDestroy {
             assets: API_CONTENT_V2[];
             floatingAssets: API_CONTENT_V2[];
             dealerId: string;
+            isAdmin: boolean;
             isDealer: boolean;
+            isDealerAdmin: boolean;
             hostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
             playlistContentId: string;
             playlistId: string;

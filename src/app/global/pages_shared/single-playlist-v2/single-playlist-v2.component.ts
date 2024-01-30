@@ -263,7 +263,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         };
 
         requests.push(this._playlist.contentFetch(dealerContentConfig));
-        if (this.isAdmin) requests.push(this._playlist.contentFetch(floatingContentConfig));
+        if (this.isAdmin || this.isDealer) requests.push(this._playlist.contentFetch(floatingContentConfig));
 
         forkJoin(requests).subscribe({
             next: ([dealerContents, floatingContents]: [{ contents?: API_CONTENT_V2[]; page?: any; message?: string }, { iContents: API_CONTENT_V2[]; page: any }]) => {
@@ -788,7 +788,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                 dealerId: this.playlist.dealerId,
                 floatingAssets: this.floatingAssets,
                 hostLicenses: this.playlistHostLicenses,
+                isAdmin: this.isAdmin,
                 isDealer: this.isDealer,
+                isDealerAdmin: this.isDealerAdmin,
                 playlistContentId: mode === 'swap' ? contentToSwap.playlistContentId : null,
                 playlistId: this.playlist.playlistId,
             },
@@ -1091,10 +1093,14 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
     }
 
     protected get isAdmin() {
-        return this._auth.current_role === 'administrator';
+        return this.currentRole === 'administrator';
     }
 
     protected get isDealer() {
-        return this._auth.current_role === 'dealer';
+        return this.currentRole === 'dealer';
+    }
+
+    protected get isDealerAdmin() {
+        return this.currentRole === 'dealeradmin';
     }
 }
