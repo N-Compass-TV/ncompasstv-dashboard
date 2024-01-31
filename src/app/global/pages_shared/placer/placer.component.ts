@@ -43,7 +43,7 @@ export class PlacerComponent implements OnInit {
     ];
 
     date = new FormControl(moment());
-
+    hostsData = [];
     placer_data: any[] = [];
     filtered_placer_data: any[] = [];
     filter: any = {
@@ -89,6 +89,7 @@ export class PlacerComponent implements OnInit {
                 });
         }
         this.checkForApiToCall();
+        this.getHosts();
     }
 
     public checkForApiToCall(page?, for_export?) {
@@ -120,7 +121,21 @@ export class PlacerComponent implements OnInit {
             });
     }
 
-    getPlacerData(page, is_export?) {
+    private getHosts() {
+        this._host
+            .get_host_minified()
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((hosts) => {
+                this.hostsData = hosts.map((host) => {
+                    return {
+                        id: host.hostId,
+                        value: `${host.name} | ${host.address}, ${host.city}`
+                    };
+                });
+        })
+    }
+
+    private getPlacerData(page, is_export?) {
         if (!is_export) this.searching_placer_data = true;
         this._placer
             .get_all_placer(page, this.search_keyword, this.sort_column, this.sort_order, this.filter.assignee, this.filter.date_from, this.filter.date_to, is_export ? 0 : 15)
