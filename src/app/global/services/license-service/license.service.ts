@@ -594,8 +594,8 @@ export class LicenseService extends BaseService {
 
 	get_activities(id: string) {
 		const base = `${this.getters.api_get_activities_by_license_id}`;
-		const params = this.setUrlParams({ id }, false, true);
-		const url = `${base}${params}`;
+		const sortUrl = `&sortOrder=desc&sortColumn=DateCreated`;
+		const url = `${base}${id}${sortUrl}` ;
 		return this.getRequest(url);
 	}
 
