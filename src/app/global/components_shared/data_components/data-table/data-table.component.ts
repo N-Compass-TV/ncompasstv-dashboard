@@ -378,6 +378,10 @@ export class DataTableComponent implements OnInit {
 
     autoChargeToggle(e) {}
 
+    deleteScreen(id) {
+        this.warningModal('warning', 'Delete Screen', 'Are you sure you want to delete this screen?', '', 'screen_delete', id);
+    }
+
     deletePlaylist(id): void {
         this._playlist.get_playlist_by_id(id).subscribe(
             (data) => {
@@ -597,9 +601,8 @@ export class DataTableComponent implements OnInit {
 
 
     editField(fields: any, label: string, value: any): void {
-        let width = '500px';
+        let width = '600px';
         const dialogParams: any = { width, data: { status: fields, message: label, data: value } };
-        if (fields.dropdown_edit) dialogParams.height = '220px';
         const dialog = this._dialog.open(EditableFieldModalComponent, dialogParams);
         const close = dialog.afterClosed().subscribe(
             (response: any) => {
