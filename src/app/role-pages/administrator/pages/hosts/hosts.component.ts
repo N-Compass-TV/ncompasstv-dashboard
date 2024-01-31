@@ -73,8 +73,6 @@ export class HostsComponent implements OnInit {
         { name: 'Vistar ID', no_show: true, key: 'vistarVenueId', no_show_to_da: true },
         { name: 'Notes', no_show: true, hidden: true, key: 'notes', no_show_to_da: true },
         { name: 'Others', no_show: true, hidden: true, key: 'others', no_show_to_da: true },
-        { name: 'Average Dwell Time', no_show: true, hidden: true, key: 'averageDwellTime', no_show_to_da: true },
-        { name: 'Foot Traffic', no_show: true, hidden: true, key: 'footTraffic', no_show_to_da: true },
     ];
 
     protected _unsubscribe = new Subject<void>();
@@ -406,6 +404,13 @@ export class HostsComponent implements OnInit {
                     this.hosts_table_column = this.hosts_table_column.filter(function (column) {
                         return column.no_show_to_da != true;
                     });
+                } else {
+                    for (let i = 1; i < 13; i++) {
+                        this.hosts_table_column.push(
+                            { name: moment(i, 'M').format('MMMM') + ' - Average Dwell Time', no_show: true, hidden: true, key: 'averageDwellTime-' + i, no_show_to_da: true },
+                            { name: moment(i, 'M').format('MMMM') + ' - Foot Traffic', no_show: true, hidden: true, key: 'footTraffic-' + i, no_show_to_da: true }
+                        );
+                    }
                 }
                 Object.keys(this.hosts_table_column).forEach((key) => {
                     if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
@@ -550,10 +555,23 @@ export class HostsComponent implements OnInit {
         data.generalCategory = data.generalCategory ? data.generalCategory : 'Other';
         data.storeHours = data.storeHours;
         data.storeHoursTotal = data.storeHoursTotal;
+
+        //To Set AVG Dwell Time and Foot Traffic Default Value to 0
+        for (let i = 1; i < 13; i++) {
+            var average_dwell_time_with_index = 'averageDwellTime-' + i;
+            var foot_traffic_with_index = 'footTraffic-' + i;
+            data[average_dwell_time_with_index] = 0;
+            data[foot_traffic_with_index] = 0;
+        }
+
+        //To Overwrite Dwell Time and Foot Traffic to available months only
         data.placerDump.map((dump) => {
-            data.averageDwellTime =
-                data.averageDwellTime != null ? data.averageDwellTime + '\n' + dump.month + ' - ' + dump.averageDwellTime : dump.month + ' - ' + dump.averageDwellTime;
-            data.footTraffic = data.footTraffic != null ? data.footTraffic + '\n' + dump.month + ' - ' + dump.footTraffic : dump.month + ' - ' + dump.footTraffic;
+            let dissected_month = dump.month.split(' ');
+            let month_index = moment().month(dissected_month[0]).format('M');
+            var average_dwell_time_with_index = 'averageDwellTime-' + month_index[0];
+            var foot_traffic_with_index = 'footTraffic-' + month_index[0];
+            data[average_dwell_time_with_index] = dump.averageDwellTime;
+            data[foot_traffic_with_index] = dump.footTraffic;
         });
 
         if (data.tags && data.tags.length > 0) data.tagsToString = data.tags.join(',');
