@@ -16,7 +16,7 @@ export class EditableFieldModalComponent implements OnInit {
     status: any;
     data: string;
     date: any;
-    hosts_data: UI_AUTOCOMPLETE[] = [];
+    hosts_data: UI_AUTOCOMPLETE;
     host_selected: string = '';
     screen_init: string;
     screen_types: Array<any> = [];
@@ -83,30 +83,29 @@ export class EditableFieldModalComponent implements OnInit {
 
     getHosts() {
         this.subscription.add(
-            this._host.get_host_minified().subscribe((data) => {
-                this.hosts_data = [];
-                data = data.map((host) => {
+            this._host.get_host_minified().subscribe((hosts) => {
+                const hostsData = hosts.map((host) => {
                     return {
-                        value: host.name,
                         id: host.hostId,
+                        value: `${host.name} | ${host.address}, ${host.city}`
                     };
                 });
 
-                this.hosts_data = [
-                    {
-                        label: 'Select Host',
-                        placeholder: 'Ex. NCompass TV Host',
-                        data: data,
-                        initialValue: this._dialog_data.status.additional_params.hostId
-                            ? [
-                                  {
-                                      id: this._dialog_data.status.additional_params.hostId,
-                                      value: this._dialog_data.status.additional_params.hostName,
-                                  },
-                              ]
-                            : [],
-                    },
-                ];
+                const initialValueHostWithAddress = hostsData.filter(i => i.id == this._dialog_data.status.additional_params.hostId)[0].value;
+
+                this.hosts_data = {
+                    label: 'Select Host',
+                    placeholder: 'Ex. NCompass TV Host',
+                    data: hostsData,
+                    initialValue: this._dialog_data.status.additional_params.hostId
+                        ? [
+                                {
+                                    id: this._dialog_data.status.additional_params.hostId,
+                                    value: initialValueHostWithAddress,
+                                },
+                            ]
+                        : [],
+                }
             })
         );
     }

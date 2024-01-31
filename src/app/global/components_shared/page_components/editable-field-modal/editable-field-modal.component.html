@@ -50,8 +50,8 @@
             </div><!-- Form Body: Screen -->
 
             <div class="form-body mb-3" *ngIf="status.label == 'Hosts'">
-                <ng-container *ngIf="hosts_data[0]; else loader">
-                    <app-autocomplete [field_data]="hosts_data[0]" *ngIf="hosts_data[0] && hosts_data[0].data.length > 0" (value_selected)="setHost($event)"> </app-autocomplete>
+                <ng-container *ngIf="hosts_data; else loader">
+                    <app-autocomplete [field_data]="hosts_data" *ngIf="hosts_data && hosts_data.data.length" (value_selected)="setHost($event)"> </app-autocomplete>
                 </ng-container>
             </div><!-- Form Body: Host -->
 

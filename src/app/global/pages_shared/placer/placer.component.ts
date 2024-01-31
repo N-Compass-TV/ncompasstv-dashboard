@@ -16,6 +16,7 @@ import { environment } from 'src/environments/environment';
 
 import { UI_PLACER_DATA } from 'src/app/global/models';
 import { PlacerService, HostService } from 'src/app/global/services';
+import { API_PLACER } from '../../models/api_placer.model';
 
 @Component({
     selector: 'app-placer',
@@ -30,6 +31,7 @@ export class PlacerComponent implements OnInit {
         { name: 'Placer Id', key: 'placerId' },
         { name: 'Placer Name', key: 'placerName', sortable: true, column: 'PlacerName' },
         { name: 'Host Name', key: 'hostName', sortable: true, column: 'HostName' },
+        { name: 'Address', key: 'address', sortable: true, column: 'Address' },
         { name: 'Foot Traffic', key: 'footTraffic', sortable: true, column: 'FootTraffic' },
         { name: 'Average Dwell Time', key: 'averageDwellTime', sortable: true, column: 'AverageDwellTime' },
         { name: 'Month', key: 'month', sortable: true, column: 'Month' },
@@ -173,7 +175,7 @@ export class PlacerComponent implements OnInit {
         this.workbook_generation = false;
     }
 
-    placer_mapToUIFormat(data: any[]) {
+    placer_mapToUIFormat(data: API_PLACER[]) {
         let count = this.paging_data.pageStart;
         return data.map((placer) => {
             const table = new UI_PLACER_DATA(
@@ -206,6 +208,7 @@ export class PlacerComponent implements OnInit {
                         placername: placer.placerName ? placer.placerName : '',
                     },
                 },
+                { value: `${placer.address}, ${placer.city}, ${placer.state} ${placer.postalCode}`, link: null, editable: false, key: false },
                 { value: placer.footTraffic, link: null, editable: false, key: false },
                 { value: placer.averageDwellTime, link: null, editable: false, key: false },
                 { value: placer.month, link: null, editable: false, key: false },
