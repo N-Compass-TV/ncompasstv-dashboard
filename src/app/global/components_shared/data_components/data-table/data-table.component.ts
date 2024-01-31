@@ -55,6 +55,7 @@ export class DataTableComponent implements OnInit {
     @Input() fillers: boolean;
     @Input() has_action = false;
     @Input() has_timestamp_beside_image = true;
+    @Input() host_data = [];
     @Input() is_dealer: boolean;
     @Input() is_delete_enabled = false;
     @Input() is_view_only = false;
@@ -603,6 +604,7 @@ export class DataTableComponent implements OnInit {
     editField(fields: any, label: string, value: any): void {
         let width = '600px';
         const dialogParams: any = { width, data: { status: fields, message: label, data: value } };
+        if (label === 'Hosts') dialogParams.data.hostsData = this.host_data;
         const dialog = this._dialog.open(EditableFieldModalComponent, dialogParams);
         const close = dialog.afterClosed().subscribe(
             (response: any) => {

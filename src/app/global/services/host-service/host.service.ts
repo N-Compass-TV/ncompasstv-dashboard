@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subject } from 'rxjs';
 
 import { BaseService } from '../base.service';
-import { API_DEALER, API_FILTERS, API_HOST, API_TIMEZONE, CustomFieldGroup, HOST_S3_FILE, PAGING, TAG } from 'src/app/global/models';
+import { API_DEALER, API_FILTERS, API_HOST, API_HOST_MINIFIED, API_TIMEZONE, CustomFieldGroup, HOST_S3_FILE, PAGING, TAG } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Injectable({
@@ -131,7 +131,7 @@ export class HostService extends BaseService {
         return this.getRequest(url).map((data) => data.host);
     }
 
-    get_host_minified() {
+    get_host_minified(): Observable<API_HOST_MINIFIED[]> {
         const url = `${this.getters.api_get_hosts_minified}?pageSize=0`;
         return this.getRequest(url).map((data) => data.paging.entities);
     }

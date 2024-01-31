@@ -16,6 +16,7 @@ import { environment } from 'src/environments/environment';
 
 import { UI_PLACER_DATA } from 'src/app/global/models';
 import { PlacerService, HostService } from 'src/app/global/services';
+import { API_PLACER } from '../../models/api_placer.model';
 
 @Component({
     selector: 'app-placer',
@@ -30,6 +31,7 @@ export class PlacerComponent implements OnInit {
         { name: 'Placer Id', key: 'placerId' },
         { name: 'Placer Name', key: 'placerName', sortable: true, column: 'PlacerName' },
         { name: 'Host Name', key: 'hostName', sortable: true, column: 'HostName' },
+        { name: 'Address', key: 'address', sortable: true, column: 'Address' },
         { name: 'Foot Traffic', key: 'footTraffic', sortable: true, column: 'FootTraffic' },
         { name: 'Average Dwell Time', key: 'averageDwellTime', sortable: true, column: 'AverageDwellTime' },
         { name: 'Month', key: 'month', sortable: true, column: 'Month' },
@@ -41,7 +43,7 @@ export class PlacerComponent implements OnInit {
     ];
 
     date = new FormControl(moment());
-
+    hostsData = [];
     placer_data: any[] = [];
     filtered_placer_data: any[] = [];
     filter: any = {
@@ -87,6 +89,7 @@ export class PlacerComponent implements OnInit {
                 });
         }
         this.checkForApiToCall();
+        this.getHosts();
     }
 
     public checkForApiToCall(page?, for_export?) {
@@ -118,7 +121,21 @@ export class PlacerComponent implements OnInit {
             });
     }
 
-    getPlacerData(page, is_export?) {
+    private getHosts() {
+        this._host
+            .get_host_minified()
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((hosts) => {
+                this.hostsData = hosts.map((host) => {
+                    return {
+                        id: host.hostId,
+                        value: `${host.name} | ${host.address}, ${host.city}`
+                    };
+                });
+        })
+    }
+
+    private getPlacerData(page, is_export?) {
         if (!is_export) this.searching_placer_data = true;
         this._placer
             .get_all_placer(page, this.search_keyword, this.sort_column, this.sort_order, this.filter.assignee, this.filter.date_from, this.filter.date_to, is_export ? 0 : 15)
@@ -173,7 +190,7 @@ export class PlacerComponent implements OnInit {
         this.workbook_generation = false;
     }
 
-    placer_mapToUIFormat(data: any[]) {
+    placer_mapToUIFormat(data: API_PLACER[]) {
         let count = this.paging_data.pageStart;
         return data.map((placer) => {
             const table = new UI_PLACER_DATA(
@@ -206,6 +223,7 @@ export class PlacerComponent implements OnInit {
                         placername: placer.placerName ? placer.placerName : '',
                     },
                 },
+                { value: `${placer.address}, ${placer.city}, ${placer.state} ${placer.postalCode}`, link: null, editable: false, key: false },
                 { value: placer.footTraffic, link: null, editable: false, key: false },
                 { value: placer.averageDwellTime, link: null, editable: false, key: false },
                 { value: placer.month, link: null, editable: false, key: false },

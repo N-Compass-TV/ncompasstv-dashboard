@@ -16,7 +16,7 @@ export class EditableFieldModalComponent implements OnInit {
     status: any;
     data: string;
     date: any;
-    hosts_data: UI_AUTOCOMPLETE[] = [];
+    hosts_data: UI_AUTOCOMPLETE;
     host_selected: string = '';
     screen_init: string;
     screen_types: Array<any> = [];
@@ -27,8 +27,7 @@ export class EditableFieldModalComponent implements OnInit {
     constructor(
         @Inject(MAT_DIALOG_DATA) public _dialog_data: any,
         public dialogRef: MatDialogRef<EditableFieldModalComponent>,
-        private _screen: ScreenService,
-        private _host: HostService
+        private _screen: ScreenService
     ) {}
 
     ngOnInit() {
@@ -42,7 +41,7 @@ export class EditableFieldModalComponent implements OnInit {
                     this.getScreenType();
                     break;
                 case 'Hosts':
-                    this.getHosts();
+                    this.prepareHostAssignForm(this._dialog_data.hostsData);
                     break;
                 default:
             }
@@ -81,35 +80,21 @@ export class EditableFieldModalComponent implements OnInit {
         );
     }
 
-    getHosts() {
-        this.subscription.add(
-            this._host.get_host_minified().subscribe((data) => {
-                this.hosts_data = [];
-                data = data.map((host) => {
-                    return {
-                        value: host.name,
-                        id: host.hostId,
-                    };
-                });
+    prepareHostAssignForm(hostsData: any[]) {
+        const hostId = this._dialog_data.status.additional_params.hostId || '';
+        const hostItem = hostsData.find(item => item.id === hostId);
+        const initialValueHostWithAddress = hostItem ? hostItem.value : '';
 
-                this.hosts_data = [
-                    {
-                        label: 'Select Host',
-                        placeholder: 'Ex. NCompass TV Host',
-                        data: data,
-                        initialValue: this._dialog_data.status.additional_params.hostId
-                            ? [
-                                  {
-                                      id: this._dialog_data.status.additional_params.hostId,
-                                      value: this._dialog_data.status.additional_params.hostName,
-                                  },
-                              ]
-                            : [],
-                    },
-                ];
-            })
-        );
+        setTimeout(() => {
+            this.hosts_data = {
+                label: 'Select Host',
+                placeholder: 'Ex. NCompass TV Host',
+                data: hostsData,
+                initialValue: hostId ? [{ id: hostId, value: initialValueHostWithAddress }] : [],
+            };
+        }, 100)
     }
+
 
     setHost(host) {
         this.host_selected = host.id;

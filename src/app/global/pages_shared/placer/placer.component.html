@@ -93,6 +93,7 @@
                     <mat-card *ngIf="filtered_placer_data.length > 0; else nodata">
                         <app-data-table
                             [table_data]="filtered_placer_data"
+                            [host_data]="hostsData"
                             [table_columns]="placer_table_column"
                             [new_table]="true"
                             [paging_details]="paging_data"
