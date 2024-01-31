@@ -191,6 +191,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
         };
         return date.toLocaleTimeString('en-US', options);
     }
@@ -218,7 +221,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.adjustMinimapWidth();
     }
 
-ngOnInit() {
+    ngOnInit() {
         this.hasAdminPrivileges = this.isCurrentUserAdmin || this.isCurrentUserDealerAdmin;
         this.initializeSocketServer();
         this._helper.singleLicensePageCurrentTab = this.current_tab;
@@ -479,19 +482,20 @@ ngOnInit() {
     }
 
     onDisplayControlSettingsSet(event: { checked: boolean }): void {
-        this._license.set_display_control_settings({
-            licenseId: this.license_id,
-            displayControlSettings: event.checked ? 1 : 0
-        })
-        .pipe(takeUntil(this._unsubscribe))
-        .subscribe(
-            () => {
-                alert(`Display Control Settings ${event.checked ? 'Enabled' : 'Disabled'} for this license`);
-            },
-            (error) => {
-                console.error(error);
-            }
-        );
+        this._license
+            .set_display_control_settings({
+                licenseId: this.license_id,
+                displayControlSettings: event.checked ? 1 : 0,
+            })
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                () => {
+                    alert(`Display Control Settings ${event.checked ? 'Enabled' : 'Disabled'} for this license`);
+                },
+                (error) => {
+                    console.error(error);
+                }
+            );
     }
 
     onFilterContent(type: string, filter: string): void {
@@ -1071,7 +1075,7 @@ ngOnInit() {
         setTimeout(() => {
             this.tooltipMessage = 'Copy license key';
             this.showCopiedTooltip = true;
-        }, 1000); 
+        }, 1000);
     }
 
     private getLicenseById() {
