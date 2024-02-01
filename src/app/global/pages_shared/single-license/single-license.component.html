@@ -1,19 +1,11 @@
 <div class="theme-container" *ngIf="host && timezone && businessName; else loaderMain">
-	<div class="popup" *ngIf="show_popup" [ngClass]="setPopupBackground()">
-		{{ popup_message }} <span class="fas fa-times" (click)="dismissPopup()"></span>
-	</div>
-	<div class="d-flex align-items-center mb-2 content-section">
-		<div class="flex-even">
-			<div class="alias-container">
-				<ng-container *ngIf="license_data">
-					<h1 class="page-title mb-1" *ngIf="!enable_edit_alias; else edit_alias">{{ title }}</h1>
-					<mat-icon
-						class="edit-alias"
-						*ngIf="!enable_edit_alias && !is_view_only"
-						(click)="activateEdit(true)"
-						matTooltip="Edit license alias">
-						edit
-					</mat-icon>
+    <div class="popup" *ngIf="show_popup" [ngClass]="setPopupBackground()">{{ popup_message }} <span class="fas fa-times" (click)="dismissPopup()"></span></div>
+    <div class="d-flex align-items-center mb-2 content-section">
+        <div class="flex-even">
+            <div class="alias-container">
+                <ng-container *ngIf="license_data">
+                    <h1 class="page-title mb-1" *ngIf="!enable_edit_alias; else edit_alias">{{ title }}</h1>
+                    <mat-icon class="edit-alias" *ngIf="!enable_edit_alias && !is_view_only" (click)="activateEdit(true)" matTooltip="Edit license alias"> edit </mat-icon>
 
                     <ng-template #edit_alias>
                         <form class="edit-alias-form" [formGroup]="update_alias">
@@ -24,15 +16,15 @@
                 </ng-container>
             </div>
 
-			<ng-container *ngIf="license_data">
-				<div class="d-flex align-items-center mb-2">
-					<p class="sm-text mb-0">{{ license_key }}</p>
-					<ng-container>
-						<mat-icon class="copy-icon" (click)="copyToClipboard(license_key)" [matTooltip]="tooltipMessage" matTooltipPosition="above">file_copy</mat-icon>
-						<mat-icon class="add-tag" (click)="openAddTagModal()" matTooltip="Add tag to this license" matTooltipPosition="above">new_label</mat-icon>
-					</ng-container>
-				</div>
-			</ng-container>
+            <ng-container *ngIf="license_data">
+                <div class="d-flex align-items-center mb-2">
+                    <p class="sm-text mb-0">{{ license_key }}</p>
+                    <ng-container>
+                        <mat-icon class="copy-icon" (click)="copyToClipboard(license_key)" [matTooltip]="tooltipMessage" matTooltipPosition="above">file_copy</mat-icon>
+                        <mat-icon class="add-tag" (click)="openAddTagModal()" matTooltip="Add tag to this license" matTooltipPosition="above">new_label</mat-icon>
+                    </ng-container>
+                </div>
+            </ng-container>
 
             <div class="d-flex gap-30">
                 <div class="d-flex flex-column">
@@ -62,7 +54,15 @@
                     <div class="d-flex timezone">
                         <span class="sm-text mr-2"> Timezone: </span>
                         <h5 class="sm-text">
-                            {{ timezone.name }}
+                            {{ timezone.name }} -
+                            <ng-container *ngIf="timezone.name === 'US/Pacific'; else otherTimezone">
+                                <span class="time-span">{{ pacificTime }}</span>
+                            </ng-container>
+                            <ng-template #otherTimezone>
+                                <span *ngIf="timezone.name === 'US/Eastern'" class="time-span">{{ easternTime }}</span>
+                                <span *ngIf="timezone.name === 'US/Mountain'" class="time-span">{{ mountainTime }}</span>
+                                <span *ngIf="timezone.name === 'US/Central'" class="time-span">{{ centralTime }}</span>
+                            </ng-template>
                         </h5>
                     </div>
 
@@ -74,38 +74,38 @@
                 </div>
             </div>
 
-			<div class="d-flex tags-container">
-				<ng-container *ngIf="tags.length > 0">
-					<div
-						class="tag sm-text d-flex align-items-center"
-						*ngFor="let tag of tags; let i = index"
-						[ngClass]="{ dealer: tag.role === 2 }"
-						[style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
-						<div class="name" matTooltip="{{ tag.description ? tag.description : 'Edit this tag' }}" (click)="openEditTagModal(i, tag)">
-							{{ tag.name }}
-						</div>
-						<ng-container *ngIf="tag.exclude === 1">
-							<mat-icon class="excluded" matTooltip="This tag is excluded">visibility_off</mat-icon>
-						</ng-container>
-						<ng-container>
-							<mat-icon class="remove-btn cursor-pointer" (click)="onRemoveTag(i, tag)" matTooltip="Remove tag on this license">
-								close
-							</mat-icon>
-						</ng-container>
-					</div>
-				</ng-container>
-			</div>
-		</div>
-		<div class="text-right">
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn pi-control sm-text mr-2"
-				[disabled]="status_check_disabled || !has_host || !has_screen"
-				(click)="checkPiStatus()"
-				title="Check Status">
-				<span class="fas fa-lightbulb"></span> <span class="ml-2 button_text_animation">Check Status</span>
-			</button>
+            <div class="d-flex tags-container">
+                <ng-container *ngIf="tags.length > 0">
+                    <div
+                        class="tag sm-text d-flex align-items-center"
+                        *ngFor="let tag of tags; let i = index"
+                        [ngClass]="{ dealer: tag.role === 2 }"
+                        [style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'"
+                    >
+                        <div class="name" matTooltip="{{ tag.description ? tag.description : 'Edit this tag' }}" (click)="openEditTagModal(i, tag)">
+                            {{ tag.name }}
+                        </div>
+                        <ng-container *ngIf="tag.exclude === 1">
+                            <mat-icon class="excluded" matTooltip="This tag is excluded">visibility_off</mat-icon>
+                        </ng-container>
+                        <ng-container>
+                            <mat-icon class="remove-btn cursor-pointer" (click)="onRemoveTag(i, tag)" matTooltip="Remove tag on this license"> close </mat-icon>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        <div class="text-right">
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control sm-text mr-2"
+                [disabled]="status_check_disabled || !has_host || !has_screen"
+                (click)="checkPiStatus()"
+                title="Check Status"
+            >
+                <span class="fas fa-lightbulb"></span> <span class="ml-2 button_text_animation">Check Status</span>
+            </button>
 
             <button
                 mat-button
@@ -184,391 +184,384 @@
                 <span class="font-weight-bold">2.0</span> <span class="ml-2 button_text_animation">Upgrade to version 2</span>
             </button>
 
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn pi-control sm-text _danger"
-				title="Delete License"
-				*ngIf="!pi_status"
-				(click)="onDeleteLicense()"
-				[disabled]="is_view_only || !license_data">
-				<span class="fas fa-trash"></span> <span class="ml-2 button_text_animation">Delete License</span>
-			</button>
-		</div>
-	</div>
-	<hr class="mb-1 mt-0" />
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control sm-text _danger"
+                title="Delete License"
+                *ngIf="!pi_status"
+                (click)="onDeleteLicense()"
+                [disabled]="is_view_only || !license_data"
+            >
+                <span class="fas fa-trash"></span> <span class="ml-2 button_text_animation">Delete License</span>
+            </button>
+        </div>
+    </div>
+    <hr class="mb-1 mt-0" />
 
-	<!-- TABS -->
-	<div class="row tabs">
-		<div class="col-lg-12 min-height-500 custom-mat-tab mt-2">
-			<mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event)">
-				<!-- Details Tab -->
-				<mat-tab label="Details">
-					<ng-container *ngIf="hasLoadedLicenseData; else loader">
-						<ng-container *ngIf="has_host && has_screen; else noHostOrScreenData">
-							<div class="details-tab-container">
-								<div class="row mb-2">
-									<!-- Screenshots -->
-									<div class="col-lg-12 tab-card">
-										<mat-card class="p-3 h-100">
-											<!-- Screenshot Area -->	
-												<div class="d-flex w-100 w-left">
-													<div class="m-auto px-2">
-														<div class="d-flex flex-column">
-																<button
-																	mat-button
-																	mat-raised-button
-																	class="theme-btn mb-2 btn-title"
-																	[disabled]="!pi_status || screenshot_timeout"
-																	(click)="screenShotPi()">
-																	<span class="fas fa-camera mr-2"></span>
-																	Screenshot
-																</button>
-																<button
-																	mat-button
-																	mat-raised-button
-																	class="theme-btn btn-title"
-																	*ngIf="screenshots.length != 0 && !isCurrentUserDealer"
-																	[disabled]="screenshot_timeout || clear_screenshots"
-																	(click)="clearScreenshots()">
-																	<span class="fas fa-times mr-2"></span>
-																	Clear
-																</button>
-														</div>
-													</div>		
+    <!-- TABS -->
+    <div class="row tabs">
+        <div class="col-lg-12 min-height-500 custom-mat-tab mt-2">
+            <mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event)">
+                <!-- Details Tab -->
+                <mat-tab label="Details">
+                    <ng-container *ngIf="hasLoadedLicenseData; else loader">
+                        <ng-container *ngIf="has_host && has_screen; else noHostOrScreenData">
+                            <div class="details-tab-container">
+                                <div class="row mb-2">
+                                    <!-- Screenshots -->
+                                    <div class="col-lg-12 tab-card">
+                                        <mat-card class="p-3 h-100">
+                                            <!-- Screenshot Area -->
+                                            <div class="d-flex w-100 w-left">
+                                                <div class="m-auto px-2">
+                                                    <div class="d-flex flex-column">
+                                                        <button
+                                                            mat-button
+                                                            mat-raised-button
+                                                            class="theme-btn mb-2 btn-title"
+                                                            [disabled]="!pi_status || screenshot_timeout"
+                                                            (click)="screenShotPi()"
+                                                        >
+                                                            <span class="fas fa-camera mr-2"></span>
+                                                            Screenshot
+                                                        </button>
+                                                        <button
+                                                            mat-button
+                                                            mat-raised-button
+                                                            class="theme-btn btn-title"
+                                                            *ngIf="screenshots.length != 0 && !isCurrentUserDealer"
+                                                            [disabled]="screenshot_timeout || clear_screenshots"
+                                                            (click)="clearScreenshots()"
+                                                        >
+                                                            <span class="fas fa-times mr-2"></span>
+                                                            Clear
+                                                        </button>
+                                                    </div>
+                                                </div>
 													
-													<div class="vl mr-3 ml-4"></div>
+                                                <div class="vl mr-3 ml-4"></div>
 													
-													<div class="m-auto horizontal-panel w-right">
-														<ng-container *ngIf="screenshots.length != 0; else no_screenshots">
-															<div class="screenshots" *ngFor="let s of screenshots">
-																<a [href]="s" target="_blank"><img [src]="s" alt="screenshots" /></a>
-																<p class="screenshots__text text-center mb-0">{{ s | screenshot }}</p>
-															</div>
-														</ng-container>
+                                                <div class="m-auto horizontal-panel w-right">
+                                                    <ng-container *ngIf="screenshots.length != 0; else no_screenshots">
+                                                        <div class="screenshots" *ngFor="let s of screenshots">
+                                                            <a [href]="s" target="_blank"><img [src]="s" alt="screenshots" /></a>
+                                                            <p class="screenshots__text text-center mb-0">{{ s | screenshot }}</p>
+                                                        </div>
+                                                    </ng-container>
 		
-														<ng-template #no_screenshots>
-															<div class="p-3 text-center">
-																<h5 class="text-muted mb-0">No Available Screenshots</h5>
-															</div>
-														</ng-template>
+                                                    <ng-template #no_screenshots>
+                                                        <div class="p-3 text-center">
+                                                            <h5 class="text-muted mb-0">No Available Screenshots</h5>
+                                                        </div>
+                                                    </ng-template>
 		
-														<div class="loading-overlay d-flex align-items-center" *ngIf="screenshot_timeout">
-															<div class="flex-even text-center">
-																<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
-																<h6 class="text-primary">{{ screenshot_message }}</h6>
-															</div>
-														</div>
+                                                    <div class="loading-overlay d-flex align-items-center" *ngIf="screenshot_timeout">
+                                                        <div class="flex-even text-center">
+                                                            <h2 class="text-primary"><span class="fas fa-camera"></span></h2>
+                                                            <h6 class="text-primary">{{ screenshot_message }}</h6>
+                                                        </div>
+                                                    </div>
 		
-														<div class="loading-overlay d-flex align-items-center" *ngIf="clear_screenshots">
-															<div class="flex-even text-center">
-																<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
-																<h6 class="text-primary">Deleting Screenshots. . .</h6>
-															</div>
-														</div>
-													</div>
-												</div>
-										</mat-card>
-									</div>
-								</div>
+                                                    <div class="loading-overlay d-flex align-items-center" *ngIf="clear_screenshots">
+                                                        <div class="flex-even text-center">
+                                                            <h2 class="text-primary"><span class="fas fa-camera"></span></h2>
+                                                            <h6 class="text-primary">Deleting Screenshots. . .</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </mat-card>
+                                    </div>
+                                </div>
 
-								<div class="d-flex gap-10">
-									<div class="w-60">
-										<div>
-											<div class="first-info d-flex w-100 gap-10 mb-2">
-												<!-- Pi and Player Status -->
-												<div class="w-60">
-													<mat-card class="p-4 h-100">
-														<h5 class="mb-0 font-weight-medium">Pi and Player Status</h5>
+                                <div class="d-flex gap-10">
+                                    <div class="w-60">
+                                        <div>
+                                            <div class="first-info d-flex w-100 gap-10 mb-2">
+                                                <!-- Pi and Player Status -->
+                                                <div class="w-60">
+                                                    <mat-card class="p-4 h-100">
+                                                        <h5 class="mb-0 font-weight-medium">Pi and Player Status</h5>
 
-														<hr class="my-2" />
+                                                        <hr class="my-2" />
 
-														<div class="d-flex">
-															<!-- Pi Status -->
-															<div class="flex-even">
-																<span class="title"> Pi Status </span>
+                                                        <div class="d-flex">
+                                                            <!-- Pi Status -->
+                                                            <div class="flex-even">
+                                                                <span class="title"> Pi Status </span>
 
-																<h5 class="title" [ngClass]="{ good: pi_status, bad: !pi_status }">
-																	{{ pi_status ? 'Online' : 'Offline' }}
-																</h5>
-															</div>
+                                                                <h5 class="title" [ngClass]="{ good: pi_status, bad: !pi_status }">
+                                                                    {{ pi_status ? "Online" : "Offline" }}
+                                                                </h5>
+                                                            </div>
 
-															<!-- Player Status -->
-															<div class="flex-even">
-																<span class="title"> Player Status </span>
+                                                            <!-- Player Status -->
+                                                            <div class="flex-even">
+                                                                <span class="title"> Player Status </span>
 
-																<h5 class="title" [ngClass]="{ good: player_status, bad: !player_status }">
-																	{{ player_status ? 'Online' : 'Offline' }}
-																</h5>
-															</div>
+                                                                <h5 class="title" [ngClass]="{ good: player_status, bad: !player_status }">
+                                                                    {{ player_status ? "Online" : "Offline" }}
+                                                                </h5>
+                                                            </div>
 
-															<!-- TV Status -->
-															<div class="flex-even">
-																<span class="title"> TV Status </span>
+                                                            <!-- TV Status -->
+                                                            <div class="flex-even">
+                                                                <span class="title"> TV Status </span>
 
-																<h5 class="title" [ngClass]="{ good: cec_status, bad: !cec_status }">
-																	{{ cec_status ? 'ON' : 'OFF' }}
-																</h5>
-															</div>
+                                                                <h5 class="title" [ngClass]="{ good: cec_status, bad: !cec_status }">
+                                                                    {{ cec_status ? "ON" : "OFF" }}
+                                                                </h5>
+                                                            </div>
 
-															<!-- Display Status -->
-															<div class="flex-even">
-																<span class="title"> Display Status </span>
+                                                            <!-- Display Status -->
+                                                            <div class="flex-even">
+                                                                <span class="title"> Display Status </span>
 
-																<h5
-																	class="title"
-																	*ngIf="!isCheckingDisplayStatus; else checkingDisplayStatus"
-																	[ngClass]="{ good: display_status === 1, bad: display_status !== 1 }">
-																	<ng-container [ngSwitch]="display_status">
-																		<ng-container *ngSwitchCase="1">ON</ng-container>
-																		<ng-container *ngSwitchCase="2">N/A</ng-container>
-																		<ng-container *ngSwitchDefault>OFF</ng-container>
-																	</ng-container>
-																</h5>
+                                                                <h5
+                                                                    class="title"
+                                                                    *ngIf="!isCheckingDisplayStatus; else checkingDisplayStatus"
+                                                                    [ngClass]="{ good: display_status === 1, bad: display_status !== 1 }"
+                                                                >
+                                                                    <ng-container [ngSwitch]="display_status">
+                                                                        <ng-container *ngSwitchCase="1">ON</ng-container>
+                                                                        <ng-container *ngSwitchCase="2">N/A</ng-container>
+                                                                        <ng-container *ngSwitchDefault>OFF</ng-container>
+                                                                    </ng-container>
+                                                                </h5>
 
-																<ng-template #checkingDisplayStatus>
-																	<h5 class="sm-text text-gray">
-																		{{ pi_status ? 'Checking ...' : 'N/A' }}
-																	</h5>
-																</ng-template>
-															</div>
-														</div>
-														<hr class="my-2"/>
-														<div class="d-flex">
-															<!-- Last Startup -->
-															<div class="flex-even last-online">
-																<span class="title">Last Startup</span>
-																<h5 class="title">{{ lastStartup }}</h5>
-															</div>
+                                                                <ng-template #checkingDisplayStatus>
+                                                                    <h5 class="sm-text text-gray">
+                                                                        {{ pi_status ? "Checking ..." : "N/A" }}
+                                                                    </h5>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+                                                        <hr class="my-2" />
+                                                        <div class="d-flex">
+                                                            <!-- Last Startup -->
+                                                            <div class="flex-even last-online">
+                                                                <span class="title">Last Startup</span>
+                                                                <h5 class="title">{{ lastStartup }}</h5>
+                                                            </div>
 
-															<!-- Last Disconnect -->
-															<div class="flex-even last-offline">
-																<span class="title">Last Disconnect</span>
-																<h5 class="title">{{ lastDisconnect }}</h5>
-															</div>
+                                                            <!-- Last Disconnect -->
+                                                            <div class="flex-even last-offline">
+                                                                <span class="title">Last Disconnect</span>
+                                                                <h5 class="title">{{ lastDisconnect }}</h5>
+                                                            </div>
 
-															<!-- Last Update -->
-															<div class="flex-even last-update">
-																<span class="title">Last Update</span>
-																<h5 class="title">{{ content_time_update || 'N/A' }}</h5>
-															</div>
-														</div>
-														<hr class="my-2"/>
-														<div class="d-flex gap-5">
-															<!-- Anydesk -->
-															<div class="flex-even">
-																<span class="title">Anydesk</span>
-																<div class="d-flex align-items-center">
-																	<h5 class="d-inline-block title mr-3">
-																		{{ anydesk_id ? anydesk_id : 'N/A' }}
-																	</h5>
+                                                            <!-- Last Update -->
+                                                            <div class="flex-even last-update">
+                                                                <span class="title">Last Update</span>
+                                                                <h5 class="title">{{ content_time_update || "N/A" }}</h5>
+                                                            </div>
+                                                        </div>
+                                                        <hr class="my-2" />
+                                                        <div class="d-flex gap-5">
+                                                            <!-- Anydesk -->
+                                                            <div class="flex-even">
+                                                                <span class="title">Anydesk</span>
+                                                                <div class="d-flex align-items-center">
+                                                                    <h5 class="d-inline-block title mr-3">
+                                                                        {{ anydesk_id ? anydesk_id : "N/A" }}
+                                                                    </h5>
 
-																	<ng-container
-																		*ngIf="!anydesk_restarting && anydesk_id; else disabledAnydeskControls">
-																		<!-- RESTART ANYDESK SERVICE BUTTON -->
-																		<button
-																			class="card-button restart-anydesk"
-																			(click)="restartAnydesk()"
-																			title="Restart Anydesk Service">
-																			<span class="fas fa-power-off md-text"></span>
-																		</button>
+                                                                    <ng-container *ngIf="!anydesk_restarting && anydesk_id; else disabledAnydeskControls">
+                                                                        <!-- RESTART ANYDESK SERVICE BUTTON -->
+                                                                        <button class="card-button restart-anydesk" (click)="restartAnydesk()" title="Restart Anydesk Service">
+                                                                            <span class="fas fa-power-off md-text"></span>
+                                                                        </button>
 
-																		<!-- RESET ANYDESK ID BUTTON -->
-																		<button
-																			*ngIf="hasAdminPrivileges"
-																			class="card-button reset-anydesk-id"
-																			(click)="onResetAnydeskID()"
-																			title="Reset Anydesk ID">
-																			<span class="fa fa-exchange md-text"></span>
-																		</button>
-																	</ng-container>
+                                                                        <!-- RESET ANYDESK ID BUTTON -->
+                                                                        <button
+                                                                            *ngIf="hasAdminPrivileges"
+                                                                            class="card-button reset-anydesk-id"
+                                                                            (click)="onResetAnydeskID()"
+                                                                            title="Reset Anydesk ID"
+                                                                        >
+                                                                            <span class="fa fa-exchange md-text"></span>
+                                                                        </button>
+                                                                    </ng-container>
 
-																	<ng-template #disabledAnydeskControls>
-																		<ng-container *ngIf="anydesk_restarting">
-																			<button
-																				class="card-button restart-anydesk disabled rotate mr-2"
-																				title="Anydesk Status">
-																				<span class="fas fa-sync md-text"></span>
-																			</button>
-																		</ng-container>
+                                                                    <ng-template #disabledAnydeskControls>
+                                                                        <ng-container *ngIf="anydesk_restarting">
+                                                                            <button class="card-button restart-anydesk disabled rotate mr-2" title="Anydesk Status">
+                                                                                <span class="fas fa-sync md-text"></span>
+                                                                            </button>
+                                                                        </ng-container>
 
-																		<span class="sm-text text-gray">
-																			{{ anydesk_status_text }}
-																		</span>
-																	</ng-template>
-																</div>
-															</div>
+                                                                        <span class="sm-text text-gray">
+                                                                            {{ anydesk_status_text }}
+                                                                        </span>
+                                                                    </ng-template>
+                                                                </div>
+                                                            </div>
 
-															<!-- Anydesk Password -->
-															<div class="flex-even last-update">
-																<span class="title">Anydesk Password</span>
-																<h5 class="title">{{ splitKey(license_id) }}</h5>
-															</div>
+                                                            <!-- Anydesk Password -->
+                                                            <div class="flex-even last-update">
+                                                                <span class="title">Anydesk Password</span>
+                                                                <h5 class="title">{{ splitKey(license_id) }}</h5>
+                                                            </div>
 
-															<!-- TV Brand -->
-															<div class="flex-even tv-brand">
-																<span class="title">TV Brand</span>
-																<div class="d-flex align-items-center">
-																	<h5 class="title">{{ tv_brand | titlecase }}</h5>
-																	<mat-icon class="clickable sm-text" (click)="openUpdateTvBrandDialog()">
-																		{{ is_editing_tv_brand ? 'save' : 'edit' }}
-																	</mat-icon>
-																</div>
-															</div>
-														</div>
-													</mat-card>
-												</div>
+                                                            <!-- TV Brand -->
+                                                            <div class="flex-even tv-brand">
+                                                                <span class="title">TV Brand</span>
+                                                                <div class="d-flex align-items-center">
+                                                                    <h5 class="title">{{ tv_brand | titlecase }}</h5>
+                                                                    <mat-icon class="clickable sm-text" (click)="openUpdateTvBrandDialog()">
+                                                                        {{ is_editing_tv_brand ? "save" : "edit" }}
+                                                                    </mat-icon>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </mat-card>
+                                                </div>
 
-												<!-- Screen Info -->
-												<div class="w-40">
-													<mat-card class="h-100 p-4">
-														<ng-container *ngIf="hasLoadedScreenData; else loaderSmall">
-															<h5 class="mb-0 font-weight-medium">Screen Info</h5>
+                                                <!-- Screen Info -->
+                                                <div class="w-40">
+                                                    <mat-card class="h-100 p-4">
+                                                        <ng-container *ngIf="hasLoadedScreenData; else loaderSmall">
+                                                            <h5 class="mb-0 font-weight-medium">Screen Info</h5>
 
-															<hr class="my-2" />
+                                                            <hr class="my-2" />
 
-															<div class="d-flex">
-																<!-- Screen Name -->
-																<div class="flex-even">
-																	<span class="title">Screen Name</span>
-																	<a [routerLink]="screen_route" target="_blank">
-																		<h5 class="hoverable title">
-																			{{ screen.screen_title ? (screen.screen_title | titlecase) : 'N/A' }}
-																		</h5>
-																	</a>
-																</div>
+                                                            <div class="d-flex">
+                                                                <!-- Screen Name -->
+                                                                <div class="flex-even">
+                                                                    <span class="title">Screen Name</span>
+                                                                    <a [routerLink]="screen_route" target="_blank">
+                                                                        <h5 class="hoverable title">
+                                                                            {{ screen.screen_title ? (screen.screen_title | titlecase) : "N/A" }}
+                                                                        </h5>
+                                                                    </a>
+                                                                </div>
 
-																<div class="flex-even">
-																	<span class="title">Screen Template</span>
-																	<h5 class="title">
-																		{{ screen.assigned_template ? screen.assigned_template : 'N/A' }}
-																	</h5>
-																</div>
+                                                                <div class="flex-even">
+                                                                    <span class="title">Screen Template</span>
+                                                                    <h5 class="title">
+                                                                        {{ screen.assigned_template ? screen.assigned_template : "N/A" }}
+                                                                    </h5>
+                                                                </div>
 
-																<div class="flex-even" *ngIf="screen_type">
-																	<span class="title">Screen Type</span>
-																	<h5 class="title">
-																		{{ screen_type.name ? (screen_type.name | titlecase) : 'N/A' }}
-																	</h5>
-																</div>
-															</div>
+                                                                <div class="flex-even" *ngIf="screen_type">
+                                                                    <span class="title">Screen Type</span>
+                                                                    <h5 class="title">
+                                                                        {{ screen_type.name ? (screen_type.name | titlecase) : "N/A" }}
+                                                                    </h5>
+                                                                </div>
+                                                            </div>
 
-															<hr class="my-2" />
+                                                            <hr class="my-2" />
 
-															<!-- Screen Playlists -->
-															<div>
-																<span class="title">Screen Playlists</span>
-																<div>
-																	<ul class="m-0 p-0 list-unstyled">
-																		<li *ngFor="let zone of zone_playlists">
-																			<span
-																				class="fas fa-circle mr-2 align-middle d-inline-block"
-																				style="font-size: 6px"></span>
+                                                            <!-- Screen Playlists -->
+                                                            <div>
+                                                                <span class="title">Screen Playlists</span>
+                                                                <div>
+                                                                    <ul class="m-0 p-0 list-unstyled">
+                                                                        <li *ngFor="let zone of zone_playlists">
+                                                                            <span class="fas fa-circle mr-2 align-middle d-inline-block" style="font-size: 6px"></span>
 
-																			<ng-container
-																				*ngIf="zone.link !== '/administrator/playlists/null'; else no_url">
-																				<a [routerLink]="zone.link" target="_blank">
-																					<h5 class="hoverable d-inline-block align-middle title m-0">
-																						{{ zone.name }} - {{ zone.playlist_name }}
-																					</h5>
-																				</a>
-																			</ng-container>
+                                                                            <ng-container *ngIf="zone.link !== '/administrator/playlists/null'; else no_url">
+                                                                                <a [routerLink]="zone.link" target="_blank">
+                                                                                    <h5 class="hoverable d-inline-block align-middle title m-0">
+                                                                                        {{ zone.name }} - {{ zone.playlist_name }}
+                                                                                    </h5>
+                                                                                </a>
+                                                                            </ng-container>
 
-																			<ng-template #no_url>
-																				<h5 class="d-inline-block align-middle title m-0">
-																					{{ zone.name }} - No Playlist
-																				</h5>
-																			</ng-template>
-																		</li>
-																	</ul>
-																</div>
-															</div>
-														</ng-container>
-													</mat-card>
-												</div>
-											</div>
+                                                                            <ng-template #no_url>
+                                                                                <h5 class="d-inline-block align-middle title m-0">{{ zone.name }} - No Playlist</h5>
+                                                                            </ng-template>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </mat-card>
+                                                </div>
+                                            </div>
 
-											<!-- Other Details -->
-											<div class="w-100 mb-3">
-												<mat-card class="p-4">
-													<h5 class="mb-0 font-weight-medium">Other Details</h5>
-													<hr class="my-2" />
+                                            <!-- Other Details -->
+                                            <div class="w-100 mb-3">
+                                                <mat-card class="p-4">
+                                                    <h5 class="mb-0 font-weight-medium">Other Details</h5>
+                                                    <hr class="my-2" />
 
-													<div class="row">
-														<!-- Notes -->
-														<div class="col-lg-4" *ngIf="!isCurrentUserDealer">
-															<div class="notes">
-																<span class="title">Host Notes </span>
-																<ng-container *ngIf="host_notes; else noNotes"></ng-container>
-																	<p (click)="onShowNotes()" class="title hoverable">
-																		{{  host_notes | substring : 200 }}
-																	</p>
-															</div>
-														</div>
+                                                    <div class="row">
+                                                        <!-- Notes -->
+                                                        <div class="col-lg-4" *ngIf="!isCurrentUserDealer">
+                                                            <div class="notes">
+                                                                <span class="title">Host Notes </span>
+                                                                <ng-container *ngIf="host_notes; else noNotes"></ng-container>
+                                                                <p (click)="onShowNotes()" class="title hoverable">
+                                                                    {{ host_notes | substring : 200 }}
+                                                                </p>
+                                                            </div>
+                                                        </div>
 
-														<ng-template #noNotes>
-															<p class="title">No notes available</p>
-														</ng-template>
+                                                        <ng-template #noNotes>
+                                                            <p class="title">No notes available</p>
+                                                        </ng-template>
 
-														<!-- Pictures -->
-														<div class="col-lg-5">
-															<span class="title">Pictures</span>
+                                                        <!-- Pictures -->
+                                                        <div class="col-lg-5">
+                                                            <span class="title">Pictures</span>
 
-															<div class="pictures__main d-flex">
-																<ng-container *ngIf="images.length; else noPictures">
-																	<div *ngFor="let i of images">
-																		<a [href]="i.url" target="_blank">
-																			<img
-																				[src]="i.url"
-																				class="mr-2 mb-2 pictures__main-pictures"
-																				alt="pictures"
-																				matTooltip="{{ i.dateCreated | date : 'MMMM d, y' }} {{
-																					i.filename
-																				}}" />
-																		</a>
-																	</div>
-																</ng-container>
-															</div>
-														</div>
+                                                            <div class="pictures__main d-flex">
+                                                                <ng-container *ngIf="images.length; else noPictures">
+                                                                    <div *ngFor="let i of images">
+                                                                        <a [href]="i.url" target="_blank">
+                                                                            <img
+                                                                                [src]="i.url"
+                                                                                class="mr-2 mb-2 pictures__main-pictures"
+                                                                                alt="pictures"
+                                                                                matTooltip="{{ i.dateCreated | date : 'MMMM d, y' }} {{ i.filename }}"
+                                                                            />
+                                                                        </a>
+                                                                    </div>
+                                                                </ng-container>
+                                                            </div>
+                                                        </div>
 
-														<ng-template #noPictures>
-															<p class="title">No pictures available</p>
-														</ng-template>
+                                                        <ng-template #noPictures>
+                                                            <p class="title">No pictures available</p>
+                                                        </ng-template>
 
-														<!-- Ticket -->
-														<div class="col-lg-3">
-															<span class="title">Tickets</span>
-															<ng-container *ngIf="!no_support_data; else noTicket">
-																<p (click)="onShowTickets()" class="title hoverable">View Tickets...</p>
-															</ng-container>
-														</div>
+                                                        <!-- Ticket -->
+                                                        <div class="col-lg-3">
+                                                            <span class="title">Tickets</span>
+                                                            <ng-container *ngIf="!no_support_data; else noTicket">
+                                                                <p (click)="onShowTickets()" class="title hoverable">View Tickets...</p>
+                                                            </ng-container>
+                                                        </div>
 
-														<ng-template #noTicket>
-															<p class="title">No tickets available</p>
-														</ng-template>
-													</div>
-												</mat-card>
-											</div>
-										</div>
-									</div>
+                                                        <ng-template #noTicket>
+                                                            <p class="title">No tickets available</p>
+                                                        </ng-template>
+                                                    </div>
+                                                </mat-card>
+                                            </div>
+                                        </div>
+                                    </div>
 
-									<div class="w-40">
-										<div>
-											<!-- System Info -->
-											<div class="w-100 mb-3">
-												<mat-card class="p-4">
-													<h5 class="mb-0 font-weight-medium">System Info</h5>
+                                    <div class="w-40">
+                                        <div>
+                                            <!-- System Info -->
+                                            <div class="w-100 mb-3">
+                                                <mat-card class="p-4">
+                                                    <h5 class="mb-0 font-weight-medium">System Info</h5>
 
-													<hr class="my-2" />
+                                                    <hr class="my-2" />
 
-													<!-- Speedtest -->
-													<div class="align-items-center">
-														<div class="last-speedtest-date mb-3">
-															<span class="title">Last Speedtest</span>
-															<div>
-																<h5 class="d-inline-block mr-4 title">
-																	{{ internet_connection.date ? internet_connection.date : 'N/A' }}
-																</h5>
+                                                    <!-- Speedtest -->
+                                                    <div class="align-items-center">
+                                                        <div class="last-speedtest-date mb-3">
+                                                            <span class="title">Last Speedtest</span>
+                                                            <div>
+                                                                <h5 class="d-inline-block mr-4 title">
+                                                                    {{ internet_connection.date ? internet_connection.date : "N/A" }}
+                                                                </h5>
 
                                                                 <ng-container *ngIf="!speedtest_running; else disable_speedtest_btn">
                                                                     <button
@@ -591,96 +584,101 @@
                                                             </div>
                                                         </div>
 
-														<div class="d-flex">
-															<!-- Connection -->
-															<div class="flex-even">
-																<span class="title">Connection Status</span>
-																<ng-container *ngIf="apps && apps.server; else netstatus_v1">
-																	<h5
-																		class="title"
-																		*ngIf="internet_connection.status && pi_status; else offline_net"
-																		[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'">
-																		{{ internet_connection.status }}
-																	</h5>
+                                                        <div class="d-flex">
+                                                            <!-- Connection -->
+                                                            <div class="flex-even">
+                                                                <span class="title">Connection Status</span>
+                                                                <ng-container *ngIf="apps && apps.server; else netstatus_v1">
+                                                                    <h5
+                                                                        class="title"
+                                                                        *ngIf="internet_connection.status && pi_status; else offline_net"
+                                                                        [ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'"
+                                                                    >
+                                                                        {{ internet_connection.status }}
+                                                                    </h5>
 
-																	<ng-template #offline_net>
-																		<h5 *ngIf="license_data.internetSpeed" class="bad sm-text">Offline</h5>
-																	</ng-template>
-																</ng-container>
+                                                                    <ng-template #offline_net>
+                                                                        <h5 *ngIf="license_data.internetSpeed" class="bad sm-text">Offline</h5>
+                                                                    </ng-template>
+                                                                </ng-container>
 
-																<ng-template #netstatus_v1>
-																	<h5
-																		class="title"
-																		[ngClass]="license_data.internetSpeed == 'Good' ? 'good' : 'slow'">
-																		{{ license_data.internetSpeed }}
-																	</h5>
-																</ng-template>
-															</div>
+                                                                <ng-template #netstatus_v1>
+                                                                    <h5 class="title" [ngClass]="license_data.internetSpeed == 'Good' ? 'good' : 'slow'">
+                                                                        {{ license_data.internetSpeed }}
+                                                                    </h5>
+                                                                </ng-template>
+                                                            </div>
 
-															<!-- Connection Type -->
-															<div class="flex-even connection-type">
-																<span class="title">Connection Type</span>
-																<h5 class="title">
-																	{{ license_data.internetType ? license_data.internetType : 'N/A' }}
-																</h5>
-															</div>
+                                                            <!-- Connection Type -->
+                                                            <div class="flex-even connection-type">
+                                                                <span class="title">Connection Type</span>
+                                                                <h5 class="title">
+                                                                    {{ license_data.internetType ? license_data.internetType : "N/A" }}
+                                                                </h5>
+                                                            </div>
 
-															<!-- Download Speed -->
-															<div class="flex-even storage">
-																<span class="title">Download Speed</span>
-																<h5 class="title">{{ internet_connection.downloadMbps }}</h5>
-															</div>
+                                                            <!-- Download Speed -->
+                                                            <div class="flex-even storage">
+                                                                <span class="title">Download Speed</span>
+                                                                <h5 class="title">{{ internet_connection.downloadMbps }}</h5>
+                                                            </div>
 
+                                                            <!-- Upload Speed -->
+                                                            <div class="flex-even storage">
+                                                                <span class="title">Upload Speed</span>
+                                                                <h5 class="title">{{ internet_connection.uploadMbps }}</h5>
+                                                            </div>
 
-															<!-- Upload Speed -->
-															<div class="flex-even storage">
-																<span class="title">Upload Speed</span>
-																<h5 class="title">{{ internet_connection.uploadMbps }}</h5>
-															</div>
+                                                            <!-- Storage -->
+                                                            <div class="flex-even storage">
+                                                                <span class="title">Storage</span>
+                                                                <h5 class="title">{{ storage_capacity ? storage_capacity : "N/A" }}</h5>
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
-															<!-- Storage -->
-															<div class="flex-even storage">
-																<span class="title">Storage</span>
-																<h5 class="title">{{ storage_capacity ? storage_capacity : 'N/A' }}</h5>
-															</div>
-														</div>
-													</div>
+                                                    <hr class="my-2" />
 
-													<hr class="my-2" />
+                                                    <div class="d-flex">
+                                                        <!-- Memory -->
+                                                        <div class="flex-even memory">
+                                                            <span class="title">RAM/Memory</span>
+                                                            <h5 class="title">{{ license_data.memory ? license_data.memory : "N/A" }}</h5>
+                                                        </div>
 
-													<div class="d-flex">
-														<!-- Memory -->
-														<div class="flex-even memory">
-															<span class="title">RAM/Memory</span>
-															<h5 class="title">{{ license_data.memory ? license_data.memory : 'N/A' }}</h5>
-														</div>
+                                                        <!-- Player Version -->
+                                                        <div class="flex-even player-version">
+                                                            <span class="title">Player Version</span>
+                                                            <h5 class="title">{{ apps && apps.server ? "Version 2" : "Version 1" }}</h5>
+                                                        </div>
 
-														<!-- Player Version -->
-														<div class="flex-even player-version">
-															<span class="title">Player Version</span>
-															<h5 class="title">{{ apps && apps.server ? 'Version 2' : 'Version 1' }}</h5>
-														</div>
+                                                        <!-- Player Server -->
+                                                        <div class="flex-even player-server-version">
+                                                            <span class="title">Server Version</span>
+                                                            <h5 class="title">{{ apps && apps.server ? apps.server : "N/A" }}</h5>
+                                                        </div>
 
-														<!-- Player Server -->
-														<div class="flex-even player-server-version">
-															<span class="title">Server Version</span>
-															<h5 class="title">{{ apps && apps.server ? apps.server : 'N/A' }}</h5>
-														</div>
+                                                        <!-- Player UI -->
+                                                        <div class="flex-even ui-version">
+                                                            <span class="title">UI Version</span>
+                                                            <h5 class="title">{{ apps && apps.ui ? apps.ui : "N/A" }}</h5>
+                                                        </div>
 
-														<!-- Player UI -->
-														<div class="flex-even ui-version">
-															<span class="title">UI Version</span>
-															<h5 class="title">{{ apps && apps.ui ? apps.ui : 'N/A' }}</h5>
-														</div>
+                                                        <!-- Pi Version -->
+                                                        <div class="flex-even storage">
+                                                            <span class="title">Pi Version</span>
+                                                            <h5 class="title">{{ apps && apps.rpi_model ? apps.rpi_model : "N/A" }}</h5>
+                                                        </div>
+                                                    </div>
 
-														<!-- Pi Version -->
-														<div class="flex-even storage">
-															<span class="title">Pi Version</span>
-															<h5 class="title">{{ apps && apps.rpi_model ? apps.rpi_model : 'N/A' }}</h5>
-														</div>
-													</div>
+                                                    <hr class="my-2" />
 
-													<hr class="my-2" />
+                                                    <div class="d-flex">
+                                                        <!-- Player UI -->
+                                                        <div class="flex-even chromium-version">
+                                                            <span class="title">Chromium Version</span>
+                                                            <h5 class="title">{{ apps && apps.chromium ? apps.chromium : "N/A" }}</h5>
+                                                        </div>
 
 													<div class="d-flex">
 														<!-- Player UI -->
@@ -704,6 +702,13 @@
 																	{{ license_data.prevPublicIP ? license_data.prevPublicIP : 'N/A' }}
 																</h5>
 															</div>
+                                                            <div class="flex-even">
+                                                                <span class="title">MAC Address</span>
+                                                                <br />
+                                                                <h5 class="title">
+                                                                    {{ license_data.macAddress ? license_data.macAddress : 'N/A' }}
+                                                                </h5>
+                                                            </div>
 														</ng-container>
 													</div>
 												</mat-card>
@@ -985,7 +990,7 @@
                                             </p>
                                         </div>
                                         <div class="ml-5 text-right">
-                                            <mat-slide-toggle (change)="disableScreenshot($event)" [checked]="license_data.screenshotSettings == 1 ? true : false">
+                                            <mat-slide-toggle (change)="disableScreenshot($event)" [checked]="license_data.screenshotSettings === 1">
                                             </mat-slide-toggle>
                                         </div>
                                     </div>
@@ -1002,7 +1007,7 @@
                                             </p>
                                         </div>
                                         <div class="ml-5 text-right">
-                                            <mat-slide-toggle (change)="disableSpeedtest($event)" [checked]="license_data.speedtestSettings == 1 ? true : false">
+                                            <mat-slide-toggle (change)="disableSpeedtest($event)" [checked]="license_data.speedtestSettings === 1">
                                             </mat-slide-toggle>
                                         </div>
                                     </div>
@@ -1016,7 +1021,21 @@
                                             <p class="sm-text mb-0">Allows the dealer to receive EMAIL notifications from this license when the device is offline.</p>
                                         </div>
                                         <div class="ml-5 text-right">
-                                            <mat-slide-toggle (change)="onUpdateNotificationSettings($event, 'email')" [checked]="license_data.emailSettings == 1 ? true : false">
+                                            <mat-slide-toggle (change)="onUpdateNotificationSettings($event, 'email')" [checked]="license_data.emailSettings === 1">
+                                            </mat-slide-toggle>
+                                        </div>
+                                    </div>
+                                </mat-card>
+
+                                <!-- DISPLAY CONTROL SETTINGS -->
+                                <mat-card class="p-4 mb-3" *ngIf="isCurrentUserAdmin">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-even">
+                                            <h4>Display Control Settings</h4>
+                                            <p class="sm-text mb-0">Allows the player to control the TV display based on the business hour schedule.</p>
+                                        </div>
+                                        <div class="ml-5 text-right">
+                                            <mat-slide-toggle (change)="onDisplayControlSettingsSet($event)" [checked]="license_data.displayControlSettings === 1">
                                             </mat-slide-toggle>
                                         </div>
                                     </div>
@@ -1032,7 +1051,7 @@
                                         <div class="ml-5 text-right">
                                             <mat-slide-toggle
                                                 (change)="onUpdateNotificationSettings($event, 'notification')"
-                                                [checked]="license_data.notificationSettings == 1 ? true : false"
+                                                [checked]="license_data.notificationSettings === 1"
                                             >
                                             </mat-slide-toggle>
                                         </div>
@@ -1049,7 +1068,7 @@
                                             </p>
                                         </div>
                                         <div class="ml-5 text-right">
-                                            <mat-slide-toggle (change)="disableResource($event)" [checked]="license_data.resourceSettings == 1 ? true : false"> </mat-slide-toggle>
+                                            <mat-slide-toggle (change)="disableResource($event)" [checked]="license_data.resourceSettings === 1"> </mat-slide-toggle>
                                         </div>
                                     </div>
                                 </mat-card>
@@ -1238,9 +1257,9 @@
 </ng-template>
 
 <ng-template #loaderMain>
-	<div class="h-80 d-flex justify-content-center align-items-center">
-		<app-spinner></app-spinner>
-	</div>
+    <div class="h-80 d-flex justify-content-center align-items-center">
+        <app-spinner></app-spinner>
+    </div>
 </ng-template>
 
 <ng-template #loaderSmall>
