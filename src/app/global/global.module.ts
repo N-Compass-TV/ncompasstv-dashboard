@@ -100,6 +100,7 @@ import { FillerGridCategoryViewComponent } from './pages_shared/fillers/componen
 import { FillerMainViewComponent } from './pages_shared/fillers/components/filler-main-view/filler-main-view.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
+import { GenerativeModalComponent } from './components_shared/media_components/generative-modal/generative-modal.component';
 import { GridViewLicenseComponent } from './components_shared/license_components/grid-view-license/grid-view-license.component';
 import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostViewComponent } from './components_shared/locator_components/host-view/host-view.component';
@@ -332,6 +333,7 @@ const ngComponents = [
     FillerMainViewComponent,
     FooterComponent,
     GenerateFeedComponent,
+    GenerativeModalComponent,
     GridViewLicenseComponent,
     HostCustomFieldsComponent,
     HostViewComponent,
@@ -510,6 +512,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
         EditTicketComponent,
         FeedMediaComponent,
         FillerGridCategoryViewComponent,
+        GenerativeModalComponent,
         ImageSelectionModalComponent,
         InformationModalComponent,
         LicenseModalComponent,

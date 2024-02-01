@@ -1,0 +1,57 @@
+<div class="generative-modal-wrapper p-2">
+    <div class="generative-modal-header mb-4">
+        <h4 class="m-0">Generative AI</h4>
+        <p class="sm-text m-0">Create your own media asset in seconds</p>
+    </div>
+
+    <div class="generative-modal-body">
+        <div class="form-wrapper">
+            <form class="d-flex align-items-start" [formGroup]="generativeAIForm" (ngSubmit)="generateImage()">
+                <mat-form-field appearance="fill" class="flex-even mr-2">
+                    <mat-label>What's on your mind?</mat-label>
+                    <input matInput placeholder="Ex: A burger with french fries on the side" formControlName="prompt" />
+                </mat-form-field>
+
+                <button mat-button mat-raised-button class="theme-btn bg-info mat-form-field-height" [disabled]="!generativeAIForm.valid">
+                    <span class="button-label">Let's Go!</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="generative-modal-result-area d-flex align-items-center justify-content-center position-relative mb-3">
+        <ng-container *ngIf="imageResult; else default">
+            <div class="generated-image-wrapper">
+                <div class="mb-3">
+                    <app-spinner></app-spinner>
+                </div>
+                <h4 class="m-0">Loading Image, Please Wait</h4>
+            </div>
+
+            <img class="generatedImage" [src]="imageResult" alt="generated-image" />
+        </ng-container>
+
+        <ng-template #default>
+            <ng-container *ngIf="!generatingImage; else loading">
+                <div class="default-view-wrapper text-center">
+                    <h4 class="m-0">Your only limitation is your imagination</h4>
+                    <p class="m-0 sm-text">Submit an idea of an image to get started!</p>
+                </div>
+            </ng-container>
+        </ng-template>
+
+        <ng-template #loading>
+            <div class="loader-wrapper text-center">
+                <div class="mb-3">
+                    <app-spinner></app-spinner>
+                </div>
+                <h4 class="m-0">Doing the impossible...</h4>
+                <p class="sm-text m-0">Hold your horses! This shouldn't take long.</p>
+            </div>
+        </ng-template>
+    </div>
+
+    <button mat-button mat-raised-button class="theme-btn" [disabled]="!imageResult.length" (click)="uploadGeneratedImage()">
+        <span class="button-label">Use Image</span>
+    </button>
+</div>

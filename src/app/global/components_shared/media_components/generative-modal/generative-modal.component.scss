@@ -1,0 +1,19 @@
+.generative-modal-result-area {
+    background: #d0d0d0;
+    height: 400px;
+    width: 700px;
+}
+
+.mat-form-field-height {
+    height: 59.32px;
+}
+
+.generatedImage {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 9;
+}

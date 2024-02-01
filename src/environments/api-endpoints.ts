@@ -231,6 +231,7 @@ export const API_ENDPOINTS = {
         validate_feed_url: 'feed/validate/url',
     },
     create: {
+        api_openai: 'ai',
         add_credit_card: 'billing/add/creditcard',
         admin_tag: 'tag/admin/create',
         amazon_s3_upload: 'host/AmazonS3Upload',
