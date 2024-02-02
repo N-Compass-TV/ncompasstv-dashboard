@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
-import { API_BLOCKLIST_CONTENT, API_SWAP_CONTENT_RESPONSE } from 'src/app/global/models';
+import { API_BLOCKLIST_CONTENT, API_CONTENT, API_SWAP_CONTENT_RESPONSE, CREATE_PLAYLIST, PAGING } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
 
@@ -42,7 +42,7 @@ export class PlaylistService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_playlist}` + '?page=' + `${page}` + '&search=' + `${key}`);
 	}
 
-	get_all_playlists(page, key, column?, order?) {
+	get_all_playlists(page: number, key: string, column?: string, order?: string): Observable<{ paging: PAGING }> {
 		const base = `${this.getters.api_get_all_playlist}`;
 		const params = this.setUrlParams({ page, search: key, sortColumn: column, sortOrder: order }, false, true);
 		const url = `${base}${params}`;
@@ -84,12 +84,16 @@ export class PlaylistService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_screens_of_playlist}${id}`);
 	}
 
-	create_playlist(data) {
+	create_playlist(data: CREATE_PLAYLIST): Observable<{ playlist: { playlistId: string } }> {
 		return this.postRequest(this.creators.api_new_playlist, data);
 	}
 
 	clone_playlist(data) {
 		return this.postRequest(this.creators.api_clone_playlist, data);
+	}
+
+	create_playlist_whitelist_migration(id) {
+		return this.postRequest(`${this.creators.api_playlist_whitelist_migration}?playlistId=${id}`, id);
 	}
 
 	bulk_whitelist(data) {

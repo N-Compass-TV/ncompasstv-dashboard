@@ -6,7 +6,10 @@ import { takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
 import { AuthService, PlaylistService } from 'src/app/global/services';
-import { UI_DEALER_PLAYLIST } from 'src/app/global/models';
+import { CREATE_PLAYLIST, UI_DEALER_PLAYLIST } from 'src/app/global/models';
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { CreatePlaylistDialogComponent } from 'src/app/global/components_shared/playlists_components/create-playlist-dialog/create-playlist-dialog.component';
 
 @Component({
 	selector: 'app-playlists',
@@ -32,12 +35,19 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 	protected _socket: any;
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _playlist: PlaylistService, private _auth: AuthService, private _date: DatePipe, private _title: TitleCasePipe) {}
+	constructor(
+		private _playlist: PlaylistService,
+		private _auth: AuthService,
+		private _dialog: MatDialog,
+		private _date: DatePipe,
+		private _title: TitleCasePipe
+	) {}
 
 	ngOnInit() {
+		this.initializeSocketConnection();
 		this.dealer_id = this.currentUser.roleInfo.dealerId;
 		this.getPlaylist(1);
-		this.getTotalCount(this.dealer_id);
+		this.getTotalCount();
 		this.dealers_info = this.currentUser.roleInfo.businessName;
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
@@ -47,9 +57,9 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	getTotalCount(id: string): void {
+	getTotalCount(): void {
 		this._playlist
-			.get_playlists_total_by_dealer(id)
+			.get_playlists_total_by_dealer(this.dealer_id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {
@@ -121,8 +131,64 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		this.ngOnInit();
 	}
 
+	showCreatePlaylistDialog() {
+		const width = '500px';
+		const height = '390px';
+		const configs: MatDialogConfig = { width, height, disableClose: true };
+
+		const dialog = this._dialog.open(CreatePlaylistDialogComponent, configs);
+		dialog.componentInstance.dealerId = this.dealer_id;
+		dialog.componentInstance.businessName = this.dealers_info;
+
+		dialog.afterClosed().subscribe({
+			next: (response) => {
+				if (!response || response === 'close') return;
+				this.createPlaylist(response);
+			}
+		});
+	}
+
+	onPushAllLicenseUpdates(licenseIds: string[]): void {
+		licenseIds.forEach((id) => this._socket.emit('D_update_player', id));
+	}
+
 	private get currentUser() {
 		return this._auth.current_user_value;
+	}
+
+	private createPlaylist(data: CREATE_PLAYLIST) {
+		this._playlist
+			.create_playlist(data)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe({
+				next: ({ playlist }) => {
+					this.showResponseDialog('success', 'Success', 'Your changes have been saved').subscribe({
+						next: () => {
+							const newPlaylistUrl = `/${this.roleRoute}/playlists/${playlist.playlistId}`;
+							// this._router.navigateByUrl(newPlaylistUrl); // just in case they want to be navigated to the playlist page instead
+							window.open(newPlaylistUrl, '_blank');
+							this.getTotalCount();
+							this.getPlaylist(1);
+						}
+					});
+				},
+				error: (e) => {
+					console.error('Error creating playlist', e);
+
+					this.showResponseDialog('error', 'Error Saving Playlist', 'Something went wrong, please contact customer support').subscribe({
+						next: () => {
+							// maybe send logging here?
+						}
+					});
+				}
+			});
+	}
+
+	private initializeSocketConnection(): void {
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket'],
+			query: 'client=Dashboard__PlaylistsPage'
+		});
 	}
 
 	private mapPlaylistToUI(data): UI_DEALER_PLAYLIST[] {
@@ -145,14 +211,13 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	onPushAllLicenseUpdates(licenseIds: string[]): void {
-		licenseIds.forEach((id) => this._socket.emit('D_update_player', id));
+	private showResponseDialog(type: string, title = '', message = '') {
+		let data = { status: type, message: title, data: message };
+		const config = { disableClose: true, width: '500px', data };
+		return this._dialog.open(ConfirmationModalComponent, config).afterClosed();
 	}
 
-	private initializeSocketConnection(): void {
-		this._socket = io(environment.socket_server, {
-			transports: ['websocket'],
-			query: 'client=Dashboard__PlaylistsPage'
-		});
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

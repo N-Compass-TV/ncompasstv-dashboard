@@ -1,14 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe, TitleCasePipe } from '@angular/common';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
-import { environment } from 'src/environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as io from 'socket.io-client';
 
+import { environment } from 'src/environments/environment';
 import { AuthService, PlaylistService } from 'src/app/global/services';
-import { UI_DEALER_PLAYLIST } from 'src/app/global/models';
+import { CreatePlaylistDialogComponent } from 'src/app/global/components_shared/playlists_components/create-playlist-dialog/create-playlist-dialog.component';
+import { CREATE_PLAYLIST, UI_DEALER_PLAYLIST } from 'src/app/global/models';
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
 	selector: 'app-playlists',
@@ -53,13 +56,19 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 	protected _socket: any;
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(private _playlist: PlaylistService, private _auth: AuthService, private _date: DatePipe, private _title: TitleCasePipe) {}
+	constructor(
+		private _auth: AuthService,
+		private _date: DatePipe,
+		private _dialog: MatDialog,
+		private _playlist: PlaylistService,
+		private _title: TitleCasePipe
+	) {}
 
 	ngOnInit() {
 		this.initializeSocketConnection();
 		this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
 		this.getPlaylist(1);
-		this.getTotalCount(this.dealer_id);
+		this.getTotalCount();
 		this.dealers_info = this._auth.current_user_value.roleInfo.businessName;
 	}
 
@@ -68,9 +77,9 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	getTotalCount(id: string) {
+	getTotalCount() {
 		this._playlist
-			.get_playlists_total_by_dealer(id)
+			.get_playlists_total_by_dealer(this.dealer_id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
 				this.playlist_details = {
@@ -121,7 +130,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 			return new UI_DEALER_PLAYLIST(
 				{ value: playlist.playlistId, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: playlist.name, link: '/dealer/playlists/' + playlist.playlistId, editable: false, hidden: false, new_tab_link: true, },
+				{ value: playlist.name, link: '/dealer/playlists/' + playlist.playlistId, editable: false, hidden: false, new_tab_link: true },
 				{ value: this._title.transform(playlist.description), link: null, editable: false, hidden: false },
 				{ value: this._date.transform(playlist.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false },
 				{ value: playlist.totalScreens > 0 ? true : false, link: null, hidden: true }
@@ -205,10 +214,65 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		licenseIds.forEach((id) => this._socket.emit('D_update_player', id));
 	}
 
+	showCreatePlaylistDialog() {
+		const width = '500px';
+		const height = '390px';
+		const configs: MatDialogConfig = { width, height, disableClose: true };
+
+		const dialog = this._dialog.open(CreatePlaylistDialogComponent, configs);
+		dialog.componentInstance.dealerId = this.dealer_id;
+		dialog.componentInstance.businessName = this.dealers_info;
+
+		dialog.afterClosed().subscribe({
+			next: (response) => {
+				if (!response || response === 'close') return;
+				this.createPlaylist(response);
+			}
+		});
+	}
+
+	private createPlaylist(data: CREATE_PLAYLIST) {
+		this._playlist
+			.create_playlist(data)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe({
+				next: ({ playlist }) => {
+					this.showResponseDialog('success', 'Success', 'Your changes have been saved').subscribe({
+						next: () => {
+							const newPlaylistUrl = `/${this.roleRoute}/playlists/${playlist.playlistId}`;
+							// this._router.navigateByUrl(newPlaylistUrl); // just in case they want to be navigated to the playlist page instead
+							window.open(newPlaylistUrl, '_blank');
+							this.getTotalCount();
+							this.getPlaylist(1);
+						}
+					});
+				},
+				error: (e) => {
+					console.error('Error creating playlist', e);
+
+					this.showResponseDialog('error', 'Error Saving Playlist', 'Something went wrong, please contact customer support').subscribe({
+						next: () => {
+							// maybe send logging here?
+						}
+					});
+				}
+			});
+	}
+
 	private initializeSocketConnection(): void {
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
 			query: 'client=Dashboard__PlaylistsPage'
 		});
+	}
+
+	private showResponseDialog(type: string, title = '', message = '') {
+		let data = { status: type, message: title, data: message };
+		const config = { disableClose: true, width: '500px', data };
+		return this._dialog.open(ConfirmationModalComponent, config).afterClosed();
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

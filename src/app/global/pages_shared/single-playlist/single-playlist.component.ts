@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { takeUntil } from 'rxjs/operators';
 import { forkJoin, Observable, Subject } from 'rxjs';
@@ -13,9 +13,7 @@ import {
 	API_LICENSE_PROPS,
 	API_SCREEN_OF_PLAYLIST,
 	API_SINGLE_PLAYLIST,
-	UI_ROLE_DEFINITION,
 	UI_PLAYLIST_SCREENS_NEW,
-	UI_CONFIRMATION_MODAL,
 	UI_ROLE_DEFINITION_TEXT
 } from 'src/app/global/models';
 import { AuthService, HelperService, PlaylistService, RoleService } from 'src/app/global/services';
@@ -44,6 +42,7 @@ export class SinglePlaylistComponent implements OnInit {
 	playlist_screens: API_SCREEN_OF_PLAYLIST[] = [];
 	playlist_screen_table: any;
 	playlist_updating: boolean = true;
+    role: any;
 	title: string;
 
 	_socket: any;
@@ -58,7 +57,7 @@ export class SinglePlaylistComponent implements OnInit {
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _playlist: PlaylistService,
-		private _role: RoleService
+        private _router: Router
 	) {}
 
 	ngOnInit() {
@@ -69,13 +68,13 @@ export class SinglePlaylistComponent implements OnInit {
 		// If changes made
 		if (this.reload) this.reload.subscribe(() => this.playlistRouteInit());
 
-		let role = this.currentRole;
-		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-			role = UI_ROLE_DEFINITION_TEXT.administrator;
+		this.role = this.currentRole;
+		if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.role = UI_ROLE_DEFINITION_TEXT.administrator;
 		}
 
-		this.host_url = `/` + role + `/hosts/`;
-		this.license_url = `/` + role + `/licenses/`;
+		this.host_url = `/` + this.role + `/hosts/`;
+		this.license_url = `/` + this.role + `/licenses/`;
 
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
@@ -252,6 +251,12 @@ export class SinglePlaylistComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				([playlistResponse, screenResponse]) => {
+                    if (playlistResponse.playlist.isMigrated) {
+                        // Redirect playlist to v2 page if already
+                        this._router.navigate([`${this.role}/playlists/v2/${playlistResponse.playlist.playlistId}`])
+                        return;
+                    }
+
 					this.setpageData(playlistResponse);
 					this.playlist_screens = screenResponse.screens;
 					this.screensMapToTable(this.playlist_screens);

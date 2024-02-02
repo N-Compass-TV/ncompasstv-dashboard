@@ -38,6 +38,7 @@ import { SingleDealerComponent } from '../../global/pages_shared/single-dealer/s
 import { SingleHostComponent } from '../../global/pages_shared/single-host/single-host.component';
 import { SingleLicenseComponent } from '../../global/pages_shared/single-license/single-license.component';
 import { SinglePlaylistComponent } from '../../global/pages_shared/single-playlist/single-playlist.component';
+import { SinglePlaylistV2Component } from 'src/app/global/pages_shared/single-playlist-v2/single-playlist-v2.component';
 import { SingleScreenComponent } from '../../global/pages_shared/single-screen/single-screen.component';
 import { SingleTemplateComponent } from '../../global/pages_shared/single-template/single-template.component';
 import { SingleUserComponent } from '../../global/pages_shared/single-user/single-user.component';
@@ -48,7 +49,7 @@ import { UI_ROLE_DEFINITION } from '../../global/models/ui_role-definition.model
 import { UnsavedChangesGuard } from 'src/app/global/guards';
 import { UpdateComponent } from './pages/update/update.component';
 import { UsersComponent } from './pages/users/users.component';
-import { ViewFillersGroupComponent } from '../../global/pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
+import { ViewFillersGroupComponent } from 'src/app/global/pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
 
 export const ADMINISTRATOR_ROUTES: Routes = [
 	{
@@ -289,6 +290,17 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 					{
 						path: '',
 						component: PlaylistsComponent
+					},
+					{
+						path: 'v2/:data',
+						component: SinglePlaylistV2Component,
+                        data: {
+							breadcrumb: 'Single Playlist'
+						}
+					},
+					{
+						path: 'v2/:data/:breadcrumb',
+						component: SinglePlaylistV2Component
 					},
 					{
 						path: 'create-playlist',

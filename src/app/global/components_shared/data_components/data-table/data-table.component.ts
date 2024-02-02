@@ -440,6 +440,9 @@ export class DataTableComponent implements OnInit {
                 case 'playlist_delete':
                     this.playlistDelete(id);
                     break;
+                case 'playlist_delete_normal':
+                    this.playlistDelete(id);
+                    break;
                 case 'advertiser_delete':
                     this.advertiserDelete(id, 0);
                     this.createActivity(deleteAdvertiser);
