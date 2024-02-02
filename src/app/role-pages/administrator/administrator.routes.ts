@@ -476,10 +476,10 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 				}
 			},
 			{
-				path: 'release-notes-view',
+				path: 'releases',
 				component: ReleaseNotesViewComponent,
 				data: {
-					breadcrumb: 'Recent Release Notes'
+					breadcrumb: 'Dashboard Releases'
 				}
 			}
 		]

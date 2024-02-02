@@ -2,8 +2,8 @@ import { Component, Input, OnInit, EventEmitter, Output, OnDestroy } from '@angu
 import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { takeUntil } from 'rxjs/operators';
-import { fromEvent, Observable, Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
+import { forkJoin, fromEvent, Observable, Subject } from 'rxjs';
 import { Sortable } from 'sortablejs';
 import * as moment from 'moment-timezone';
 
@@ -402,6 +402,13 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         });
     }
 
+    onSuccessModal(message: string, data: string) {
+        this._confirmation_dialog.success({ message: message, data: data });
+        this.bulk_toggle = false;
+        this.isMarking({ checked: false });
+        this.reload_playlist.emit(true);
+    }
+
     onSetSchedule(): void {
         this.showContentScheduleDialog();
     }
@@ -516,12 +523,33 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
             const playlistContentIdToBeReplaced = this.selected_playlist_content_ids[0];
             if (content.playlistContentId === playlistContentIdToBeReplaced) return this.showErrorDialog('Cannot select the same content to be swapped');
 
-            // if swap content
             if (response.mode === 'swap') {
                 const content: API_CONTENT = response.data[0];
                 const playlistContentIdToBeReplaced = this.selected_contents[0];
                 if (content.playlistContentId === playlistContentIdToBeReplaced.playlistContentId) return this.showErrorDialog('Cannot select the same content to be swapped');
-                this.swapContent({ contentId: content.contentId, playlistContentId: playlistContentIdToBeReplaced.playlistContentId });
+
+                const child = this.playlist_contents.filter((c) => c.parentId === playlistContentIdToBeReplaced.playlistContentId);
+
+                const swapContent$ = this.swapContent({ contentId: content.contentId, playlistContentId: playlistContentIdToBeReplaced.playlistContentId });
+
+                if (child.length > 0) {
+                    swapContent$
+                        .pipe(
+                            switchMap(() => {
+                                const swapChild = child.map((child) => {
+                                    return this.swapContent({ contentId: content.contentId, playlistContentId: child.playlistContentId });
+                                });
+                                return forkJoin(swapChild);
+                            })
+                        )
+                        .subscribe(() => {
+                            this.onSuccessModal('Success', 'Content swapped');
+                        });
+                } else {
+                    swapContent$.subscribe(() => {
+                        this.onSuccessModal('Success', 'Content swapped');
+                    });
+                }
             }
         });
     }
@@ -1089,15 +1117,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
     }
 
     private swapContent(data: { contentId: string; playlistContentId: string }) {
-        return this._playlist
-            .swap_playlist_content(data)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() => {
-                this._confirmation_dialog.success({ message: 'Success!', data: 'Content swapped' });
-                this.bulk_toggle = false;
-                this.isMarking({ checked: false });
-                this.reload_playlist.emit(true);
-            });
+        return this._playlist.swap_playlist_content(data).pipe(takeUntil(this._unsubscribe));
     }
 
     protected get _contentFileTypes() {

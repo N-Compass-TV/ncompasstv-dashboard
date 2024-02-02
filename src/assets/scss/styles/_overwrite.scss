@@ -111,6 +111,7 @@
     .mat-dialog-container {
         max-height: unset;
     }
+
     .timepicker-overlay {
         z-index: 1100 !important;
     }
@@ -327,4 +328,10 @@ breadcrumb {
     max-width: 10%;
     position: relative;
     width: 100%;
+}
+
+#edit-host {
+    .mat-tab-body.mat-tab-body-active {
+        overflow-y: hidden !important;
+    }
 }

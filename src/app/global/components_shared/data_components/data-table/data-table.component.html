@@ -396,17 +396,11 @@
                         </ng-template>
 
                         <!-- EDIT BUTTON -->
-                        <div class="float-right ml-2" *ngIf="data[d].editable && !is_view_only" mat-dialog-content (click)="editField(data[d], data[d].label, data[d].value)">
+                        <div class="ml-2" *ngIf="data[d].editable && !is_view_only" (click)="editField(data[d], data[d].label, data[d].value)">
                             <i class="clickable fa fa-pencil text-gray" title="Edit {{ data[d].label }}"></i>
                         </div>
 
-                        <!-- EDIT BUTTON -->
-                        <div
-                            class="ml-3 clickable mt-neg15 position-absolute ml-2"
-                            *ngIf="data[d].popview && data[d].value > 0"
-                            mat-dialog-content
-                            (click)="viewListModal(data[d], data[d].label, data[d].value)"
-                        >
+                        <div class="ml-2" *ngIf="data[d].popview && data[d].value > 0" (click)="viewListModal(data[d], data[d].label, data[d].value)">
                             <i class="clickable fa fa-search-plus text-gray" title="View all {{ data[d].label }}"></i>
                         </div>
                     </span>
@@ -453,7 +447,7 @@
                 </td>
 
                 <td class="p-3 control-toggle" *ngIf="advertiser_delete">
-                    <i class="fas fa-trash cursor-pointer" title="Delete Advertiser" (click)="deleteAdvertiser(data.id.value)"></i>
+                    <i class="fas fa-trash cursor-pointer" title="Delete Advertiser" (click)="deleteAdvertiser(data.advertiserId.value)"></i>
                 </td>
 
                 <td class="p-3 control-toggle" *ngIf="billing_action">

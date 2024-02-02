@@ -33,7 +33,7 @@ export class ScreensComponent implements OnInit {
 	//Name = Column Name, Sortable: If Sortable, Column: For BE Key to sort, Key: Column to be exported as per API, No_export: Dont Include to Export
 	tbl_screen_columns = [ 
 		{ name: '#', sortable: false, no_export: true},
-		{ name: 'Screeen Name', sortable: true, column:'ScreenName', no_export: true},
+		{ name: 'Screen Name', sortable: true, column:'ScreenName', no_export: true},
 		{ name: 'Dealer', sortable: true, column:'BusinessName', no_export: true},
 		{ name: 'Hosts', sortable: true, column:'HostName', no_export: true},
 		{ name: 'Type', sortable: true, column:'ScreenTypeName', no_export: true},
@@ -121,7 +121,7 @@ export class ScreensComponent implements OnInit {
 					{ value: s.screenId, link: null , editable: false, hidden: true},
 					{ value: counter++, link: null , editable: false, hidden: false},
 					{ value: this._titlecase.transform(s.screenName), link: '/administrator/screens/' +  s.screenId, editable: false, hidden: false, new_tab_link: true},
-					{ value: this._titlecase.transform(s.businessName), link: '/administrator/dealers/' + s.dealerId, editable: false, hidden: false, new_tab_link: true},
+					{ value: s.businessName ? this._titlecase.transform(s.businessName) : '--', link: '/administrator/dealers/' + s.dealerId, editable: false, hidden: false, new_tab_link: true},
 					{ value: s.hostName != null ? this._titlecase.transform(s.hostName) : '--', link: s.hostName ? '/administrator/hosts/' + s.hostId : null, editable: false, hidden: false, new_tab_link: true},
 					{ value: s.screenTypeName != '' ? this._titlecase.transform(s.screenTypeName) : '--', link: null, editable: true, dropdown_edit: true, label:'Screen Type', id: s.screenId, name: s.screenName, hidden: false},
 					{ value: s.templateName != '' ? this._titlecase.transform(s.templateName) : null, link: null, editable: false, hidden: false},
