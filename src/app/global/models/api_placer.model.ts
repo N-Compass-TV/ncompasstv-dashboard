@@ -5,8 +5,8 @@ export interface API_PLACER {
     hostId: string;
     hostName: string;
     address: string;
-    city: string;
-    state: string;
+    hostCity: string;
+    hostState: string;
     postalCode: string;
     averageDwellTime: number;
     footTraffic: number;

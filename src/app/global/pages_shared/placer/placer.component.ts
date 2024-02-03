@@ -31,7 +31,15 @@ export class PlacerComponent implements OnInit {
         { name: 'Placer Id', key: 'placerId' },
         { name: 'Placer Name', key: 'placerName', sortable: true, column: 'PlacerName' },
         { name: 'Host Name', key: 'hostName', sortable: true, column: 'HostName' },
+        { name: 'Dealer', key: 'dealerName', no_show: true, hidden: true },
+        { name: 'Category', key: 'category', no_show: true, hidden: true },
+        { name: 'General Category', key: 'generalCategory', no_show: true, hidden: true },
         { name: 'Address', key: 'address', sortable: true, column: 'Address' },
+        { name: 'City', key: 'hostCity', no_show: true, hidden: true },
+        { name: 'State', key: 'hostState', no_show: true, hidden: true },
+        { name: 'Zip Code', key: 'postalCode', no_show: true, hidden: true },
+        { name: 'Longitude', key: 'longitude', no_show: true, hidden: true },
+        { name: 'Latitude', key: 'latitude', no_show: true, hidden: true },
         { name: 'Foot Traffic', key: 'footTraffic', sortable: true, column: 'FootTraffic' },
         { name: 'Average Dwell Time', key: 'averageDwellTime', sortable: true, column: 'AverageDwellTime' },
         { name: 'Month', key: 'month', sortable: true, column: 'Month' },
@@ -60,8 +68,8 @@ export class PlacerComponent implements OnInit {
     paging_data: any;
     searching_placer_data: boolean = true;
     search_keyword: string = '';
-    sort_column: string = 'DateUploaded';
-    sort_order: string = 'desc';
+    sort_column: string = '';
+    sort_order: string = '';
     total_placer: number = 0;
 
     //Export
@@ -129,10 +137,10 @@ export class PlacerComponent implements OnInit {
                 this.hostsData = hosts.map((host) => {
                     return {
                         id: host.hostId,
-                        value: `${host.name} | ${host.address}, ${host.city}`
+                        value: `${host.name} | ${host.address}, ${host.city}`,
                     };
                 });
-        })
+            });
     }
 
     private getPlacerData(page, is_export?) {
@@ -223,7 +231,7 @@ export class PlacerComponent implements OnInit {
                         placername: placer.placerName ? placer.placerName : '',
                     },
                 },
-                { value: `${placer.address}, ${placer.city}, ${placer.state} ${placer.postalCode}`, link: null, editable: false, key: false },
+                { value: `${placer.address}, ${placer.hostCity}, ${placer.hostState} ${placer.postalCode}`, link: null, editable: false, key: false },
                 { value: placer.footTraffic, link: null, editable: false, key: false },
                 { value: placer.averageDwellTime, link: null, editable: false, key: false },
                 { value: placer.month, link: null, editable: false, key: false },
