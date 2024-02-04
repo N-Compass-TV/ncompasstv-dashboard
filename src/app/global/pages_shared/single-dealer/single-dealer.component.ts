@@ -1651,14 +1651,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 }
 
                 //To Overwrite Dwell Time and Foot Traffic to available months only
-                item.placerDump.map((dump) => {
-                    let dissected_month = dump.month.split(' ');
-                    let month_index = moment().month(dissected_month[0]).format('M');
-                    var average_dwell_time_with_index = 'averageDwellTime-' + month_index[0];
-                    var foot_traffic_with_index = 'footTraffic-' + month_index[0];
-                    item[average_dwell_time_with_index] = dump.averageDwellTime;
-                    item[foot_traffic_with_index] = dump.footTraffic;
-                });
+                if (item.placerDump) {
+                    item.placerDump.map((dump) => {
+                        let dissected_month = dump.month.split(' ');
+                        let month_index = moment().month(dissected_month[0]).format('M');
+                        var average_dwell_time_with_index = 'averageDwellTime-' + month_index[0];
+                        var foot_traffic_with_index = 'footTraffic-' + month_index[0];
+                        item[average_dwell_time_with_index] = dump.averageDwellTime;
+                        item[foot_traffic_with_index] = dump.footTraffic;
+                    });
+                }
+
                 break;
 
             case 'Advertisers':
