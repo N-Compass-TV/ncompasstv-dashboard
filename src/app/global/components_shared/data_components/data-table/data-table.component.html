@@ -149,7 +149,7 @@
                                             </ng-container>
                                         </a>
                                     </ng-container>
-									
+
                                     <ng-template #isGlobalLink>
                                         <a
                                             class="cursor-pointer table-row-url with-link-support"
@@ -176,7 +176,7 @@
                                                             </ng-container>
                                                         </div>
                                                     </span>
-									  
+
                                                     <ng-template #shortened_tooltip>
                                                         <span [title]="data[d].value">
                                                             {{ data[d].value | substring : 10 }}
@@ -393,7 +393,6 @@
                         </ng-template>
 
                         <!-- EDIT BUTTON -->
-              </div>
                         <button class="naked-btn ml-2" *ngIf="data[d].editable && !is_view_only" (click)="editField(data[d], data[d].label, data[d].value)">
                             <i class="clickable fa fa-pencil text-gray" title="Edit {{ data[d].label }}"></i>
                         </button>
