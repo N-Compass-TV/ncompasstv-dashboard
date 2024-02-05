@@ -212,6 +212,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         { name: 'Address', sortable: true, column: 'Address', key: 'address' },
         { name: 'City', sortable: true, column: 'City', key: 'city' },
         { name: 'State', sortable: true, column: 'State', key: 'state' },
+        { name: 'Latitude', sortable: true, key: 'latitude', no_show: true, hidden: true },
+        { name: 'Longitude', sortable: true, key: 'longitude', no_show: true, hidden: true },
         { name: 'Postal Code', sortable: true, column: 'PostalCode', key: 'postalCode' },
         { name: 'License Count', sortable: true, column: 'TotalLicences', key: 'totalLicences' },
         { name: 'Vistar Venue ID', no_show: true, key: 'vistarVenueId' },
