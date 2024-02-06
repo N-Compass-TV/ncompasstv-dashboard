@@ -53,7 +53,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
             playlistContentId: string;
             playlistId: string;
         },
-        private _playlist: SinglePlaylistService
+        private _playlist: SinglePlaylistService,
     ) {}
 
     ngOnInit() {

@@ -5,13 +5,13 @@
     </button>
 
     <div class="logo">
-        <img class="logo-image" *ngIf="!icons_only" src="assets/media-files/logo-light.png" alt="logo">
-        <img class="logo-image" *ngIf="icons_only" src="assets/media-files/icon-logo.png" alt="logo">
+        <img class="logo-image" *ngIf="!icons_only" src="assets/media-files/logo-light.png" alt="logo" />
+        <img class="logo-image" *ngIf="icons_only" src="assets/media-files/icon-logo.png" alt="logo" />
     </div>
 
     <ul class="menu list-unstyled m-0 p-0">
         <li class="menu-item full-width mb-1" *ngFor="let route of routes">
-            <a [routerLink]="route.path" routerLinkActive="is-active" class="full-width" title="{{icons_only ? route.label:''}}">
+            <a [routerLink]="route.path" routerLinkActive="is-active" class="full-width" title="{{ icons_only ? route.label : '' }}">
                 <span class="{{ route.icon }} inline-block"></span>
                 <span *ngIf="!icons_only">
                     <span class="url-text ml-2">{{ route.label }}</span>

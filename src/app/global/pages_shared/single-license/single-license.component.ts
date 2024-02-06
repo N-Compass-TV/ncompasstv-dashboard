@@ -25,7 +25,7 @@ import {
     LicenseService,
     ScreenService,
     TagService,
-    TemplateService
+    TemplateService,
 } from 'src/app/global/services';
 
 import {
@@ -52,7 +52,7 @@ import {
     PAGING,
     API_HOST_FILE,
     UI_HOST_FILE,
-    UI_HOST_SUPPORT
+    UI_HOST_SUPPORT,
 } from 'src/app/global/models';
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
@@ -194,7 +194,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         private _tag: TagService,
         private _template: TemplateService,
         private _titleCasePipe: TitleCasePipe,
-        private _snackBar: MatSnackBar
+        private _snackBar: MatSnackBar,
     ) {}
 
     @HostListener('window:resize', [])
@@ -294,7 +294,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             )
             .add(() => (this.saving_license_settings = false));
     }
@@ -333,7 +333,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -349,7 +349,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -365,7 +365,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -381,7 +381,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -449,7 +449,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         });
     }
@@ -539,7 +539,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -593,7 +593,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -700,7 +700,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -717,7 +717,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -780,7 +780,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     this.fastEdgeSettingsSaving = false;
                     alert(`Failed saving DCP Tool changes, ${error.error}`);
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -793,7 +793,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             'Update System to Version 2 and Restart',
             'Are you sure you want to upgrade the software to version 2 and restart the pi?',
             'Click OK to upgrade',
-            'system_upgrade'
+            'system_upgrade',
         );
     }
 
@@ -989,7 +989,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             )
             .add(() => (this.initial_load = false));
     }
@@ -1008,13 +1008,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 (response) => {
                     this.pagingData = response;
 
-                    if (!response.entities || response.entities.length <= 0) return this.hasNoData = true;  
+                    if (!response.entities || response.entities.length <= 0) return (this.hasNoData = true);
                     const images = response.entities as API_HOST_FILE[];
                     this.images = [...images];
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1029,9 +1029,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.showCopiedTooltip = false;
 
         setTimeout(() => {
-        this.tooltipMessage = 'Copy license key';
-        this.showCopiedTooltip = true;
-        }, 1000); 
+            this.tooltipMessage = 'Copy license key';
+            this.showCopiedTooltip = true;
+        }, 1000);
     }
 
     private getLicenseById() {
@@ -1053,7 +1053,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (e) => {
                     throw new Error(e);
-                }
+                },
             );
     }
 
@@ -1157,19 +1157,19 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     switch (currentFilter.name) {
                         case 'host':
                             filteredContents = dataToBeFiltered.filter(
-                                (content) => !this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type)
+                                (content) => !this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type),
                             );
                             break;
 
                         case 'advertiser':
                             filteredContents = dataToBeFiltered.filter(
-                                (content) => !this.isBlank(content.advertiser_id) && this.isBlank(content.host_id) && !classifications.includes(content.file_type)
+                                (content) => !this.isBlank(content.advertiser_id) && this.isBlank(content.host_id) && !classifications.includes(content.file_type),
                             );
                             break;
 
                         default:
                             filteredContents = dataToBeFiltered.filter(
-                                (content) => this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type)
+                                (content) => this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type),
                             );
                             break;
                     }
@@ -1184,13 +1184,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
                         case 'image':
                             filteredContents = dataToBeFiltered.filter(
-                                (content) => content.classification !== 'filler' && imageFileTypes.includes(content.file_type.toLowerCase())
+                                (content) => content.classification !== 'filler' && imageFileTypes.includes(content.file_type.toLowerCase()),
                             );
                             break;
 
                         case 'video':
                             filteredContents = dataToBeFiltered.filter(
-                                (content) => content.classification !== 'filler' && videoFileTypes.includes(content.file_type.toLowerCase())
+                                (content) => content.classification !== 'filler' && videoFileTypes.includes(content.file_type.toLowerCase()),
                             );
 
                             break;
@@ -1390,7 +1390,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1440,7 +1440,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     this.no_screen_assigned = true;
                     this.hasLoadedScreenData = true;
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1466,7 +1466,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1511,7 +1511,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1553,7 +1553,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 content.createdByName,
                 content.ownerRoleId,
                 content.classification,
-                content.seq
+                content.seq,
             );
 
             return mappedContent;
@@ -1573,7 +1573,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             data.template.name != null ? data.template.name : '',
             `${data.createdBy.firstName} ${data.createdBy.lastName}`,
             this.mapScreenZoneToUI(data.screenZonePlaylistsContents),
-            []
+            [],
         );
     }
 
@@ -1598,7 +1598,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     content.screenTemplateZonePlaylist.order,
                     contents,
                     content.screenTemplateZonePlaylist.playlistName,
-                    content.screenTemplateZonePlaylist.playlistId
+                    content.screenTemplateZonePlaylist.playlistId,
                 );
             });
     }
@@ -1616,7 +1616,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             data.playlistName,
             data.name,
             data.description,
-            data.order
+            data.order,
         );
     }
 
@@ -1664,7 +1664,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 () => this.getLicenseActivity(),
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1991,7 +1991,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     () => {},
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         });
     }
@@ -2055,7 +2055,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -2099,7 +2099,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -2135,7 +2135,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -2147,7 +2147,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 () => {},
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 

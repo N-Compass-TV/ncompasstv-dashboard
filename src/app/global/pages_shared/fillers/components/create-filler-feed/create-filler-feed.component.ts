@@ -36,7 +36,7 @@ export class CreateFillerFeedComponent implements OnInit {
         private _filler: FillerService,
         private _dialog: MatDialog,
         private _route: Router,
-        private _auth: AuthService
+        private _auth: AuthService,
     ) {}
 
     ngOnInit() {
@@ -134,7 +134,7 @@ export class CreateFillerFeedComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 

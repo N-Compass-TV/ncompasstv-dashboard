@@ -3,9 +3,9 @@ export class UI_DEALER_HOST {
     host_id: object;
     host_name: object;
     address: object;
-    city:object;
-    state:object;
-    postal_code:object;
+    city: object;
+    state: object;
+    postal_code: object;
     license_count: object;
     status: object;
     // install_date: object;

@@ -32,7 +32,7 @@ export class AutocompleteComponent implements OnInit {
             startWith(this.field_data.initialValue && this.field_data.initialValue.length ? this.field_data.initialValue[0].value : ''),
             debounceTime(this.field_data.allowSearchTrigger ? 1000 : 0),
             distinctUntilChanged(),
-            map((keyword) => this._filter(keyword))
+            map((keyword) => this._filter(keyword)),
         );
     }
 

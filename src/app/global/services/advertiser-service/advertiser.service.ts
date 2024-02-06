@@ -36,7 +36,7 @@ export class AdvertiserService extends BaseService {
     }
 
     get_advertisers_total_by_dealer(
-        id: string
+        id: string,
     ): Observable<{ newAdvertisersLastWeek: number; newAdvertisersThisWeek: number; total: number; totalActive: number; totalInActive: number }> {
         const url = `${this.getters.api_get_advertiser_total_by_dealer}${id}`;
         return this.getRequest(url);
@@ -45,7 +45,7 @@ export class AdvertiserService extends BaseService {
     get_advertisers_by_dealer_id(
         filters: API_FILTERS,
         enforceTagKeySearch = false,
-        allowBlankFilters = true
+        allowBlankFilters = true,
     ): Observable<{ advertisers?: API_ADVERTISER[]; paging?: PAGING; message?: string }> {
         const base = `${this.getters.api_get_advertisers_by_dealer_id}`;
         const params = this.setUrlParams(filters, enforceTagKeySearch, allowBlankFilters);

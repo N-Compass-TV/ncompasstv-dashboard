@@ -52,8 +52,7 @@
             [primary_keyword]="'name'"
             [secondary_keyword]="'name'"
             (searched)="onSearchFiller($event)"
-            [api_search]="true"
-        >
+            [api_search]="true">
         </app-search-field>
     </div>
 </div>
@@ -62,10 +61,10 @@
         <div class="filter-pills pt-1">
             <div class="filetype-pill pill">
                 Sorted by {{ sorting_column }} :
-                <strong *ngIf="sorting_column == 'DateCreated'; else nameFilter">{{ sorting_order == "asc" ? "Oldest" : "Newest" }}</strong>
+                <strong *ngIf="sorting_column == 'DateCreated'; else nameFilter">{{ sorting_order == 'asc' ? 'Oldest' : 'Newest' }}</strong>
             </div>
             <ng-template #nameFilter>
-                <strong>{{ sorting_order == "asc" ? "Ascending" : "Descending" }}</strong>
+                <strong>{{ sorting_order == 'asc' ? 'Ascending' : 'Descending' }}</strong>
             </ng-template>
         </div>
     </div>
@@ -113,8 +112,7 @@
                                             class="cover-bg w-100 h-100"
                                             [src]="'assets/media-files/no-ss.png'"
                                             title="No Album Preview"
-                                            *ngIf="no_preview_available && !initial_loading"
-                                        />
+                                            *ngIf="no_preview_available && !initial_loading" />
                                     </div>
                                 </div>
                             </ng-template>
@@ -129,7 +127,7 @@
                         <div class="row">
                             <div class="col-lg-12 text-center text-primary uppercase">
                                 <span class="sm-text f-500 clickable hover-prime" title="{{ group.name }}" (click)="navigateToFillerGroup(group.fillerGroupId)"
-                                    >{{ group.name | slice : 0 : 20 }}{{ group.name.length > 20 ? "..." : "" }}</span
+                                    >{{ group.name | slice: 0 : 20 }}{{ group.name.length > 20 ? '...' : '' }}</span
                                 >
                             </div>
                             <div class="col-lg-12 mt-2">
@@ -138,8 +136,7 @@
                                         [src]="group.coverPhoto"
                                         class="clickable full-width h-130-px br-5 cover-bg"
                                         title="Click to Preview Album"
-                                        (click)="showAlbumPreview(group.fillerGroupId, 4, '', i)"
-                                    />
+                                        (click)="showAlbumPreview(group.fillerGroupId, 4, '', i)" />
                                 </div>
                                 <ng-template #defaultphoto>
                                     <div>
@@ -147,8 +144,7 @@
                                             [src]="'assets/media-files/filler-group-placeholder.png'"
                                             class="clickable full-width h-130-px br-5"
                                             title="Click to Preview Album"
-                                            (click)="showAlbumPreview(group.fillerGroupId, 4, '', i)"
-                                        />
+                                            (click)="showAlbumPreview(group.fillerGroupId, 4, '', i)" />
                                     </div>
                                 </ng-template>
                             </div>
@@ -169,18 +165,16 @@
                                     <span
                                         class="sm-text fas fa-cog text-light-gray ml-2 clickable hover-prime"
                                         title="Edit Filler Group"
-                                        (click)="onEditFillerGroup(group.fillerGroupId)"
-                                    ></span>
+                                        (click)="onEditFillerGroup(group.fillerGroupId)"></span>
 
                                     <span
                                         class="sm-text fas fa-trash text-danger ml-2 clickable"
                                         title="Delete Filler Group"
-                                        (click)="onDeleteFillerGroup(group.fillerGroupId)"
-                                    ></span>
+                                        (click)="onDeleteFillerGroup(group.fillerGroupId)"></span>
                                 </ng-container>
                                 <ng-template #createdbyarea>
                                     <span class="sm-text text-dark" title="{{ group.createdByName }}">{{
-                                        group.createdByName.length > 10 ? (group.createdByName | slice : 0 : 10) + "..." : group.createdByName
+                                        group.createdByName.length > 10 ? (group.createdByName | slice: 0 : 10) + '...' : group.createdByName
                                     }}</span>
                                 </ng-template>
                             </div>
@@ -211,7 +205,7 @@
                                 <span class="fa fa-image text-primary mr-2" *ngIf="filler.fileType | isimage" title="Image"></span>
                                 <span class="fa fa-video text-primary mr-2" *ngIf="filler.fileType | isvideo" title="Video"></span>
                                 <span class="fa fa-wifi text-primary mr-2" *ngIf="filler.fileType === 'feed'" title="Feed"></span>
-                                {{ filler.title.length > 15 ? (filler.title | slice : 0 : 20) + "..." : filler.title }}
+                                {{ filler.title.length > 15 ? (filler.title | slice: 0 : 20) + '...' : filler.title }}
                             </div>
                             <img [src]="filler.url" class="full-width cover-bg h-150" />
                             <div class="filler-name position-absolute bg-white p-1 sm-text font-bold bottom-0 text-center border-top">

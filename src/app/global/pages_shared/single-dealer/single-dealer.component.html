@@ -9,8 +9,7 @@
                 [refresh_banner]="true"
                 [page]="'single-dealer'"
                 [page_data]="dealer_and_user_data"
-                (update_info)="ngOnInit()"
-            >
+                (update_info)="ngOnInit()">
             </app-banner>
 
             <div class="select-dealer-field text-white position-absolute">
@@ -29,8 +28,7 @@
                     [new_value]="dealer_name"
                     [initial_value]="dealer_name"
                     [loading_data]="loading_data"
-                    [loading_search]="loading_search"
-                >
+                    [loading_search]="loading_search">
                 </app-autocomplete-field>
 
                 <span class="fas fa-search icon text-white"></span>
@@ -66,8 +64,7 @@
                                 [breakdown5_value]="license_card.breakdown5_value"
                                 [breakdown5_label]="license_card.breakdown5_label"
                                 [fourth_value]="license_card.fourth_value"
-                                [fourth_value_label]="license_card.fourth_value_label"
-                            >
+                                [fourth_value_label]="license_card.fourth_value_label">
                             </app-data-card-graph>
                         </mat-card>
                     </div>
@@ -81,8 +78,7 @@
                                 [active_label]="host_card.good_value_label"
                                 [inactive]="host_card.bad_value"
                                 [inactive_label]="host_card.bad_value_label"
-                                [icon]="'fas fa-briefcase'"
-                            >
+                                [icon]="'fas fa-briefcase'">
                             </app-data-quick-stats>
                         </ng-container>
                     </div>
@@ -95,8 +91,7 @@
                             [active_label]="advertiser_card.good_value_label"
                             [inactive]="advertiser_card.bad_value"
                             [inactive_label]="advertiser_card.bad_value_label"
-                            [icon]="'fas fa-ad'"
-                        >
+                            [icon]="'fas fa-ad'">
                         </app-data-quick-stats>
                     </div>
                 </div>
@@ -171,8 +166,7 @@
                                                     class="theme-btn pi-control sm-text mr-2"
                                                     [disabled]="searching_license"
                                                     (click)="reloadLicense()"
-                                                    title="Reload"
-                                                >
+                                                    title="Reload">
                                                     <span class="fas fa-sync-alt"></span>
                                                     <span class="ml-2 button_text_animation">Reload</span>
                                                 </button>
@@ -182,8 +176,7 @@
                                                     mat-raised-button
                                                     class="theme-btn pi-control _cool sm-text mr-2"
                                                     [matMenuTriggerFor]="orderSort"
-                                                    title="Order by License Status"
-                                                >
+                                                    title="Order by License Status">
                                                     <span class="fas fa-sort"></span>
                                                     <span class="ml-2 button_text_animation">Order by License Status</span>
                                                 </button>
@@ -224,8 +217,7 @@
                                                         class="theme-btn pi-control sm-text _teal mr-2"
                                                         [disabled]="remote_reboot_disabled || !licenses"
                                                         (click)="screenshotDealer()"
-                                                        title="Screenshot"
-                                                    >
+                                                        title="Screenshot">
                                                         <span class="fas fa-camera"></span>
                                                         <span class="ml-2 button_text_animation">Screenshot</span>
                                                     </button>
@@ -237,8 +229,7 @@
                                                         class="theme-btn pi-control sm-text _warning mr-2"
                                                         [disabled]="remote_reboot_disabled || !licenses"
                                                         (click)="rebootPlayer()"
-                                                        title="Reboot Player"
-                                                    >
+                                                        title="Reboot Player">
                                                         <span class="fas fa-power-off"></span>
                                                         <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
                                                     </button>
@@ -250,8 +241,7 @@
                                                         class="theme-btn pi-control sm-text _caution mr-2"
                                                         [disabled]="remote_reboot_disabled || !licenses"
                                                         (click)="rebootPi()"
-                                                        title="Reboot Pi"
-                                                    >
+                                                        title="Reboot Pi">
                                                         <span class="fas fa-power-off"></span>
                                                         <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
                                                     </button>
@@ -262,8 +252,7 @@
                                                             mat-raised-button
                                                             class="theme-btn pi-control sm-text _warning mr-2"
                                                             [disabled]="true"
-                                                            [title]="timeout_message"
-                                                        >
+                                                            [title]="timeout_message">
                                                             <span class="fas fa-power-off"></span>
                                                             <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
                                                         </button>
@@ -275,8 +264,7 @@
                                                             mat-raised-button
                                                             class="theme-btn pi-control sm-text _teal mr-2"
                                                             [disabled]="remote_reboot_disabled || !licenses"
-                                                            title="timeout_message"
-                                                        >
+                                                            title="timeout_message">
                                                             <span class="fas fa-camera"></span>
                                                             <span class="ml-2 button_text_animation">Screenshot</span>
                                                         </button>
@@ -288,8 +276,7 @@
                                                             mat-raised-button
                                                             class="theme-btn pi-control sm-text _caution mr-2"
                                                             [disabled]="true"
-                                                            [title]="timeout_message"
-                                                        >
+                                                            [title]="timeout_message">
                                                             <span class="fas fa-power-off"></span>
                                                             <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
                                                         </button>
@@ -302,8 +289,7 @@
                                                         [ngClass]="array_to_delete.length > 0 ? '_danger' : ''"
                                                         [disabled]="array_to_delete.length == 0"
                                                         (click)="multipleDeleteLicense()"
-                                                        title="Multiple Delete"
-                                                    >
+                                                        title="Multiple Delete">
                                                         <span class="fas fa-trash-alt" [ngStyle]="{ color: array_to_delete.length > 0 ? '#fff' : '#222' }"></span>
                                                         <span class="ml-2 button_text_animation" [ngStyle]="{ color: array_to_delete.length > 0 ? '#fff' : '#222' }">
                                                             Multiple Delete
@@ -318,14 +304,12 @@
                                                         class="theme-btn pi-control sm-text _primary mr-2"
                                                         (click)="exportTable('Licenses')"
                                                         [disabled]="workbook_generation"
-                                                        title="Export to CSV"
-                                                    >
+                                                        title="Export to CSV">
                                                         <span
                                                             class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                                            [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                                        ></span>
+                                                            [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                                                         <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                                                            !workbook_generation ? "Export" : "Generating CSV"
+                                                            !workbook_generation ? 'Export' : 'Generating CSV'
                                                         }}</span>
                                                     </button>
                                                 </ng-container>
@@ -339,8 +323,7 @@
                                                     [primary_keyword]="'alias'"
                                                     [secondary_keyword]="'host_name'"
                                                     (searched)="licenseFilterData($event)"
-                                                    [api_search]="true"
-                                                ></app-search-field>
+                                                    [api_search]="true"></app-search-field>
                                             </div>
                                         </div>
                                         <div class="row" *ngIf="filters.label_status || filters.label_zone || filters.label_dealer || filters.label_host">
@@ -396,8 +379,7 @@
                                                             [active_tab]="sort_column"
                                                             [sort_column]="sort_column"
                                                             [sort_order]="sort_order"
-                                                            [dealer_id]="dealer_id"
-                                                        >
+                                                            [dealer_id]="dealer_id">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </ng-container>
@@ -436,14 +418,12 @@
                                             class="theme-btn pi-control sm-text _primary mr-2"
                                             (click)="exportTable('Hosts')"
                                             [disabled]="workbook_generation"
-                                            title="Export to CSV"
-                                        >
+                                            title="Export to CSV">
                                             <span
                                                 class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                                [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                            ></span>
+                                                [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                                             <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                                                !workbook_generation ? "Export" : "Generating CSV"
+                                                !workbook_generation ? 'Export' : 'Generating CSV'
                                             }}</span>
                                         </button>
                                         <div class="search-field">
@@ -455,8 +435,7 @@
                                                 [primary_keyword]="'host_name'"
                                                 [secondary_keyword]="'host_name'"
                                                 (searched)="hostFilterData($event)"
-                                                [api_search]="true"
-                                            >
+                                                [api_search]="true">
                                             </app-search-field>
                                         </div>
                                     </div>
@@ -474,8 +453,7 @@
                                                         [sort_order]="sort_order_hosts"
                                                         [page]="'single-dealer-host-tab'"
                                                         (page_triggered)="getDealerHost($event)"
-                                                        (to_sort_column)="getHostsColumnsAndOrder($event)"
-                                                    >
+                                                        (to_sort_column)="getHostsColumnsAndOrder($event)">
                                                     </app-data-table>
                                                 </mat-card>
                                             </ng-container>
@@ -501,14 +479,12 @@
                                                 class="theme-btn pi-control sm-text _primary mr-2"
                                                 (click)="exportTable('Advertisers')"
                                                 [disabled]="workbook_generation"
-                                                title="Export to CSV"
-                                            >
+                                                title="Export to CSV">
                                                 <span
                                                     class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                                    [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                                ></span>
+                                                    [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                                                 <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                                                    !workbook_generation ? "Export" : "Generating CSV"
+                                                    !workbook_generation ? 'Export' : 'Generating CSV'
                                                 }}</span>
                                             </button>
                                             <mat-menu #advertiserStatusList="matMenu">
@@ -529,8 +505,7 @@
                                                 [primary_keyword]="'name'"
                                                 [secondary_keyword]="'name'"
                                                 (searched)="advertiserFilterData($event)"
-                                                [api_search]="true"
-                                            >
+                                                [api_search]="true">
                                             </app-search-field>
                                         </div>
                                     </div>
@@ -550,8 +525,7 @@
                                                         [page]="'advertisers'"
                                                         (page_triggered)="getDealerAdvertiser($event)"
                                                         (update_info)="reloadAdvertiser()"
-                                                        (to_sort_column)="getAdvertisersColumnsAndOrder($event)"
-                                                    >
+                                                        (to_sort_column)="getAdvertisersColumnsAndOrder($event)">
                                                     </app-data-table>
                                                 </mat-card>
                                             </ng-container>
@@ -577,8 +551,7 @@
                                                     [primary_keyword]="'licenseKey'"
                                                     [secondary_keyword]="'licenseAlias'"
                                                     (searched)="licenseZoneFilterData($event)"
-                                                    [api_search]="true"
-                                                >
+                                                    [api_search]="true">
                                                 </app-search-field>
                                             </div>
                                         </div>
@@ -591,8 +564,7 @@
                                                             [table_columns]="license_zone_table_col"
                                                             [new_table]="true"
                                                             [paging_details]="paging_data_zone"
-                                                            (page_triggered)="getDealerLicenseZone($event)"
-                                                        >
+                                                            (page_triggered)="getDealerLicenseZone($event)">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </ng-container>
@@ -609,7 +581,7 @@
                                 <div class="row">
                                     <div class="col-lg-12 ml-2 pt-4">
                                         <h5>{{ createdBy }}</h5>
-                                        <h6>{{ dateCreated | date : "MMMM d, y" }}</h6>
+                                        <h6>{{ dateCreated | date: 'MMMM d, y' }}</h6>
                                     </div>
                                 </div>
 
@@ -630,8 +602,7 @@
                                             [owner_data]="dealer_data"
                                             [reload_data]="reload_data"
                                             (pageChanged)="getDealerActivity($event)"
-                                            (sortColumnEvent)="getActivityColumnsAndOrder($event)"
-                                        >
+                                            (sortColumnEvent)="getActivityColumnsAndOrder($event)">
                                         </app-single-activity-tab>
                                     </div>
                                 </div>

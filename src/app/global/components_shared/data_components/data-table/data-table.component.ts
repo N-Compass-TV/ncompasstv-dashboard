@@ -128,7 +128,7 @@ export class DataTableComponent implements OnInit {
         private _router: Router,
         private _screen: ScreenService,
         private _user: UserService,
-        private _dealer: DealerService
+        private _dealer: DealerService,
     ) {}
 
     ngOnInit() {
@@ -209,7 +209,7 @@ export class DataTableComponent implements OnInit {
                     this.table_data = [...orders];
                     this._billing.on_click_order.next();
                 },
-                (error) => (this.in_progress = false)
+                (error) => (this.in_progress = false),
             )
             .add(() => (this.in_progress = false));
     }
@@ -290,7 +290,7 @@ export class DataTableComponent implements OnInit {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -321,7 +321,7 @@ export class DataTableComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -358,7 +358,7 @@ export class DataTableComponent implements OnInit {
                     : 'This advertiser has assigned contents. If you wish to continue, the contents of the advertiser will be unassigned.',
                 '',
                 data.message ? 'advertiser_delete' : 'advertiser_delete_force',
-                id
+                id,
             );
         });
     }
@@ -384,12 +384,12 @@ export class DataTableComponent implements OnInit {
                     'Are you sure you want to delete this playlist?',
                     '',
                     data.screens.length ? 'playlist_delete' : 'playlist_delete_normal',
-                    id
+                    id,
                 );
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -502,7 +502,7 @@ export class DataTableComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -512,8 +512,8 @@ export class DataTableComponent implements OnInit {
                 () => this.update_info.emit(true),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -525,8 +525,8 @@ export class DataTableComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -538,8 +538,8 @@ export class DataTableComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -555,8 +555,8 @@ export class DataTableComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -566,8 +566,8 @@ export class DataTableComponent implements OnInit {
                 () => this.reload_page.emit(true),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -577,8 +577,8 @@ export class DataTableComponent implements OnInit {
                 () => this.reload_page.emit(true),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -588,8 +588,8 @@ export class DataTableComponent implements OnInit {
                 () => this.update_info.emit(true),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -614,8 +614,8 @@ export class DataTableComponent implements OnInit {
                                 () => this.openConfirmationModal('success', 'Success!', 'License Alias changed succesfully'),
                                 (error) => {
                                     console.error(error);
-                                }
-                            )
+                                },
+                            ),
                         );
                         break;
                     case 'Install Date':
@@ -627,8 +627,8 @@ export class DataTableComponent implements OnInit {
                                 },
                                 (error) => {
                                     console.error(error);
-                                }
-                            )
+                                },
+                            ),
                         );
                         break;
                     case 'Screen Type':
@@ -644,8 +644,8 @@ export class DataTableComponent implements OnInit {
                                 () => this.openConfirmationModal('success', 'Success!', 'Screen Type changed succesfully'),
                                 (error) => {
                                     console.error(error);
-                                }
-                            )
+                                },
+                            ),
                         );
 
                     case 'Host Document Alias':
@@ -661,7 +661,7 @@ export class DataTableComponent implements OnInit {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -727,7 +727,7 @@ export class DataTableComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         });
     }
@@ -850,7 +850,7 @@ export class DataTableComponent implements OnInit {
                 () => this._helper.onRefreshUsersPage.next(),
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -862,7 +862,7 @@ export class DataTableComponent implements OnInit {
                 map((response) => {
                     if (!response.licenses || response.licenses.length <= 0) return [];
                     return response.licenses.map((license) => license.licenseId);
-                })
+                }),
             )
             .subscribe((licenses: string[]) => {
                 if (licenses.length <= 0) return this.showConfirmationDialog('error', 'No licenses associated with this playlist');
@@ -893,7 +893,7 @@ export class DataTableComponent implements OnInit {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 

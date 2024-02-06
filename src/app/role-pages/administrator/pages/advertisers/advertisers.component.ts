@@ -59,7 +59,12 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 
     protected _unsubscribe = new Subject<void>();
 
-    constructor(private _auth: AuthService, private _advertiser: AdvertiserService, private _dealer: DealerService, private _helper: HelperService) {}
+    constructor(
+        private _auth: AuthService,
+        private _advertiser: AdvertiserService,
+        private _dealer: DealerService,
+        private _helper: HelperService,
+    ) {}
 
     ngOnInit() {
         this.pageRequested(1);
@@ -91,7 +96,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
                     new_last_week_label: 'Advertiser(s)',
                     new_last_week_description: 'New last week',
                 };
-            })
+            }),
         );
     }
 
@@ -191,8 +196,8 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
                     },
                     (error) => {
                         console.error(error);
-                    }
-                )
+                    },
+                ),
             );
         } else {
             this.advertiser_table_column = [
@@ -232,8 +237,8 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
                     },
                     (error) => {
                         console.error(error);
-                    }
-                )
+                    },
+                ),
             );
         }
     }
@@ -285,7 +290,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
                 },
                 { value: i.businessName, link: '/administrator/dealers/' + i.dealerId, editable: false, hidden: false, new_tab_link: true },
                 { value: i.contactPerson, link: null, editable: false, hidden: false },
-                { value: i.totalAdvertisers, link: null, editable: false, hidden: false }
+                { value: i.totalAdvertisers, link: null, editable: false, hidden: false },
             );
         });
     }
@@ -306,7 +311,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
                     new_tab_link: true,
                     editable: false,
                     hidden: false,
-                }
+                },
             );
         });
     }

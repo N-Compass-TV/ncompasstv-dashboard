@@ -68,7 +68,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
         private _params: ActivatedRoute,
         private _router: Router,
         private _snackbar: MatSnackBar,
-        private _user: UserService
+        private _user: UserService,
     ) {}
 
     ngOnInit() {
@@ -123,7 +123,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     this.password_form_disabled = false;
-                }
+                },
             );
     }
 
@@ -157,7 +157,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                     () => this._router.navigate([`/${this.roleRoute}/users`]),
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         });
     }
@@ -272,7 +272,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     this.password_form_disabled = false;
-                }
+                },
             );
     }
 
@@ -294,7 +294,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                 (error) => {
                     this.has_loaded_assigned_dealers = true;
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -318,7 +318,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                 (error) => {
                     this.has_loaded_dealers_list = true;
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -346,7 +346,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -615,7 +615,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             },
             (error) => {
                 this.is_searching_dealer = false;
-            }
+            },
         );
     }
 

@@ -1,23 +1,23 @@
 .content-schedule-card {
-	background: #fff;
-	border: 3px #222 solid;
-	width: 100%;
-	.card-thumbnail {
-		height: 120px;
-		width: 100px;
+    background: #fff;
+    border: 3px #222 solid;
+    width: 100%;
+    .card-thumbnail {
+        height: 120px;
+        width: 100px;
 
-		img {
-			object-fit: cover;
-			width: 100%;
-			height: 100%;
-		}
-	}
+        img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+    }
 }
 
 .future-schedule {
-	border: 3px orange solid;
+    border: 3px orange solid;
 }
 
 .inactive-schedule {
-	border: 3px rgb(200, 18, 27) solid;
+    border: 3px rgb(200, 18, 27) solid;
 }

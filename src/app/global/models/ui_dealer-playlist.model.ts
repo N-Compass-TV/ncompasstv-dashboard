@@ -6,10 +6,7 @@ export class UI_DEALER_PLAYLIST {
     date_created: object;
     allow_export: object;
 
-    constructor(
-        playlistId: object, count: object, name: object, playlistDescription: object, 
-        dateCreated: object, allow_export?: object,
-    ) {
+    constructor(playlistId: object, count: object, name: object, playlistDescription: object, dateCreated: object, allow_export?: object) {
         this.playlist_id = playlistId;
         this.count = count;
         this.name = name;

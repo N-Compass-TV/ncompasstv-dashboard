@@ -8,11 +8,10 @@
                     class="theme-btn pi-control _primary sm-text mr-2"
                     (click)="exportTable()"
                     [disabled]="workbook_generation"
-                    title="Export Table to CSV"
-                >
+                    title="Export Table to CSV">
                     <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                     <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                        !workbook_generation ? "Export" : "Generating CSV"
+                        !workbook_generation ? 'Export' : 'Generating CSV'
                     }}</span>
                 </button>
             </div>
@@ -25,8 +24,7 @@
                     [secondary_keyword]="'dealerIdAlias'"
                     (searched)="filterData($event)"
                     [api_search]="true"
-                    [allow_one]="true"
-                ></app-search-field>
+                    [allow_one]="true"></app-search-field>
             </div>
         </div>
     </div>
@@ -52,8 +50,7 @@
                         (to_sort_column)="getAdvertisersColumnsAndOrder($event)"
                         [active_tab]="sort_column_billings"
                         [sort_column]="sort_column_billings"
-                        [sort_order]="sort_order_billings"
-                    >
+                        [sort_order]="sort_order_billings">
                     </app-data-table>
                 </mat-card>
             </ng-container>

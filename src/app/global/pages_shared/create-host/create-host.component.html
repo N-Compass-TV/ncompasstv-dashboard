@@ -28,8 +28,7 @@
                                     [disabled]="is_dealer"
                                     [paging]="paging"
                                     [loading_data]="loading_data"
-                                    [loading_search]="loading_search"
-                                >
+                                    [loading_search]="loading_search">
                                 </app-autocomplete-field>
                             </div>
                             <div *ngFor="let field of new_host_form_fields" class="{{ field.col }} mb-2">
@@ -37,8 +36,7 @@
                                     *ngIf="!field.autocomplete && !field.checkbox; else custom_field"
                                     [hideRequiredMarker]="false"
                                     [floatLabel]="'auto'"
-                                    class="full-width"
-                                >
+                                    class="full-width">
                                     <mat-label>{{ field.label }}</mat-label>
                                     <input matInput [formControlName]="field.control" [placeholder]="field.placeholder" [required]="field.is_required" />
                                 </mat-form-field>
@@ -52,8 +50,7 @@
                                         [key_of_value]="'categoryName'"
                                         [required]="field.is_required"
                                         [label]="field.label"
-                                        [initial_value]="category_selected"
-                                    >
+                                        [initial_value]="category_selected">
                                     </app-autocomplete-field>
 
                                     <app-autocomplete-field
@@ -65,8 +62,7 @@
                                         [required]="false"
                                         [label]="field.label"
                                         [initial_value]="category_selected"
-                                        [disabled]="true"
-                                    >
+                                        [disabled]="true">
                                     </app-autocomplete-field>
 
                                     <!-- New Autocomplete Implementation-->
@@ -90,8 +86,7 @@
                                             *ngIf="city_field_data.data.length; else searching"
                                             [field_data]="city_field_data"
                                             (no_data_found)="searchCity($event)"
-                                            (value_selected)="searchCityById($event)"
-                                        ></app-autocomplete>
+                                            (value_selected)="searchCityById($event)"></app-autocomplete>
 
                                         <ng-template #searching>
                                             <div class="form-placeholder">
@@ -126,8 +121,7 @@
                                         [primary_keyword]="'name'"
                                         [key_of_value]="'id'"
                                         [required]="field.is_required"
-                                        [label]="field.label"
-                                    >
+                                        [label]="field.label">
                                     </app-autocomplete-field>
                                 </ng-template>
                             </div>
@@ -157,8 +151,7 @@
                                                                     [(ngModel)]="t.openingHourData"
                                                                     [spinners]="false"
                                                                     [meridian]="true"
-                                                                    [ngModelOptions]="{ standalone: true }"
-                                                                ></ngb-timepicker>
+                                                                    [ngModelOptions]="{ standalone: true }"></ngb-timepicker>
                                                             </div>
                                                             <div class="d-inline-block mx-3">
                                                                 <span>--</span>
@@ -169,8 +162,7 @@
                                                                     [(ngModel)]="t.closingHourData"
                                                                     [spinners]="false"
                                                                     [meridian]="true"
-                                                                    [ngModelOptions]="{ standalone: true }"
-                                                                ></ngb-timepicker>
+                                                                    [ngModelOptions]="{ standalone: true }"></ngb-timepicker>
                                                             </div>
                                                         </div>
                                                         <div class="flex-even add-remove-btn" *ngIf="h.periods.length > 1">
@@ -200,16 +192,8 @@
                                 </div>
                             </div>
                         </div>
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn mr-2"
-                            [disabled]="
-                                new_host_form.invalid ||
-                                is_creating_host
-                            "
-                        >
-                            {{ is_creating_host ? "Saving Host Place..." : "Submit" }}
+                        <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="new_host_form.invalid || is_creating_host">
+                            {{ is_creating_host ? 'Saving Host Place...' : 'Submit' }}
                         </button>
                     </form>
                 </ng-container>
@@ -231,8 +215,7 @@
                             type="text"
                             name="ng-scrape-form"
                             class="ng-input-form no-border full-width no-outline"
-                            placeholder="Search Host Business Name"
-                        />
+                            placeholder="Search Host Business Name" />
                         <button class="google-search-field-btn no-border right-0" [ngClass]="location_field ? 'disabled' : ''" [disabled]="location_field">
                             <span class="fas fa-search"></span>
                         </button>

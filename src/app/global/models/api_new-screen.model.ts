@@ -26,7 +26,7 @@ export class SCREEN_INFO {
         this.templateid = templateid;
         this.createdby = createdby;
         this.screenTypeId = screenTypeId;
-    } 
+    }
 }
 
 export class SCREEN_ZONE_PLAYLIST {

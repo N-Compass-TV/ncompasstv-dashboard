@@ -16,18 +16,18 @@ import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 }
  */
 export interface PlaylistContentSchedule {
-	alternateWeek?: number;
-	dateCreated?: string;
-	days: string;
-	from: string; // YYYY-MM-DD HH:mm:ss
-	playTimeEnd: string;
-	playTimeStart: string;
-	playlistContentId?: string;
-	playlistContentsScheduleId?: string;
-	status?: string;
-	to: string; // YYYY-MM-DD HH:mm:ss
-	type: number;
-	livestream?: number;
-	playTimeStartData?: NgbTimeStruct;
-	playTimeEndData?: NgbTimeStruct;
+    alternateWeek?: number;
+    dateCreated?: string;
+    days: string;
+    from: string; // YYYY-MM-DD HH:mm:ss
+    playTimeEnd: string;
+    playTimeStart: string;
+    playlistContentId?: string;
+    playlistContentsScheduleId?: string;
+    status?: string;
+    to: string; // YYYY-MM-DD HH:mm:ss
+    type: number;
+    livestream?: number;
+    playTimeStartData?: NgbTimeStruct;
+    playTimeEndData?: NgbTimeStruct;
 }

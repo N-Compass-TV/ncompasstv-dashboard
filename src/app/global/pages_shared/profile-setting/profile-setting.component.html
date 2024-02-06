@@ -1,10 +1,7 @@
 <div class="theme-container">
     <div class="row">
         <div class="offset-lg-8 col-lg-4 pt-5 mb-4 text-right" *ngIf="is_dealer">
-            <button
-                class="full-width p-0 f-500 md-text bg-primary text-white d-flex hidden-button"
-                (click)="goToUrl()"
-                [disabled]="no_dealer_values || no_credit_card">
+            <button class="full-width p-0 f-500 md-text bg-primary text-white d-flex hidden-button" (click)="goToUrl()" [disabled]="no_dealer_values || no_credit_card">
                 <div class="col-lg-10 p-2">SHOP LICENSES NOW!</div>
                 <div class="col-lg-2 p-2 white-bg"><i class="text-dark fas fa-shopping-cart"></i></div>
             </button>
@@ -112,10 +109,7 @@
                     <div class="col-lg-12 p-0">
                         <div class="row">
                             <div class="col-lg-12">
-                                <app-payment-setting
-                                    [dealerId]="dealer_id"
-                                    [dealerEmail]="dealer_email"
-                                    [currentUser]="current_user"></app-payment-setting>
+                                <app-payment-setting [dealerId]="dealer_id" [dealerEmail]="dealer_email" [currentUser]="current_user"></app-payment-setting>
                             </div>
                         </div>
                     </div>
@@ -143,7 +137,7 @@
                         <div class="row">
                             <div class="col-lg-12 ml-2">
                                 <h5>{{ created_by }}</h5>
-                                <h6>{{ date_created | date : 'MMMM d, y' }}</h6>
+                                <h6>{{ date_created | date: 'MMMM d, y' }}</h6>
                             </div>
                         </div>
 
@@ -188,4 +182,3 @@
         </div>
     </mat-card>
 </ng-template>
-

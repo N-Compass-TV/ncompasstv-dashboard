@@ -33,8 +33,7 @@
                         [third_value]="licenses_count.third_value"
                         [third_value_label]="licenses_count.third_value_label"
                         [fourth_value]="licenses_count.fourth_value"
-                        [fourth_value_label]="licenses_count.fourth_value_label"
-                    >
+                        [fourth_value_label]="licenses_count.fourth_value_label">
                     </app-data-card-graph>
                 </mat-card>
             </div>
@@ -46,8 +45,7 @@
                             [compare_basis]="licenses_count.new_this_week_value"
                             [compare_basis_label]="licenses_count.new_this_week_value_description"
                             [label_array]="temp_label_this_week"
-                            [value_array]="temp_array_this_week"
-                        >
+                            [value_array]="temp_array_this_week">
                         </app-data-card-graph>
                     </ng-container>
                 </mat-card>
@@ -60,8 +58,7 @@
                             [compare_basis]="licenses_count.new_last_week_value"
                             [compare_basis_label]="licenses_count.new_last_week_value_description"
                             [label_array]="temp_label_last_week"
-                            [value_array]="temp_array_last_week"
-                        >
+                            [value_array]="temp_array_last_week">
                         </app-data-card-graph>
                     </ng-container>
                 </mat-card>
@@ -138,11 +135,10 @@
                     class="theme-btn pi-control sm-text _primary mr-2"
                     (click)="exportTable()"
                     [disabled]="workbook_generation"
-                    title="Export to CSV"
-                >
+                    title="Export to CSV">
                     <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                     <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                        !workbook_generation ? "Export" : "Generating CSV"
+                        !workbook_generation ? 'Export' : 'Generating CSV'
                     }}</span>
                 </button>
 
@@ -152,8 +148,7 @@
                     class="theme-btn pi-control sm-text _caution mr-2"
                     [matMenuTriggerFor]="favoriteOption"
                     title="Favorite Licenses"
-                    *ngIf="active_view === 'grid'"
-                >
+                    *ngIf="active_view === 'grid'">
                     <span class="fas fa-star"></span>
                     <span class="ml-2 button_text_animation">Show/Hide Favorites</span>
                 </button>
@@ -171,8 +166,7 @@
                         class="theme-btn sm-text h-45 mr-2"
                         [ngClass]="active_view === 'list' ? 'active-button' : ''"
                         title="List View"
-                        (click)="changeView('list')"
-                    >
+                        (click)="changeView('list')">
                         <span class="button-label mr-0"><i class="fas fa-list"></i></span>
                     </button>
                     <button
@@ -181,8 +175,7 @@
                         class="theme-btn sm-text h-45"
                         [ngClass]="active_view === 'grid' ? 'active-button' : ''"
                         title="Grid View"
-                        (click)="changeView('grid')"
-                    >
+                        (click)="changeView('grid')">
                         <span class="button-label mr-0"><i class="fas fa-th"></i></span>
                     </button>
                 </div>
@@ -197,8 +190,7 @@
                     [primary_keyword]="'alias'"
                     [secondary_keyword]="'host_name'"
                     (searched)="licenseFilterData($event)"
-                    [api_search]="true"
-                >
+                    [api_search]="true">
                 </app-search-field>
             </div>
         </div>
@@ -265,8 +257,7 @@
                                 [active_tab]="sort_column"
                                 [sort_column]="sort_column"
                                 [sort_order]="sort_order"
-                                [is_view_only]="is_view_only"
-                            >
+                                [is_view_only]="is_view_only">
                             </app-data-table>
                         </mat-card>
                     </div>
@@ -282,8 +273,7 @@
                         (show_more)="showMore($event)"
                         [no_favorites]="no_favorites"
                         [favorite_view]="favorite_view"
-                        [dealers_name]="dealers_name"
-                    >
+                        [dealers_name]="dealers_name">
                     </app-grid-view-license>
                 </ng-template>
             </div>

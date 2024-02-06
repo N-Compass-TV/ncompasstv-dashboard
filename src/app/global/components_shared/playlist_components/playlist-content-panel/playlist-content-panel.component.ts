@@ -101,7 +101,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         private _content: ContentService,
         private _dialog: MatDialog,
         private _playlist: PlaylistService,
-        private _router: Router
+        private _router: Router,
     ) {}
 
     ngOnInit() {
@@ -182,7 +182,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         } else {
             if (this.structured_remove_in_blocklist.length > 0) {
@@ -211,7 +211,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -264,7 +264,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -389,7 +389,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                 (error) => {
                     this.selected_contents = [];
                     this.playlist_new_content = [];
-                }
+                },
             );
     }
 
@@ -551,7 +551,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         } else {
             this.emitReloadPlaylist();
@@ -576,7 +576,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -595,7 +595,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -798,7 +798,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         frequencyUpdate?: FREQUENCY,
         creditsToSubmit?: CREDITS_TO_SUBMIT,
         creditsStatusUpdate?: CREDITS_STATUS,
-        isAdded?: true
+        isAdded?: true,
     ): void {
         this.playlist_saving = true;
         this.is_bulk_selecting = false;
@@ -861,7 +861,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         } else {
             if (this.structured_incoming_blocklist.length > 0) {
@@ -983,7 +983,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -1008,7 +1008,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 

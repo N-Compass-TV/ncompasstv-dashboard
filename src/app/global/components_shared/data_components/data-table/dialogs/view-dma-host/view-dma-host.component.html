@@ -11,12 +11,12 @@
             <div class="row">
                 <h3 class="mb-1 mt-2 text-primary">Hosts</h3>
             </div>
-            <hr>
+            <hr />
             <div class="row">
                 <ol class="col-lg-12" *ngIf="hosts_of_dma.length > 0; else loading">
                     <li class="col-lg-12 text-gray mb-2 md-text text-left" *ngFor="let host of hosts_of_dma">
                         <a class="sm-text" [routerLink]="getLink('hosts', host.hostId)" target="_blank">
-                            {{host.hostName}}
+                            {{ host.hostName }}
                         </a>
                     </li>
                 </ol>

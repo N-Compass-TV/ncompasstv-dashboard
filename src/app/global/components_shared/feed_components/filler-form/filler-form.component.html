@@ -4,7 +4,7 @@
             <div *ngFor="let f of filler_fields" class="{{ f.width }}">
                 <mat-form-field class="full-width mb-2" appearance="fill" *ngIf="!f.viewType">
                     <mat-label>{{ f.label }}</mat-label>
-                    <input matInput formControlName="{{ f.form_control_name }}" [type]="f.type" [required]="f.required" autocomplete="off">
+                    <input matInput formControlName="{{ f.form_control_name }}" [type]="f.type" [required]="f.required" autocomplete="off" />
                 </mat-form-field>
 
                 <!-- <div class="full-width bg-gray mb-4 position-relative overflow-hidden upload-image-field" appearance="fill" *ngIf="f.viewType == 'upload'">
@@ -49,14 +49,12 @@
         <div class="filler-playlist-panel p-3 mb-4 bg-gray">
             <div class="filler-playlist-panel-header bg-light rounded p-2 mb-3 d-flex">
                 <div class="flex-even">
-                    <button mat-button mat-raised-button class="theme-btn" (click)="openMediaLibraryModal()">
-                        Add Filler Images <span class="fas fa-media"></span>
-                    </button>
+                    <button mat-button mat-raised-button class="theme-btn" (click)="openMediaLibraryModal()">Add Filler Images <span class="fas fa-media"></span></button>
                 </div>
                 <div class="flex-even text-right">
                     <button mat-button mat-raised-button class="theme-btn bg-danger" (click)="removeFillerItem(null, true)" [disabled]="selected_items.length < 2">
                         Remove Selected Images <span class="fas fa-times"></span>
-                    </button>                    
+                    </button>
                 </div>
             </div>
 
@@ -67,17 +65,17 @@
                             <div class="p-0 mx-1 thumbnail-card rounded-0 position-relative overflow-hidden">
                                 <div class="button-wrap d-flex">
                                     <div class="flex-even text-left">
-                                        <input type="checkbox" (change)="selectedItem(f)">
+                                        <input type="checkbox" (change)="selectedItem(f)" />
                                     </div>
 
                                     <button class="filler-item-remove-button" (click)="removeFillerItem(f)"><span class="fas fa-times text-danger"></span></button>
                                 </div>
-                                <img [src]="f.thumbnail || 'https://cdn.filestackcontent.com/resize=width:100/' + f.handlerId" alt="f.title">
-        
+                                <img [src]="f.thumbnail || 'https://cdn.filestackcontent.com/resize=width:100/' + f.handlerId" alt="f.title" />
+
                                 <div class="thumbnail-title">
                                     <div class="d-flex">
                                         <span class="sequence">{{ i + 1 }}</span>
-                                        <span class="text-center ml-2 flex-even" [title]="f.title">{{ f.title | substring:8 }}</span>
+                                        <span class="text-center ml-2 flex-even" [title]="f.title">{{ f.title | substring: 8 }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -94,8 +92,6 @@
             </div>
         </div>
 
-        <button mat-button mat-raised-button matStepperNext class="theme-btn" (click)="passFillerData()">
-            Next <span class="fas fa-long-arrow-right"></span>
-        </button>
+        <button mat-button mat-raised-button matStepperNext class="theme-btn" (click)="passFillerData()">Next <span class="fas fa-long-arrow-right"></span></button>
     </form>
 </div>

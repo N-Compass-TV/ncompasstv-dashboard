@@ -40,8 +40,7 @@
                                             [selected]="selectedContents.includes(assets[count + i])"
                                             [default_width]="false"
                                             [is_frequency_enabled]="false"
-                                            (content_selected)="contentSelected(assets[count + i], $event)"
-                                        >
+                                            (content_selected)="contentSelected(assets[count + i], $event)">
                                         </app-content>
 
                                         <!-- This is due to checkbox not working when wrapped within .mark-content-wrapper -->
@@ -52,16 +51,14 @@
                                                 [ngClass]="{
                                                     'cursor-pointer': _dialog_data.playlistContentId,
                                                     marked: assets[count + i] && markedContent && markedContent.contentId == assets[count + i].contentId
-                                                }"
-                                            >
+                                                }">
                                                 <app-content
                                                     [content]="assets[count + i]"
                                                     [controls]="false"
                                                     [default_width]="false"
                                                     [selectable]="_dialog_data && !_dialog_data.playlistContentId"
                                                     [swapping]="_dialog_data.playlistContentId"
-                                                    (content_selected)="contentSelected(assets[count + i], $event)"
-                                                >
+                                                    (content_selected)="contentSelected(assets[count + i], $event)">
                                                 </app-content>
                                             </div>
                                         </ng-template>
@@ -149,8 +146,7 @@
                                         [sequence_setting]="false"
                                         [bulk_setting]="true"
                                         [has_image_and_feed]="hasImageAndFeed"
-                                        (changed)="applyContentSettings($event)"
-                                    ></app-basic-settings>
+                                        (changed)="applyContentSettings($event)"></app-basic-settings>
                                 </div>
                             </mat-tab>
                             <mat-tab label="Play Where">
@@ -170,8 +166,7 @@
                                                 [host_licenses]="playlistHostLicenses"
                                                 [toggle_all_add_content]="toggleAll.asObservable()"
                                                 (to_whitelist)="licenseIdToggled($event)"
-                                                (to_blacklist)="licenseDeselected()"
-                                            >
+                                                (to_blacklist)="licenseDeselected()">
                                             </app-play-location>
                                         </div>
                                     </div>
@@ -206,8 +201,7 @@
                         mat-raised-button
                         class="theme-btn mr-2"
                         [disabled]="!selectedContents.length && !newContentsSettings"
-                        [mat-dialog-close]="newContentsSettings"
-                    >
+                        [mat-dialog-close]="newContentsSettings">
                         <i class="fas fa-save mr-3 text-green"></i>
                         <small class="font-weight-bold">Save</small>
                     </button>

@@ -40,8 +40,7 @@
                             [third_value]="licenses_details.third_value"
                             [third_value_label]="licenses_details.third_value_label"
                             [fourth_value]="licenses_details.fourth_value"
-                            [fourth_value_label]="licenses_details.fourth_value_label"
-                        >
+                            [fourth_value_label]="licenses_details.fourth_value_label">
                         </app-data-card-graph>
                     </ng-container>
                 </mat-card>
@@ -54,8 +53,7 @@
                             [compare_basis]="licenses_details.new_this_week_value"
                             [compare_basis_label]="licenses_details.new_this_week_value_description"
                             [label_array]="temp_label_this_week"
-                            [value_array]="temp_array_this_week"
-                        >
+                            [value_array]="temp_array_this_week">
                         </app-data-card-graph>
                     </ng-container>
                 </mat-card>
@@ -68,8 +66,7 @@
                             [compare_basis]="licenses_details.new_last_week_value"
                             [compare_basis_label]="licenses_details.new_last_week_value_description"
                             [label_array]="temp_label_last_week"
-                            [value_array]="temp_array_last_week"
-                        >
+                            [value_array]="temp_array_last_week">
                         </app-data-card-graph>
                     </ng-container>
                 </mat-card>
@@ -93,8 +90,7 @@
                                             mat-raised-button
                                             class="theme-btn sm-text mr-2 h-45"
                                             [matMenuTriggerFor]="licenseStatus"
-                                            [disabled]="hide_all_license"
-                                        >
+                                            [disabled]="hide_all_license">
                                             <span class="button-label">License Status</span>
                                             <span class="fas fa-circle xsm-text"></span>
                                         </button>
@@ -137,8 +133,7 @@
                                             mat-raised-button
                                             class="theme-btn sm-text mr-2 h-45"
                                             [matMenuTriggerFor]="timezone"
-                                            [disabled]="hide_all_license"
-                                        >
+                                            [disabled]="hide_all_license">
                                             <span class="button-label">Timezone</span>
                                             <span class="fas fa-sort xsm-text"></span>
                                         </button>
@@ -160,8 +155,7 @@
                                             class="theme-btn pi-control _cool sm-text mr-2"
                                             [matMenuTriggerFor]="orderSort"
                                             title="Order by License Status"
-                                            [disabled]="hide_all_license"
-                                        >
+                                            [disabled]="hide_all_license">
                                             <span class="fas fa-sort"></span>
                                             <span class="ml-2 button_text_animation">Order by License Status</span>
                                         </button>
@@ -179,14 +173,12 @@
                                             (click)="exportTable('licenses')"
                                             [disabled]="workbook_generation"
                                             title="Export to CSV"
-                                            [disabled]="hide_all_license"
-                                        >
+                                            [disabled]="hide_all_license">
                                             <span
                                                 class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                                [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                            ></span>
+                                                [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                                             <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                                                !workbook_generation ? "Export" : "Generating CSV"
+                                                !workbook_generation ? 'Export' : 'Generating CSV'
                                             }}</span>
                                         </button>
                                         <button
@@ -196,8 +188,7 @@
                                             [matMenuTriggerFor]="adminOption"
                                             title="Admin Licenses"
                                             *ngIf="!is_dealer_admin"
-                                            [disabled]="hide_all_license"
-                                        >
+                                            [disabled]="hide_all_license">
                                             <span class="fas fa-user-shield"></span>
                                             <span class="ml-2 button_text_animation">Show/Hide Admin License</span>
                                         </button>
@@ -211,8 +202,7 @@
                                             class="theme-btn pi-control sm-text _caution mr-2"
                                             [matMenuTriggerFor]="favoriteOption"
                                             title="Favorite Licenses"
-                                            *ngIf="!hide_all_license && active_view === 'grid'"
-                                        >
+                                            *ngIf="!hide_all_license && active_view === 'grid'">
                                             <span class="fas fa-star"></span>
                                             <span class="ml-2 button_text_animation">Show/Hide Favorites</span>
                                         </button>
@@ -228,8 +218,7 @@
                                             class="theme-btn sm-text h-45 mr-2"
                                             [ngClass]="active_view === 'list' ? 'active-button' : ''"
                                             title="List View"
-                                            (click)="changeView('list')"
-                                        >
+                                            (click)="changeView('list')">
                                             <span class="button-label mr-0"><i class="fas fa-list"></i></span>
                                         </button>
                                         <button
@@ -238,8 +227,7 @@
                                             class="theme-btn sm-text h-45"
                                             [ngClass]="active_view === 'grid' ? 'active-button' : ''"
                                             title="Grid View"
-                                            (click)="changeView('grid')"
-                                        >
+                                            (click)="changeView('grid')">
                                             <span class="button-label mr-0"><i class="fas fa-th"></i></span>
                                         </button>
                                     </div>
@@ -252,8 +240,7 @@
                                             [primary_keyword]="'license_id'"
                                             [secondary_keyword]="'alias'"
                                             (searched)="filterData($event, 'licenses')"
-                                            [api_search]="true"
-                                        >
+                                            [api_search]="true">
                                         </app-search-field>
                                     </div>
                                 </div>
@@ -316,8 +303,7 @@
                                                             (to_sort_column)="getColumnsAndOrder($event, 'licenses')"
                                                             [active_tab]="sort_column"
                                                             [sort_column]="sort_column"
-                                                            [sort_order]="sort_order"
-                                                        >
+                                                            [sort_order]="sort_order">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </div>
@@ -334,8 +320,7 @@
                                                 (show_more)="showMore($event)"
                                                 [no_favorites]="no_favorites"
                                                 [favorite_view]="favorite_view"
-                                                class="col-lg-12 mr-2 p-0"
-                                            >
+                                                class="col-lg-12 mr-2 p-0">
                                             </app-grid-view-license>
                                         </ng-template>
                                     </div>
@@ -352,8 +337,7 @@
                                                         mat-raised-button
                                                         class="theme-btn sm-text _info mr-2 mt-3"
                                                         title="Show All Licenses"
-                                                        (click)="showAllLicenses()"
-                                                    >
+                                                        (click)="showAllLicenses()">
                                                         <span class="fas fa-eye"></span>
                                                         <span class="ml-2">Show All Licenses</span>
                                                     </button>
@@ -390,14 +374,12 @@
                                                     class="theme-btn pi-control sm-text _primary mr-2"
                                                     (click)="exportTable('hosts')"
                                                     [disabled]="workbook_generation"
-                                                    title="Export to CSV"
-                                                >
+                                                    title="Export to CSV">
                                                     <span
                                                         class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"
-                                                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                                    ></span>
+                                                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                                                     <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                                                        !workbook_generation ? "Export" : "Generating CSV"
+                                                        !workbook_generation ? 'Export' : 'Generating CSV'
                                                     }}</span>
                                                 </button>
                                             </div>
@@ -411,8 +393,7 @@
                                                     [primary_keyword]="'name'"
                                                     [secondary_keyword]="'name'"
                                                     (searched)="filterData($event, 'hosts')"
-                                                    [api_search]="true"
-                                                ></app-search-field>
+                                                    [api_search]="true"></app-search-field>
                                             </div>
                                         </div>
                                         <div class="row" *ngIf="!initial_load_hosts">
@@ -429,8 +410,7 @@
                                                             (to_sort_column)="getColumnsAndOrder($event, 'hosts')"
                                                             [active_tab]="sort_column_hosts"
                                                             [sort_column]="sort_column_hosts"
-                                                            [sort_order]="sort_order_hosts"
-                                                        >
+                                                            [sort_order]="sort_order_hosts">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </ng-container>

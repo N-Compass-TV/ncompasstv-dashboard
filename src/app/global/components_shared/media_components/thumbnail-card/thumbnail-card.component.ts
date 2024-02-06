@@ -53,7 +53,12 @@ export class ThumbnailCardComponent implements OnInit {
     protected _socket: any;
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private _auth: AuthService, private _dialog: MatDialog, private _content: ContentService, private router: Router) {}
+    constructor(
+        private _auth: AuthService,
+        private _dialog: MatDialog,
+        private _content: ContentService,
+        private router: Router,
+    ) {}
 
     ngOnInit() {
         if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.role = UI_ROLE_DEFINITION_TEXT.administrator;
@@ -146,7 +151,7 @@ export class ThumbnailCardComponent implements OnInit {
                         },
                         (error) => {
                             console.error(error);
-                        }
+                        },
                     );
             }
         });

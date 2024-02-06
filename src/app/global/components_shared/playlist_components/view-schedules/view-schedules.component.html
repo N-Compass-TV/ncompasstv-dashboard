@@ -1,24 +1,24 @@
 <div class="view-schedules-dialog p-2">
-	<div class="d-flex mb-4">
-		<div class="flex-even">
-			<h3 class="m-0">Playlist Schedules</h3>
-			<p class="sm-text">
-				<i class="fas fa-rectangle-wide mr-2"></i> <span>Active</span>, <i class="fas fa-rectangle-wide mx-2 text-orange"></i>
-				<span>Future</span>, <i class="fas fa-rectangle-wide mx-2 text-danger"></i> <span>Inactive</span>
-			</p>
-		</div>
-		<div>
-			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
-				<i class="fas fa-times"></i>
-			</button>
-		</div>
-	</div>
+    <div class="d-flex mb-4">
+        <div class="flex-even">
+            <h3 class="m-0">Playlist Schedules</h3>
+            <p class="sm-text">
+                <i class="fas fa-rectangle-wide mr-2"></i> <span>Active</span>, <i class="fas fa-rectangle-wide mx-2 text-orange"></i> <span>Future</span>,
+                <i class="fas fa-rectangle-wide mx-2 text-danger"></i> <span>Inactive</span>
+            </p>
+        </div>
+        <div>
+            <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
 
-	<div class="container-fluid schedule-list bg-gray box-shadow py-3 rounded">
-		<div class="row no-gutters">
-			<div class="col-lg-4 mb-3" *ngFor="let card of _dialog.contents; let i = index">
-				<div class="mx-1"><app-content-schedule-card [content]="card" [index]="i"></app-content-schedule-card></div>
-			</div>
-		</div>
-	</div>
+    <div class="container-fluid schedule-list bg-gray box-shadow py-3 rounded">
+        <div class="row no-gutters">
+            <div class="col-lg-4 mb-3" *ngFor="let card of _dialog.contents; let i = index">
+                <div class="mx-1"><app-content-schedule-card [content]="card" [index]="i"></app-content-schedule-card></div>
+            </div>
+        </div>
+    </div>
 </div>

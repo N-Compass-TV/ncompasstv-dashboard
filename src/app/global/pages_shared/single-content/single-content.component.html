@@ -3,7 +3,7 @@
         <div class="title-section">
             <div class="d-flex align-items-center">
                 <div class="flex-even">
-                    <h1 class="page-title" [title]="data.content.title">{{ data.content.title | substring : 40 }}</h1>
+                    <h1 class="page-title" [title]="data.content.title">{{ data.content.title | substring: 40 }}</h1>
                 </div>
             </div>
             <hr class="my-4" />
@@ -39,7 +39,7 @@
                         <div class="flex-even filename">
                             <span class="sm-text"> Filename </span>
                             <h5 class="mb-0" [title]="data.content.title">
-                                {{ data.content.title | substring : 32 }}
+                                {{ data.content.title | substring: 32 }}
                             </h5>
                         </div>
 
@@ -57,7 +57,7 @@
                         <div class="flex-even uploaded-by">
                             <span class="sm-text"> Uploaded by </span>
                             <h5>
-                                {{ data.content.createdByName || "N/A" }}
+                                {{ data.content.createdByName || 'N/A' }}
                             </h5>
                         </div>
 
@@ -203,8 +203,7 @@
                                                 matInput
                                                 [matDatepicker]="datePicker2"
                                                 [min]="start_date"
-                                                readonly
-                                            />
+                                                readonly />
                                             <mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
                                             <mat-datepicker #datePicker2></mat-datepicker>
                                         </mat-form-field>
@@ -217,8 +216,7 @@
                                             class="theme-btn px-4 height-60"
                                             [disabled]="!start_date || !end_date || generating_report"
                                             title="Generate Report"
-                                            (click)="generateReport()"
-                                        >
+                                            (click)="generateReport()">
                                             <div class="d-flex align-items-center">
                                                 <div class="flex-even mr-2">
                                                     <span class="fas fa-chart-bar"></span>
@@ -263,12 +261,10 @@
                                     class="theme-btn sm-text _primary height-60 width-80"
                                     (click)="exportTable()"
                                     [disabled]="workbook_generation"
-                                    title="Export to CSV"
-                                >
+                                    title="Export to CSV">
                                     <span
                                         class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                    ></span>
+                                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                                 </button>
                             </div>
                             <!-- Search Field -->
@@ -301,8 +297,7 @@
                                 [table_columns]="content_history_table_columns"
                                 [paging_details]="paging_data_history"
                                 (page_triggered)="onClickPageNumber($event)"
-                                [new_table]="true"
-                            >
+                                [new_table]="true">
                             </app-data-table>
                         </mat-card>
                     </mat-tab>
@@ -325,7 +320,7 @@
                         <i class="text-gray fa-5x far fa-file-alt"></i>
                     </div>
                     <h3 class="text-gray col-lg-12">
-                        {{ generating_report ? "Generating Content Logs Report, Please Wait ..." : "No Data Found" }}
+                        {{ generating_report ? 'Generating Content Logs Report, Please Wait ...' : 'No Data Found' }}
                     </h3>
                 </mat-card>
             </div>

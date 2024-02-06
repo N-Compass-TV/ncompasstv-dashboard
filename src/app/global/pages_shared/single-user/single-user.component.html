@@ -85,7 +85,7 @@
                     <mat-form-field class="full-width position-relative">
                         <mat-label>New Password</mat-label>
                         <input formControlName="new_password" matInput [type]="is_password_field_type ? 'password' : 'text'" placeholder="New Password" />
-                        <mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{ is_password_field_type ? "visibility_off" : "visibility" }}</mat-icon>
+                        <mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{ is_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
                         <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_invalid">
                             {{ password_validation_message }}
                         </span>
@@ -98,7 +98,7 @@
                         <mat-label>Retype New Password</mat-label>
                         <input matInput formControlName="re_password" [type]="is_retype_password_field_type ? 'password' : 'text'" placeholder="Retype New Password" />
                         <mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{
-                            is_retype_password_field_type ? "visibility_off" : "visibility"
+                            is_retype_password_field_type ? 'visibility_off' : 'visibility'
                         }}</mat-icon>
                         <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_match == false">
                             {{ password_is_match }}
@@ -125,8 +125,7 @@
                                 formControlName="dealers"
                                 [placeholder]="'Select Dealer Name(s)'"
                                 [multiple]="true"
-                                [value]="selected_dealers_control.value"
-                            >
+                                [value]="selected_dealers_control.value">
                                 class="full-width"
                                 <div class="custom-panel">
                                     <mat-option>
@@ -135,8 +134,7 @@
                                             [formControl]="dealer_filter_control"
                                             [placeholderLabel]="'Search Dealer Name'"
                                             [clearSearchInput]="false"
-                                            [searching]="is_searching_dealer"
-                                        >
+                                            [searching]="is_searching_dealer">
                                             <mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
                                         </ngx-mat-select-search>
                                     </mat-option>
@@ -167,8 +165,7 @@
                                 <ng-container *ngFor="let dealer of selected_dealers_control.value; let i = index">
                                     <div
                                         class="d-flex align-items-center bg-primary text-white md-text dealer pl-3 pr-3 br-5 mr-2 mb-2"
-                                        [ngClass]="{ 'selected-dealer-disabled': !has_loaded_dealers_list }"
-                                    >
+                                        [ngClass]="{ 'selected-dealer-disabled': !has_loaded_dealers_list }">
                                         <ng-container *ngIf="has_loaded_assigned_dealers; else loaderSmall">
                                             <div class="name">{{ dealer.businessName }}</div>
                                             <div class="remove-btn cursor-pointer" (click)="removeSelectedDealer(i)">

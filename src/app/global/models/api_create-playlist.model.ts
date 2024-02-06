@@ -14,10 +14,10 @@ export class API_CREATE_PLAYLIST {
 }
 
 export class API_CREATE_PLAYLIST_CONTENT {
-	contentId: string;
+    contentId: string;
     handlerId: string;
     seq: number;
-	isFullScreen: number;
+    isFullScreen: number;
     duration: number;
 
     constructor(contentId: string, handler: string, seq: number, fullscreen: number, duration: number) {

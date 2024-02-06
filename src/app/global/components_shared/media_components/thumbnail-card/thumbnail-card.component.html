@@ -2,8 +2,7 @@
     class="p-0 thumbnail-card rounded-0 position-relative overflow-hidden"
     data-placement="top"
     [attr.title]="filename"
-    [class.is-protected]="is_dealer && is_protected && multiple_delete"
->
+    [class.is-protected]="is_dealer && is_protected && multiple_delete">
     <div class="icon-overlay">
         <div class="sm-text ml-1 mr-1 mt-1">
             <div class="d-flex">
@@ -14,8 +13,7 @@
                     class="fas fa-user-circle mr-1"
                     [ngClass]="dealer === '' || dealer === null ? 'text-gray' : 'text-primary'"
                     [title]="dealer === '' || dealer === null ? 'Unassigned' : 'Assigned'"
-                    *ngIf="!is_filler"
-                ></i>
+                    *ngIf="!is_filler"></i>
                 <i class="fas fa-expand text-primary" *ngIf="is_fullscreen == 1" title="Fullscreen"></i>
                 <ng-container *ngIf="is_scheduled_content">
                     <i class="fas fa-clock text-primary mr-1 float-right" title="Is scheduled"></i>

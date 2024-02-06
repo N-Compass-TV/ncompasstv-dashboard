@@ -7,8 +7,7 @@
         'inactive-schedule': content.scheduleStatus === 'inactive',
         'future-schedule': content.scheduleStatus === 'future',
         'is-scheduled': content.scheduleStatus === 'scheduled'
-    }"
->
+    }">
     <ng-container *ngIf="!detailed_view_mode; else detailed_view">
         <section
             class="playlistv2-content__header px-2"
@@ -16,8 +15,7 @@
             [class.inactive-schedule]="content.scheduleStatus === 'inactive'"
             [class.future-schedule]="content.scheduleStatus === 'future'"
             [class.is-scheduled]="content.scheduleStatus === 'scheduled'"
-            [class.frequency-hover]="canSetFrequencyBorder"
-        >
+            [class.frequency-hover]="canSetFrequencyBorder">
             <div class="content-filename-wrapper h-100 d-flex align-items-center justify-content-between">
                 <div class="d-flex name align-items-center">
                     <span
@@ -26,18 +24,16 @@
                             'fa-image': content.fileType | isimage,
                             'fa-video': content.fileType | isvideo,
                             'fa-rss': content.fileType | isFeed
-                        }"
-                    >
+                        }">
                     </span>
-                    <span class="content-name d-block font-weight-bold text-primary xsm-text">{{ content.fileName || content.title | nohandle | slice : 0 : 8 }}</span>
+                    <span class="content-name d-block font-weight-bold text-primary xsm-text">{{ content.fileName || content.title | nohandle | slice: 0 : 8 }}</span>
                 </div>
 
                 <div class="checkbox-wrapper d-flex align-items-center">
                     <i
                         class="frequency-icon text-warning mr-1 push-right"
                         *ngIf="content.frequency"
-                        [ngClass]="content.frequency > 10 ? 'fas fa-chess-queen' : 'fas fa-chess-pawn'"
-                    ></i>
+                        [ngClass]="content.frequency > 10 ? 'fas fa-chess-queen' : 'fas fa-chess-pawn'"></i>
 
                     <input
                         class="push-right"
@@ -47,8 +43,7 @@
                         [(ngModel)]="selected"
                         [ngModelOptions]="{ standalone: true }"
                         [checked]="selected"
-                        (change)="content_selected.emit($event)"
-                    />
+                        (change)="content_selected.emit($event)" />
                 </div>
             </div>
         </section>
@@ -58,14 +53,13 @@
         </ng-container>
 
         <section class="playlistv2-content__thumbnail" [ngClass]="!controls && 'no-controls'" [matTooltip]="getFrequencyInfo()">
-            <img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName | slice : 0 : 15 || content.title | slice : 0 : 15" />
+            <img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName | slice: 0 : 15 || content.title | slice: 0 : 15" />
         </section>
 
         <section
             *ngIf="controls"
             class="playlistv2-content__controls d-flex align-items-center p-1 px-2 bg-white"
-            [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }"
-        >
+            [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
             <div class="index flex-even">
                 <span class="index-font mr-2">{{ index }}</span>
             </div>
@@ -77,8 +71,7 @@
                             class="naked-btn"
                             [ngClass]="i < playlistContentControls.length - 1 && 'mr-15'"
                             [matTooltip]="c.label"
-                            (click)="control_click.emit({ playlistContent: content, action: c.action })"
-                        >
+                            (click)="control_click.emit({ playlistContent: content, action: c.action })">
                             <span class="xsm-text">
                                 <i class="{{ c.icon }}" [ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-green-2' : c.colorClass"> </i>
                             </span>
@@ -92,7 +85,7 @@
     <ng-template #detailed_view>
         <div class="playlistv2__content-list">
             <div class="playlistv2__content-list-thumbnail">
-                <img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName | slice : 0 : 15 || content.title | slice : 0 : 15" />
+                <img class="image-w-100" [src]="content.thumbnail | sanitize" [alt]="content.fileName | slice: 0 : 15 || content.title | slice: 0 : 15" />
             </div>
             <ng-container *ngIf="isParentFrequency || isChildFrequency">
                 <div class="frequency-overlay" (mouseenter)="setHoveredBaseFrequency(content)" (mouseleave)="unsetHoveredBaseFrequency()"></div>
@@ -102,14 +95,13 @@
                 [class.inactive-schedule]="content.scheduleStatus === 'inactive'"
                 [class.future-schedule]="content.scheduleStatus === 'future'"
                 [class.is-scheduled]="content.scheduleStatus === 'scheduled'"
-                [class.frequency-hover]="canSetFrequencyBorder"
-            >
+                [class.frequency-hover]="canSetFrequencyBorder">
                 <div class="upper__details mb-3">
                     <div class="upper__details-text">
                         <span class="upper__details-title">
-                            {{ content.fileName || content.title | nohandle | slice : 0 : 40 }}
+                            {{ content.fileName || content.title | nohandle | slice: 0 : 40 }}
                         </span>
-                        <span class="upper__details-date">Uploaded {{ content.dateCreated | date : "mediumDate" }}</span>
+                        <span class="upper__details-date">Uploaded {{ content.dateCreated | date: 'mediumDate' }}</span>
                     </div>
 
                     <div class="checkbox-selector pt-1" [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }">
@@ -126,8 +118,7 @@
                             [(ngModel)]="selected"
                             [ngModelOptions]="{ standalone: true }"
                             [checked]="selected"
-                            (change)="content_selected.emit($event)"
-                        />
+                            (change)="content_selected.emit($event)" />
                     </div>
                 </div>
 
@@ -138,7 +129,7 @@
                                 <span class="fas fa-calendar mr-2"></span>
                                 <span>Date Range</span>
                                 <br />
-                                {{ content.from && content.to ? (content.from | date : "shortDate") + " - " + (content.to | date : "shortDate") : "--" }}
+                                {{ content.from && content.to ? (content.from | date: 'shortDate') + ' - ' + (content.to | date: 'shortDate') : '--' }}
                             </p>
                         </div>
                         <div class="playlist-content-schedule__days flex-even" *ngIf="content.days">
@@ -146,7 +137,7 @@
                                 <span class="fas fa-calendar-check mr-2"></span>
                                 <span>Days</span>
                                 <br />
-                                {{ content.days ? convertDayFormat(content.days) : "--" }}
+                                {{ content.days ? convertDayFormat(content.days) : '--' }}
                             </p>
                         </div>
                         <div class="playlist-content-schedule__time-range flex-even" *ngIf="content.playTimeStart && content.playTimeEnd">
@@ -187,8 +178,7 @@
                                     'fa-image': content.fileType | isimage,
                                     'fa-video': content.fileType | isvideo,
                                     'fa-rss': content.fileType | isFeed
-                                }"
-                            >
+                                }">
                             </i>
 
                             <span>
@@ -211,8 +201,7 @@
                                     class="naked-btn text-center"
                                     [ngClass]="i < playlistContentControls.length - 1 && 'mr-3'"
                                     [matTooltip]="c.label"
-                                    (click)="control_click.emit({ playlistContent: content, action: c.action })"
-                                >
+                                    (click)="control_click.emit({ playlistContent: content, action: c.action })">
                                     <span class="md-text">
                                         <i class="{{ c.icon }}" [ngClass]="c.action == 'fullscreen' && content.isFullScreen == 1 ? 'text-primary' : c.colorClass"> </i>
                                     </span>

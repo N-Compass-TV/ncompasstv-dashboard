@@ -25,8 +25,7 @@
                                     <div
                                         class="breakdown-item"
                                         *ngFor="let p of playlistContentBreakdown; let i = index"
-                                        [ngClass]="i < playlistContentBreakdown.length - 1 && 'mr-4'"
-                                    >
+                                        [ngClass]="i < playlistContentBreakdown.length - 1 && 'mr-4'">
                                         <h4 class="font-weight-bold m-0 text-green">
                                             {{ p.total }}
                                         </h4>
@@ -38,11 +37,10 @@
                                         <button
                                             mat-button
                                             mat-raised-button
-                                            class="theme-btn {{c.className || ''}}"
-                                            [ngClass]="{'mr-2': i < playlistControls.length - 1}"
+                                            class="theme-btn {{ c.className || '' }}"
+                                            [ngClass]="{ 'mr-2': i < playlistControls.length - 1 }"
                                             [disabled]="c.disabled"
-                                            (click)="playlistControlClicked(c)"
-                                        >
+                                            (click)="playlistControlClicked(c)">
                                             <i class="{{ c.icon }} mr-3"></i>
                                             <small class="font-weight-bold">{{ c.label }}</small>
                                         </button>

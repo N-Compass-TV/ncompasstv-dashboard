@@ -9,9 +9,7 @@ export class UI_DEALER_ADVERTISERS {
     // state: object;
     advertiser_count: object;
 
-    constructor(
-        id: object, index: object, dealer_alias: object, name: object, contact: object, advertiser_count: object
-    ) {
+    constructor(id: object, index: object, dealer_alias: object, name: object, contact: object, advertiser_count: object) {
         this.dealer_id = id;
         this.index = index;
         this.dealer_alias = dealer_alias;

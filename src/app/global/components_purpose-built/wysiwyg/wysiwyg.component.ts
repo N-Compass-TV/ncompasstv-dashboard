@@ -1,19 +1,19 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
-	selector: 'app-wysiwyg',
-	templateUrl: './wysiwyg.component.html',
-	styleUrls: ['./wysiwyg.component.scss']
+    selector: 'app-wysiwyg',
+    templateUrl: './wysiwyg.component.html',
+    styleUrls: ['./wysiwyg.component.scss'],
 })
 export class WysiwygComponent implements OnInit {
-	tinymce_content: any = '';
-    @Output() tynimce_value: EventEmitter<any> = new EventEmitter;
+    tinymce_content: any = '';
+    @Output() tynimce_value: EventEmitter<any> = new EventEmitter();
     @Input() description;
 
-	constructor() {}
+    constructor() {}
 
-	ngOnInit() {
-        if(this.description.length > 0) {
+    ngOnInit() {
+        if (this.description.length > 0) {
             this.tinymce_content = this.description;
             this.tynimce_value.emit(this.description);
         }

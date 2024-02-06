@@ -7,8 +7,8 @@ export class UI_DEALER_TRANSACTIONS {
     price: object;
     status: object;
     link: object;
-    
-    constructor(index: object, date: object, order_no: object, transaction: object, description: object, price: object, status: object, link:object) {
+
+    constructor(index: object, date: object, order_no: object, transaction: object, description: object, price: object, status: object, link: object) {
         this.index = index;
         this.date = date;
         this.order_no = order_no;
@@ -28,7 +28,7 @@ export class UI_DEALER_INVOICE_TRANSACTIONS {
     billing_date: object;
     status: object;
     link: object;
-    
+
     constructor(index: object, dealer_alias: object, dealer_name: object, total_bill: object, billing_date: object, status: object, link: object) {
         this.index = index;
         this.dealer_alias = dealer_alias;

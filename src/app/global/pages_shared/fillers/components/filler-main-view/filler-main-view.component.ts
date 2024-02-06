@@ -42,7 +42,12 @@ export class FillerMainViewComponent implements OnInit {
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private _filler: FillerService, private _dialog: MatDialog, private _router: Router, private _auth: AuthService) {}
+    constructor(
+        private _filler: FillerService,
+        private _dialog: MatDialog,
+        private _router: Router,
+        private _auth: AuthService,
+    ) {}
 
     ngOnInit() {}
 

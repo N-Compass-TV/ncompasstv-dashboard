@@ -26,7 +26,10 @@ export class BasicSettingsComponent implements OnInit, OnDestroy {
     isChildFrequency = false;
     protected _unsubscribe = new Subject<void>();
 
-    constructor(private _formBuilder: FormBuilder, private _video: IsvideoPipe) {}
+    constructor(
+        private _formBuilder: FormBuilder,
+        private _video: IsvideoPipe,
+    ) {}
 
     ngOnInit() {
         this.initializeForm();

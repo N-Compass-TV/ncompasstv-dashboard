@@ -42,7 +42,13 @@ export class ViewFillersGroupComponent implements OnInit {
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
-    constructor(private _filler: FillerService, private _params: ActivatedRoute, private _dialog: MatDialog, private _auth: AuthService, private _user: UserService) {}
+    constructor(
+        private _filler: FillerService,
+        private _params: ActivatedRoute,
+        private _dialog: MatDialog,
+        private _auth: AuthService,
+        private _user: UserService,
+    ) {}
 
     ngOnInit() {
         this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => (this.filler_group_id = this._params.snapshot.params.data));

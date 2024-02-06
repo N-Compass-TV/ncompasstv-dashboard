@@ -1,6 +1,6 @@
 export type ButtonGroup = {
-	value: number;
-	label: string;
-	slug: string;
-	icon: string;
+    value: number;
+    label: string;
+    slug: string;
+    icon: string;
 };

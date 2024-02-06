@@ -302,7 +302,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         private _role: RoleService,
         private _titlecase: TitleCasePipe,
         private _user: UserService,
-        private cd: ChangeDetectorRef
+        private cd: ChangeDetectorRef,
     ) {}
 
     ngOnInit() {
@@ -352,8 +352,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
 
         this.subscription.add(
@@ -361,8 +361,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 (data) => (this.selected_index = data.tab),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
 
         this.subscribeToReassignSuccess();
@@ -388,8 +388,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 () => this.warningModal('success', 'License Activated', 'License successfully activated.', '', ''),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -436,7 +436,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 { value: i.region ? i.region : '--', link: null, editable: false, hidden: false },
                 { value: i.state, link: null, editable: false, hidden: false },
                 { value: i.status, link: null, editable: false, hidden: false },
-                { value: i.userId ? i.advertiserUser : 'Unassigned', link: null, editable: false, hidden: false }
+                { value: i.userId ? i.advertiserUser : 'Unassigned', link: null, editable: false, hidden: false },
             );
         });
     }
@@ -490,7 +490,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 { value: i.mainTotalFeed, link: null, editable: false, hidden: false },
                 { value: i.mainTotalFeedPercentage, link: null, editable: false, hidden: false },
                 { value: i.mainTotalOther, link: null, editable: false, hidden: false },
-                { value: i.mainTotalOtherPercentage, link: null, editable: false, hidden: false }
+                { value: i.mainTotalOtherPercentage, link: null, editable: false, hidden: false },
             );
         });
     }
@@ -516,8 +516,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 () => this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -551,7 +551,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             )
             .add(() => (this.initial_load_activity = false));
     }
@@ -632,7 +632,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 { value: this._date.transform(a.dateCreated, 'MMMM d, y'), hidden: false },
                 { value: activityMessage, hidden: false },
                 { value: a.initiatedBy, hidden: true },
-                { value: a.dateUpdated, hidden: true }
+                { value: a.dateUpdated, hidden: true },
             );
         });
     }
@@ -652,8 +652,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -694,7 +694,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -740,8 +740,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -763,9 +763,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 )
-                .add(() => (this.is_host_stats_loaded = true))
+                .add(() => (this.is_host_stats_loaded = true)),
         );
     }
 
@@ -802,7 +802,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     this.filters.assigned,
                     this.filters.pending,
                     this.filters.online,
-                    this.filters.isactivated
+                    this.filters.isactivated,
                 )
                 .subscribe(
                     (response: { paging; statistics; message }) => {
@@ -814,8 +814,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                         this.license_filtered_data = [];
                         this.initial_load_license = false;
                         this.searching_license = false;
-                    }
-                )
+                    },
+                ),
         );
     }
 
@@ -857,7 +857,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.subscription.add(
             this._license.get_licenses_total_by_dealer(id).subscribe((data: any) => {
                 this.setLicensesCount(data);
-            })
+            }),
         );
     }
 
@@ -930,7 +930,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 { value: h.state, link: null, editable: false, hidden: false },
                 { value: h.postalCode, link: null, editable: false, hidden: false },
                 { value: h.totalLicences, link: null, editable: false, hidden: false },
-                { value: h.status, link: null, editable: false, hidden: false }
+                { value: h.status, link: null, editable: false, hidden: false },
                 // { value: this._date.transform(h.installDate), link: null, editable: false, hidden: false},
             );
         });
@@ -1038,7 +1038,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     no_show: true,
                     label: this.checkStatusForExport(l),
                     new_status: true,
-                }
+                },
             );
             return table;
         });
@@ -1171,7 +1171,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             this.subscription.add(
                 this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
                     this.setDealersDropdownDataWithPage(data);
-                })
+                }),
             );
         } else {
             if (this.is_search) {
@@ -1180,7 +1180,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             this.subscription.add(
                 this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
                     this.setDealersDropdownData(data);
-                })
+                }),
             );
         }
     }
@@ -1213,8 +1213,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     this.searching_license_zone = false;
                     this.license_zone_data = [];
                     this.license_zone_filtered_data = [];
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -1280,8 +1280,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     },
                     (error) => {
                         console.error(error);
-                    }
-                )
+                    },
+                ),
         );
     }
 
@@ -1326,7 +1326,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             'Update System and Restart',
             'Are you sure you want to update the player and restart the pi?',
             'Click OK to push updates for this license',
-            'system_update'
+            'system_update',
         );
     }
 
@@ -1379,7 +1379,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     this.subscription.add(
                         this._license.delete_license(this.array_to_delete).subscribe((data) => {
                             this.warningModal('success', 'License Deleted', 'License successfully deleted.', '', ''), this.reloadLicense();
-                        })
+                        }),
                     );
 
                     this.createActivity(deletedLicenseActivity);
@@ -1419,7 +1419,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1434,7 +1434,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             'Are you sure you want to delete ' + this.array_to_delete.length + ' licenses?',
             '',
             'license_delete',
-            this.array_to_delete
+            this.array_to_delete,
         );
     }
 
@@ -1462,7 +1462,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 if ('message' in response) return;
 
                 this.setDealerAllLicenses(response);
-            })
+            }),
         );
     }
 
@@ -1519,7 +1519,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                             this.filters.assigned,
                             this.filters.pending,
                             this.filters.online,
-                            this.filters.isactivated
+                            this.filters.isactivated,
                         )
                         .subscribe((data) => {
                             data.licenseTemplateZoneExports.map((i) => {
@@ -1538,7 +1538,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                                 };
                             });
                             this.generateExcel(tab);
-                        })
+                        }),
                 );
                 break;
             case 'Hosts':
@@ -1561,7 +1561,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                             };
                         });
                         this.generateExcel(tab);
-                    })
+                    }),
                 );
                 break;
 
@@ -1586,7 +1586,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                                 };
                             });
                             this.generateExcel(tab);
-                        })
+                        }),
                 );
                 break;
         }
@@ -1808,7 +1808,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1831,7 +1831,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -1878,8 +1878,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 },
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -1925,8 +1925,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 () => this.ngOnInit(),
                 (error) => {
                     console.error(error);
-                }
-            )
+                },
+            ),
         );
     }
 

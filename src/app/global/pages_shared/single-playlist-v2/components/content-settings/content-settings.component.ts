@@ -58,7 +58,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
             index?: number;
         },
         private _playlist: SinglePlaylistService,
-        private _video: IsvideoPipe
+        private _video: IsvideoPipe,
     ) {}
 
     ngOnInit() {

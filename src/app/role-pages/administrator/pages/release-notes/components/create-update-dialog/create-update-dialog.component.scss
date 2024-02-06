@@ -1,28 +1,27 @@
 .heading {
-	.saving-indicator {
-		margin-right: 20px;
-	}
+    .saving-indicator {
+        margin-right: 20px;
+    }
 }
 
 .sections {
+    .text-editor-section {
+        margin-right: 30px;
+        min-width: 550px;
+        max-width: 550px;
+    }
 
-	.text-editor-section {
-		margin-right: 30px;
-		min-width: 550px;
-		max-width: 550px;
-	}
+    .preview-section {
+        min-width: 450px;
+        margin-right: auto;
 
-	.preview-section {
-		min-width: 450px;
-		margin-right: auto;
-
-		.text {
-			overflow-wrap: break-word;
-		}
-	}
+        .text {
+            overflow-wrap: break-word;
+        }
+    }
 }
 
 .mat-dialog-actions {
-	justify-content: flex-end;
-	margin-top: 110px;
+    justify-content: flex-end;
+    margin-top: 110px;
 }

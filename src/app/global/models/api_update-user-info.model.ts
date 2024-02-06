@@ -80,7 +80,7 @@ export class API_UPDATE_DEALER_PROFILE_BY_ADMIN {
         city: string,
         state: string,
         startDate: Date,
-        updatedBy: string
+        updatedBy: string,
     ) {
         this.userId = userId;
         this.dealerId = dealerId;

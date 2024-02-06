@@ -2,7 +2,7 @@ export class UI_PLAYLIST_HOST_LICENSE {
     id: string;
     dealer_id: string;
     host_name: string;
-    licenses: UI_PLAYLIST_LICENSE[]; 
+    licenses: UI_PLAYLIST_LICENSE[];
     status: boolean;
 
     constructor(id: string, dealer: string, name: string, licenses: UI_PLAYLIST_LICENSE[], status: boolean) {

@@ -26,8 +26,7 @@
                         [good_value]="host_count.good_value"
                         [good_value_label]="host_count.good_value_label"
                         [bad_value]="host_count.bad_value"
-                        [bad_value_label]="host_count.bad_value_label"
-                    >
+                        [bad_value_label]="host_count.bad_value_label">
                     </app-data-card-compare>
                 </mat-card>
             </div>
@@ -37,8 +36,7 @@
                         *ngIf="host_count; else small_loader"
                         [data_value]="host_count.new_this_week_value"
                         [data_label]="host_count.new_this_week_label"
-                        [data_description]="host_count.new_this_week_description"
-                    >
+                        [data_description]="host_count.new_this_week_description">
                     </app-data-card-count>
                 </mat-card>
             </div>
@@ -48,8 +46,7 @@
                         *ngIf="host_count; else small_loader"
                         [data_value]="host_count.new_last_week_value"
                         [data_label]="host_count.new_last_week_label"
-                        [data_description]="host_count.new_last_week_description"
-                    >
+                        [data_description]="host_count.new_last_week_description">
                     </app-data-card-count>
                 </mat-card>
             </div>
@@ -72,14 +69,12 @@
                                             class="theme-btn pi-control sm-text _primary mr-2"
                                             (click)="exportTable()"
                                             [disabled]="workbook_generation"
-                                            title="Export to CSV"
-                                        >
+                                            title="Export to CSV">
                                             <span
                                                 class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                                                [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                                            ></span>
+                                                [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                                             <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                                                !workbook_generation ? "Export" : "Generating CSV"
+                                                !workbook_generation ? 'Export' : 'Generating CSV'
                                             }}</span>
                                         </button>
                                     </div>
@@ -92,8 +87,7 @@
                                             [primary_keyword]="'host_name'"
                                             [secondary_keyword]="'host_name'"
                                             (searched)="hostFilterData($event)"
-                                            [api_search]="true"
-                                        ></app-search-field>
+                                            [api_search]="true"></app-search-field>
                                     </div>
                                 </div>
                                 <div class="row" *ngIf="!initial_load">
@@ -106,8 +100,7 @@
                                                     [new_table]="true"
                                                     [paging_details]="hostsPaging"
                                                     (page_triggered)="getHosts($event)"
-                                                    [is_view_only]="is_view_only"
-                                                >
+                                                    [is_view_only]="is_view_only">
                                                 </app-data-table>
                                             </mat-card>
                                         </ng-container>
@@ -158,8 +151,7 @@
                                     mat-raised-button
                                     class="theme-btn pi-control _cool sm-text mr-2"
                                     [matMenuTriggerFor]="orderSort"
-                                    title="Order by License Status"
-                                >
+                                    title="Order by License Status">
                                     <span class="fas fa-sort"></span>
                                     <span class="ml-2 button_text_animation">Order by License Status</span>
                                 </button>
@@ -178,8 +170,7 @@
                                     [primary_keyword]="'alias'"
                                     [secondary_keyword]="'host_name'"
                                     (searched)="licenseFilterData($event)"
-                                    [api_search]="true"
-                                ></app-search-field>
+                                    [api_search]="true"></app-search-field>
                             </div>
                         </div>
 
@@ -231,8 +222,7 @@
                                             [active_tab]="sort_column"
                                             [sort_column]="sort_column"
                                             [sort_order]="sort_order"
-                                            [is_view_only]="is_view_only"
-                                        >
+                                            [is_view_only]="is_view_only">
                                         </app-data-table>
                                     </mat-card>
                                 </ng-container>
@@ -256,8 +246,7 @@
                                             [primary_keyword]="'name'"
                                             [secondary_keyword]="'name'"
                                             (searched)="onSearchAdvertiser($event)"
-                                            [api_search]="true"
-                                        ></app-search-field>
+                                            [api_search]="true"></app-search-field>
                                     </div>
                                 </div>
                                 <div class="row" *ngIf="!initial_load_advertiser">
@@ -270,8 +259,7 @@
                                                     [new_table]="true"
                                                     [paging_details]="paging_data"
                                                     (page_triggered)="getAdvertiserByDealer($event)"
-                                                    [is_view_only]="is_view_only"
-                                                >
+                                                    [is_view_only]="is_view_only">
                                                 </app-data-table>
                                             </mat-card>
                                         </ng-container>

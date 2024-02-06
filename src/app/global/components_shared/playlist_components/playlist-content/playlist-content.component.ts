@@ -45,7 +45,11 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 
     protected _unsubscribe: Subject<void> = new Subject();
 
-    constructor(private _dialog: MatDialog, private _helper: HelperService, private _isImage: IsimagePipe) {}
+    constructor(
+        private _dialog: MatDialog,
+        private _helper: HelperService,
+        private _isImage: IsimagePipe,
+    ) {}
 
     ngOnInit() {
         if (this.content.classification == 'filler-v2') this.content.thumbnail = `${this.content.url.substr(0, this.content.url.lastIndexOf('.') + 1)}jpg`;

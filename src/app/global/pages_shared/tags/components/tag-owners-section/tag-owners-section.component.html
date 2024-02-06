@@ -19,11 +19,10 @@
                     class="theme-btn pi-control sm-text _primary mr-2"
                     (click)="exportTable()"
                     [disabled]="workbook_generation"
-                    title="Export to CSV"
-                >
+                    title="Export to CSV">
                     <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
                     <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
-                        !workbook_generation ? "Export" : "Generating CSV"
+                        !workbook_generation ? 'Export' : 'Generating CSV'
                     }}</span>
                 </button>
             </div>
@@ -42,7 +41,7 @@
         <mat-form-field class="full-width" *ngIf="!isLoading">
             <mat-label
                 ><i class="fas fa-search mr-3"></i>
-                <ng-container *ngIf="!is_dealer; else notAdmin"> Search by tag, @assignee or ^dealer </ng-container>
+                <ng-container *ngIf="!is_dealer; else notAdmin"> Search by tag, &#64;assignee or ^dealer </ng-container>
             </mat-label>
             <input matInput [formControl]="searchFormControl" />
         </mat-form-field>
@@ -63,8 +62,7 @@
                 [currentTagType]="currentTagType"
                 [currentUserRole]="currentUserRole"
                 [currentUserId]="currentUserId"
-                (onClickPageNumber)="clickedPageNumber($event)"
-            >
+                (onClickPageNumber)="clickedPageNumber($event)">
             </app-tags-table>
         </div>
     </div>
@@ -80,4 +78,4 @@
     <p>No results found</p>
 </ng-template>
 
-<ng-template #notAdmin> Search by tag or @assignee </ng-template>
+<ng-template #notAdmin> Search by tag or &#64;assignee </ng-template>

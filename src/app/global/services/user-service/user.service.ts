@@ -66,7 +66,7 @@ export class UserService extends BaseService {
                 if ('host' in response) result = response.host.length && { ...result, host: response.host[0] };
 
                 return result;
-            }
+            },
         );
     }
 

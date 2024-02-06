@@ -33,8 +33,7 @@
                         *ngIf="contentData.playlistContents[0].fileType | isimage; else video"
                         class="thumbnail-preview-100 border"
                         [src]="contentData.playlistContents[0].thumbnail | sanitize"
-                        [alt]="contentData.playlistContents[0].fileName || contentData.playlistContents[0].title"
-                    />
+                        [alt]="contentData.playlistContents[0].fileName || contentData.playlistContents[0].title" />
 
                     <ng-template #video>
                         <video class="thumbnail-preview-100 border" [src]="contentData.playlistContents[0].url + contentData.playlistContents[0].fileName" controls muted></video>
@@ -60,14 +59,14 @@
                         <div class="playlist-content-basic-info d-flex flex-column">
                             <div class="d-flex">
                                 <h5 class="m-0 font-weight-bold">
-                                    {{ content.fileName || content.title | nohandle | slice : 0 : 50 }}
+                                    {{ content.fileName || content.title | nohandle | slice: 0 : 50 }}
                                 </h5>
                                 <ng-container *ngIf="content.frequency > 0">
                                     <i class="frequency-icon text-warning ml-2 fas" [ngClass]="setFrequencyIcon(content.frequency)"></i>
                                 </ng-container>
                             </div>
                             <div class="upload-details">
-                                <p class="xsm-text">Uploaded by {{ content.createdByName }} on {{ content.dateCreated | date : "MMM d, y h:mm a" }}</p>
+                                <p class="xsm-text">Uploaded by {{ content.createdByName }} on {{ content.dateCreated | date: 'MMM d, y h:mm a' }}</p>
                             </div>
                         </div>
                     </div>
@@ -78,8 +77,7 @@
                                 'fa-image': content.fileType | isimage,
                                 'fa-video': content.fileType | isvideo,
                                 'fa-rss': content.fileType | isFeed
-                            }"
-                        >
+                            }">
                         </span>
                     </div>
                 </div>
@@ -89,8 +87,7 @@
                     [has_image_and_feed]="hasImageAndFeed"
                     [playlist_content]="contentData.playlistContents"
                     [playlist_content_length]="contentData.playlistContentLength"
-                    (changed)="playlistContentModified($event)"
-                ></app-basic-settings>
+                    (changed)="playlistContentModified($event)"></app-basic-settings>
             </div>
             <!-- Info/Fullscreen/Duration/Frequency -->
 
@@ -106,7 +103,7 @@
                                             <div class="flex-even">
                                                 <h4>Whitelist Host and Licenses</h4>
                                                 <p class="sm-text m-0">
-                                                    Select host and licenses you want {{ contentData.bulkSet ? "these contents" : "this content" }} to play or toggle all.
+                                                    Select host and licenses you want {{ contentData.bulkSet ? 'these contents' : 'this content' }} to play or toggle all.
                                                 </p>
                                             </div>
                                             <div class="toggle-wrapper pt-1 pr-2">
@@ -122,8 +119,7 @@
                                                 [toggle_all]="toggleAll.asObservable()"
                                                 (to_blacklist)="licensesToBlacklist($event)"
                                                 (to_whitelist)="licenseToWhitelist($event)"
-                                                (license_toggled)="checkIfAllHostLicensesWhitelisted($event)"
-                                            >
+                                                (license_toggled)="checkIfAllHostLicensesWhitelisted($event)">
                                             </app-play-location>
                                         </div>
                                     </div>
@@ -135,8 +131,7 @@
                                 <app-content-scheduler
                                     [contents]="contentData.playlistContents"
                                     [hasExistingSchedule]="contentData.hasExistingSchedule"
-                                    [scheduleType]="contentData.scheduleType"
-                                >
+                                    [scheduleType]="contentData.scheduleType">
                                 </app-content-scheduler>
                             </div>
 
@@ -145,8 +140,7 @@
                                     *ngIf="allowBulkScheduleSet; else bulkScheduleSetGate"
                                     [contents]="contentData.playlistContents"
                                     [hasExistingSchedule]="contentData.hasExistingSchedule"
-                                    [scheduleType]="contentData.scheduleType"
-                                >
+                                    [scheduleType]="contentData.scheduleType">
                                 </app-content-scheduler>
 
                                 <ng-template #bulkScheduleSetGate>
@@ -175,7 +169,7 @@
                                         <span>Date Range</span>
                                         <br />
                                         <span class="sm-text">
-                                            {{ content.from && content.to ? (content.from | date : "longDate") + " - " + (content.to | date : "longDate") : "--" }}
+                                            {{ content.from && content.to ? (content.from | date: 'longDate') + ' - ' + (content.to | date: 'longDate') : '--' }}
                                         </span>
                                     </div>
                                     <div class="playlist-content-schedule__days flex-even p-4" *ngIf="content.days">
@@ -183,7 +177,7 @@
                                         <span>Days</span>
                                         <br />
                                         <span class="sm-text">
-                                            {{ content.days ? convertDayFormat(content.days) : "--" }}
+                                            {{ content.days ? convertDayFormat(content.days) : '--' }}
                                         </span>
                                     </div>
                                     <div class="playlist-content-schedule__time-range flex-even p-4" *ngIf="content.playTimeStart && content.playTimeEnd">

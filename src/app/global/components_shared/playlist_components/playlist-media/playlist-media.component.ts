@@ -48,7 +48,7 @@ export class PlaylistMediaComponent implements OnInit {
         private _auth: AuthService,
         private _filler: FillerService,
         private _playlist: PlaylistService,
-        private _currentDialog: MatDialogRef<PlaylistMediaComponent>
+        private _currentDialog: MatDialogRef<PlaylistMediaComponent>,
     ) {}
 
     ngOnInit() {
@@ -260,7 +260,7 @@ export class PlaylistMediaComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             )
             .add(() => {
                 //map existing contents to comply with format
@@ -313,7 +313,7 @@ export class PlaylistMediaComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 

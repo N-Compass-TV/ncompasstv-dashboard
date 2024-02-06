@@ -24,38 +24,35 @@ import { UsersComponent } from './pages/users/users.component';
 import { AuthGuard } from 'src/app/global/guards';
 
 @NgModule({
-	declarations: [
-		DealerLayoutComponent, 
-		DashboardComponent, 
-		AdvertisersComponent, 
-		HostsComponent, 
-		LicensesComponent, 
-		LocatorComponent, 
-		PlaylistsComponent, 
-		ScreensComponent, 
-		ReportsComponent, 
-		UsersComponent, 
-	],
-	imports: [
-		CommonModule,
-		GlobalModule,
-		MatCardModule,
-		MatButtonModule,
-		MatAutocompleteModule,
-		MatInputModule,
-		MatInputModule,
-		MatMenuModule,
-		MatSelectModule,
-		MatExpansionModule,
-		FeedsModule,
-		FormsModule,
-		ReactiveFormsModule,
+    declarations: [
+        DealerLayoutComponent,
+        DashboardComponent,
+        AdvertisersComponent,
+        HostsComponent,
+        LicensesComponent,
+        LocatorComponent,
+        PlaylistsComponent,
+        ScreensComponent,
+        ReportsComponent,
+        UsersComponent,
+    ],
+    imports: [
+        CommonModule,
+        GlobalModule,
+        MatCardModule,
+        MatButtonModule,
+        MatAutocompleteModule,
+        MatInputModule,
+        MatInputModule,
+        MatMenuModule,
+        MatSelectModule,
+        MatExpansionModule,
+        FeedsModule,
+        FormsModule,
+        ReactiveFormsModule,
         BreadcrumbsModule,
-		RouterModule.forChild(DEALER_ROUTES),
-	],
-	providers: [
-		AuthGuard,
-	]
+        RouterModule.forChild(DEALER_ROUTES),
+    ],
+    providers: [AuthGuard],
 })
-
-export class DealerModule { }
+export class DealerModule {}

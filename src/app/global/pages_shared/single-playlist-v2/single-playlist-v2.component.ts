@@ -112,7 +112,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         private _dialog: MatDialog,
         private _isVideo: IsvideoPipe,
         private _playlist: SinglePlaylistService,
-        private _router: Router
+        private _router: Router,
     ) {}
 
     ngOnInit() {
@@ -394,7 +394,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                 },
                 (error) => {
                     throw new Error(error);
-                }
+                },
             );
     }
 
@@ -415,7 +415,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                     { value: i.hostName, link: null, editable: false, hidden: false },
                     { value: i.screenTypeName || '--', link: null, editable: false, hidden: false },
                     { value: i.templateName, link: null, editable: false, hidden: false },
-                    { value: i.createdBy, link: null, editable: false, hidden: false }
+                    { value: i.createdBy, link: null, editable: false, hidden: false },
                 );
             });
         } else {
@@ -621,7 +621,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
             `You are about to push playlist updates to ${this.licensesToUpdate.length} licenses?`,
             `Playlist Update will be pushed on ${this.licensesToUpdate.length} licenses. Click OK to Continue.`,
             'update',
-            this.licensesToUpdate
+            this.licensesToUpdate,
         );
     }
 
@@ -630,7 +630,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         schedulesToUpdate: PlaylistContentSchedule[],
         updateFrequencyCount: number,
         updateParentFrequencyCount: number,
-        savingPlaylist: boolean
+        savingPlaylist: boolean,
     ) {
         this.savingPlaylist = false;
         this.selectedPlaylistContents = [];
@@ -775,7 +775,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                     },
                 ],
             },
-            false
+            false,
         );
     }
 

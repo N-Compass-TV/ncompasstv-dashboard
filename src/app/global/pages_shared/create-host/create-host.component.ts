@@ -113,7 +113,7 @@ export class CreateHostComponent implements OnInit {
         private _map: MapService,
         private _router: Router,
         private _titlecase: TitleCasePipe,
-        private _location: LocationService
+        private _location: LocationService,
     ) {}
 
     ngOnInit() {
@@ -189,7 +189,7 @@ export class CreateHostComponent implements OnInit {
             },
             (error) => {
                 console.error(error);
-            }
+            },
         );
     }
 
@@ -269,7 +269,7 @@ export class CreateHostComponent implements OnInit {
                     (error) => {
                         this.is_creating_host = false;
                         this.openConfirmationModal('error', 'Host Place Creation Failed', 'An error occured while saving your data', null);
-                    }
+                    },
                 );
         }
     }
@@ -299,7 +299,7 @@ export class CreateHostComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -383,30 +383,30 @@ export class CreateHostComponent implements OnInit {
         let city;
         let country;
 
-        if (data.address.includes('USA')  || data.address.includes('Canada') || data.address.includes('United States')) {
+        if (data.address.includes('USA') || data.address.includes('Canada') || data.address.includes('United States')) {
             country = sliced_address[sliced_address.length - 1];
         }
 
-        console.log(sliced_address)
+        console.log(sliced_address);
 
         // Address Mapping
         if (sliced_address.length == 5) {
             // We are sure that this here includes a country, and it is the last index (4)
             zipState = sliced_address[3].split(' ');
             state = zipState[0];
-            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
+            zip = country && country == 'Canada' ? `${zipState[1]}${zipState[2]}` : zipState[1];
             city = sliced_address[2];
             address = `${sliced_address[0]}, ${sliced_address[1]}`;
         } else if (sliced_address.length == 4) {
             zipState = country ? sliced_address[2].split(' ') : sliced_address[3].split(' ');
             state = zipState[0];
-            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
+            zip = country && country == 'Canada' ? `${zipState[1]}${zipState[2]}` : zipState[1];
             city = sliced_address[1];
             address = sliced_address[0];
         } else if (sliced_address.length == 3) {
             zipState = sliced_address[2].split(' ');
             state = zipState[0];
-            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
+            zip = country && country == 'Canada' ? `${zipState[1]}${zipState[2]}` : zipState[1];
             city = sliced_address[1];
             address = sliced_address[0];
         }
@@ -442,7 +442,7 @@ export class CreateHostComponent implements OnInit {
 
     setZipValidatorRule(googleAddress: string) {
         const zipLength = googleAddress.includes('Canada') ? 6 : 5;
-        this.newHostFormControls.zip.setValidators([Validators.required, Validators.maxLength(zipLength), Validators.maxLength(zipLength)])
+        this.newHostFormControls.zip.setValidators([Validators.required, Validators.maxLength(zipLength), Validators.maxLength(zipLength)]);
     }
 
     searchStateAndRegion(state: string) {
@@ -479,7 +479,7 @@ export class CreateHostComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             )
             .add(() => {
                 this.loading_search = false;
@@ -516,7 +516,7 @@ export class CreateHostComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         } else {
             if (this.is_search) this.loading_search = true;
@@ -533,7 +533,7 @@ export class CreateHostComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         }
     }
@@ -614,7 +614,7 @@ export class CreateHostComponent implements OnInit {
                 },
                 (error) => {
                     console.error(error);
-                }
+                },
             );
     }
 
@@ -685,7 +685,7 @@ export class CreateHostComponent implements OnInit {
                             })
                             .filter((data) => data),
                     ];
-                }
+                },
             );
     }
 
@@ -713,7 +713,7 @@ export class CreateHostComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         } else {
             let sliced_address = data.split(', ');
@@ -739,7 +739,7 @@ export class CreateHostComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         } else {
             this._location
@@ -753,7 +753,7 @@ export class CreateHostComponent implements OnInit {
                     },
                     (error) => {
                         console.error(error);
-                    }
+                    },
                 );
         }
     }
