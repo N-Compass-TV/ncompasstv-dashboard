@@ -9,13 +9,17 @@
                         class="theme-btn pi-control sm-text _primary mr-2"
                         (click)="exportTable()"
                         [disabled]="workbook_generation"
-                        title="Export to CSV"
-                    >
+                        title="Export to CSV">
                         <span
-                            class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
-                            [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
-                        ></span>
-                        <span class="ml-2 button_text_animation">{{ !workbook_generation ? "Export" : "Generating CSV" }}</span>
+                            class="{{
+                                !workbook_generation
+                                    ? 'fas fa-file-excel'
+                                    : 'fas fa-spinner fa-spin'
+                            }}"
+                            [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                        <span class="ml-2 button_text_animation">{{
+                            !workbook_generation ? 'Export' : 'Generating CSV'
+                        }}</span>
                     </button>
                 </div>
                 <div class="col-lg-4">
@@ -28,8 +32,7 @@
                         [secondary_keyword]="'dmaCode'"
                         (searched)="filterData($event)"
                         [api_search]="true"
-                        [allow_one]="true"
-                    ></app-search-field>
+                        [allow_one]="true"></app-search-field>
                 </div>
             </div>
             <div class="row" *ngIf="!initial_load_dma">
@@ -41,8 +44,7 @@
                                 [table_columns]="dma_table_column"
                                 [new_table]="true"
                                 [paging_details]="paging_data"
-                                (page_triggered)="getDMA($event)"
-                            >
+                                (page_triggered)="getDMA($event)">
                             </app-data-table>
                         </mat-card>
                     </ng-container>
@@ -64,7 +66,9 @@
                 <i class="text-gray fa-5x far fa-file-alt"></i>
             </div>
             <h3 class="text-gray col-lg-12">No Results Found.</h3>
-            <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+            <span class="text-gray col-lg-12"
+                >Try adjusting your search to find what you're looking for.</span
+            >
         </mat-card>
     </div>
 </ng-template>
