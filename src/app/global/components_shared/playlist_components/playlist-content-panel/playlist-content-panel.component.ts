@@ -65,6 +65,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
     currentStatusFilter: { key: string; label: string };
     currentFileTypeFilter = 'all';
     has_selected_content_with_schedule = false;
+    is_administrator = this._auth.current_role === 'administrator';
     is_loading = false;
     is_bulk_selecting = false;
     list_view_mode = false;
