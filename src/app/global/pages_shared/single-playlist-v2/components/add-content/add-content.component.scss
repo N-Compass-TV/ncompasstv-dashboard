@@ -1,0 +1,40 @@
+.add-content-setup-wrapper {
+    width: 1300px;
+}
+
+.media-files-wrapper {
+    min-height: 430px;
+    overflow-y: scroll;
+}
+
+.media-library-browser-wrapper {
+    height: 500px;
+    overflow-y: scroll;
+}
+
+.loader-height {
+    height: 360px !important;
+}
+
+.selected-content-controls {
+    background: #fff;
+    height: 50px;
+    width: 100%;
+}
+
+.selected-contents {
+    border: 1px solid #f0f0f0;
+    contain: content;
+    position: relative;
+}
+
+.play-location-wrapper {
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+    height: 340px;
+    overflow-y: scroll;
+}
+
+.search-form-wrapper {
+    width: 450px;
+}

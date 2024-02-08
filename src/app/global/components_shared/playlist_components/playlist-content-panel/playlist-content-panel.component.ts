@@ -29,6 +29,7 @@ import {
 } from 'src/app/global/models';
 
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from 'src/app/global/constants/file-types';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-playlist-content-panel',
@@ -67,6 +68,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
     is_loading = false;
     is_bulk_selecting = false;
     list_view_mode = false;
+    migrationLoading = false;
     updated_playlist_content: API_UPDATED_PLAYLIST_CONTENT[];
     playlist_order: string[] = [];
     playlist_changes_data: any;
@@ -103,6 +105,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         private _content: ContentService,
         private _dialog: MatDialog,
         private _playlist: PlaylistService,
+        private _router: Router,
     ) {}
 
     ngOnInit() {
@@ -435,12 +438,46 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         this.showContentScheduleDialog();
     }
 
+    onSwitchPlaylist(): void {
+        this.openConfirmationModal(
+            'warning',
+            'Switching to Playlist V2',
+            'You are about to switch to playlist V2, this action is irreversible.',
+        );
+    }
+
     onViewContentList(): void {
         this.list_view_mode = !this.list_view_mode;
     }
 
     onViewSchedule(): void {
         this.showViewSchedulesDialog();
+    }
+
+    openConfirmationModal(status, message, data): void {
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: {
+                    status: status,
+                    message: message,
+                    data: data,
+                },
+            })
+            .afterClosed()
+            .subscribe((response) => {
+                if (status === 'success') {
+                    this._router.navigate(
+                        [`/${this.currentRole}/playlists/v2/${this.playlist_id}`],
+                        {},
+                    );
+                }
+
+                if (status === 'warning' && response) {
+                    this.switchToV2();
+                }
+            });
     }
 
     optionsSaved(data: PLAYLIST_CHANGES): void {
@@ -776,6 +813,43 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
     structureAddedPlaylistContent(incoming_playlist_content: API_CONTENT_BLACKLISTED_CONTENTS[]): void {
         this.playlist_contents = incoming_playlist_content.concat(this.playlist_contents);
         this.savePlaylistChanges(this.structureUpdatedPlaylist(), null, null, null, true);
+    }
+
+    switchToV2() {
+        this.migrationLoading = true;
+
+        this._playlist
+            .create_playlist_whitelist_migration(this.playlist_id)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe({
+                next: ({ message }) => {
+                    this.migrationLoading = false;
+
+                    if (message === 'Successfully Migrated.') {
+                        this.openConfirmationModal(
+                            'success',
+                            'Success!',
+                            'Playlist Successfully Migrated',
+                        );
+                        return;
+                    }
+
+                    this.openConfirmationModal(
+                        'error',
+                        'Please contact tech support',
+                        'Migration Failed',
+                    );
+                },
+                error: (e) => {
+                    console.error('Error migrating playlist to version 2', e);
+                    this.migrationLoading = false;
+                    this.openConfirmationModal(
+                        'error',
+                        'Please contact tech support',
+                        'Migration Failed',
+                    );
+                },
+            });
     }
 
     searchPlaylistContent(id: string): any {
@@ -1168,5 +1242,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
     protected get currentUser() {
         return this._auth.current_user_value;
+    }
+
+    protected get currentRole() {
+        return this._auth.current_role;
     }
 }
