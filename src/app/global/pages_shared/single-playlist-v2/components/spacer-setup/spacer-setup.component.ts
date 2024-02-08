@@ -62,9 +62,7 @@ export class SpacerSetupComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.playlistHostLicenses = this._dialog_data.hostLicenses
-            ? [...this._dialog_data.hostLicenses]
-            : [];
+        this.playlistHostLicenses = this._dialog_data.hostLicenses ? [...this._dialog_data.hostLicenses] : [];
     }
 
     public get dynamicSpacerAlgoFields() {
@@ -91,10 +89,7 @@ export class SpacerSetupComponent implements OnInit {
                     0,
                     [
                         Validators.required,
-                        this.numberRangeValidator.bind(
-                            this,
-                            this.getCategoryInfoByName(c.categoryName),
-                        ),
+                        this.numberRangeValidator.bind(this, this.getCategoryInfoByName(c.categoryName)),
                     ],
                 ],
             });

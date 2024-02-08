@@ -47,12 +47,9 @@ export class ContentComponent implements OnInit, OnDestroy {
             this.prepareThumbnails();
             this.subscribeToMoveButton();
             this.isParentFrequency =
-                (this.is_frequency_enabled && this.content.frequency === 22) ||
-                this.content.frequency === 33;
+                (this.is_frequency_enabled && this.content.frequency === 22) || this.content.frequency === 33;
             this.isChildFrequency =
-                this.is_frequency_enabled &&
-                !this.isParentFrequency &&
-                this.content.frequency !== 0;
+                this.is_frequency_enabled && !this.isParentFrequency && this.content.frequency !== 0;
             this.subscribeToContentHover();
         }
     }
@@ -92,8 +89,7 @@ export class ContentComponent implements OnInit, OnDestroy {
     }
 
     public getFrequencyInfo() {
-        if ((!this.isParentFrequency && !this.isChildFrequency) || !this.is_frequency_enabled)
-            return;
+        if ((!this.isParentFrequency && !this.isChildFrequency) || !this.is_frequency_enabled) return;
         const frequency = this.content.frequency;
         const parsedFrequency = this.isParentFrequency ? (frequency === 22 ? 2 : 3) : frequency;
         let result = this.isParentFrequency ? 'Parent' : 'Child';
@@ -128,9 +124,7 @@ export class ContentComponent implements OnInit, OnDestroy {
     private subscribeToMoveButton() {
         this.move_enabled.pipe(takeUntil(this._unsubscribe)).subscribe({
             next: (res) => {
-                const moveButton = this.playlistContentControls.find(
-                    (obj) => obj.action == 'quick-move',
-                );
+                const moveButton = this.playlistContentControls.find((obj) => obj.action == 'quick-move');
                 moveButton.disabled = res;
             },
         });

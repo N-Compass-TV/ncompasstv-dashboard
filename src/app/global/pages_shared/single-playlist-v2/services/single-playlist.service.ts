@@ -77,9 +77,7 @@ export class SinglePlaylistService extends BaseService {
         return this.getRequest(`playlistsv2?playlistid=${playlistId}`);
     }
 
-    getPlaylistHosts(
-        playlistId: string,
-    ): Observable<{ host: API_HOST; licenses: API_LICENSE_PROPS[] }[]> {
+    getPlaylistHosts(playlistId: string): Observable<{ host: API_HOST; licenses: API_LICENSE_PROPS[] }[]> {
         return this.getRequest(`playlistsv2/gethostlicenses?playlistid=${playlistId}`).map(
             (data: any) => data.hostLicenses,
         );
@@ -100,14 +98,8 @@ export class SinglePlaylistService extends BaseService {
         switch (data.type) {
             case 3: // type 3 means the content only plays during the set schedule
                 const currentDate = moment(new Date(), `${DATE_FORMAT} ${TIME_FORMAT}`);
-                const startDate = moment(
-                    `${data.from} ${data.playTimeStart}`,
-                    `${DATE_FORMAT} ${TIME_FORMAT}`,
-                );
-                const endDate = moment(
-                    `${data.to} ${data.playTimeEnd}`,
-                    `${DATE_FORMAT} ${TIME_FORMAT}`,
-                );
+                const startDate = moment(`${data.from} ${data.playTimeStart}`, `${DATE_FORMAT} ${TIME_FORMAT}`);
+                const endDate = moment(`${data.to} ${data.playTimeEnd}`, `${DATE_FORMAT} ${TIME_FORMAT}`);
 
                 if (currentDate.isBefore(startDate)) result = 'future';
                 if (currentDate.isBetween(startDate, endDate, undefined)) result = 'scheduled';
@@ -130,16 +122,10 @@ export class SinglePlaylistService extends BaseService {
     }
 
     getWhitelistData(playlistContentId: string) {
-        return this.getRequest(
-            `playlistsv2/GetLicensePlaylistContents?playlistContentId=${playlistContentId}`,
-        );
+        return this.getRequest(`playlistsv2/GetLicensePlaylistContents?playlistContentId=${playlistContentId}`);
     }
 
-    mapScheduleFromUiContent(
-        data: UI_CONTENT_SCHEDULE,
-        playlistContentId?: string,
-        contents?: API_CONTENT_V2[],
-    ) {
+    mapScheduleFromUiContent(data: UI_CONTENT_SCHEDULE, playlistContentId?: string, contents?: API_CONTENT_V2[]) {
         const result = {} as PlaylistContentSchedule;
 
         switch (data.type) {
@@ -153,11 +139,7 @@ export class SinglePlaylistService extends BaseService {
                 result.type = 3;
 
                 Object.keys(data).forEach((key) => {
-                    if (
-                        typeof data[key] === 'undefined' ||
-                        (!data[key] && typeof data[key] !== 'number')
-                    )
-                        return;
+                    if (typeof data[key] === 'undefined' || (!data[key] && typeof data[key] !== 'number')) return;
 
                     switch (key) {
                         case 'days':
@@ -168,16 +150,11 @@ export class SinglePlaylistService extends BaseService {
                             break;
                         case 'playTimeStartData':
                         case 'playTimeEndData':
-                            let toParse =
-                                key === 'playTimeStartData'
-                                    ? data.playTimeStartData
-                                    : data.playTimeEndData;
-                            const resultKey =
-                                key === 'playTimeStartData' ? 'playTimeStart' : 'playTimeEnd';
-                            result[resultKey] = moment(
-                                `${toParse.hour}:${toParse.minute}`,
-                                'HH:mm',
-                            ).format(TIME_FORMAT);
+                            let toParse = key === 'playTimeStartData' ? data.playTimeStartData : data.playTimeEndData;
+                            const resultKey = key === 'playTimeStartData' ? 'playTimeStart' : 'playTimeEnd';
+                            result[resultKey] = moment(`${toParse.hour}:${toParse.minute}`, 'HH:mm').format(
+                                TIME_FORMAT,
+                            );
                             break;
                         case 'startDate':
                         case 'endDate':
@@ -210,9 +187,7 @@ export class SinglePlaylistService extends BaseService {
     }
 
     removeWhitelist(blacklistData: { playlistContentId: string; licenses: string[] }[]) {
-        return this.postRequest(`playlistsv2/LicensePlaylistContentsDelete`, blacklistData).map(
-            (data) => data,
-        );
+        return this.postRequest(`playlistsv2/LicensePlaylistContentsDelete`, blacklistData).map((data) => data);
     }
 
     revert_frequency(playlistContentId: string) {
@@ -227,10 +202,7 @@ export class SinglePlaylistService extends BaseService {
         return this.postRequest(url, body);
     }
 
-    swapPlaylistContent(
-        data: { contentId: string; playlistContentId: string; duration: number },
-        isFrequency = false,
-    ) {
+    swapPlaylistContent(data: { contentId: string; playlistContentId: string; duration: number }, isFrequency = false) {
         const frequencyEndpoint = 'playlistsv2/content/swap/parent';
         const endpoint = isFrequency ? frequencyEndpoint : 'playlistsv2/swapcontent';
         return this.postRequest(endpoint, data);

@@ -30,9 +30,7 @@
                                     <div
                                         class="breakdown-item"
                                         *ngFor="let p of playlistContentBreakdown; let i = index"
-                                        [ngClass]="
-                                            i < playlistContentBreakdown.length - 1 && 'mr-4'
-                                        ">
+                                        [ngClass]="i < playlistContentBreakdown.length - 1 && 'mr-4'">
                                         <h4 class="font-weight-bold m-0 text-green">
                                             {{ p.total }}
                                         </h4>
@@ -57,8 +55,7 @@
                                 </div>
                             </section>
 
-                            <section
-                                class="bg-white box-shadow p-4 playlist-content-management rounded">
+                            <section class="bg-white box-shadow p-4 playlist-content-management rounded">
                                 <div class="filter-controls">
                                     <div class="d-flex">
                                         <div class="flex-even">
@@ -71,63 +68,42 @@
                                                         <div class="d-flex">
                                                             <div
                                                                 class="content-filters"
-                                                                *ngFor="
-                                                                    let p of playlistFilters;
-                                                                    let i = index
-                                                                "
+                                                                *ngFor="let p of playlistFilters; let i = index"
                                                                 [ngClass]="i == 0 && 'mr-3'">
                                                                 <button
                                                                     mat-button
                                                                     mat-raised-button
                                                                     class="theme-btn"
                                                                     [matMenuTriggerFor]="menu">
-                                                                    <i
-                                                                        class="{{
-                                                                            p.icon
-                                                                        }} mr-3 text-green"></i>
-                                                                    <small
-                                                                        class="font-weight-bold mr-2">
+                                                                    <i class="{{ p.icon }} mr-3 text-green"></i>
+                                                                    <small class="font-weight-bold mr-2">
                                                                         {{ p.label }}
 
                                                                         <ng-container
                                                                             *ngIf="
-                                                                                p.label ===
-                                                                                    'Content Type' &&
+                                                                                p.label === 'Content Type' &&
                                                                                 currentFilters.type
                                                                             ">
                                                                             :
-                                                                            {{
-                                                                                currentFilters.type
-                                                                                    | titlecase
-                                                                            }}
+                                                                            {{ currentFilters.type | titlecase }}
                                                                         </ng-container>
 
                                                                         <ng-container
                                                                             *ngIf="
-                                                                                p.label ===
-                                                                                    'Content Status' &&
+                                                                                p.label === 'Content Status' &&
                                                                                 currentFilters.status
                                                                             ">
                                                                             :
-                                                                            {{
-                                                                                currentFilters.status
-                                                                                    | titlecase
-                                                                            }}
+                                                                            {{ currentFilters.status | titlecase }}
                                                                         </ng-container>
                                                                     </small>
-                                                                    <i
-                                                                        class="fas fa-caret-down"></i>
+                                                                    <i class="fas fa-caret-down"></i>
                                                                 </button>
                                                                 <mat-menu #menu="matMenu">
                                                                     <button
                                                                         mat-menu-item
                                                                         *ngFor="let i of p.items"
-                                                                        (click)="
-                                                                            filterContent(
-                                                                                p.action,
-                                                                                i.action
-                                                                            )
-                                                                        ">
+                                                                        (click)="filterContent(p.action, i.action)">
                                                                         {{ i.label }}
                                                                     </button>
                                                                 </mat-menu>
@@ -146,27 +122,14 @@
                                                                 mat-button
                                                                 mat-raised-button
                                                                 class="theme-btn"
-                                                                *ngFor="
-                                                                    let p of playlistViews;
-                                                                    let i = index
-                                                                "
-                                                                (click)="
-                                                                    viewButtonClicked(p.action)
-                                                                "
-                                                                [ngClass]="
-                                                                    i !==
-                                                                        playlistViews.length - 1 &&
-                                                                    'mr-3'
-                                                                "
+                                                                *ngFor="let p of playlistViews; let i = index"
+                                                                (click)="viewButtonClicked(p.action)"
+                                                                [ngClass]="i !== playlistViews.length - 1 && 'mr-3'"
                                                                 [class.selected]="p.is_selected">
-                                                                <i
-                                                                    class="{{
-                                                                        p.icon
-                                                                    }} mr-3 text-green"></i>
-                                                                <small
-                                                                    class="font-weight-bold mr-1"
-                                                                    >{{ p.label }}</small
-                                                                >
+                                                                <i class="{{ p.icon }} mr-3 text-green"></i>
+                                                                <small class="font-weight-bold mr-1">{{
+                                                                    p.label
+                                                                }}</small>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -176,9 +139,7 @@
 
                                         <div class="search-form-wrapper">
                                             <form class="search-form">
-                                                <mat-form-field
-                                                    class="full-width"
-                                                    appearance="fill">
+                                                <mat-form-field class="full-width" appearance="fill">
                                                     <mat-label>Search Playlist Content</mat-label>
                                                     <input
                                                         matInput
@@ -191,8 +152,7 @@
                                     </div>
                                 </div>
 
-                                <div
-                                    class="bg-gray box-shadow p-3 playlist-contents vh-64 rounded overflow-y-scroll">
+                                <div class="bg-gray box-shadow p-3 playlist-contents vh-64 rounded overflow-y-scroll">
                                     <div
                                         class="row no-gutters"
                                         #draggables
@@ -206,28 +166,14 @@
                                             <div class="m-1">
                                                 <app-content
                                                     [content]="c"
-                                                    [enabled_controls]="
-                                                        enabledPlaylistContentControls
-                                                    "
+                                                    [enabled_controls]="enabledPlaylistContentControls"
                                                     [detailed_view_mode]="detailedViewMode"
                                                     [index]="c.seq"
                                                     [move_enabled]="sortablejsTriggered"
-                                                    [saving]="
-                                                        playlistContentsToSave.includes(
-                                                            c.playlistContentId
-                                                        )
-                                                    "
-                                                    [selected]="
-                                                        selectedPlaylistContents.includes(
-                                                            c.playlistContentId
-                                                        )
-                                                    "
-                                                    (control_click)="
-                                                        contentControlClicked($event, i)
-                                                    "
-                                                    (content_selected)="
-                                                        playlistContentSelected(c.playlistContentId)
-                                                    ">
+                                                    [saving]="playlistContentsToSave.includes(c.playlistContentId)"
+                                                    [selected]="selectedPlaylistContents.includes(c.playlistContentId)"
+                                                    (control_click)="contentControlClicked($event, i)"
+                                                    (content_selected)="playlistContentSelected(c.playlistContentId)">
                                                 </app-content>
                                             </div>
                                         </div>
@@ -238,22 +184,18 @@
                                         *ngIf="!playlistContents.length">
                                         <div class="text-center">
                                             <h3 class="mb-2">
-                                                Welcome to your new playlist! Add contents to get
-                                                started.
+                                                Welcome to your new playlist! Add contents to get started.
                                             </h3>
                                             <p class="sm-text">
                                                 <ng-container
                                                     *ngIf="
-                                                        assets.length > 0 &&
-                                                            floatingAssets.length > 0;
+                                                        assets.length > 0 && floatingAssets.length > 0;
                                                         else noAssetAvailable
                                                     ">
-                                                    Click on the Add Content button above to start
-                                                    adding contents.
+                                                    Click on the Add Content button above to start adding contents.
                                                 </ng-container>
                                                 <ng-template #noAssetAvailable>
-                                                    Upload your contents in the Media Library before
-                                                    adding them here
+                                                    Upload your contents in the Media Library before adding them here
                                                 </ng-template>
                                             </p>
                                         </div>
@@ -294,27 +236,19 @@
                                                     <div class="d-flex w-100">
                                                         <div>
                                                             <a
-                                                                [routerLink]="[
-                                                                    hostURL,
-                                                                    hostLicense.host.hostId
-                                                                ]"
+                                                                [routerLink]="[hostURL, hostLicense.host.hostId]"
                                                                 target="_blank">
-                                                                <h5
-                                                                    class="sm-text font-weight-bold mb-0">
+                                                                <h5 class="sm-text font-weight-bold mb-0">
                                                                     {{ hostLicense.host.name }}
                                                                 </h5>
                                                             </a>
                                                         </div>
                                                         <div class="flex-even text-right sm-text">
                                                             {{ hostLicense.licenses.length }}
-                                                            License<span
-                                                                *ngIf="
-                                                                    hostLicense.licenses.length > 1
-                                                                "
+                                                            License<span *ngIf="hostLicense.licenses.length > 1"
                                                                 >s</span
                                                             >
-                                                            <span
-                                                                class="fas fa-arrow-down ml-2"></span>
+                                                            <span class="fas fa-arrow-down ml-2"></span>
                                                         </div>
                                                     </div>
                                                 </mat-expansion-panel-header>
@@ -325,24 +259,12 @@
                                                         class="option-license-list w-100 mb-1">
                                                         <mat-checkbox
                                                             class="sm-text"
-                                                            (change)="
-                                                                addToLicenseToPush(
-                                                                    $event,
-                                                                    license.licenseId
-                                                                )
-                                                            ">
+                                                            (change)="addToLicenseToPush($event, license.licenseId)">
                                                             <a
-                                                                [routerLink]="[
-                                                                    licenseURL,
-                                                                    license.licenseId
-                                                                ]"
+                                                                [routerLink]="[licenseURL, license.licenseId]"
                                                                 target="_blank">
-                                                                <h5
-                                                                    class="sm-text font-weight-bold mb-0">
-                                                                    {{
-                                                                        license.alias ||
-                                                                            license.licenseKey
-                                                                    }}
+                                                                <h5 class="sm-text font-weight-bold mb-0">
+                                                                    {{ license.alias || license.licenseKey }}
                                                                 </h5>
                                                             </a>
                                                         </mat-checkbox>
@@ -361,9 +283,7 @@
     </ng-container>
 
     <ng-template #playlistNotFound>
-        <div
-            class="loader text-center py-5 d-flex align-items-center vh-50"
-            *ngIf="playlistDataNotFound; else spinner">
+        <div class="loader text-center py-5 d-flex align-items-center vh-50" *ngIf="playlistDataNotFound; else spinner">
             <div class="w-100">
                 <h3 class="mt-4 mb-2">Playlist Not Found</h3>
                 <p class="sm-text">The playlist you are trying to access does not exist</p>
@@ -375,8 +295,7 @@
         <div class="vh-60">
             <app-spinner
                 [message]="
-                    (savingPlaylist && 'Saving playlist, Please wait ...') ||
-                    'Getting Playlist, Please wait ...'
+                    (savingPlaylist && 'Saving playlist, Please wait ...') || 'Getting Playlist, Please wait ...'
                 "></app-spinner>
         </div>
     </ng-template>

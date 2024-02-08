@@ -12,11 +12,7 @@
 
     <div class="form-container">
         <ng-container *ngIf="isFormReady">
-            <form
-                class="text-left"
-                [formGroup]="createPlaylistForm"
-                (ngSubmit)="createPlaylist()"
-                #formDirective>
+            <form class="text-left" [formGroup]="createPlaylistForm" (ngSubmit)="createPlaylist()" #formDirective>
                 <div class="d-flex flex-column mb-4">
                     <ng-container *ngFor="let field of formFields">
                         <ng-container [ngSwitch]="field.type">
@@ -76,11 +72,7 @@
                             [disabled]="createPlaylistForm.invalid">
                             Submit
                         </button>
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn btn-danger"
-                            [mat-dialog-close]="'close'">
+                        <button mat-button mat-raised-button class="theme-btn btn-danger" [mat-dialog-close]="'close'">
                             Close
                         </button>
                     </div>

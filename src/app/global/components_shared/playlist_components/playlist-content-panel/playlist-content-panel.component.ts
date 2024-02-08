@@ -468,10 +468,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
             .afterClosed()
             .subscribe((response) => {
                 if (status === 'success') {
-                    this._router.navigate(
-                        [`/${this.currentRole}/playlists/v2/${this.playlist_id}`],
-                        {},
-                    );
+                    this._router.navigate([`/${this.currentRole}/playlists/v2/${this.playlist_id}`], {});
                 }
 
                 if (status === 'warning' && response) {
@@ -826,28 +823,16 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                     this.migrationLoading = false;
 
                     if (message === 'Successfully Migrated.') {
-                        this.openConfirmationModal(
-                            'success',
-                            'Success!',
-                            'Playlist Successfully Migrated',
-                        );
+                        this.openConfirmationModal('success', 'Success!', 'Playlist Successfully Migrated');
                         return;
                     }
 
-                    this.openConfirmationModal(
-                        'error',
-                        'Please contact tech support',
-                        'Migration Failed',
-                    );
+                    this.openConfirmationModal('error', 'Please contact tech support', 'Migration Failed');
                 },
                 error: (e) => {
                     console.error('Error migrating playlist to version 2', e);
                     this.migrationLoading = false;
-                    this.openConfirmationModal(
-                        'error',
-                        'Please contact tech support',
-                        'Migration Failed',
-                    );
+                    this.openConfirmationModal('error', 'Please contact tech support', 'Migration Failed');
                 },
             });
     }

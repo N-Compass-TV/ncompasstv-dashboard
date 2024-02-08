@@ -38,11 +38,7 @@ import { SinglePlaylistService } from './services/single-playlist.service';
 import { AuthService } from '../../services';
 import { ContentSettingsComponent } from './components/content-settings/content-settings.component';
 import { AddContentComponent } from './components/add-content/add-content.component';
-import {
-    BlacklistUpdates,
-    PlaylistContent,
-    PlaylistContentUpdate,
-} from './type/PlaylistContentUpdate';
+import { BlacklistUpdates, PlaylistContent, PlaylistContentUpdate } from './type/PlaylistContentUpdate';
 import { QuickMoveComponent } from './components/quick-move/quick-move.component';
 import { IsvideoPipe } from '../../pipes';
 import { SpacerSetupComponent } from './components/spacer-setup/spacer-setup.component';
@@ -216,10 +212,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         const filterByKeyword = (c: API_CONTENT_V2) => {
             if (!this.currentFilters.keyword || this.currentFilters.keyword.trim().length <= 0)
                 return Array.from(this.playlistContentsBackup);
-            return (
-                c.fileName &&
-                c.fileName.toLowerCase().includes(this.currentFilters.keyword.toLowerCase())
-            );
+            return c.fileName && c.fileName.toLowerCase().includes(this.currentFilters.keyword.toLowerCase());
         };
 
         const filterByContentType = (c: API_CONTENT_V2) => {
@@ -262,10 +255,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                 .filter(filterByContentType)
                 .filter((c) => c.scheduleStatus !== 'active');
         } else {
-            result = result
-                .filter(filterByKeyword)
-                .filter(filterByContentType)
-                .filter(filterByStatus);
+            result = result.filter(filterByKeyword).filter(filterByContentType).filter(filterByStatus);
         }
 
         this.playlistContents = [...result];
@@ -294,8 +284,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                 { contents?: API_CONTENT_V2[]; page?: any; message?: string },
                 { iContents: API_CONTENT_V2[]; page: any },
             ]) => {
-                dealerContents.contents =
-                    'message' in dealerContents ? [] : dealerContents.contents;
+                dealerContents.contents = 'message' in dealerContents ? [] : dealerContents.contents;
                 this.assets = dealerContents.contents;
                 if (floatingContents && floatingContents.iContents.length)
                     this.floatingAssets = floatingContents.iContents;
@@ -364,9 +353,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
                 if (!response.playlist.isMigrated) {
                     // Redirect playlist to v1 page if not migrated yet
-                    this._router.navigate([
-                        `${this.role}/playlists/${response.playlist.playlistId}`,
-                    ]);
+                    this._router.navigate([`${this.role}/playlists/${response.playlist.playlistId}`]);
                     return;
                 }
 
@@ -522,9 +509,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
     public playlistContentSelected(playlistContentId: string) {
         if (this.selectedPlaylistContents.includes(playlistContentId))
-            this.selectedPlaylistContents = this.selectedPlaylistContents.filter(
-                (p) => p !== playlistContentId,
-            );
+            this.selectedPlaylistContents = this.selectedPlaylistContents.filter((p) => p !== playlistContentId);
         else this.selectedPlaylistContents.push(playlistContentId);
 
         this.setBulkControlsState();
@@ -533,11 +518,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         else this.enabledPlaylistContentControls = [...this.playlistContentControls];
     }
 
-    private playlistContentSettings(
-        playlistContents: API_CONTENT_V2[],
-        bulkSet = false,
-        index?: number,
-    ) {
+    private playlistContentSettings(playlistContents: API_CONTENT_V2[], bulkSet = false, index?: number) {
         const hasExistingSchedule = playlistContents.length === 1 && playlistContents[0].type === 3;
         const scheduleType = bulkSet ? 1 : playlistContents[0].type;
         const data = {
@@ -556,19 +537,14 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
             .open(ContentSettingsComponent, configs)
             .afterClosed()
             .subscribe({
-                next: (res: {
-                    contentUpdates: PlaylistContent[];
-                    blacklistUpdates: BlacklistUpdates[];
-                }) => {
+                next: (res: { contentUpdates: PlaylistContent[]; blacklistUpdates: BlacklistUpdates[] }) => {
                     if (!res) return;
 
                     // ensure that the mark all button is set to false after saving data
                     if (bulkSet && this.isInMarkedAllState) this.toggleMarkAllButton(false);
 
                     /** Store updates for saving */
-                    res.contentUpdates.forEach((p) =>
-                        this.playlistContentsToSave.push(p.playlistContentId),
-                    );
+                    res.contentUpdates.forEach((p) => this.playlistContentsToSave.push(p.playlistContentId));
 
                     /** Save Playlist Data */
                     this.savePlaylistContentUpdates(res, false);
@@ -588,8 +564,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
             .afterClosed()
             .subscribe({
                 next: (res: { seq: number }) => {
-                    if (res && res.seq)
-                        this.movePlaylistContent(playlistContent.playlistContentId, res.seq);
+                    if (res && res.seq) this.movePlaylistContent(playlistContent.playlistContentId, res.seq);
                 },
             });
     }
@@ -752,11 +727,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
     private rearrangePlaylist(updates: any[], moveAndSave: boolean = false) {
         updates.forEach((p, index) => {
-            if (
-                this.playlistSequenceUpdates.filter(
-                    (i: PlaylistContent) => i.playlistContentId == p,
-                ).length
-            ) {
+            if (this.playlistSequenceUpdates.filter((i: PlaylistContent) => i.playlistContentId == p).length) {
                 /** Get index of the re-updated playlist content (in this.playlistSequenceUpdates) */
                 const pcIndex = this.playlistSequenceUpdates.findIndex(
                     (i: PlaylistContent) => i.playlistContentId == p,
@@ -810,8 +781,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                     const indexForTotalCount = this.playlistContentBreakdown.findIndex(
                         (c) => c.label === 'Content Count',
                     );
-                    this.playlistContentBreakdown[indexForTotalCount].total =
-                        this.playlistContents.length;
+                    this.playlistContentBreakdown[indexForTotalCount].total = this.playlistContents.length;
 
                     // Reset
                     this.selectedPlaylistContents = [];
@@ -836,8 +806,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                 return { ...p, disabled: this.selectedPlaylistContents.length < 1 };
             else if (p.action == pActions.savePlaylist)
                 return { ...p, disabled: this.playlistSequenceUpdates.length == 0 };
-            else if (p.action == pActions.markAll)
-                return { ...p, disabled: this.playlistContents.length == 0 };
+            else if (p.action == pActions.markAll) return { ...p, disabled: this.playlistContents.length == 0 };
             return p;
         });
     }
@@ -899,10 +868,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
     private showClonePlaylistDialog() {
         const config = { disableClose: true, data: { playlist: this.playlist }, width: '600px' };
-        const dialog: MatDialogRef<ClonePlaylistComponent> = this._dialog.open(
-            ClonePlaylistComponent,
-            config,
-        );
+        const dialog: MatDialogRef<ClonePlaylistComponent> = this._dialog.open(ClonePlaylistComponent, config);
         dialog.componentInstance.playlistVersion = 2;
     }
 
@@ -950,9 +916,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         const DEFAULT_WIDTH = '500px';
         const DEFAULT_HEIGHT = '350px';
         const dataMsg =
-            typeof content === 'undefined'
-                ? 'Proceed removing these contents?'
-                : `Filename: ${content.fileName}`;
+            typeof content === 'undefined' ? 'Proceed removing these contents?' : `Filename: ${content.fileName}`;
         let returnMsg = 'Success!';
 
         if (typeof content === 'undefined')
@@ -973,10 +937,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
             disableClose: true,
             data,
         };
-        let idsToDelete =
-            typeof content === 'undefined'
-                ? this.selectedPlaylistContents
-                : [content.playlistContentId];
+        let idsToDelete = typeof content === 'undefined' ? this.selectedPlaylistContents : [content.playlistContentId];
 
         this._dialog
             .open(ConfirmationModalComponent, configs)
@@ -1041,9 +1002,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         const playlistContentToSwap = {
             contentId: newContent.contentId,
             playlistContentId: playlistContent.playlistContentId,
-            duration: this._isVideo.transform(newContent.fileType)
-                ? newContent.duration
-                : playlistContent.duration,
+            duration: this._isVideo.transform(newContent.fileType) ? newContent.duration : playlistContent.duration,
         };
 
         /** Store updates for saving */
@@ -1055,9 +1014,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                 this.playlistContents = this.playlistContents
                     .map((content) => {
                         const swapped = { ...playlistContent, ...res.content, ...res.plContent };
-                        return playlistContent.playlistContentId === content.playlistContentId
-                            ? swapped
-                            : content;
+                        return playlistContent.playlistContentId === content.playlistContentId ? swapped : content;
                     })
                     .sort(
                         (a, b) =>
@@ -1084,9 +1041,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         let updateParentFrequencyCount = 0;
         const toUpdate: PlaylistContentUpdate = {
             playlistId: this.playlist.playlistId,
-            playlistContentsLicenses: savingPlaylist
-                ? this.playlistSequenceUpdates
-                : data.contentUpdates,
+            playlistContentsLicenses: savingPlaylist ? this.playlistSequenceUpdates : data.contentUpdates,
         };
 
         const requests = [];
@@ -1101,17 +1056,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
             // set the API calls for contents that have updated frequencies
             if (c && typeof c.frequency !== 'undefined' && c.frequency > 0) {
                 // if frequency is 1 then revert
-                if (c.frequency === 1)
-                    requests.push(this._playlist.revert_frequency(c.playlistContentId));
+                if (c.frequency === 1) requests.push(this._playlist.revert_frequency(c.playlistContentId));
                 // else update the frequency
-                else
-                    requests.push(
-                        this._playlist.set_frequency(
-                            c.frequency,
-                            c.playlistContentId,
-                            this.playlistId,
-                        ),
-                    );
+                else requests.push(this._playlist.set_frequency(c.frequency, c.playlistContentId, this.playlistId));
 
                 updateFrequencyCount++;
             }
@@ -1119,8 +1066,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
             const originalContent = this.playlistContents.find(
                 (original) => original.playlistContentId === c.playlistContentId,
             );
-            const isParentFrequency =
-                originalContent.frequency === 33 || originalContent.frequency === 22;
+            const isParentFrequency = originalContent.frequency === 33 || originalContent.frequency === 22;
             if (isParentFrequency) updateParentFrequencyCount++;
 
             return c;
@@ -1130,8 +1076,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
             requests.push(this._playlist.removeWhitelist(data.blacklistUpdates));
 
         // api call to update content schedule
-        if (schedulesToUpdate.length > 0)
-            requests.push(this._playlist.updateContentSchedule(schedulesToUpdate));
+        if (schedulesToUpdate.length > 0) requests.push(this._playlist.updateContentSchedule(schedulesToUpdate));
 
         this.savingPlaylist = savingPlaylist;
         combinedRequests = forkJoin(requests).pipe(takeUntil(this._unsubscribe));
@@ -1162,8 +1107,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                                 savingPlaylist,
                             );
                         },
-                        error: (e) =>
-                            console.error('Error executing combined playlist update requests', e),
+                        error: (e) => console.error('Error executing combined playlist update requests', e),
                     });
                 },
                 error: (e) => {
@@ -1184,9 +1128,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         this.playlistControls[index].label = currentLabel;
         this.playlistControls[index].icon = currentIcon;
         this.selectedPlaylistContents = this.isInMarkedAllState ? allContentIds : [];
-        this.enabledPlaylistContentControls = this.isInMarkedAllState
-            ? []
-            : [...this.playlistContentControls];
+        this.enabledPlaylistContentControls = this.isInMarkedAllState ? [] : [...this.playlistContentControls];
         this.setBulkControlsState();
     }
 

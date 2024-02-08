@@ -28,25 +28,17 @@
         <ng-container *ngIf="!updatingView; else loading">
             <!-- Info/Fullscreen/Duration/Frequency -->
             <div class="col-lg-6">
-                <div
-                    class="playlist-content-preview mb-3"
-                    *ngIf="!contentData.bulkSet; else selected">
+                <div class="playlist-content-preview mb-3" *ngIf="!contentData.bulkSet; else selected">
                     <img
                         *ngIf="contentData.playlistContents[0].fileType | isimage; else video"
                         class="thumbnail-preview-100 border"
                         [src]="contentData.playlistContents[0].thumbnail | sanitize"
-                        [alt]="
-                            contentData.playlistContents[0].fileName ||
-                            contentData.playlistContents[0].title
-                        " />
+                        [alt]="contentData.playlistContents[0].fileName || contentData.playlistContents[0].title" />
 
                     <ng-template #video>
                         <video
                             class="thumbnail-preview-100 border"
-                            [src]="
-                                contentData.playlistContents[0].url +
-                                contentData.playlistContents[0].fileName
-                            "
+                            [src]="contentData.playlistContents[0].url + contentData.playlistContents[0].fileName"
                             controls
                             muted></video>
                     </ng-template>
@@ -55,9 +47,7 @@
                 <ng-template #selected>
                     <div class="playlist-content-preview scroll bg-gray p-2 w-100 mb-3">
                         <div class="row no-gutters mb-1">
-                            <div
-                                class="col-lg-3"
-                                *ngFor="let c of contentData.playlistContents; let i = index">
+                            <div class="col-lg-3" *ngFor="let c of contentData.playlistContents; let i = index">
                                 <div class="m-1">
                                     <app-content
                                         [content]="c"
@@ -79,9 +69,7 @@
                         <div class="playlist-content-basic-info d-flex flex-column">
                             <div class="d-flex">
                                 <h5 class="m-0 font-weight-bold">
-                                    {{
-                                        content.fileName || content.title | nohandle | slice: 0 : 50
-                                    }}
+                                    {{ content.fileName || content.title | nohandle | slice: 0 : 50 }}
                                 </h5>
                                 <ng-container *ngIf="content.frequency > 0">
                                     <i
@@ -120,33 +108,25 @@
 
             <!-- Play Where/Content Schedule -->
             <div class="col-lg-6">
-                <ng-container
-                    *ngIf="content.frequency !== 2 && content.frequency !== 3; else childSchedule">
+                <ng-container *ngIf="content.frequency !== 2 && content.frequency !== 3; else childSchedule">
                     <mat-tab-group mat-stretch-tabs>
                         <mat-tab label="Play Where">
                             <ng-container *ngIf="!loadingWhitelistedLicenses; else loading">
-                                <ng-container
-                                    *ngIf="contentData.hostLicenses.length > 0; else noLicenses">
+                                <ng-container *ngIf="contentData.hostLicenses.length > 0; else noLicenses">
                                     <div class="play-where-wrapper">
                                         <div class="d-flex align-items-center pt-3">
                                             <div class="flex-even">
                                                 <h4>Whitelist Host and Licenses</h4>
                                                 <p class="sm-text m-0">
                                                     Select host and licenses you want
-                                                    {{
-                                                        contentData.bulkSet
-                                                            ? 'these contents'
-                                                            : 'this content'
-                                                    }}
+                                                    {{ contentData.bulkSet ? 'these contents' : 'this content' }}
                                                     to play or toggle all.
                                                 </p>
                                             </div>
                                             <div class="toggle-wrapper pt-1 pr-2">
                                                 <mat-slide-toggle
                                                     [checked]="hasWhitelistedAllHostLicenses"
-                                                    (change)="
-                                                        toggleAll.next($event)
-                                                    "></mat-slide-toggle>
+                                                    (change)="toggleAll.next($event)"></mat-slide-toggle>
                                             </div>
                                         </div>
 
@@ -158,9 +138,7 @@
                                                 [toggle_all]="toggleAll.asObservable()"
                                                 (to_blacklist)="licensesToBlacklist($event)"
                                                 (to_whitelist)="licenseToWhitelist($event)"
-                                                (license_toggled)="
-                                                    checkIfAllHostLicensesWhitelisted($event)
-                                                ">
+                                                (license_toggled)="checkIfAllHostLicensesWhitelisted($event)">
                                             </app-play-location>
                                         </div>
                                     </div>
@@ -168,9 +146,7 @@
                             </ng-container>
                         </mat-tab>
                         <mat-tab label="Content Schedule">
-                            <div
-                                class="mt-3 pb-2"
-                                *ngIf="!contentData.bulkSet; else bulkScheduleSet">
+                            <div class="mt-3 pb-2" *ngIf="!contentData.bulkSet; else bulkScheduleSet">
                                 <app-content-scheduler
                                     [contents]="contentData.playlistContents"
                                     [hasExistingSchedule]="contentData.hasExistingSchedule"
@@ -190,8 +166,7 @@
                                     <div class="bulk-schedule-set-gate p-5 text-center">
                                         <h3 class="mb-1">Set Bulk Schedule</h3>
                                         <p class="mb-4 sm-text">
-                                            This will overwrite the schedule of your selected
-                                            playlist contents
+                                            This will overwrite the schedule of your selected playlist contents
                                         </p>
                                         <button
                                             mat-button
@@ -230,16 +205,12 @@
                                             }}
                                         </span>
                                     </div>
-                                    <div
-                                        class="playlist-content-schedule__days flex-even p-4"
-                                        *ngIf="content.days">
+                                    <div class="playlist-content-schedule__days flex-even p-4" *ngIf="content.days">
                                         <span class="fas fa-calendar-check mr-2"></span>
                                         <span>Days</span>
                                         <br />
                                         <span class="sm-text">
-                                            {{
-                                                content.days ? convertDayFormat(content.days) : '--'
-                                            }}
+                                            {{ content.days ? convertDayFormat(content.days) : '--' }}
                                         </span>
                                     </div>
                                     <div
@@ -249,12 +220,7 @@
                                         <span>Time Range</span>
                                         <br />
                                         <span class="sm-text">
-                                            {{
-                                                getPlayTimesText(
-                                                    content.playTimeStart,
-                                                    content.playTimeEnd
-                                                )
-                                            }}
+                                            {{ getPlayTimesText(content.playTimeStart, content.playTimeEnd) }}
                                         </span>
                                     </div>
                                 </div>
@@ -283,8 +249,7 @@
 
     <!-- Save/Cancel Button -->
     <div class="save-cancel-button-wrapper">
-        <ng-container
-            *ngIf="content.frequency === 0 || content.frequency === 22 || content.frequency === 33">
+        <ng-container *ngIf="content.frequency === 0 || content.frequency === 22 || content.frequency === 33">
             <button
                 mat-button
                 mat-raised-button

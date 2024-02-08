@@ -42,8 +42,7 @@ export class BasicSettingsComponent implements OnInit, OnDestroy {
 
     private initializeForm() {
         const content = this.playlist_content[0];
-        this.isParentFrequency =
-            (content && content.frequency === 33) || (content && content.frequency === 22);
+        this.isParentFrequency = (content && content.frequency === 33) || (content && content.frequency === 22);
         this.isChildFrequency = !this.isParentFrequency && content && content.frequency !== 0;
         const parseFormValue = (value: any) => !this.bulk_setting && value;
 
@@ -54,9 +53,7 @@ export class BasicSettingsComponent implements OnInit, OnDestroy {
             duration: [
                 {
                     value: content ? parseFormValue(content.duration) : 20,
-                    disabled:
-                        (!this.bulk_setting && this._video.transform(content.fileType)) ||
-                        this.isChildFrequency,
+                    disabled: (!this.bulk_setting && this._video.transform(content.fileType)) || this.isChildFrequency,
                 },
             ],
             isFullScreen: [

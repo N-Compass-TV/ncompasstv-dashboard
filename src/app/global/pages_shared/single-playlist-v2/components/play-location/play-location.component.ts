@@ -32,10 +32,8 @@ export class PlayLocationComponent implements OnInit {
     ngOnInit() {
         /** Yes I had them separated instead of just one observable instance */
         if (this.toggle_all) this.toggle_all.subscribe((e: any) => this.onAllToggled(e));
-        if (this.toggle_all_add_content)
-            this.toggle_all_add_content.subscribe((e: any) => this.onAllToggled(e));
-        if (this.toggle_all_spacer)
-            this.toggle_all_spacer.subscribe((e: any) => this.onAllToggled(e));
+        if (this.toggle_all_add_content) this.toggle_all_add_content.subscribe((e: any) => this.onAllToggled(e));
+        if (this.toggle_all_spacer) this.toggle_all_spacer.subscribe((e: any) => this.onAllToggled(e));
     }
 
     private addContent_toggleAllHostLicenses(isChecked: boolean, hostLicenses: HostLicenses) {
@@ -43,14 +41,10 @@ export class PlayLocationComponent implements OnInit {
             if (!this.selectedHostIds.includes(hostLicenses.host.hostId))
                 this.selectedHostIds.push(hostLicenses.host.hostId);
             hostLicenses.licenses.forEach(
-                (l) =>
-                    !this.selectedLicenseIds.includes(l.licenseId) &&
-                    this.selectedLicenseIds.push(l.licenseId),
+                (l) => !this.selectedLicenseIds.includes(l.licenseId) && this.selectedLicenseIds.push(l.licenseId),
             );
         } else {
-            this.selectedHostIds = this.selectedHostIds.filter(
-                (h) => h !== hostLicenses.host.hostId,
-            );
+            this.selectedHostIds = this.selectedHostIds.filter((h) => h !== hostLicenses.host.hostId);
             this.selectedLicenseIds = this.selectedLicenseIds.filter(
                 (id) => !hostLicenses.licenses.some((l) => id === l.licenseId),
             );
@@ -85,9 +79,7 @@ export class PlayLocationComponent implements OnInit {
             if (!this.selectedHostIds.includes(hostLicenses.host.hostId))
                 this.selectedHostIds.push(hostLicenses.host.hostId);
             hostLicenses.licenses.forEach(
-                (l) =>
-                    !this.selectedLicenseIds.includes(l.licenseId) &&
-                    this.selectedLicenseIds.push(l.licenseId),
+                (l) => !this.selectedLicenseIds.includes(l.licenseId) && this.selectedLicenseIds.push(l.licenseId),
             );
             this.whitelisted_hosts = this.selectedHostIds;
             this.whitelisted_licenses = this.selectedLicenseIds;
@@ -97,9 +89,7 @@ export class PlayLocationComponent implements OnInit {
             this.blacklistLicences = [...this.whitelisted_licenses];
             this.whitelisted_hosts = [];
             this.whitelisted_licenses = [];
-            this.selectedHostIds = this.selectedHostIds.filter(
-                (h) => h !== hostLicenses.host.hostId,
-            );
+            this.selectedHostIds = this.selectedHostIds.filter((h) => h !== hostLicenses.host.hostId);
             this.selectedLicenseIds = this.selectedLicenseIds.filter(
                 (id) => !hostLicenses.licenses.some((l) => id === l.licenseId),
             );
@@ -119,10 +109,8 @@ export class PlayLocationComponent implements OnInit {
      */
     public toggleHostLicense(e: MatSlideToggleChange, h: HostLicenses, licenseId: string) {
         if (e.checked) {
-            if (!this.selectedHostIds.includes(h.host.hostId))
-                this.selectedHostIds.push(h.host.hostId);
-            if (!this.selectedLicenseIds.includes(licenseId))
-                this.selectedLicenseIds.push(licenseId);
+            if (!this.selectedHostIds.includes(h.host.hostId)) this.selectedHostIds.push(h.host.hostId);
+            if (!this.selectedLicenseIds.includes(licenseId)) this.selectedLicenseIds.push(licenseId);
             this.removeFromBlacklist(licenseId);
             this.to_whitelist.emit(this.getAllCurrentWhitelisted);
         } else {
@@ -144,8 +132,7 @@ export class PlayLocationComponent implements OnInit {
     }
 
     private addtoBlacklist(licenseId: string) {
-        if (!this.blacklistLicences.filter((i) => i == licenseId).length)
-            this.blacklistLicences.push(licenseId);
+        if (!this.blacklistLicences.filter((i) => i == licenseId).length) this.blacklistLicences.push(licenseId);
     }
 
     /**

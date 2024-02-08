@@ -51,10 +51,7 @@
                                     *ngFor="let ac of availableContentCategories; let i = index">
                                     {{ ac.count }}
                                     {{ ac.categoryName | titlecase
-                                    }}<ng-container
-                                        *ngIf="i < availableContentCategories.length - 1"
-                                        >,</ng-container
-                                    >
+                                    }}<ng-container *ngIf="i < availableContentCategories.length - 1">,</ng-container>
                                 </span>
                             </p>
                         </div>
@@ -62,19 +59,11 @@
 
                     <div class="spacer-algo-fields pt-2" formArrayName="spacerAlgoFields">
                         <div class="row">
-                            <div
-                                class="col-lg-6"
-                                *ngFor="
-                                    let field of dynamicSpacerAlgoFields.controls;
-                                    let i = index
-                                ">
+                            <div class="col-lg-6" *ngFor="let field of dynamicSpacerAlgoFields.controls; let i = index">
                                 <div [formGroup]="field" *ngIf="field.value | keyvalue as f">
                                     <p
                                         class="m-0 sm-text font-italic"
-                                        *ngIf="
-                                            !field.get(f[0].key).hasError('numberRange');
-                                            else shortDesc
-                                        ">
+                                        *ngIf="!field.get(f[0].key).hasError('numberRange'); else shortDesc">
                                         minimum 0, maximum
                                         {{ getCategoryInfoByName(f[0].key).count || 0 }}.
                                     </p>
@@ -84,9 +73,7 @@
                                             name="field.key"
                                             formControlName="{{ f[0].key }}"
                                             matInput
-                                            placeholder="{{
-                                                getCategoryInfoByName(f[0].key).count
-                                            }} available"
+                                            placeholder="{{ getCategoryInfoByName(f[0].key).count }} available"
                                             type="number" />
                                     </mat-form-field>
                                     <ng-template #shortDesc>
@@ -104,12 +91,7 @@
                 </form>
             </div>
 
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn mr-2"
-                [disabled]="!spacerInfo.valid"
-                matStepperNext>
+            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="!spacerInfo.valid" matStepperNext>
                 <i class="fas fa-long-arrow-alt-right mr-3 text-green"></i>
                 <small class="font-weight-bold">Next</small>
             </button>
@@ -128,9 +110,7 @@
                 <div class="step-header d-flex align-items-center mb-3">
                     <div class="title-desc flex-even">
                         <h3 class="m-0">Assign Spacer</h3>
-                        <p class="sm-text">
-                            Choose which host or licenses you wish to assign this spacer
-                        </p>
+                        <p class="sm-text">Choose which host or licenses you wish to assign this spacer</p>
                     </div>
 
                     <div class="toggle-wrapper pt-1 pr-2">
@@ -146,11 +126,7 @@
                 </div>
             </div>
 
-            <button
-                mat-button
-                mat-raised-button
-                class="theme-btn mr-2"
-                [disabled]="!spacerInfo.valid">
+            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="!spacerInfo.valid">
                 <i class="fas fa-save mr-3 text-green"></i>
                 <small class="font-weight-bold">Save</small>
             </button>

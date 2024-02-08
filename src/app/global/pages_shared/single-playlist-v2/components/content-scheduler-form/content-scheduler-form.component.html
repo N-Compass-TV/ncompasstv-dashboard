@@ -8,9 +8,7 @@
                 <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                     <mat-label class="md-text">Start Date</mat-label>
                     <input formControlName="startDate" matInput [matDatepicker]="datePickerStart" />
-                    <mat-datepicker-toggle
-                        matSuffix
-                        [for]="datePickerStart"></mat-datepicker-toggle>
+                    <mat-datepicker-toggle matSuffix [for]="datePickerStart"></mat-datepicker-toggle>
                     <mat-datepicker #datePickerStart></mat-datepicker>
                 </mat-form-field>
             </div>

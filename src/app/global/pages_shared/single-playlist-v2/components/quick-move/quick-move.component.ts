@@ -1,12 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import {
-    AbstractControl,
-    FormBuilder,
-    FormControl,
-    FormGroup,
-    ValidatorFn,
-    Validators,
-} from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { ButtonGroup } from '../../type/ButtonGroup';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { API_CONTENT } from 'src/app/global/models';
@@ -35,10 +28,7 @@ export class QuickMoveComponent implements OnInit {
 
     ngOnInit() {
         this.quickMoveForm = this._formBuilder.group({
-            seq: [
-                this.playlistContent.seq,
-                [Validators.required, this.numberRangeValidator(this.playlistCount)],
-            ],
+            seq: [this.playlistContent.seq, [Validators.required, this.numberRangeValidator(this.playlistCount)]],
         });
     }
 

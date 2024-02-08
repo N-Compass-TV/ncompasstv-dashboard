@@ -44,28 +44,16 @@
                         <ng-container *ngFor="let c of assets; let i = index">
                             <!-- Allows devs to define desired number of columns per row via gridCount -->
                             <div class="row no-gutters mb-1" *ngIf="i % gridCount == 0">
-                                <div
-                                    class="col-lg"
-                                    *ngFor="
-                                        let col of [].constructor(gridCount);
-                                        let count = index
-                                    ">
+                                <div class="col-lg" *ngFor="let col of [].constructor(gridCount); let count = index">
                                     <div class="m-1">
                                         <app-content
-                                            *ngIf="
-                                                _dialog_data && !_dialog_data.playlistContentId;
-                                                else swapping
-                                            "
+                                            *ngIf="_dialog_data && !_dialog_data.playlistContentId; else swapping"
                                             [content]="assets[count + i]"
                                             [controls]="false"
-                                            [selected]="
-                                                selectedContents.includes(assets[count + i])
-                                            "
+                                            [selected]="selectedContents.includes(assets[count + i])"
                                             [default_width]="false"
                                             [is_frequency_enabled]="false"
-                                            (content_selected)="
-                                                contentSelected(assets[count + i], $event)
-                                            ">
+                                            (content_selected)="contentSelected(assets[count + i], $event)">
                                         </app-content>
 
                                         <!-- This is due to checkbox not working when wrapped within .mark-content-wrapper -->
@@ -78,26 +66,19 @@
                                                         markContent(assets[count + i])
                                                 "
                                                 [ngClass]="{
-                                                    'cursor-pointer':
-                                                        _dialog_data.playlistContentId,
+                                                    'cursor-pointer': _dialog_data.playlistContentId,
                                                     marked:
                                                         assets[count + i] &&
                                                         markedContent &&
-                                                        markedContent.contentId ==
-                                                            assets[count + i].contentId
+                                                        markedContent.contentId == assets[count + i].contentId
                                                 }">
                                                 <app-content
                                                     [content]="assets[count + i]"
                                                     [controls]="false"
                                                     [default_width]="false"
-                                                    [selectable]="
-                                                        _dialog_data &&
-                                                        !_dialog_data.playlistContentId
-                                                    "
+                                                    [selectable]="_dialog_data && !_dialog_data.playlistContentId"
                                                     [swapping]="_dialog_data.playlistContentId"
-                                                    (content_selected)="
-                                                        contentSelected(assets[count + i], $event)
-                                                    ">
+                                                    (content_selected)="contentSelected(assets[count + i], $event)">
                                                 </app-content>
                                             </div>
                                         </ng-template>
@@ -126,11 +107,7 @@
                             <small class="font-weight-bold">Next</small>
                         </button>
 
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn bg-danger"
-                            [mat-dialog-close]>
+                        <button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]>
                             <i class="fas fa-times mr-3"></i>
                             <small class="font-weight-bold">Cancel</small>
                         </button>
@@ -148,11 +125,7 @@
                             <small class="font-weight-bold">Swap</small>
                         </button>
 
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn bg-danger"
-                            [mat-dialog-close]>
+                        <button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]>
                             <i class="fas fa-times mr-3"></i>
                             <small class="font-weight-bold">Cancel</small>
                         </button>
@@ -175,8 +148,7 @@
 
                 <div class="row mb-4" *ngIf="selectedContents.length; else no_selected">
                     <div class="col-lg-6">
-                        <div
-                            class="selected-content-controls border shadow p-2 d-flex align-items-center">
+                        <div class="selected-content-controls border shadow p-2 d-flex align-items-center">
                             <div class="selected-content-count">
                                 <strong class="sm-text">
                                     Count: <span class="ml-1">{{ selectedContents.length }}</span>
@@ -185,9 +157,7 @@
                         </div>
                         <div class="media-files-wrapper bg-gray p-2 selected-contents">
                             <div class="row no-gutters">
-                                <div
-                                    class="col-lg-3"
-                                    *ngFor="let c of selectedContents; let i = index">
+                                <div class="col-lg-3" *ngFor="let c of selectedContents; let i = index">
                                     <div class="m-1">
                                         <app-content
                                             [content]="c"
@@ -213,9 +183,7 @@
                                         [sequence_setting]="false"
                                         [bulk_setting]="true"
                                         [has_image_and_feed]="hasImageAndFeed"
-                                        (changed)="
-                                            applyContentSettings($event)
-                                        "></app-basic-settings>
+                                        (changed)="applyContentSettings($event)"></app-basic-settings>
                                 </div>
                             </mat-tab>
                             <mat-tab label="Play Where">
@@ -225,16 +193,13 @@
                                             <div class="flex-even">
                                                 <h4>Whitelist Host and Licenses</h4>
                                                 <p class="sm-text m-0">
-                                                    Select host and licenses you want your contents
-                                                    to play.
+                                                    Select host and licenses you want your contents to play.
                                                 </p>
                                             </div>
                                             <div class="toggle-wrapper pt-1 pr-2">
                                                 <mat-slide-toggle
                                                     [checked]="hasSelectedAllHostLicenses"
-                                                    (change)="
-                                                        toggleAll.next($event)
-                                                    "></mat-slide-toggle>
+                                                    (change)="toggleAll.next($event)"></mat-slide-toggle>
                                             </div>
                                         </div>
                                         <div
@@ -285,11 +250,7 @@
                         <small class="font-weight-bold">Save</small>
                     </button>
 
-                    <button
-                        mat-button
-                        mat-raised-button
-                        class="theme-btn bg-danger"
-                        [mat-dialog-close]>
+                    <button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]>
                         <i class="fas fa-times mr-3"></i>
                         <small class="font-weight-bold">Cancel</small>
                     </button>
@@ -308,8 +269,7 @@
 
     <ng-template #loading>
         <ng-container *ngIf="noData; else spin">
-            <div
-                class="d-flex align-items-center text-center bg-gray media-files-wrapper w-100 mb-4">
+            <div class="d-flex align-items-center text-center bg-gray media-files-wrapper w-100 mb-4">
                 <h2 class="flex-even">Sorry! No data found.</h2>
             </div>
         </ng-container>

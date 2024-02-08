@@ -16,12 +16,7 @@
             <form [formGroup]="quickMoveForm">
                 <mat-form-field class="full-width" appearance="fill">
                     <mat-label>Set Position #</mat-label>
-                    <input
-                        name="sequence"
-                        formControlName="seq"
-                        matInput
-                        placeholder="Example: 4"
-                        type="number" />
+                    <input name="sequence" formControlName="seq" matInput placeholder="Example: 4" type="number" />
                 </mat-form-field>
                 <div class="d-flex form-desc">
                     <p class="flex-even sm-text">
@@ -29,10 +24,7 @@
                     </p>
                     <p
                         class="sm-text text-danger"
-                        *ngIf="
-                            quickMoveForm.get('seq').invalid &&
-                            quickMoveForm.get('seq').errors?.numberRange
-                        ">
+                        *ngIf="quickMoveForm.get('seq').invalid && quickMoveForm.get('seq').errors?.numberRange">
                         Please enter a number between 1 and {{ playlistCount }}.
                     </p>
                 </div>

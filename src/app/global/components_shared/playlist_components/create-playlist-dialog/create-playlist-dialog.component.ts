@@ -94,9 +94,7 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
                     // else loop through the remaining requests
 
                     for (let i = currentPage; i < lastPage; i++) {
-                        remainingRequests.push(
-                            this._dealer.get_dealers_with_page_minified(i + 1, '', pageSize),
-                        );
+                        remainingRequests.push(this._dealer.get_dealers_with_page_minified(i + 1, '', pageSize));
                     }
 
                     forkJoin(remainingRequests)
@@ -149,9 +147,7 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
             startWith(''),
             debounceTime(300),
             takeUntil(this._unsubscribe),
-            map((keyword: string) =>
-                keyword ? this._filterDealers(keyword) : this.dealers.slice(),
-            ),
+            map((keyword: string) => (keyword ? this._filterDealers(keyword) : this.dealers.slice())),
         );
     }
 

@@ -16,8 +16,7 @@
             [class.future-schedule]="content.scheduleStatus === 'future'"
             [class.is-scheduled]="content.scheduleStatus === 'scheduled'"
             [class.frequency-hover]="canSetFrequencyBorder">
-            <div
-                class="content-filename-wrapper h-100 d-flex align-items-center justify-content-between">
+            <div class="content-filename-wrapper h-100 d-flex align-items-center justify-content-between">
                 <div class="d-flex name align-items-center">
                     <span
                         class="sm-text text-primary fas mr-1 d-block"
@@ -36,9 +35,7 @@
                     <i
                         class="frequency-icon text-warning mr-1 push-right"
                         *ngIf="content.frequency"
-                        [ngClass]="
-                            content.frequency > 10 ? 'fas fa-chess-queen' : 'fas fa-chess-pawn'
-                        "></i>
+                        [ngClass]="content.frequency > 10 ? 'fas fa-chess-queen' : 'fas fa-chess-pawn'"></i>
 
                     <input
                         class="push-right"
@@ -85,9 +82,7 @@
                             class="naked-btn"
                             [ngClass]="i < playlistContentControls.length - 1 && 'mr-15'"
                             [matTooltip]="c.label"
-                            (click)="
-                                control_click.emit({ playlistContent: content, action: c.action })
-                            ">
+                            (click)="control_click.emit({ playlistContent: content, action: c.action })">
                             <span class="xsm-text">
                                 <i
                                     class="{{ c.icon }}"
@@ -130,9 +125,7 @@
                         <span class="upper__details-title">
                             {{ content.fileName || content.title | nohandle | slice: 0 : 40 }}
                         </span>
-                        <span class="upper__details-date"
-                            >Uploaded {{ content.dateCreated | date: 'mediumDate' }}</span
-                        >
+                        <span class="upper__details-date">Uploaded {{ content.dateCreated | date: 'mediumDate' }}</span>
                     </div>
 
                     <div
@@ -158,21 +151,15 @@
                 </div>
 
                 <div class="middle__details mb-2">
-                    <div
-                        class="d-flex playlist-content-schedule"
-                        *ngIf="content.type === 3; else not_custom_scheduled">
-                        <div
-                            class="playlist-content-schedule__date-range flex-even"
-                            *ngIf="content.from && content.to">
+                    <div class="d-flex playlist-content-schedule" *ngIf="content.type === 3; else not_custom_scheduled">
+                        <div class="playlist-content-schedule__date-range flex-even" *ngIf="content.from && content.to">
                             <p class="xsm-text">
                                 <span class="fas fa-calendar mr-2"></span>
                                 <span>Date Range</span>
                                 <br />
                                 {{
                                     content.from && content.to
-                                        ? (content.from | date: 'shortDate') +
-                                          ' - ' +
-                                          (content.to | date: 'shortDate')
+                                        ? (content.from | date: 'shortDate') + ' - ' + (content.to | date: 'shortDate')
                                         : '--'
                                 }}
                             </p>
@@ -229,20 +216,14 @@
                             </i>
 
                             <span>
-                                <ng-container *ngIf="content.fileType | isimage"
-                                    >Image</ng-container
-                                >
-                                <ng-container *ngIf="content.fileType | isvideo"
-                                    >Video</ng-container
-                                >
+                                <ng-container *ngIf="content.fileType | isimage">Image</ng-container>
+                                <ng-container *ngIf="content.fileType | isvideo">Video</ng-container>
                                 <ng-container *ngIf="content.fileType | isFeed">Feed</ng-container>
                             </span>
                         </div>
 
                         <div class="time-details">
-                            <span class="md-text"
-                                ><i class="fas fa-clock"></i> {{ content.duration || 0 }}s</span
-                            >
+                            <span class="md-text"><i class="fas fa-clock"></i> {{ content.duration || 0 }}s</span>
                         </div>
                     </div>
 
@@ -266,8 +247,7 @@
                                         <i
                                             class="{{ c.icon }}"
                                             [ngClass]="
-                                                c.action == 'fullscreen' &&
-                                                content.isFullScreen == 1
+                                                c.action == 'fullscreen' && content.isFullScreen == 1
                                                     ? 'text-primary'
                                                     : c.colorClass
                                             ">

@@ -20,10 +20,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
     currentIndex = 0;
     hasImageAndFeed: boolean;
     hasWhitelistedAllHostLicenses = false;
-    isChildFrequency =
-        this.content.frequency === 0 ||
-        this.content.frequency === 22 ||
-        this.content.frequency === 33;
+    isChildFrequency = this.content.frequency === 0 || this.content.frequency === 22 || this.content.frequency === 33;
     playlistContent: SavePlaylistContentUpdate = {
         contentUpdates: [],
         blacklistUpdates: [
@@ -68,8 +65,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
         this.currentIndex = this.contentData.index || 0;
         this.playlistContent.blacklistUpdates[0].playlistContentId =
             this.contentData.playlistContents[0].playlistContentId;
-        this.hasImageAndFeed =
-            this.contentData.playlistContents.filter((p) => p.fileType !== 'webm').length > 0;
+        this.hasImageAndFeed = this.contentData.playlistContents.filter((p) => p.fileType !== 'webm').length > 0;
 
         this._playlist.hostLoaded$.subscribe({
             next: (res: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[]) => {
@@ -85,8 +81,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
 
         /** Set initial state of prev and next buttons */
         if (this.contentData.index === 0) this.prevDisabled = true;
-        if (this.contentData.index > this.contentData.allContents.length - 1)
-            this.nextDisabled = true;
+        if (this.contentData.index > this.contentData.allContents.length - 1) this.nextDisabled = true;
 
         if (this.contentData.bulkSet) {
             const mappedLicenses = this.mappedHostLicenses(this.contentData.hostLicenses);
@@ -128,26 +123,24 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this._playlist
-            .getWhitelistData(this.contentData.playlistContents[0].playlistContentId)
-            .subscribe({
-                next: (res: { licensePlaylistContents?: any[]; message?: string }) => {
-                    this.loadingWhitelistedLicenses = false;
+        this._playlist.getWhitelistData(this.contentData.playlistContents[0].playlistContentId).subscribe({
+            next: (res: { licensePlaylistContents?: any[]; message?: string }) => {
+                this.loadingWhitelistedLicenses = false;
 
-                    if (!res.licensePlaylistContents || res.message) {
-                        this.whitelistedLicenses = [];
-                        this.whitelistedHosts = [];
-                        return;
-                    }
+                if (!res.licensePlaylistContents || res.message) {
+                    this.whitelistedLicenses = [];
+                    this.whitelistedHosts = [];
+                    return;
+                }
 
-                    const whitelistedLicenses = res.licensePlaylistContents.map((i) => i.licenseId);
-                    const whitelistedHosts = res.licensePlaylistContents.map((i) => i.hostId);
+                const whitelistedLicenses = res.licensePlaylistContents.map((i) => i.licenseId);
+                const whitelistedHosts = res.licensePlaylistContents.map((i) => i.hostId);
 
-                    this.whitelistedLicenses = [...whitelistedLicenses];
-                    this.whitelistedHosts = [...whitelistedHosts];
-                    this.checkIfAllHostLicensesWhitelisted([...whitelistedLicenses]);
-                },
-            });
+                this.whitelistedLicenses = [...whitelistedLicenses];
+                this.whitelistedHosts = [...whitelistedHosts];
+                this.checkIfAllHostLicensesWhitelisted([...whitelistedLicenses]);
+            },
+        });
     }
 
     public getPlayTimesText(start: string, end: string) {
@@ -183,8 +176,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
             this.playlistContent.blacklistUpdates = [];
             this.playlistContent.contentUpdates = [
                 {
-                    ...(this.playlistContent.contentUpdates &&
-                        this.playlistContent.contentUpdates[0]),
+                    ...(this.playlistContent.contentUpdates && this.playlistContent.contentUpdates[0]),
                     licenseIds,
                     playlistContentId: this.contentData.playlistContents[0].playlistContentId,
                 },
@@ -239,21 +231,15 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
     /**
      * @param basicSettings - Playlist content setting changes
      */
-    public playlistContentModified(basicSettings: {
-        duration?: number;
-        frequency?: number;
-        isFullScreen?: number;
-    }) {
+    public playlistContentModified(basicSettings: { duration?: number; frequency?: number; isFullScreen?: number }) {
         // simply parse frequency if it is of type string
-        if (typeof basicSettings.frequency === 'string')
-            basicSettings.frequency = parseInt(basicSettings.frequency);
+        if (typeof basicSettings.frequency === 'string') basicSettings.frequency = parseInt(basicSettings.frequency);
 
         /** Single Playlist Content Edit */
         if (!this.contentData.bulkSet) {
             this.playlistContent.contentUpdates = [
                 {
-                    ...(this.playlistContent.contentUpdates &&
-                        this.playlistContent.contentUpdates[0]),
+                    ...(this.playlistContent.contentUpdates && this.playlistContent.contentUpdates[0]),
                     ...basicSettings,
                     playlistContentId: this.contentData.playlistContents[0].playlistContentId,
                     duration: this._video.transform(this.contentData.playlistContents[0].fileType)
@@ -272,9 +258,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
             return {
                 playlistContentId: p.playlistContentId,
                 ...basicSettings,
-                duration: this._video.transform(p.fileType)
-                    ? p.duration
-                    : basicSettings.duration || p.duration,
+                duration: this._video.transform(p.fileType) ? p.duration : basicSettings.duration || p.duration,
             };
         });
     }
@@ -282,16 +266,14 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
     private subscribeToContentSchedulerFormChanges() {
         this._playlist.schedulerFormUpdated.pipe(takeUntil(this._unsubscribe)).subscribe({
             next: (response) => {
-                this.playlistContent.contentUpdates = this.playlistContent.contentUpdates.map(
-                    (contentUpdate) => {
-                        contentUpdate.schedule = this._playlist.mapScheduleFromUiContent(
-                            response,
-                            contentUpdate.playlistContentId,
-                            this.contentData.playlistContents,
-                        );
-                        return contentUpdate;
-                    },
-                );
+                this.playlistContent.contentUpdates = this.playlistContent.contentUpdates.map((contentUpdate) => {
+                    contentUpdate.schedule = this._playlist.mapScheduleFromUiContent(
+                        response,
+                        contentUpdate.playlistContentId,
+                        this.contentData.playlistContents,
+                    );
+                    return contentUpdate;
+                });
             },
         });
     }
@@ -304,9 +286,7 @@ export class ContentSettingsComponent implements OnInit, OnDestroy {
         const playlistContent = this.contentData.allContents[this.currentIndex];
         this.content = playlistContent;
         this.isChildFrequency =
-            this.content.frequency === 0 ||
-            this.content.frequency === 22 ||
-            this.content.frequency === 33;
+            this.content.frequency === 0 || this.content.frequency === 22 || this.content.frequency === 33;
         this.contentData.playlistContents = [playlistContent];
         this.contentData.hasExistingSchedule = playlistContent && playlistContent.type === 3;
         this.contentData.scheduleType = playlistContent.type;

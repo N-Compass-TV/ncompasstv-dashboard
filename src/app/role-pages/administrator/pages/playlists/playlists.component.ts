@@ -265,11 +265,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe({
                 next: ({ playlist }) => {
-                    this.showResponseDialog(
-                        'success',
-                        'Success',
-                        'Your changes have been saved',
-                    ).subscribe({
+                    this.showResponseDialog('success', 'Success', 'Your changes have been saved').subscribe({
                         next: () => {
                             const newPlaylistUrl = `/${this.roleRoute}/playlists/v2/${playlist.playlistId}`;
                             window.open(newPlaylistUrl, '_blank');

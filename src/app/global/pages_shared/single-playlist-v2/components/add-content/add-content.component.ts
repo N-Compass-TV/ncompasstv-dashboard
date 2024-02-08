@@ -59,9 +59,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.assets = [...this._dialog_data.assets];
         this.floating_assets = [...this._dialog_data.floatingAssets];
-        this.playlistHostLicenses = this._dialog_data.hostLicenses
-            ? [...this._dialog_data.hostLicenses]
-            : [];
+        this.playlistHostLicenses = this._dialog_data.hostLicenses ? [...this._dialog_data.hostLicenses] : [];
         this.noHostData = !this.playlistHostLicenses.length;
         this.newContentsSettings.playlistId = this._dialog_data.playlistId;
 
@@ -76,8 +74,7 @@ export class AddContentComponent implements OnInit, OnDestroy {
         this._playlist.hostLoaded$.subscribe({
             next: (res: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[]) => {
                 this.gettingHostData = false;
-                if (!this.playlistHostLicenses.length && res.length)
-                    this.playlistHostLicenses = res;
+                if (!this.playlistHostLicenses.length && res.length) this.playlistHostLicenses = res;
                 else this.noHostData = true;
             },
         });
@@ -93,14 +90,15 @@ export class AddContentComponent implements OnInit, OnDestroy {
     }
 
     public applyContentSettings(settingsData: any) {
-        this.newContentsSettings.playlistContentsLicenses =
-            this.newContentsSettings.playlistContentsLicenses.map((c, index) => {
+        this.newContentsSettings.playlistContentsLicenses = this.newContentsSettings.playlistContentsLicenses.map(
+            (c, index) => {
                 return {
                     ...c,
                     ...settingsData,
                     seq: index,
                 };
-            });
+            },
+        );
     }
 
     private checkIfAllHostLicensesWhitelisted(licenseIds: string[]) {
@@ -110,35 +108,26 @@ export class AddContentComponent implements OnInit, OnDestroy {
     }
 
     public contentSelected(content: API_CONTENT_V2, e?: any) {
-        if (!e.target.checked)
-            this.selectedContents = this.selectedContents.filter((i) => i !== content);
+        if (!e.target.checked) this.selectedContents = this.selectedContents.filter((i) => i !== content);
         else this.selectedContents.push(content);
 
         const schedule = { type: 1 };
 
-        this.newContentsSettings.playlistContentsLicenses = this.selectedContents.map(
-            (c, index) => {
-                return {
-                    contentId: c.contentId,
-                    duration: c.fileType !== 'webm' ? c.duration || 20 : c.duration,
-                    isFullScreen: 0,
-                    licenseIds: [],
-                    seq: index,
-                    ...schedule,
-                };
-            },
-        );
+        this.newContentsSettings.playlistContentsLicenses = this.selectedContents.map((c, index) => {
+            return {
+                contentId: c.contentId,
+                duration: c.fileType !== 'webm' ? c.duration || 20 : c.duration,
+                isFullScreen: 0,
+                licenseIds: [],
+                seq: index,
+                ...schedule,
+            };
+        });
 
-        this.hasImageAndFeed =
-            this.selectedContents.filter((p) => p.fileType !== 'webm').length > 0;
+        this.hasImageAndFeed = this.selectedContents.filter((p) => p.fileType !== 'webm').length > 0;
     }
 
-    private getContents(
-        floating: boolean = false,
-        page: number = 1,
-        pageSize: number = 60,
-        searchKey?: string,
-    ) {
+    private getContents(floating: boolean = false, page: number = 1, pageSize: number = 60, searchKey?: string) {
         this.noData = false;
         if (this.pageLimit > 0 && this.currentPage > this.pageLimit) {
             this.paginating = false;
@@ -228,15 +217,16 @@ export class AddContentComponent implements OnInit, OnDestroy {
     public licenseIdToggled(licenseIds: string[]) {
         this.checkIfAllHostLicensesWhitelisted(licenseIds);
 
-        this.newContentsSettings.playlistContentsLicenses =
-            this.newContentsSettings.playlistContentsLicenses.map((c) => {
+        this.newContentsSettings.playlistContentsLicenses = this.newContentsSettings.playlistContentsLicenses.map(
+            (c) => {
                 if (!c.licenseIds) c.licenseIds = [];
 
                 return {
                     ...c,
                     licenseIds: licenseIds,
                 };
-            });
+            },
+        );
     }
 
     public licenseDeselected() {
@@ -296,24 +286,20 @@ export class AddContentComponent implements OnInit, OnDestroy {
     }
 
     private searchInit() {
-        this.searchInput.valueChanges
-            .pipe(takeUntil(this._unsubscribe), debounceTime(1000))
-            .subscribe({
-                next: (searchKey) => {
-                    const floating = this.selectedContentType.slug == 'floating-content';
+        this.searchInput.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe({
+            next: (searchKey) => {
+                const floating = this.selectedContentType.slug == 'floating-content';
 
-                    if (searchKey.length) {
-                        this.searching = true;
-                        this.getContents(floating, null, null, searchKey);
-                        return;
-                    }
+                if (searchKey.length) {
+                    this.searching = true;
+                    this.getContents(floating, null, null, searchKey);
+                    return;
+                }
 
-                    this.assets = floating
-                        ? [...this.floating_assets]
-                        : [...this._dialog_data.assets];
-                    this.searching = false;
-                },
-            });
+                this.assets = floating ? [...this.floating_assets] : [...this._dialog_data.assets];
+                this.searching = false;
+            },
+        });
     }
 
     private subscribeToContentScheduleFormChanges() {

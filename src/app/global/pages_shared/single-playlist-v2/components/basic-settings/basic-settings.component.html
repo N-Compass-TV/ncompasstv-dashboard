@@ -3,10 +3,7 @@
         <div class="d-flex">
             <div
                 class="flex-even"
-                *ngIf="
-                    has_image_and_feed ||
-                    (!bulk_setting && !(playlist_content[0]?.fileType | isvideo))
-                ">
+                *ngIf="has_image_and_feed || (!bulk_setting && !(playlist_content[0]?.fileType | isvideo))">
                 <!-- Settings: Duration -->
                 <div class="duration-form-wrapper pb-2 border-bottom">
                     <mat-form-field class="full-width" appearance="fill">
@@ -24,9 +21,7 @@
         </div>
 
         <!-- Settings: Frequency -->
-        <div
-            class="frequency-set-wrapper border-bottom py-25 d-flex align-items-center"
-            *ngIf="!bulk_setting">
+        <div class="frequency-set-wrapper border-bottom py-25 d-flex align-items-center" *ngIf="!bulk_setting">
             <div class="flex-even">
                 <strong class="sm-text">Set Frequency</strong>
             </div>
@@ -40,12 +35,8 @@
                         </mat-radio-button>
                     </ng-container>
 
-                    <mat-radio-button class="mr-3" value="2"
-                        ><strong class="sm-text">2x</strong></mat-radio-button
-                    >
-                    <mat-radio-button value="3"
-                        ><strong class="sm-text">3x</strong></mat-radio-button
-                    >
+                    <mat-radio-button class="mr-3" value="2"><strong class="sm-text">2x</strong></mat-radio-button>
+                    <mat-radio-button value="3"><strong class="sm-text">3x</strong></mat-radio-button>
                 </mat-radio-group>
             </div>
 

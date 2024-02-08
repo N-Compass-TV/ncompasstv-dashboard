@@ -95,10 +95,7 @@ export class PlaylistService extends BaseService {
     }
 
     create_playlist_whitelist_migration(id) {
-        return this.postRequest(
-            `${this.creators.api_playlist_whitelist_migration}?playlistId=${id}`,
-            id,
-        );
+        return this.postRequest(`${this.creators.api_playlist_whitelist_migration}?playlistId=${id}`, id);
     }
 
     bulk_whitelist(data) {

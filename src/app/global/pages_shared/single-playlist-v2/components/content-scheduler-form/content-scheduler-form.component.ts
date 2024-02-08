@@ -175,12 +175,7 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
                 const playEnd = form.value.playTimeEndData as NgbTimeStruct;
 
                 const isSetToPlayAllDay = (start: NgbTimeStruct, end: NgbTimeStruct) => {
-                    return (
-                        start.hour === 0 &&
-                        start.minute === 0 &&
-                        end.hour === 23 &&
-                        end.minute === 59
-                    );
+                    return start.hour === 0 && start.minute === 0 && end.hour === 23 && end.minute === 59;
                 };
 
                 this.isCheckedToPlayAllDay = isSetToPlayAllDay(playStart, playEnd);
@@ -201,8 +196,7 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
         this._playlist.scheduleTypeSelected.pipe(takeUntil(this._unsubscribe)).subscribe({
             next: (response) => {
                 this._playlist.schedulerFormUpdated.emit(response);
-                if (!response.hasExistingSchedule && response.type === 3)
-                    this.setDefaultFormValues();
+                if (!response.hasExistingSchedule && response.type === 3) this.setDefaultFormValues();
             },
         });
     }

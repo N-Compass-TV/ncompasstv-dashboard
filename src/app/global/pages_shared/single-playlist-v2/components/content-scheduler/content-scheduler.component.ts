@@ -1,11 +1,4 @@
-import {
-    Component,
-    ChangeDetectorRef,
-    OnInit,
-    OnDestroy,
-    Input,
-    AfterViewInit,
-} from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit, OnDestroy, Input, AfterViewInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -64,9 +57,7 @@ export class ContentSchedulerComponent implements OnInit, OnDestroy, AfterViewIn
     }
 
     private initializeData() {
-        const selectedButtonGroup = this.scheduleTypes.filter(
-            (type) => type.value === this.scheduleType,
-        )[0];
+        const selectedButtonGroup = this.scheduleTypes.filter((type) => type.value === this.scheduleType)[0];
         this.selectedContentSchedule = selectedButtonGroup;
 
         if (this.hasExistingSchedule) {
@@ -93,10 +84,8 @@ export class ContentSchedulerComponent implements OnInit, OnDestroy, AfterViewIn
     }
 
     private subscribeToSchedulerFormData() {
-        this._playlist.receiveSchedulerFormData
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
-                this._playlist.schedulerFormUpdated.emit({ type: 3, ...response });
-            });
+        this._playlist.receiveSchedulerFormData.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+            this._playlist.schedulerFormUpdated.emit({ type: 3, ...response });
+        });
     }
 }
