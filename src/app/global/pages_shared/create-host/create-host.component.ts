@@ -132,9 +132,7 @@ export class CreateHostComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            this.is_dealer_admin = true;
-        }
+        if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.is_dealer_admin = true;
         this.current_host_image = this.default_host_image;
         this.initializeCreateHostForm();
         this.initializeGooglePlaceForm();
