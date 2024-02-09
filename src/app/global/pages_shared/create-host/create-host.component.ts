@@ -865,6 +865,13 @@ export class CreateHostComponent implements OnInit {
         }
     }
 
+    addNewHostPlace() {
+        const url = this._router.serializeUrl(
+            this._router.createUrlTree([`/${this.roleRoute}/users/create-user/host`], {}),
+        );
+        window.open(url, '_blank');
+    }
+
     private mapOperationHours(
         data: { close: { day: number; time: number }; open: { day: number; time: number } }[],
     ): void {
