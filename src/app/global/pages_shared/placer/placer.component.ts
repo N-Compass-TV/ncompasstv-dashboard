@@ -15,7 +15,7 @@ import * as filestack from 'filestack-js';
 import { environment } from 'src/environments/environment';
 
 import { UI_PLACER_DATA } from 'src/app/global/models';
-import { PlacerService, HostService } from 'src/app/global/services';
+import { PlacerService, HostService, ExportService } from 'src/app/global/services';
 import { API_PLACER } from '../../models/api_placer.model';
 
 @Component({
@@ -99,6 +99,7 @@ export class PlacerComponent implements OnInit {
         private _placer: PlacerService,
         private _date: DatePipe,
         private _host: HostService,
+        private _export: ExportService,
     ) {}
 
     ngOnInit() {
@@ -106,17 +107,15 @@ export class PlacerComponent implements OnInit {
             this._host
                 .get_host_by_id(this.host_id)
                 .pipe(takeUntil(this._unsubscribe))
-                .subscribe((data) => {
-                    this.host_name = data.host.name;
-                });
+                .subscribe((data) => (this.host_name = data.host.name));
         }
         this.checkForApiToCall();
         this.getHosts();
     }
 
     public checkForApiToCall(page?, for_export?) {
-        if (this.host_id != '') this.getPlacerForHost(page ? page : 1, for_export);
-        else this.getPlacerData(page ? page : 1, for_export);
+        if (this.host_id != '') return this.getPlacerForHost(page ? page : 1, for_export);
+        this.getPlacerData(page ? page : 1, for_export);
     }
 
     private getPlacerForHost(page, is_export?) {
@@ -275,14 +274,21 @@ export class PlacerComponent implements OnInit {
                     editable: false,
                     key: false,
                 },
-                { value: placer.uploadedBy, link: null, editable: false, key: false },
+                { value: placer.uploadedBy, link: null, editable: false, key: false, compressed: true },
                 {
                     value: this._date.transform(placer.publicationDate, 'MMM d, y'),
                     link: null,
                     editable: false,
                     key: false,
                 },
-                { value: placer.sourceFile, link: null, editable: false, key: false },
+                {
+                    value: placer.sourceFile,
+                    new_tab_link: false,
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                    compressed: true,
+                },
                 {
                     value: placer.placerDumpId,
                     link: null,
