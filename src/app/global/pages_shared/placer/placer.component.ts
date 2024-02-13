@@ -14,7 +14,7 @@ import { FormControl } from '@angular/forms';
 import * as filestack from 'filestack-js';
 import { environment } from 'src/environments/environment';
 
-import { UI_PLACER_DATA } from 'src/app/global/models';
+import { UI_PLACER_DATA, WORKSHEET } from 'src/app/global/models';
 import { PlacerService, HostService, ExportService } from 'src/app/global/services';
 import { API_PLACER } from '../../models/api_placer.model';
 
@@ -30,16 +30,18 @@ export class PlacerComponent implements OnInit {
         { name: '#', sortable: false, no_export: true },
         { name: 'Placer Id', key: 'placerId' },
         { name: 'Placer Name', key: 'placerName', sortable: true, column: 'PlacerName' },
-        { name: 'Host Name', key: 'hostName', sortable: true, column: 'HostName' },
-        { name: 'Dealer', key: 'dealerName', no_show: true, hidden: true },
-        { name: 'Category', key: 'category', no_show: true, hidden: true },
-        { name: 'General Category', key: 'generalCategory', no_show: true, hidden: true },
-        { name: 'Address', key: 'address', sortable: true, column: 'Address' },
-        { name: 'City', key: 'hostCity', no_show: true, hidden: true },
-        { name: 'State', key: 'hostState', no_show: true, hidden: true },
-        { name: 'Zip Code', key: 'postalCode', no_show: true, hidden: true },
-        { name: 'Longitude', key: 'longitude', no_show: true, hidden: true },
-        { name: 'Latitude', key: 'latitude', no_show: true, hidden: true },
+        { name: 'Host Name', key: 'hostName', sortable: true, column: 'HostName', unassigned: false },
+        { name: 'Host ID', key: 'hostId', no_show: true, hidden: true, unassigned: false },
+        { name: 'Unassigned Host', key: 'unassignedHost', no_show: true, hidden: true, color: 'red' },
+        { name: 'Dealer', key: 'dealerName', no_show: true, hidden: true, unassigned: false },
+        { name: 'Category', key: 'category', no_show: true, hidden: true, unassigned: false },
+        { name: 'General Category', key: 'generalCategory', no_show: true, hidden: true, unassigned: false },
+        { name: 'Address', key: 'address', sortable: true, column: 'Address', unassigned: false },
+        { name: 'City', key: 'hostCity', no_show: true, hidden: true, unassigned: false },
+        { name: 'State', key: 'hostState', no_show: true, hidden: true, unassigned: false },
+        { name: 'Zip Code', key: 'postalCode', no_show: true, hidden: true, unassigned: false },
+        { name: 'Longitude', key: 'longitude', no_show: true, hidden: true, unassigned: false },
+        { name: 'Latitude', key: 'latitude', no_show: true, hidden: true, unassigned: false },
         { name: 'Foot Traffic', key: 'footTraffic', sortable: true, column: 'FootTraffic' },
         {
             name: 'Average Dwell Time',
@@ -74,6 +76,7 @@ export class PlacerComponent implements OnInit {
     };
     host_name: string = '';
     initial_load_placer: boolean = false;
+    original_placer_table_column: any[];
     placer_to_export: any[] = [];
     paging_data: any;
     searching_placer_data: boolean = true;
@@ -81,11 +84,11 @@ export class PlacerComponent implements OnInit {
     sort_column: string = '';
     sort_order: string = '';
     total_placer: number = 0;
+    unassigned_hosts: any[] = [];
 
     //Export
-    workbook: any;
     workbook_generation = false;
-    worksheet: any;
+    worksheet: WORKSHEET[];
 
     today: Date = new Date();
     pickerDateFrom = '';
@@ -103,6 +106,7 @@ export class PlacerComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        this.original_placer_table_column = this.placer_table_column;
         if (this.host_id != '') {
             this._host
                 .get_host_by_id(this.host_id)
@@ -191,6 +195,15 @@ export class PlacerComponent implements OnInit {
         if (is_export) {
             this.placer_to_export = [...placer_data.paging.entities];
             this.modifyDataForExport(this.placer_to_export);
+
+            //to concat exceeded unassignedhost IF its greater than placer data count
+            if (this.unassigned_hosts.length > this.placer_to_export.length) {
+                for (let i = this.placer_to_export.length; i < this.unassigned_hosts.length; i++) {
+                    this.placer_to_export.push({
+                        unassignedHost: this.unassigned_hosts[this.placer_to_export.length].hostName,
+                    });
+                }
+            }
         } else {
             this.total_placer = placer_data.paging.totalEntities;
             this.paging_data = placer_data.paging;
@@ -201,28 +214,27 @@ export class PlacerComponent implements OnInit {
         }
     }
 
+    private getUnassignedHosts() {
+        this._placer
+            .get_unassigned_host()
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((data) => (this.unassigned_hosts = data.paging.entities));
+    }
+
     private readyForExport() {
-        this.placer_to_export.forEach((item) => {
-            this.worksheet.addRow(item).font = { bold: false };
+        const filename = this.host_id != '' ? this.host_name + '_placer_data' : 'Placer_Data';
+        let tables_to_export = this.placer_table_column;
+        tables_to_export = tables_to_export.filter(function (column) {
+            return !column.no_export;
         });
-
-        let rowIndex = 1;
-        for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-            this.worksheet.getRow(rowIndex).alignment = {
-                vertical: 'middle',
-                horizontal: 'center',
-                wrapText: true,
-            };
-        }
-
-        this.workbook.xlsx.writeBuffer().then((file: any) => {
-            const blob = new Blob([file], {
-                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8',
-            });
-            const filename = this.host_id != '' ? this.host_name + '_placer_data' : 'Placer_Data' + '.xlsx';
-            saveAs(blob, filename);
-        });
-
+        this.worksheet = [
+            {
+                name: filename,
+                columns: tables_to_export,
+                data: this.placer_to_export,
+            },
+        ];
+        this._export.generate(filename, this.worksheet);
         this.workbook_generation = false;
     }
 
@@ -260,7 +272,7 @@ export class PlacerComponent implements OnInit {
                     },
                 },
                 {
-                    value: `${placer.address}, ${placer.hostCity}, ${placer.hostState} ${placer.postalCode}`,
+                    value: `${placer.address}, ${placer.hostCity}` + `\n` + `${placer.hostState} ${placer.postalCode}`,
                     link: null,
                     editable: false,
                     key: false,
@@ -315,23 +327,6 @@ export class PlacerComponent implements OnInit {
 
     exportTable() {
         this.workbook_generation = true;
-        const header = [];
-        this.workbook = new Workbook();
-        this.workbook.creator = 'NCompass TV';
-        this.workbook.useStyles = true;
-        this.workbook.created = new Date();
-        this.worksheet = this.workbook.addWorksheet('Placer Data');
-        Object.keys(this.placer_table_column).forEach((key) => {
-            if (this.placer_table_column[key].name && !this.placer_table_column[key].no_export) {
-                header.push({
-                    header: this.placer_table_column[key].name,
-                    key: this.placer_table_column[key].key,
-                    width: 30,
-                    style: { font: { name: 'Arial', bold: true } },
-                });
-            }
-        });
-        this.worksheet.columns = header;
         this.getDataForExport();
     }
 
@@ -347,6 +342,12 @@ export class PlacerComponent implements OnInit {
             this.filter.date_to = value;
             this.filter.date_to_label = label;
         } else {
+            if (value == 2) {
+                this.getUnassignedHosts();
+                this.placer_table_column = this.placer_table_column.filter((column) => column.unassigned != false);
+                return;
+            }
+            this.placer_table_column = this.original_placer_table_column;
             this.filter.assignee = value;
             this.filter.assignee_label = label;
         }
@@ -355,9 +356,12 @@ export class PlacerComponent implements OnInit {
     }
 
     private modifyDataForExport(data) {
-        data.map((placer) => {
+        data.map((placer, index) => {
             placer.dateUploaded = this._date.transform(placer.dateUploaded, 'MMM d, y');
             placer.publicationDate = this._date.transform(placer.publicationDate, 'MMM d, y');
+
+            //to map unassigned host column view on export
+            placer.unassignedHost = this.unassigned_hosts[index].hostName;
         });
     }
 
