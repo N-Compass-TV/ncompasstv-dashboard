@@ -223,6 +223,12 @@ export class PlacerComponent implements OnInit {
 
     private readyForExport() {
         const filename = this.host_id != '' ? this.host_name + '_placer_data' : 'Placer_Data';
+        if (this.filter.assignee != 2) {
+            this.placer_table_column = this.placer_table_column.filter(function (column) {
+                return column.key != 'unassignedHost';
+            });
+        } else this.placer_table_column = this.placer_table_column.filter((column) => column.unassigned != false);
+
         let tables_to_export = this.placer_table_column;
         tables_to_export = tables_to_export.filter(function (column) {
             return !column.no_export;
@@ -236,6 +242,7 @@ export class PlacerComponent implements OnInit {
         ];
         this._export.generate(filename, this.worksheet);
         this.workbook_generation = false;
+        this.placer_table_column = this.original_placer_table_column;
     }
 
     placer_mapToUIFormat(data: API_PLACER[]) {
@@ -335,6 +342,7 @@ export class PlacerComponent implements OnInit {
     }
 
     filterTable(value, label, is_date_from?, is_date_to?) {
+        this.placer_table_column = this.original_placer_table_column;
         if (is_date_from) {
             this.filter.date_from = value;
             this.filter.date_from_label = label;
@@ -342,12 +350,7 @@ export class PlacerComponent implements OnInit {
             this.filter.date_to = value;
             this.filter.date_to_label = label;
         } else {
-            if (value == 2) {
-                this.getUnassignedHosts();
-                this.placer_table_column = this.placer_table_column.filter((column) => column.unassigned != false);
-                return;
-            }
-            this.placer_table_column = this.original_placer_table_column;
+            if (value == 2) this.getUnassignedHosts();
             this.filter.assignee = value;
             this.filter.assignee_label = label;
         }
@@ -361,7 +364,7 @@ export class PlacerComponent implements OnInit {
             placer.publicationDate = this._date.transform(placer.publicationDate, 'MMM d, y');
 
             //to map unassigned host column view on export
-            placer.unassignedHost = this.unassigned_hosts[index].hostName;
+            if (this.unassigned_hosts.length) placer.unassignedHost = this.unassigned_hosts[index].hostName;
         });
     }
 
@@ -380,6 +383,7 @@ export class PlacerComponent implements OnInit {
         };
         this.pickerDateFrom = '';
         this.pickerDateTo = '';
+        this.placer_table_column = this.original_placer_table_column;
         this.checkForApiToCall();
     }
 
