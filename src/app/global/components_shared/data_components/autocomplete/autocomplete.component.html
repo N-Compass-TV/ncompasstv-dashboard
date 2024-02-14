@@ -1,35 +1,30 @@
 <div class="autocomplete-field">
-    <div class="flex">
-        <div class="flex-even">
-            <mat-form-field appearance="standard" class="custom-autocomplete w-100">
-                <mat-label>{{ field_data.label }}</mat-label>
-                <input
-                    type="text"
-                    matInput
-                    [placeholder]="field_data.placeholder"
-                    [formControl]="autoCompleteControl"
-                    [(ngModel)]="autoCompleteModel"
-                    [matAutocomplete]="auto"
-                    (focus)="onFocus()"
-                    #autoCompleteInputField />
-                <mat-autocomplete
-                    #auto="matAutocomplete"
-                    [displayWith]="!staticVal && displayOption"
-                    (optionSelected)="valueSelected($event)">
-                    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
-                        {{ option.value }}
-                    </mat-option>
-                </mat-autocomplete>
-            </mat-form-field>
-        </div>
-        <div class="unselect-button-container text-right" *ngIf="field_data.unselect">
-            <button
-                class="naked-btn mt-3 fas fa-times text-danger"
-                title="Remove Selection"
-                (click)="removeSelection()"
-                [disabled]="!autoCompleteModel"></button>
-        </div>
-    </div>
+    <mat-form-field appearance="standard" class="custom-autocomplete w-100">
+        <mat-label>{{ field_data.label }}</mat-label>
+        <input
+            type="text"
+            matInput
+            [placeholder]="field_data.placeholder"
+            [formControl]="autoCompleteControl"
+            [matAutocomplete]="auto"
+            (focus)="onFocus()"
+            #autoCompleteInputField />
+        <mat-autocomplete
+            #auto="matAutocomplete"
+            [displayWith]="!staticVal && displayOption"
+            (optionSelected)="valueSelected($event)">
+            <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                {{ option.value }}
+            </mat-option>
+        </mat-autocomplete>
+    </mat-form-field>
+    <button
+        *ngIf="field_data.unselect && autoCompleteControl.value"
+        class="selection-remover naked-btn mt-3 bg-danger text-white"
+        title="Remove Selection"
+        (click)="removeSelection()">
+        <i class="fas fa-times"></i>
+    </button>
     <div class="autocomplete-error-msg bg-danger text-white" *ngIf="field_data.noData">
         <span>{{ field_data.noData }}</span>
     </div>

@@ -42,11 +42,11 @@
     <!-- DROPDOWNS -->
     <ng-template #dropdown>
         <div class="form-wrapper">
-            <div class="row mb-4">
-                <div class="col-lg-4">
+            <div class="d-flex mb-4">
+                <div class="flex-even">
                     <h3 class="form-header-title m-0">Edit {{ message }}</h3>
                 </div>
-                <div class="col-lg-8 text-right" *ngIf="message === 'Hosts'">
+                <div class="editing" *ngIf="message === 'Hosts'">
                     <span class="font-weight-bold sm-text text-primary">Placer: </span>
                     <span class="sm-text text-primary">{{ status.additional_params.placername }}</span>
                 </div>
