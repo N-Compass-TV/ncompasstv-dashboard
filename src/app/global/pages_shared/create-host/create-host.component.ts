@@ -90,14 +90,15 @@ export class CreateHostComponent implements OnInit {
     paging: PAGING;
     place_id: string;
     search_keyword: string;
-    selected_timezone: string;
     selected_location: any;
     state_provinces: { state: string; abbreviation: string; region: string }[] = STATES_PROVINCES;
-    timezone: API_TIMEZONE[];
+    timezones: API_TIMEZONE[];
+    timezone_autocomplete: UI_AUTOCOMPLETE;
     title = 'Create Host Place';
     trigger_data: Subject<any> = new Subject<any>();
     create_host_data: UI_AUTOCOMPLETE = { label: 'City', placeholder: 'Type anything', data: [] };
     isListVisible: boolean = false;
+    update_timezone_value = new Subject<UI_AUTOCOMPLETE_DATA | string>();
 
     private dealer_id: string;
     private logo_data: { images: string[]; logo: string };
@@ -482,33 +483,33 @@ export class CreateHostComponent implements OnInit {
 
         this._timezone.getTimezoneByCoordinates(data.latitude, data.longitude).subscribe(
             (timezone: string) => {
-                this.selected_timezone = timezone;
                 const timezoneControl = this.newHostFormControls.timezone;
-                let timezoneData;
+                let timezoneData: API_TIMEZONE[];
 
                 // Set the value based on the detected timezone
                 switch (timezone) {
                     case pacific:
-                        timezoneData = this.timezone.filter((data) => data.name == 'US/Pacific');
+                        timezoneData = this.timezones.filter((data) => data.name === 'US/Pacific');
                         break;
                     case eastern:
-                        timezoneData = this.timezone.filter((data) => data.name == 'US/Eastern');
+                        timezoneData = this.timezones.filter((data) => data.name === 'US/Eastern');
                         break;
                     case central:
-                        timezoneData = this.timezone.filter((data) => data.name == 'US/Central');
+                        timezoneData = this.timezones.filter((data) => data.name === 'US/Central');
                         break;
                     case mountain:
-                        timezoneData = this.timezone.filter((data) => data.name == 'US/Mountain');
+                        timezoneData = this.timezones.filter((data) => data.name === 'US/Mountain');
                         break;
                     default:
                         timezoneControl.setValue('Unknown Timezone');
                         break;
                 }
 
-                this.setTimezone(timezoneData[0].id, timezoneData[0].name);
+                const { id, name } = timezoneData[0];
+                this.timezoneChanged({ id, value: name, display: name });
             },
-            (error) => {
-                console.error('Error getting timezone:', error);
+            (e) => {
+                console.error('Error getting timezone:', e);
             },
         );
     }
@@ -570,13 +571,22 @@ export class CreateHostComponent implements OnInit {
             });
     }
 
-    setTimezone(data, name) {
-        this.newHostFormControls.timezone.setValue(data);
-        this.newHostFormControls.zone.setValue(name);
-    }
-
     setToDealer(id: string) {
         this.newHostFormControls.dealerId.setValue(id);
+    }
+
+    timezoneChanged(data: string | UI_AUTOCOMPLETE_DATA) {
+        if (typeof data === 'string') {
+            console.error('Invalid timezone!');
+            this.newHostFormControls.timezone.setValue('');
+            this.newHostFormControls.zone.setValue('');
+            return;
+        }
+
+        const { id, display } = data;
+        this.newHostFormControls.timezone.setValue(id);
+        this.newHostFormControls.zone.setValue(display);
+        this.update_timezone_value.next(data);
     }
 
     closeGoogleDropdownList() {
@@ -653,12 +663,10 @@ export class CreateHostComponent implements OnInit {
         });
 
         this.new_host_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-            if (this.new_host_form.valid) {
-                this.form_invalid = false;
-            } else {
-                this.form_invalid = true;
-            }
+            this.form_invalid = this.new_host_form.invalid;
         });
+
+        // this.subscribeToTimezoneChanges();
     }
 
     private initializeGooglePlaceForm() {
@@ -702,7 +710,19 @@ export class CreateHostComponent implements OnInit {
                     });
 
                     this.city_loaded = true;
-                    this.timezone = timezones;
+                    this.timezones = timezones;
+                    this.timezone_autocomplete = this._timezoneAutoComplete;
+
+                    this.timezone_autocomplete.data = [
+                        ...this.timezones.map((t) => {
+                            return {
+                                id: t.id,
+                                value: t.name,
+                                display: t.name,
+                            };
+                        }),
+                    ];
+
                     this.dealers_data = dealersData.dealers;
                     this.paging = dealersData.paging;
                     this.loading_data = false;
@@ -965,6 +985,24 @@ export class CreateHostComponent implements OnInit {
         });
     }
 
+    private subscribeToTimezoneChanges() {
+        const timezoneIdControl = this.newHostFormControls.timezone;
+        const timezoneNameControl = this.newHostFormControls.zone;
+
+        timezoneNameControl.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe((response: string) => {
+            // check if the changed value is an id
+            // and if the id exists on the list of timezones
+            const timezoneIndex = this.timezones.findIndex((t) => t.name === response);
+
+            if (timezoneIndex === -1) {
+                console.error('Error! Invalid timezone.');
+                timezoneIdControl.setValue('');
+                timezoneNameControl.setValue('');
+                return;
+            }
+        });
+    }
+
     clearAddressValue() {
         this.newHostFormControls.address.setValue('');
         this.city_selected = '';
@@ -1129,6 +1167,15 @@ export class CreateHostComponent implements OnInit {
                 status: false,
             },
         ];
+    }
+
+    protected get _timezoneAutoComplete(): UI_AUTOCOMPLETE {
+        return {
+            label: 'Timezone',
+            placeholder: 'Select or search for a timezone',
+            data: [],
+            allowSearchTrigger: false,
+        };
     }
 
     protected get currentRole() {

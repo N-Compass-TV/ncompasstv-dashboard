@@ -18,7 +18,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
         initialValue: [],
         noData: null,
     };
-    @Input() trigger_input_update = new Observable<UI_AUTOCOMPLETE_DATA>();
+    @Input() trigger_input_update = new Observable<UI_AUTOCOMPLETE_DATA | string>();
     @Output() value_selected: EventEmitter<{ id: string; value: string }> = new EventEmitter();
     @Output() input_changed = new EventEmitter<string>();
     @Output() no_data_found: EventEmitter<string> = new EventEmitter();
@@ -45,9 +45,17 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
             map((keyword) => this._filter(keyword)),
         );
 
+        // watch for update from parent component and update the control value
         this.trigger_input_update.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
-            this.autoCompleteControl.setValue(response);
+            this.autoCompleteControl.setValue(response, { emitEvent: false });
         });
+
+        // emit change on input field
+        this.autoCompleteControl.valueChanges
+            .pipe(takeUntil(this._unsubscribe), debounceTime(1000))
+            .subscribe((response) => {
+                this.input_changed.emit(response);
+            });
     }
 
     ngOnDestroy(): void {
