@@ -28,6 +28,7 @@ export class CreateFillerFeedComponent implements OnInit {
     selected_group: any = this.page_data.group;
     selected_groups: any = [];
     selected_dealer: any = [];
+    unselected_dealer: any = [];
     final_data_to_upload: any;
     fillerQuantity: any = {};
     total_quantity = 0;
@@ -107,9 +108,9 @@ export class CreateFillerFeedComponent implements OnInit {
     }
 
     //is_Dealer temporary only until has API
-    getAllFillers(key?) {
+    getAllFillers(key?, assignee?) {
         this._filler
-            .get_filler_group_for_feeds()
+            .get_filler_group_for_feeds(assignee)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data: any) => {
                 let groups_with_count_only = data.paging.entities.filter((group) => {
@@ -117,9 +118,9 @@ export class CreateFillerFeedComponent implements OnInit {
                 });
                 this.filler_groups = groups_with_count_only;
                 this.filler_groups_original = this.filler_groups;
-                this.groups_loaded = true;
             })
             .add(() => {
+                this.groups_loaded = true;
                 if (this.page_data.from_edit_table) {
                     this.getFillerFeedDetail(this.page_data.id);
                     return;
@@ -232,6 +233,7 @@ export class CreateFillerFeedComponent implements OnInit {
             Interval: this._formControls.fillerInterval.value,
             Duration: this._formControls.fillerDuration.value,
             AssignedDealerIds: this.selected_dealer,
+            DeleteAssignedDealers: this.unselected_dealer,
             PlaylistGroups: [],
         };
 
@@ -285,7 +287,15 @@ export class CreateFillerFeedComponent implements OnInit {
     }
 
     setAssignedTo(data) {
-        data ? this.selected_dealer.push(data.id) : [];
+        if (data) {
+            this.selected_dealer.push(data.id);
+            this.getAllFillers('', data.id);
+            //just incase there has been a group selected before assigning to an assignee so remove selected groups
+            this.selected_groups = [];
+            this.countTotalQuantity();
+            return;
+        }
+        this.unselected_dealer.push(this.existing_data.assignedDealers[0].dealerId);
     }
 
     protected get roleRoute() {

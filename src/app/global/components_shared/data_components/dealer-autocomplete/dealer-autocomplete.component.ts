@@ -50,6 +50,6 @@ export class DealerAutocompleteComponent implements OnInit {
     }
 
     setDealer(id) {
-        this.dealer_selected.emit(id);
+        id ? this.dealer_selected.emit(id) : this.dealer_selected.emit(null);
     }
 }
