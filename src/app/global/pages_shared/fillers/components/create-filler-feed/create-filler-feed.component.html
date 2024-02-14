@@ -65,38 +65,15 @@
                             <span class="font-weight-bold sm-text mr-2">Filters:</span>
                             <div class="d-inline-flex">
                                 <button
+                                    *ngFor="let filter_category of filters"
                                     class="naked-btn xsm-text with-border p-1 br-5 mr-2"
-                                    (click)="onFilterGroup('ALL')"
+                                    (click)="onFilterGroup(filter_category)"
                                     [ngClass]="
-                                        active_btn_filter == 'ALL' ? 'active-button text-white' : 'text-primary'
-                                    ">
-                                    ALL
-                                </button>
-                                <button
-                                    class="naked-btn xsm-text with-border p-1 br-5 mr-2"
-                                    (click)="onFilterGroup('ADMIN')"
-                                    [ngClass]="
-                                        active_btn_filter == 'ADMIN' ? 'active-button text-white' : 'text-primary'
-                                    ">
-                                    ADMIN
-                                </button>
-                                <button
-                                    class="naked-btn xsm-text with-border p-1 br-5 mr-2"
-                                    (click)="onFilterGroup('DEALER ADMIN')"
-                                    [ngClass]="
-                                        active_btn_filter == 'DEALER ADMIN'
+                                        active_btn_filter == filter_category
                                             ? 'active-button text-white'
                                             : 'text-primary'
                                     ">
-                                    DEALER ADMIN
-                                </button>
-                                <button
-                                    class="naked-btn xsm-text with-border p-1 br-5 mr-2"
-                                    (click)="onFilterGroup('DEALER')"
-                                    [ngClass]="
-                                        active_btn_filter == 'DEALER' ? 'active-button text-white' : 'text-primary'
-                                    ">
-                                    DEALER
+                                    {{ filter_category }}
                                 </button>
                             </div>
                         </div>
