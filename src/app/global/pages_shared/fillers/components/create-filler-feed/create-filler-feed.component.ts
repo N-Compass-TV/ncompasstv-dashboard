@@ -23,6 +23,7 @@ export class CreateFillerFeedComponent implements OnInit {
     groups_to_remove: any = [];
     selected_group: any = this.page_data.group;
     selected_groups: any = [];
+    selected_dealer: string = '';
     final_data_to_upload: any;
     fillerQuantity: any = {};
     total_quantity = 0;
@@ -199,6 +200,7 @@ export class CreateFillerFeedComponent implements OnInit {
             name: this._formControls.fillerGroupName.value,
             Interval: this._formControls.fillerInterval.value,
             Duration: this._formControls.fillerDuration.value,
+            AssignedDealerIds: [this.selected_dealer],
             PlaylistGroups: [],
         };
 
@@ -249,6 +251,10 @@ export class CreateFillerFeedComponent implements OnInit {
             this._route.createUrlTree([`/${this.roleRoute}/fillers/view-fillers-group/${id}`], {}),
         );
         window.open(url, '_blank');
+    }
+
+    setAssignedTo(data) {
+        this.selected_dealer = data.id;
     }
 
     protected get roleRoute() {
