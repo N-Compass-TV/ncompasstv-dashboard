@@ -33,12 +33,9 @@ export class AutocompleteComponent implements OnInit {
     @ViewChild('autoCompleteInputField', { static: false })
     autoCompleteInputField: ElementRef;
     autoCompleteControl = new FormControl();
-    autoCompleteModel: any;
     filteredOptions!: Observable<any[]>;
     keyword = '';
     staticVal: boolean = false;
-
-    constructor(private cdref: ChangeDetectorRef) {}
 
     ngOnInit() {
         this.filteredOptions = this.autoCompleteControl.valueChanges.pipe(
@@ -56,10 +53,6 @@ export class AutocompleteComponent implements OnInit {
     ngAfterViewInit() {
         this.setupDefaults();
         this.startTriggerListener();
-    }
-
-    ngAfterViewChecked(): void {
-        this.cdref.detectChanges();
     }
 
     ngOnChanges() {
