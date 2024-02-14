@@ -44,7 +44,7 @@ export class DealerAutocompleteComponent implements OnInit {
             label: 'Assigned To',
             placeholder: 'Ex. NCompass TV',
             data: this.dealers,
-            initialValue: [],
+            initialValue: this.initial_value ? this.initial_value : [],
             unselect: true,
         };
     }
