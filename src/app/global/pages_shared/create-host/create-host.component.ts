@@ -648,8 +648,14 @@ export class CreateHostComponent implements OnInit {
             is_canada: [''],
             address: ['', Validators.required],
             city: ['', Validators.required],
-            state: ['', Validators.required],
-            region: ['', Validators.required],
+            state: [
+                '',
+                [Validators.required, Validators.minLength(2), Validators.max(2), Validators.pattern('[A-Z]*')],
+            ],
+            region: [
+                '',
+                [Validators.required, Validators.minLength(2), Validators.max(2), Validators.pattern('[A-Z]*')],
+            ],
             zip: ['', Validators.required],
             category: ['', Validators.required],
             category2: [{ value: '', disabled: true }],
@@ -664,6 +670,9 @@ export class CreateHostComponent implements OnInit {
 
         this.new_host_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.form_invalid = this.new_host_form.invalid;
+
+            console.log('state control', this.newHostFormControls.state);
+            console.log('region control', this.newHostFormControls.region);
         });
 
         // this.subscribeToTimezoneChanges();
