@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Router } from '@angular/router';
 import { forkJoin, ObservableInput, Subject } from 'rxjs';
@@ -27,6 +27,8 @@ import {
     UI_STORE_HOUR,
     UI_STORE_HOUR_PERIOD,
     UI_ROLE_DEFINITION_TEXT,
+    UI_CITY_AUTOCOMPLETE_DATA,
+    UI_CITY_AUTOCOMPLETE,
 } from 'src/app/global/models';
 
 import {
@@ -63,7 +65,6 @@ export class CreateHostComponent implements OnInit {
     current_host_image: string;
     dealers_data: API_DEALER[] = [];
     dealer_name: string;
-    form_invalid = true;
     google_operation_days = this._googleOperationDays;
     google_place_form: FormGroup;
     google_result: any;
@@ -100,15 +101,16 @@ export class CreateHostComponent implements OnInit {
     isListVisible: boolean = false;
     update_timezone_value = new Subject<UI_AUTOCOMPLETE_DATA | string>();
 
-    private dealer_id: string;
-    private logo_data: { images: string[]; logo: string };
     private is_search = false;
+    private dealer_id: string;
+    private form_invalid = true;
+    private logo_data: { images: string[]; logo: string };
     private operation_hours: UI_STORE_HOUR_PERIOD[];
     protected default_host_image = 'assets/media-files/admin-icon.png';
     protected _unsubscribe = new Subject<void>();
 
     // New Autocomplete Dependencies
-    city_field_data: UI_AUTOCOMPLETE = {
+    city_field_data: UI_CITY_AUTOCOMPLETE = {
         label: 'City',
         placeholder: 'Type a city',
         data: [],
@@ -165,6 +167,97 @@ export class CreateHostComponent implements OnInit {
         data.periods.push(hours);
     }
 
+    addNewHostPlace() {
+        const url = this._router.serializeUrl(
+            this._router.createUrlTree([`/${this.roleRoute}/users/create-user/host`], {}),
+        );
+        window.open(url, '_blank');
+    }
+
+    clearAddressValue() {
+        this.newHostFormControls.address.setValue('');
+        this.city_selected = '';
+        this.newHostFormControls.city.setValue('');
+        this.newHostFormControls.state.setValue('');
+        this.newHostFormControls.region.setValue('');
+        this.newHostFormControls.zip.setValue('');
+    }
+
+    closeGoogleDropdownList() {
+        this.isListVisible = false;
+    }
+
+    fillCityOfHost(address: string, country?: string) {
+        if (country !== 'Canada') {
+            this._location
+                .get_cities_data(address)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    (data) => {
+                        let city = address + ', ' + data.data[0].state;
+                        this.setCity(city);
+                    },
+                    (error) => {
+                        console.error(error);
+                    },
+                );
+        } else {
+            this._location
+                .get_cities_data(address)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    (data) => {
+                        let city_data = data.data.filter((data) => data.country === 'CA');
+                        let city = city_data[0].city + ', ' + city_data[0].state;
+                        this.setCity(city);
+                    },
+                    (error) => {
+                        console.error(error);
+                    },
+                );
+        }
+    }
+
+    getCities() {
+        this._location
+            .get_cities()
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((response) => {
+                this.cities_state_data = response.map((city) => {
+                    return new CITIES_STATE_DATA(
+                        city.id,
+                        city.city,
+                        city.abbreviation,
+                        city.state,
+                        city.region,
+                        city.country,
+                    );
+                });
+            });
+    }
+
+    getCitiesAndStates() {
+        this._location
+            .get_cities_data()
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((response) => {
+                this.cities_state_data = response;
+
+                this.city_field_data.data = [
+                    ...this.cities_state_data.data
+                        .map((data) => {
+                            return {
+                                id: data.id,
+                                value: `${data.city}, ${data.state}`,
+                                display: data.city,
+                                country: data.country,
+                            };
+                        })
+                        .filter((data) => data),
+                ];
+            });
+    }
+
     getFullDayName(abbreviatedDay: string): string {
         switch (abbreviatedDay.toLowerCase()) {
             case 'm':
@@ -190,6 +283,31 @@ export class CreateHostComponent implements OnInit {
         }
     }
 
+    getGeneralCategory(category) {
+        this._categories
+            .get_category_general(category)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((data) => {
+                if (!data.message) {
+                    this.setToGeneralCategory(data.category.generalCategory);
+                } else {
+                    this.setToGeneralCategory('Others');
+                }
+            });
+    }
+
+    getMoreBusinessPlaceDetails(location) {
+        let location_selected = location;
+        this._map
+            .get_google_store_info(location.placeId)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((data) => {
+                if (!data.result.opening_hours) return;
+                location_selected.opening_hours = data.result.opening_hours;
+                this.mapOperationHours(location_selected.opening_hours.periods);
+            });
+    }
+
     onBulkAddHours(): void {
         const dialog = this._dialog.open(BulkEditBusinessHoursComponent, {
             width: '550px',
@@ -199,15 +317,10 @@ export class CreateHostComponent implements OnInit {
             autoFocus: false,
         });
 
-        dialog.afterClosed().subscribe(
-            (response: UI_STORE_HOUR[]) => {
-                if (!response) return;
-                this.operation_days = response;
-            },
-            (error) => {
-                console.error(error);
-            },
-        );
+        dialog.afterClosed().subscribe((response: UI_STORE_HOUR[]) => {
+            if (!response) return;
+            this.operation_days = response;
+        });
     }
 
     onChoosePhotos() {
@@ -381,33 +494,7 @@ export class CreateHostComponent implements OnInit {
         dialogRef.afterClosed().subscribe(() => (this.form_invalid = false));
     }
 
-    getGeneralCategory(category) {
-        this._categories
-            .get_category_general(category)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((data) => {
-                if (!data.message) {
-                    this.setToGeneralCategory(data.category.generalCategory);
-                } else {
-                    this.setToGeneralCategory('Others');
-                }
-            });
-    }
-
-    getMoreBusinessPlaceDetails(location) {
-        let location_selected = location;
-        this._map
-            .get_google_store_info(location.placeId)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((data) => {
-                if (!data.result.opening_hours) return;
-                location_selected.opening_hours = data.result.opening_hours;
-                this.mapOperationHours(location_selected.opening_hours.periods);
-            });
-    }
-
     plotToMap(data: GOOGLE_MAP_SEARCH_RESULT_V2) {
-        this.setZipValidatorRule(data.address);
         let sliced_address = data.address.split(', ');
         this.getGeneralCategory(data.type);
         this.setToCategory(data.type);
@@ -420,12 +507,12 @@ export class CreateHostComponent implements OnInit {
         this.newHostFormControls.lat.setValue(data.latitude);
         this.newHostFormControls.long.setValue(data.longitude);
 
-        let address;
-        let zipState;
-        let zip;
-        let state;
-        let city;
-        let country;
+        let address: string;
+        let zipState: string[];
+        let zip: string;
+        let state: string;
+        let city: string;
+        let country: string;
         const pacific = 'Pacific';
         const eastern = 'Eastern';
         const central = 'Central';
@@ -457,10 +544,15 @@ export class CreateHostComponent implements OnInit {
             address = sliced_address[0];
         }
 
+        this.canada_selected = country && country.includes('Canada');
+
+        // Set Zip validation
+        this.setZipCodeValidation();
+
         let state_region: { state: string; abbreviation: string; region: string } = this.searchStateAndRegion(state);
 
         // Set Address Value
-        this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
+        this.newHostFormControls.address.setValue(address);
 
         // Set City Value
         this.trigger_data.next({ data: sliced_address[1], action: AUTOCOMPLETE_ACTIONS.static });
@@ -473,8 +565,10 @@ export class CreateHostComponent implements OnInit {
         this.newHostFormControls.region.setValue(state_region.region);
 
         // Set Zip Value
-        this.canada_selected = country && country.includes('Canada');
         this.newHostFormControls.zip.setValue(zip);
+
+        // Checks if Zip is Canadian then parses it
+        this.setCanadaZip();
 
         // Get Business Place Details
         this.getMoreBusinessPlaceDetails(this.selected_location);
@@ -506,7 +600,7 @@ export class CreateHostComponent implements OnInit {
                 }
 
                 const { id, name } = timezoneData[0];
-                this.timezoneChanged({ id, value: name, display: name });
+                this.timezoneChanged(id, name);
             },
             (e) => {
                 console.error('Error getting timezone:', e);
@@ -518,35 +612,72 @@ export class CreateHostComponent implements OnInit {
         data.periods.splice(index, 1);
     }
 
-    setZipValidatorRule(googleAddress: string) {
-        const zipLength = googleAddress.includes('Canada') ? 6 : 5;
-        this.newHostFormControls.zip.setValidators([
-            Validators.required,
-            Validators.maxLength(zipLength),
-            Validators.maxLength(zipLength),
-        ]);
-    }
-
     searchStateAndRegion(state: string) {
         return this.state_provinces.filter(
             (s) => state.toLowerCase() == s.state.toLowerCase() || state.toLowerCase() == s.abbreviation.toLowerCase(),
         )[0];
     }
 
-    setToGeneralCategory(event: string) {
-        this.no_category2 = true;
-        this.newHostFormControls.category2.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
-    }
-
-    setToCategory(event: string) {
-        this.no_category = true;
-        this.newHostFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
-        this.getGeneralCategory(event);
-    }
-
     searchBoxTrigger(event: { is_search: boolean; page: number }) {
         this.is_search = event.is_search;
         this.getDealers(event.page);
+    }
+
+    searchCity(keyword: string) {
+        this.search_keyword = keyword;
+        this.city_field_data.data = [];
+        this._location
+            .get_cities_data(keyword) // Make sure keyword is a string here
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (response) => {
+                    this.cities_state_data.data = response.data;
+                    this.city_field_data.initialValue = [{ id: '', value: keyword }];
+                    this.city_field_data.data = [
+                        ...this.cities_state_data.data
+                            .map((data) => {
+                                return {
+                                    id: data.id,
+                                    value: `${data.city}, ${data.state}`,
+                                    display: data.city,
+                                    country: data.country,
+                                };
+                            })
+                            .filter((data) => data),
+                    ];
+                },
+                (error) => {
+                    this.city_field_data.noData = `${keyword} not found`;
+                    this.city_field_data.data = [
+                        ...this.cities_state_data.data
+                            .map((data) => {
+                                return {
+                                    id: data.id,
+                                    value: `${data.city}, ${data.state}`,
+                                    display: data.city,
+                                    country: data.country,
+                                };
+                            })
+                            .filter((data) => data),
+                    ];
+                },
+            );
+    }
+
+    searchCityById(data: UI_CITY_AUTOCOMPLETE_DATA) {
+        const city = this.cities_state_data.data.find((item) => item.id === data.id);
+
+        this.canada_selected = city.country === 'CA';
+
+        if (typeof city === 'undefined' || !city) {
+            console.error('Could not set city data!');
+            return;
+        }
+
+        this.newHostFormControls.city.setValue(city.city);
+        this.newHostFormControls.state.setValue(city.abbreviation);
+        this.newHostFormControls.region.setValue(city.region);
+        this.setZipCodeValidation();
     }
 
     searchDealer(keyword: string) {
@@ -571,26 +702,53 @@ export class CreateHostComponent implements OnInit {
             });
     }
 
+    setCity(data: string): void {
+        let cityState = data.split(',')[0].trim();
+        if (!this.canada_selected) {
+            this.newHostFormControls.city.setValue(cityState);
+            this.city_selected = cityState;
+            this._location
+                .get_cities_data(data)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    (data) => {
+                        this.newHostFormControls.state.setValue(data.data[0].abbreviation);
+                        this.newHostFormControls.region.setValue(data.data[0].region);
+                    },
+                    (error) => {
+                        console.error(error);
+                    },
+                );
+        } else {
+            let sliced_address = data.split(', ');
+            let filtered_data = this.city_state.filter((city) => {
+                return city.city === sliced_address[0];
+            });
+
+            this.newHostFormControls.city.setValue(cityState);
+            this.newHostFormControls.state.setValue(filtered_data[0].state);
+            this.newHostFormControls.region.setValue(filtered_data[0].region);
+        }
+    }
+
+    setToCategory(event: string) {
+        this.no_category = true;
+        this.newHostFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
+        this.getGeneralCategory(event);
+    }
+
     setToDealer(id: string) {
         this.newHostFormControls.dealerId.setValue(id);
     }
 
-    timezoneChanged(data: string | UI_AUTOCOMPLETE_DATA) {
-        if (typeof data === 'string') {
-            console.error('Invalid timezone!');
-            this.newHostFormControls.timezone.setValue('');
-            this.newHostFormControls.zone.setValue('');
-            return;
-        }
-
-        const { id, display } = data;
-        this.newHostFormControls.timezone.setValue(id);
-        this.newHostFormControls.zone.setValue(display);
-        this.update_timezone_value.next(data);
+    setToGeneralCategory(event: string) {
+        this.no_category2 = true;
+        this.newHostFormControls.category2.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
     }
 
-    closeGoogleDropdownList() {
-        this.isListVisible = false;
+    timezoneChanged(timezoneId: string, name: string) {
+        this.newHostFormControls.timezone.setValue(timezoneId);
+        this.newHostFormControls.zone.setValue(name);
     }
 
     private formatTime(data: number): string {
@@ -656,7 +814,7 @@ export class CreateHostComponent implements OnInit {
                 '',
                 [Validators.required, Validators.minLength(2), Validators.max(2), Validators.pattern('[A-Z]*')],
             ],
-            zip: ['', Validators.required],
+            zip: ['', [Validators.required, Validators.minLength(5)]],
             category: ['', Validators.required],
             category2: [{ value: '', disabled: true }],
             long: ['', Validators.required],
@@ -670,12 +828,7 @@ export class CreateHostComponent implements OnInit {
 
         this.new_host_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.form_invalid = this.new_host_form.invalid;
-
-            console.log('state control', this.newHostFormControls.state);
-            console.log('region control', this.newHostFormControls.region);
         });
-
-        // this.subscribeToTimezoneChanges();
     }
 
     private initializeGooglePlaceForm() {
@@ -699,7 +852,7 @@ export class CreateHostComponent implements OnInit {
             this._host.get_time_zones().pipe(takeUntil(this._unsubscribe)),
         ];
 
-        http: forkJoin(requests)
+        forkJoin(requests)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 ([generalCategories, getCategories, getDealers, getTimeZones]) => {
@@ -737,164 +890,10 @@ export class CreateHostComponent implements OnInit {
                     this.loading_data = false;
                     this.is_page_ready = true;
                 },
-                (error) => {
-                    console.error(error);
+                (err) => {
+                    console.error('Error loading initial data', err);
                 },
             );
-    }
-
-    getCities() {
-        this._location
-            .get_cities()
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
-                this.cities_state_data = response.map((city) => {
-                    return new CITIES_STATE_DATA(
-                        city.id,
-                        city.city,
-                        city.abbreviation,
-                        city.state,
-                        city.region,
-                        city.country,
-                    );
-                });
-            });
-    }
-
-    getCitiesAndStates() {
-        this._location
-            .get_cities_data()
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
-                this.cities_state_data = response;
-
-                this.city_field_data.data = [
-                    ...this.cities_state_data.data
-                        .map((data) => {
-                            return {
-                                id: data.id,
-                                value: `${data.city}, ${data.state}`,
-                                display: data.city,
-                            };
-                        })
-                        .filter((data) => data),
-                ];
-            });
-    }
-
-    searchCity(keyword: string) {
-        this.search_keyword = keyword;
-        this.city_field_data.data = [];
-        this._location
-            .get_cities_data(keyword) // Make sure keyword is a string here
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (response) => {
-                    this.cities_state_data.data = response.data;
-                    this.city_field_data.initialValue = [{ id: '', value: keyword }];
-                    this.city_field_data.data = [
-                        ...this.cities_state_data.data
-                            .map((data) => {
-                                return {
-                                    id: data.id,
-                                    value: `${data.city}, ${data.state}`,
-                                    display: data.city,
-                                };
-                            })
-                            .filter((data) => data),
-                    ];
-                },
-                (error) => {
-                    this.city_field_data.noData = `${keyword} not found`;
-                    this.city_field_data.data = [
-                        ...this.cities_state_data.data
-                            .map((data) => {
-                                return {
-                                    id: data.id,
-                                    value: `${data.city}, ${data.state}`,
-                                    display: data.city,
-                                };
-                            })
-                            .filter((data) => data),
-                    ];
-                },
-            );
-    }
-
-    searchCityById(data: UI_AUTOCOMPLETE_DATA) {
-        const city = this.cities_state_data.data.filter((item) => item.id === data.id)[0];
-
-        if (!city) return;
-        this.newHostFormControls.city.setValue(city.city);
-        this.newHostFormControls.state.setValue(city.abbreviation);
-        this.newHostFormControls.region.setValue(city.region);
-    }
-
-    setCity(data): void {
-        let cityState = data.split(',')[0].trim();
-        if (!this.canada_selected) {
-            this.newHostFormControls.city.setValue(cityState);
-            this.city_selected = cityState;
-            this._location
-                .get_cities_data(data)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        this.newHostFormControls.state.setValue(data.data[0].abbreviation);
-                        this.newHostFormControls.region.setValue(data.data[0].region);
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            let sliced_address = data.split(', ');
-            let filtered_data = this.city_state.filter((city) => {
-                return city.city === sliced_address[0];
-            });
-
-            this.newHostFormControls.city.setValue(cityState);
-            this.newHostFormControls.state.setValue(filtered_data[0].state);
-            this.newHostFormControls.region.setValue(filtered_data[0].region);
-        }
-    }
-
-    fillCityOfHost(address: string, country?: string) {
-        if (country !== 'Canada') {
-            this._location
-                .get_cities_data(address)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        let city = address + ', ' + data.data[0].state;
-                        this.setCity(city);
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            this._location
-                .get_cities_data(address)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        let city_data = data.data.filter((data) => data.country === 'CA');
-                        let city = city_data[0].city + ', ' + city_data[0].state;
-                        this.setCity(city);
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        }
-    }
-
-    addNewHostPlace() {
-        const url = this._router.serializeUrl(
-            this._router.createUrlTree([`/${this.roleRoute}/users/create-user/host`], {}),
-        );
-        window.open(url, '_blank');
     }
 
     private mapOperationHours(
@@ -994,31 +993,32 @@ export class CreateHostComponent implements OnInit {
         });
     }
 
-    private subscribeToTimezoneChanges() {
-        const timezoneIdControl = this.newHostFormControls.timezone;
-        const timezoneNameControl = this.newHostFormControls.zone;
+    private setZipCodeValidation() {
+        const control = this.newHostFormControls.zip;
+        if (control.disabled) this.newHostFormControls.zip.enable();
 
-        timezoneNameControl.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe((response: string) => {
-            // check if the changed value is an id
-            // and if the id exists on the list of timezones
-            const timezoneIndex = this.timezones.findIndex((t) => t.name === response);
+        const country = this.canada_selected ? 'CA' : 'US';
+        let validators: ValidatorFn[] = [Validators.required];
+        const usZipValidators = [Validators.minLength(5), Validators.maxLength(5)];
+        const canadaZipValidators = [Validators.minLength(7), Validators.maxLength(7)];
+        validators = country === 'CA' ? validators.concat(canadaZipValidators) : validators.concat(usZipValidators);
 
-            if (timezoneIndex === -1) {
-                console.error('Error! Invalid timezone.');
-                timezoneIdControl.setValue('');
-                timezoneNameControl.setValue('');
-                return;
-            }
-        });
+        this.newHostFormControls.zip.clearValidators();
+        this.newHostFormControls.zip.setValidators(validators);
+        this.newHostFormControls.zip.setErrors(null);
+        this.newHostFormControls.zip.updateValueAndValidity({ emitEvent: false });
     }
 
-    clearAddressValue() {
-        this.newHostFormControls.address.setValue('');
-        this.city_selected = '';
-        this.newHostFormControls.city.setValue('');
-        this.newHostFormControls.state.setValue('');
-        this.newHostFormControls.region.setValue('');
-        this.newHostFormControls.zip.setValue('');
+    private setCanadaZip() {
+        if (!this.canada_selected) return;
+        const control = this.newHostFormControls.zip;
+        const canadaZip = (control.value as string).trim();
+
+        if (canadaZip.length === 6) {
+            const left = canadaZip.substring(0, 3);
+            const right = canadaZip.substring(3, 6);
+            this.newHostFormControls.zip.patchValue(`${left} ${right}`, { emitEvent: false });
+        }
     }
 
     protected get _createFormFields() {
