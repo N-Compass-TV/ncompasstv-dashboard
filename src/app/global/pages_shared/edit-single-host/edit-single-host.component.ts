@@ -827,10 +827,23 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
     private subscribeToZipChanges() {
         const control = this._formControls.zip;
         const country = this.canada_selected ? 'CA' : 'US';
-        const maxLength = country === 'CA' ? 7 : 5;
+
+        const formatCanadaZip = (data: string) => {
+            const zip = data.replace(/\s/g, '');
+
+            if (zip && zip.length === 6) {
+                const clean = data.substring(0, 6);
+                const left = clean.substring(0, 3);
+                const right = clean.substring(3, 6);
+                return `${left} ${right}`;
+            }
+
+            return data;
+        };
 
         control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(300)).subscribe((response: string) => {
-            control.patchValue(response.substring(0, maxLength), { emitEvent: false });
+            const result = country === 'US' ? response.substring(0, 5) : formatCanadaZip(response);
+            control.patchValue(result, { emitEvent: false });
         });
     }
 
