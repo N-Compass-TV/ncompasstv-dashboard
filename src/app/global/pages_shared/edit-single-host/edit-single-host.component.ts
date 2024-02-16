@@ -593,9 +593,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
         let invalidFields = [];
 
         for (const name in controls) {
-            if (controls[name].invalid) {
-                invalidFields.push(`${this._titlecase.transform(name)}`);
-            }
+            if (controls[name].invalid) invalidFields.push(`${this._titlecase.transform(name)}`);
         }
 
         invalidFields = [...new Set(invalidFields)];

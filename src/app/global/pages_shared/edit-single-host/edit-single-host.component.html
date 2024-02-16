@@ -207,16 +207,6 @@
 
                                     <div class="timezone-container pr-3">
                                         <div *ngIf="timezones_loaded; else loadingTimezones">
-                                            <!-- <app-autocomplete-field
-                                                [data_reference]="timezones"
-                                                [primary_keyword]="'name'"
-                                                [key_of_value]="'id'"
-                                                (data_value)="setTimezone($event)"
-                                                [required]="true"
-                                                [label]="'Timezone'"
-                                                [initial_value]="host.timeZoneData.name">
-                                            </app-autocomplete-field> -->
-
                                             <mat-form-field>
                                                 <mat-label>Timezone</mat-label>
                                                 <mat-select formControlName="timezone">

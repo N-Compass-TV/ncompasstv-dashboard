@@ -288,11 +288,10 @@ export class CreateHostComponent implements OnInit {
             .get_category_general(category)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
-                if (!data.message) {
-                    this.setToGeneralCategory(data.category.generalCategory);
-                } else {
-                    this.setToGeneralCategory('Others');
-                }
+                // if no result then set category as 'Others'
+                // else assign the response found
+                const result: string = data.message ? 'Others' : data.category.generalCategory;
+                this.setToGeneralCategory(result);
             });
     }
 
@@ -309,18 +308,21 @@ export class CreateHostComponent implements OnInit {
     }
 
     onBulkAddHours(): void {
-        const dialog = this._dialog.open(BulkEditBusinessHoursComponent, {
+        const dialogConfig: MatDialogConfig = {
             width: '550px',
             height: '450px',
             panelClass: 'position-relative',
             data: {},
             autoFocus: false,
-        });
+        };
 
-        dialog.afterClosed().subscribe((response: UI_STORE_HOUR[]) => {
-            if (!response) return;
-            this.operation_days = response;
-        });
+        this._dialog
+            .open(BulkEditBusinessHoursComponent, dialogConfig)
+            .afterClosed()
+            .subscribe((response: UI_STORE_HOUR[]) => {
+                if (!response) return;
+                this.operation_days = response;
+            });
     }
 
     onChoosePhotos() {
