@@ -93,27 +93,12 @@
                                         [disabled]="true">
                                     </app-autocomplete-field>
 
-                                    <!-- New Autocomplete Implementation-->
-                                    <!-- <app-autocomplete-field
-											*ngIf="field.control === 'city'"
-											(data_value)="setCity($event)"
-											[key_of_value]="'city_state'"
-											[placeholder]="field.placeholder"
-											[label]="field.label"
-											[data_reference]="city_state"
-											[search_keyword]="'city_state'"
-											[primary_keyword]="'city_state'"
-											[new_value]="city_selected"
-											[initial_value]="city_selected"
-											[is_city]="true">
-										</app-autocomplete-field> -->
-
                                     <ng-container *ngIf="field.control === 'city'">
                                         <app-autocomplete
                                             #autoCompleteFieldCity
                                             *ngIf="city_field_data.data.length; else searching"
                                             [field_data]="city_field_data"
-                                            (no_data_found)="searchCity($event)"
+                                            (no_data_found)="resetCityList($event)"
                                             (value_selected)="searchCityById($event)"></app-autocomplete>
 
                                         <ng-template #searching>
@@ -163,7 +148,7 @@
                                     </ng-template>
 
                                     <ng-container *ngIf="field.control === 'timezone'">
-                                        <mat-form-field>
+                                        <mat-form-field class="full-width">
                                             <mat-label>Timezone</mat-label>
                                             <mat-select formControlName="timezone">
                                                 <mat-option *ngFor="let timezone of timezones" [value]="timezone.id">

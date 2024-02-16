@@ -187,37 +187,6 @@ export class CreateHostComponent implements OnInit {
         this.isListVisible = false;
     }
 
-    fillCityOfHost(address: string, country?: string) {
-        if (country !== 'Canada') {
-            this._location
-                .get_cities_data(address)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        let city = address + ', ' + data.data[0].state;
-                        this.setCity(city);
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            this._location
-                .get_cities_data(address)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        let city_data = data.data.filter((data) => data.country === 'CA');
-                        let city = city_data[0].city + ', ' + city_data[0].state;
-                        this.setCity(city);
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        }
-    }
-
     getCities() {
         this._location
             .get_cities()
@@ -367,9 +336,6 @@ export class CreateHostComponent implements OnInit {
             );
             return;
         }
-
-        // Still needed?
-        const businessHours = this.setBusinessHoursBeforeSubmitting(this.operation_days);
 
         const newHostPlace = new API_CREATE_HOST({
             dealerId: this.newHostFormControls.dealerId.value,
@@ -614,6 +580,46 @@ export class CreateHostComponent implements OnInit {
         data.periods.splice(index, 1);
     }
 
+    resetCityList(keyword: string) {
+        this.search_keyword = keyword;
+        this.city_field_data.data = [];
+
+        this.searchCity(keyword).subscribe(
+            (response) => {
+                this.cities_state_data.data = response.data;
+                this.city_field_data.initialValue = [{ id: '', value: keyword }];
+                this.city_field_data.data = [
+                    ...this.cities_state_data.data
+                        .map((data) => {
+                            return {
+                                id: data.id,
+                                value: `${data.city}, ${data.state}`,
+                                display: data.city,
+                                country: data.country,
+                            };
+                        })
+                        .filter((data) => data),
+                ];
+            },
+            (err) => {
+                this.city_field_data.noData = `${keyword} not found`;
+                this.city_field_data.data = [
+                    ...this.cities_state_data.data
+                        .map((data) => {
+                            return {
+                                id: data.id,
+                                value: `${data.city}, ${data.state}`,
+                                display: data.city,
+                                country: data.country,
+                            };
+                        })
+                        .filter((data) => data),
+                ];
+                console.error('City not found', err);
+            },
+        );
+    }
+
     searchStateAndRegion(state: string) {
         return this.state_provinces.filter(
             (s) => state.toLowerCase() == s.state.toLowerCase() || state.toLowerCase() == s.abbreviation.toLowerCase(),
@@ -623,47 +629,6 @@ export class CreateHostComponent implements OnInit {
     searchBoxTrigger(event: { is_search: boolean; page: number }) {
         this.is_search = event.is_search;
         this.getDealers(event.page);
-    }
-
-    searchCity(keyword: string) {
-        this.search_keyword = keyword;
-        this.city_field_data.data = [];
-        this._location
-            .get_cities_data(keyword) // Make sure keyword is a string here
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(
-                (response) => {
-                    this.cities_state_data.data = response.data;
-                    this.city_field_data.initialValue = [{ id: '', value: keyword }];
-                    this.city_field_data.data = [
-                        ...this.cities_state_data.data
-                            .map((data) => {
-                                return {
-                                    id: data.id,
-                                    value: `${data.city}, ${data.state}`,
-                                    display: data.city,
-                                    country: data.country,
-                                };
-                            })
-                            .filter((data) => data),
-                    ];
-                },
-                (error) => {
-                    this.city_field_data.noData = `${keyword} not found`;
-                    this.city_field_data.data = [
-                        ...this.cities_state_data.data
-                            .map((data) => {
-                                return {
-                                    id: data.id,
-                                    value: `${data.city}, ${data.state}`,
-                                    display: data.city,
-                                    country: data.country,
-                                };
-                            })
-                            .filter((data) => data),
-                    ];
-                },
-            );
     }
 
     searchCityById(data: UI_CITY_AUTOCOMPLETE_DATA) {
@@ -994,6 +959,10 @@ export class CreateHostComponent implements OnInit {
         });
     }
 
+    private searchCity(keyword: string) {
+        return this._location.get_cities_data(keyword).pipe(takeUntil(this._unsubscribe));
+    }
+
     private setBusinessHoursBeforeSubmitting(data: UI_STORE_HOUR[]) {
         return data.map((operation) => {
             operation.periods = operation.periods.map((period) => {
@@ -1081,10 +1050,23 @@ export class CreateHostComponent implements OnInit {
     private subscribeToZipChanges() {
         const control = this.newHostFormControls.zip;
         const country = this.canada_selected ? 'CA' : 'US';
-        const maxLength = country === 'CA' ? 7 : 5;
+
+        const formatCanadaZip = (data: string) => {
+            const zip = data.trim();
+
+            if (zip && zip.length === 6) {
+                const clean = data.substring(0, 7);
+                const left = clean.substring(0, 3);
+                const right = clean.substring(3, 6);
+                return `${left} ${right}`;
+            }
+
+            return data;
+        };
 
         control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(300)).subscribe((response: string) => {
-            control.patchValue(response.substring(0, maxLength), { emitEvent: false });
+            const result = country === 'US' ? response.substring(0, 5) : formatCanadaZip(response);
+            control.patchValue(result, { emitEvent: false });
         });
     }
 
