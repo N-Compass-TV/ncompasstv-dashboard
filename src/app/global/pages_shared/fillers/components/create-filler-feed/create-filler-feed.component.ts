@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { FillerService, AuthService } from 'src/app/global/services';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
@@ -22,8 +23,10 @@ export class CreateFillerFeedComponent implements OnInit {
     filler_name: string = '';
     filler_groups: any = [];
     filler_groups_original: any = [];
+    filters = ['ALL', 'ADMIN', 'DEALER ADMIN', 'DEALER'];
     groups_loaded: boolean = false;
     groups_to_remove: any = [];
+    is_current_user_admin = this._isAdmin;
     selected_assignee: any = [];
     selected_group: any = this.page_data.group;
     selected_groups: any = [];
@@ -300,5 +303,9 @@ export class CreateFillerFeedComponent implements OnInit {
 
     protected get roleRoute() {
         return this._auth.roleRoute;
+    }
+
+    protected get _isAdmin() {
+        return this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator;
     }
 }

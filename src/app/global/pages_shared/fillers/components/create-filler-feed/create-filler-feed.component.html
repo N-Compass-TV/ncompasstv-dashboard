@@ -38,7 +38,7 @@
                             <input matInput type="number" autocomplete="off" formControlName="fillerDuration" min="0" />
                         </mat-form-field>
                     </div>
-                    <div class="col-lg-12" *ngIf="assignee_loaded">
+                    <div class="col-lg-12" *ngIf="assignee_loaded && is_current_user_admin">
                         <app-dealer-autocomplete
                             (dealer_selected)="setAssignedTo($event)"
                             [initial_value]="selected_assignee"></app-dealer-autocomplete>
