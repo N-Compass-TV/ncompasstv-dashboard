@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms'
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Router } from '@angular/router';
 import { forkJoin, ObservableInput, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import * as uuid from 'uuid';
 import * as moment from 'moment';
 
@@ -800,6 +800,9 @@ export class CreateHostComponent implements OnInit {
     }
 
     private initializeCreateHostForm() {
+        const upperCaseAlphabets = '^[A-Z]+$';
+        const numbersOnly = '^[0-9]+$';
+
         this.new_host_form = this._form.group({
             dealerId: ['', Validators.required],
             businessName: ['', Validators.required],
@@ -808,13 +811,23 @@ export class CreateHostComponent implements OnInit {
             city: ['', Validators.required],
             state: [
                 '',
-                [Validators.required, Validators.minLength(2), Validators.max(2), Validators.pattern('[A-Z]*')],
+                [
+                    Validators.required,
+                    Validators.minLength(2),
+                    Validators.maxLength(2),
+                    Validators.pattern(upperCaseAlphabets),
+                ],
             ],
             region: [
                 '',
-                [Validators.required, Validators.minLength(2), Validators.max(2), Validators.pattern('[A-Z]*')],
+                [
+                    Validators.required,
+                    Validators.minLength(2),
+                    Validators.maxLength(2),
+                    Validators.pattern(upperCaseAlphabets),
+                ],
             ],
-            zip: ['', [Validators.required, Validators.minLength(5)]],
+            zip: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(7)]],
             category: ['', Validators.required],
             category2: [{ value: '', disabled: true }],
             long: ['', Validators.required],
@@ -822,13 +835,25 @@ export class CreateHostComponent implements OnInit {
             timezone: ['', Validators.required],
             zone: [''],
             contactPerson: ['', Validators.required],
-            contactNumber: ['', Validators.required],
+            contactNumber: [
+                '',
+                [
+                    Validators.required,
+                    Validators.minLength(10),
+                    Validators.maxLength(10),
+                    Validators.pattern(numbersOnly),
+                ],
+            ],
             createdBy: this._auth.current_user_value.user_id,
         });
 
         this.new_host_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.form_invalid = this.new_host_form.invalid;
         });
+
+        this.subscribeToContactNumberChanges();
+        this.subscribeToRegionChanges();
+        this.subscribeToStateChanges();
     }
 
     private initializeGooglePlaceForm() {
@@ -993,22 +1018,6 @@ export class CreateHostComponent implements OnInit {
         });
     }
 
-    private setZipCodeValidation() {
-        const control = this.newHostFormControls.zip;
-        if (control.disabled) this.newHostFormControls.zip.enable();
-
-        const country = this.canada_selected ? 'CA' : 'US';
-        let validators: ValidatorFn[] = [Validators.required];
-        const usZipValidators = [Validators.minLength(5), Validators.maxLength(5)];
-        const canadaZipValidators = [Validators.minLength(7), Validators.maxLength(7)];
-        validators = country === 'CA' ? validators.concat(canadaZipValidators) : validators.concat(usZipValidators);
-
-        this.newHostFormControls.zip.clearValidators();
-        this.newHostFormControls.zip.setValidators(validators);
-        this.newHostFormControls.zip.setErrors(null);
-        this.newHostFormControls.zip.updateValueAndValidity({ emitEvent: false });
-    }
-
     private setCanadaZip() {
         if (!this.canada_selected) return;
         const control = this.newHostFormControls.zip;
@@ -1019,6 +1028,62 @@ export class CreateHostComponent implements OnInit {
             const right = canadaZip.substring(3, 6);
             this.newHostFormControls.zip.patchValue(`${left} ${right}`, { emitEvent: false });
         }
+    }
+
+    private setZipCodeValidation() {
+        const control = this.newHostFormControls.zip;
+        const numbersOnly = '^[0-9]+$';
+        const canadianZipCodePattern = `^[A-Za-z]\\d[A-Za-z] \\d[A-Za-z]\\d$`;
+        const country = this.canada_selected ? 'CA' : 'US';
+
+        let validators: ValidatorFn[] = [Validators.required];
+        const usZipValidators = [Validators.minLength(5), Validators.maxLength(5), Validators.pattern(numbersOnly)];
+        const canadaZipValidators = [
+            Validators.minLength(7),
+            Validators.maxLength(7),
+            Validators.pattern(canadianZipCodePattern),
+        ];
+        validators = country === 'CA' ? validators.concat(canadaZipValidators) : validators.concat(usZipValidators);
+
+        control.clearValidators();
+        control.setValidators(validators);
+        control.setErrors(null);
+        control.updateValueAndValidity({ emitEvent: false });
+        this.subscribeToZipChanges();
+    }
+
+    private subscribeToContactNumberChanges() {
+        const control = this.newHostFormControls.contactNumber;
+
+        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(300)).subscribe((response: string) => {
+            control.patchValue(response.substring(0, 10), { emitEvent: false });
+        });
+    }
+
+    private subscribeToRegionChanges() {
+        const control = this.newHostFormControls.region;
+
+        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(300)).subscribe((response: string) => {
+            control.patchValue(response.substring(0, 2), { emitEvent: false });
+        });
+    }
+
+    private subscribeToStateChanges() {
+        const control = this.newHostFormControls.state;
+
+        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(300)).subscribe((response: string) => {
+            control.patchValue(response.substring(0, 2), { emitEvent: false });
+        });
+    }
+
+    private subscribeToZipChanges() {
+        const control = this.newHostFormControls.zip;
+        const country = this.canada_selected ? 'CA' : 'US';
+        const maxLength = country === 'CA' ? 7 : 5;
+
+        control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(300)).subscribe((response: string) => {
+            control.patchValue(response.substring(0, maxLength), { emitEvent: false });
+        });
     }
 
     protected get _createFormFields() {
@@ -1059,7 +1124,7 @@ export class CreateHostComponent implements OnInit {
                 control: 'contactNumber',
                 placeholder: 'Ex. 1 222 3456 7890',
                 col: 'col-lg-6',
-                type: 'number',
+                type: 'tel',
                 min: '0',
                 is_required: true,
             },

@@ -163,14 +163,6 @@
                                     </ng-template>
 
                                     <ng-container *ngIf="field.control === 'timezone'">
-                                        <!-- <app-autocomplete
-                                            #autoCompleteTimezone
-                                            [field_data]="timezone_autocomplete"
-                                            [trigger_input_update]="update_timezone_value.asObservable()"
-                                            (value_selected)="timezoneChanged($event)"
-                                            (input_changed)="timezoneChanged($event)">
-                                        </app-autocomplete> -->
-
                                         <mat-form-field>
                                             <mat-label>Timezone</mat-label>
                                             <mat-select formControlName="timezone">
