@@ -777,7 +777,7 @@ export class CreateHostComponent implements OnInit {
             address: ['', Validators.required],
             city: ['', Validators.required],
             state: [
-                '',
+                { value: '', disabled: true },
                 [
                     Validators.required,
                     Validators.minLength(2),
@@ -786,7 +786,7 @@ export class CreateHostComponent implements OnInit {
                 ],
             ],
             region: [
-                '',
+                { value: '', disabled: true },
                 [
                     Validators.required,
                     Validators.minLength(2),
