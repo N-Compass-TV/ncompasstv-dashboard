@@ -710,16 +710,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             timezone: ['', Validators.required],
             vistar_venue_id: [''],
             notes: [''],
-            contactPerson: ['', Validators.required],
-            contactNumber: [
-                '',
-                [
-                    Validators.required,
-                    Validators.minLength(10),
-                    Validators.maxLength(10),
-                    Validators.pattern(numbersOnly),
-                ],
-            ],
+            contactPerson: [''],
+            contactNumber: ['', [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(numbersOnly)]],
             others: [''],
         });
 
@@ -936,7 +928,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
             {
                 label: 'Contact Number',
                 control: 'contactNumber',
-                placeholder: 'Ex. 1 222 3456 7890',
+                placeholder: 'Ex. 555 555 1234',
                 col: 'col-lg-6',
             },
             {

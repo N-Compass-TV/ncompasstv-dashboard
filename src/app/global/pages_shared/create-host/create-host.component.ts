@@ -801,16 +801,8 @@ export class CreateHostComponent implements OnInit {
             lat: ['', Validators.required],
             timezone: ['', Validators.required],
             zone: [''],
-            contactPerson: ['', Validators.required],
-            contactNumber: [
-                '',
-                [
-                    Validators.required,
-                    Validators.minLength(10),
-                    Validators.maxLength(10),
-                    Validators.pattern(numbersOnly),
-                ],
-            ],
+            contactPerson: [''],
+            contactNumber: ['', [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(numbersOnly)]],
             createdBy: this._auth.current_user_value.user_id,
         });
 
@@ -1106,7 +1098,7 @@ export class CreateHostComponent implements OnInit {
             {
                 label: 'Contact Number',
                 control: 'contactNumber',
-                placeholder: 'Ex. 1 222 3456 7890',
+                placeholder: 'Ex. 555 555 1234',
                 col: 'col-lg-6',
                 type: 'tel',
                 min: '0',
