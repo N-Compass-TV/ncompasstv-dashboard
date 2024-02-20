@@ -14,6 +14,7 @@ export class DealerAutocompleteComponent implements OnInit {
     dealers: any = [];
 
     @Input() initial_value: any;
+    @Input() active_only: boolean = false;
     @Output() dealer_selected: EventEmitter<any> = new EventEmitter();
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -26,7 +27,7 @@ export class DealerAutocompleteComponent implements OnInit {
 
     getDealersMinified() {
         this._dealer
-            .get_dealers_with_page_minified(1, '', 0)
+            .get_dealers_with_page_minified(1, '', 0, this.active_only)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response) => {
