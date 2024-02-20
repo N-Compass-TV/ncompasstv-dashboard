@@ -1093,7 +1093,7 @@ export class CreateHostComponent implements OnInit {
                 placeholder: 'Ex. Bob Dylan',
                 type: 'string',
                 col: 'col-lg-6',
-                is_required: true,
+                is_required: false,
             },
             {
                 label: 'Contact Number',
@@ -1102,7 +1102,7 @@ export class CreateHostComponent implements OnInit {
                 col: 'col-lg-6',
                 type: 'tel',
                 min: '0',
-                is_required: true,
+                is_required: false,
             },
             {
                 label: 'Latitude',
