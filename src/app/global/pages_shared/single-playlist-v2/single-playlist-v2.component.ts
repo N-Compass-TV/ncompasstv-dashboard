@@ -31,6 +31,7 @@ import {
     PlaylistPrimaryControlActions,
     PLAYLIST_SETTING_ACTIONS as pSettingAction,
     PLAYLIST_SETTING_BUTTONS,
+    PlaylistFilterLabels
 } from './constants';
 
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types';
@@ -94,6 +95,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
     playlistDataNotFound = false;
     playlistDescription = 'Getting playlist data';
     playlistFilters = PlaylistFiltersDropdown;
+    playlistFilterLabels = PlaylistFilterLabels;
     playlistHostLicenses: { host: API_HOST; licenses: API_LICENSE_PROPS[] }[];
     playlistLicenseIds: string[] = [];
     playlistName = 'Please wait';

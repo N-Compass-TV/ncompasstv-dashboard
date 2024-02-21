@@ -57,9 +57,14 @@ export const PlaylistPrimaryControls = [
     },
 ];
 
+export const PlaylistFilterLabels = {
+    contentTypeLabel: 'Content Type',
+    contentStatusLabel: 'Content Schedule Status'
+};
+
 export const PlaylistFiltersDropdown = [
     {
-        label: 'Content Type',
+        label: PlaylistFilterLabels.contentTypeLabel,
         icon: 'fas fa-image',
         action: PlaylistFilterActions.contentType,
         items: [
@@ -70,7 +75,7 @@ export const PlaylistFiltersDropdown = [
         ],
     },
     {
-        label: 'Content Schedule Status',
+        label: PlaylistFilterLabels.contentStatusLabel,
         action: PlaylistFilterActions.contentStatus,
         icon: 'fas fa-calendar-alt',
         items: [
