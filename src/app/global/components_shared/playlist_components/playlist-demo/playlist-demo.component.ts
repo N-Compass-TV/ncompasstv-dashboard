@@ -47,7 +47,7 @@ export class PlaylistDemoComponent implements OnInit {
     ngOnInit() {
         if (this._dialog_data) {
             this.in_modal = true;
-            this.playlist_id = this._dialog_data;
+            this.playlist_id = this._dialog_data.playlistId;
 
             this.getPlaylistById();
         } else {
