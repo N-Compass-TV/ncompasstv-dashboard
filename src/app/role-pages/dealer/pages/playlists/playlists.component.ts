@@ -37,6 +37,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
         'Name',
         'Description',
         'Creation Date',
+        'Total Content',
         // 'Last Update'
     ];
 
@@ -146,6 +147,13 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
                     hidden: false,
                 },
                 { value: playlist.totalScreens > 0 ? true : false, link: null, hidden: true },
+                {
+                    value: playlist.totalContents,
+                    data_label: 'total_content',
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
             );
         });
     }

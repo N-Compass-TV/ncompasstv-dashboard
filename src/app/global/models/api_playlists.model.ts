@@ -12,4 +12,5 @@ export class API_PLAYLIST {
     totalScreens: number;
     playlistName?: string;
     name?: string;
+    totalContents: number;
 }
