@@ -439,6 +439,7 @@ export class LicenseService extends BaseService {
         pending?,
         online?,
         isActivated?,
+        page?,
     ) {
         const base = `${this.getters.api_get_licenses_duration}`;
         const params = this.setUrlParams(
@@ -459,6 +460,7 @@ export class LicenseService extends BaseService {
                 pending,
                 online,
                 isActivated,
+                page: 1,
             },
             false,
             true,
@@ -565,6 +567,10 @@ export class LicenseService extends BaseService {
         return this.postRequest(`${this.updaters.install_date}`, data, options);
     }
 
+    update_install_request_date(licenseId: string, installRequestDate: string): Observable<any> {
+        return this.postRequest(`${this.updaters.install_request_date}`, { licenseId, installRequestDate });
+    }
+
     //  Updates the installation date on multiple licenses
     update_install_date_list(data: { licenseId: string; installDate: string }[]): Observable<any> {
         const options = {
@@ -626,9 +632,9 @@ export class LicenseService extends BaseService {
         );
     }
 
-    get_activities(id: string) {
+    get_activities(id: string, page) {
         const base = `${this.getters.api_get_activities_by_license_id}`;
-        const sortUrl = `&sortOrder=desc&sortColumn=DateCreated`;
+        const sortUrl = `&sortOrder=desc&sortColumn=DateCreated&page=${page}`;
         const url = `${base}${id}${sortUrl}`;
         return this.getRequest(url);
     }

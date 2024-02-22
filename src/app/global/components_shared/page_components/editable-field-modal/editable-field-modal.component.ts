@@ -49,7 +49,7 @@ export class EditableFieldModalComponent implements OnInit {
 
         if (this.status.label.includes('Date')) {
             const data = this.data;
-            let value: any = moment(data).toDate();
+            let value: any = moment(data, 'MMM D, YYYY').toDate();
             if (!data || data.trim().length <= 0 || data.includes('--')) value = moment();
             this.date = value;
         }
@@ -91,12 +91,14 @@ export class EditableFieldModalComponent implements OnInit {
                 placeholder: 'Ex. NCompass TV Host',
                 data: hostsData,
                 initialValue: hostId ? [{ id: hostId, value: initialValueHostWithAddress }] : [],
+                unselect: true,
             };
         }, 100);
     }
 
     setHost(host) {
-        this.host_selected = host.id;
+        if (host) this.host_selected = host.id;
+        else this.host_selected = '';
     }
 
     setScreenType(type) {
