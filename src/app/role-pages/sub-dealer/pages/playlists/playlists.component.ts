@@ -27,7 +27,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
     search_data: string = '';
     searching: boolean = false;
 
-    playlist_table_column = ['#', 'Name', 'Description', 'Creation Date'];
+    playlist_table_column = ['#', 'Name', 'Description', 'Creation Date', 'Total Content'];
 
     protected _socket: any;
     protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -156,6 +156,13 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
                     hidden: false,
                 },
                 { value: playlist.totalScreens > 0 ? true : false, link: null, hidden: true },
+                {
+                    value: playlist.totalContents,
+                    data_label: 'total_content',
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
             );
         });
     }

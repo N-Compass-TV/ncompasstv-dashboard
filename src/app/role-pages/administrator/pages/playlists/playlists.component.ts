@@ -233,6 +233,13 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
                     new_tab_link: true,
                 },
                 { value: p.totalScreens > 0 ? true : false, link: null, hidden: true },
+                {
+                    value: p.totalContents,
+                    data_label: 'total_content',
+                    link: null,
+                    editable: false,
+                    hidden: false,
+                },
             );
         });
     }
@@ -320,6 +327,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
             { name: 'Playlist Name', sortable: true, column: 'Name' },
             { name: 'Publish Date', sortable: true, column: 'DateCreated' },
             { name: 'Assigned To', sortable: true, column: 'BusinessName' },
+            { name: 'Total Content', sortable: true, column: 'TotalContents' },
         ];
     }
 }
