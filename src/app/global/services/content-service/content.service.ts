@@ -214,7 +214,7 @@ export class ContentService extends BaseService {
         return this.postRequest(`${this.creators.api_openai}/generateImages`, {
             prompt,
             n: 1,
-            size: '1024x1024',
+            size: '1792x1024',
             model: 'dall-e-3',
         }).map((data) => JSON.parse(data));
     }
