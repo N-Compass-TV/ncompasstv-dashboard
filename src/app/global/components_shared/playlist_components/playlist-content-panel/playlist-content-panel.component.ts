@@ -12,6 +12,7 @@ import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-sc
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
 import { AuthService, ConfirmationDialogService, ContentService, PlaylistService } from 'src/app/global/services';
+import { DATE_FORMATS } from 'src/app/global/constants/common';
 
 import {
     API_BLOCKLIST_CONTENT,
@@ -26,6 +27,7 @@ import {
     API_CONTENT_HISTORY,
     API_CONTENT_HISTORY_LIST,
     API_CONTENT_DATA,
+    UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
 
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from 'src/app/global/constants/file-types';
@@ -65,7 +67,13 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
     currentStatusFilter: { key: string; label: string };
     currentFileTypeFilter = 'all';
     has_selected_content_with_schedule = false;
-    is_administrator = this._auth.current_role === 'administrator';
+    authorizedRoles = new Set([
+        UI_ROLE_DEFINITION_TEXT.administrator,
+        UI_ROLE_DEFINITION_TEXT.dealeradmin,
+        UI_ROLE_DEFINITION_TEXT.dealer,
+        UI_ROLE_DEFINITION_TEXT['sub-dealer'],
+    ]);
+    isAuthorized = this.authorizedRoles.has(this._auth.current_role as UI_ROLE_DEFINITION_TEXT);
     is_loading = false;
     is_bulk_selecting = false;
     list_view_mode = false;
@@ -1022,9 +1030,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                     break;
 
                 case 3:
-                    const currentDate = moment(new Date(), 'YYYY-MM-DD hh:mm A');
-                    const startDate = moment(`${schedule.from} ${schedule.playTimeStart}`, 'YYYY-MM-DD hh:mm A');
-                    const endDate = moment(`${schedule.to} ${schedule.playTimeEnd}`, 'YYYY-MM-DD hh:mm A');
+                    const currentDate = moment(new Date(), DATE_FORMATS.DATE_TIME_12);
+                    const startDate = moment(`${schedule.from} ${schedule.playTimeStart}`, DATE_FORMATS.DATE_TIME_12);
+                    const endDate = moment(`${schedule.to} ${schedule.playTimeEnd}`, DATE_FORMATS.DATE_TIME_12);
 
                     if (currentDate.isBefore(startDate)) status = 'future';
                     if (currentDate.isBetween(startDate, endDate, undefined)) status = 'active';

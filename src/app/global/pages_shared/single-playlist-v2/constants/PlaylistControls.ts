@@ -59,7 +59,7 @@ export const PlaylistPrimaryControls = [
 
 export const PlaylistFilterLabels = {
     contentTypeLabel: 'Content Type',
-    contentStatusLabel: 'Content Schedule Status'
+    contentStatusLabel: 'Content Schedule Status',
 };
 
 export const PlaylistFiltersDropdown = [

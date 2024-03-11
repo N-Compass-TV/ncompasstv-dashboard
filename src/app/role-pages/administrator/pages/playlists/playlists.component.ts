@@ -256,40 +256,35 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
     showCreatePlaylistDialog() {
         const width = '576px';
         const configs: MatDialogConfig = { width, disableClose: true };
-        const dialog = this._dialog.open(CreatePlaylistDialogComponent, configs);
-
-        dialog.afterClosed().subscribe({
-            next: (response) => {
-                if (!response || response === 'close') return;
-                this.createPlaylist(response);
-            },
-        });
-    }
-
-    private createPlaylist(data: CREATE_PLAYLIST) {
-        this._playlist
-            .create_playlist(data)
-            .pipe(takeUntil(this._unsubscribe))
+        this._dialog
+            .open(CreatePlaylistDialogComponent, configs)
+            .afterClosed()
             .subscribe({
-                next: ({ playlist }) => {
-                    this.showResponseDialog('success', 'Success', 'Your changes have been saved').subscribe({
-                        next: () => {
-                            const newPlaylistUrl = `/${this.roleRoute}/playlists/v2/${playlist.playlistId}`;
-                            window.open(newPlaylistUrl, '_blank');
-                            this.getTotalPlaylist();
-                            this.getPlaylists(1);
-                        },
-                    });
-                },
-                error: (e) => {
-                    console.error('Error creating playlist', e);
-                    this.showResponseDialog(
-                        'error',
-                        'Error Saving Playlist',
-                        'Something went wrong, please contact customer support',
-                    ).subscribe();
+                next: (response) => {
+                    if (!response || response === 'close') return;
+                    this.createPlaylist(response);
                 },
             });
+    }
+
+    private async createPlaylist(data: CREATE_PLAYLIST) {
+        try {
+            const playlist = await this._playlist.create_playlist(data).pipe(takeUntil(this._unsubscribe)).toPromise();
+
+            await this.showResponseDialog('success', 'Success', 'Your changes have been saved');
+
+            const newPlaylistUrl = `/${this.roleRoute}/playlists/v2/${playlist.playlist.playlistId}`;
+            window.open(newPlaylistUrl, '_blank');
+            this.getTotalPlaylist();
+            this.getPlaylists(1);
+        } catch (error) {
+            console.error('Error creating playlist', error);
+            await this.showResponseDialog(
+                'error',
+                'Error Saving Playlist',
+                'Something went wrong, please contact customer support',
+            );
+        }
     }
 
     private initializeSocketConnection(): void {

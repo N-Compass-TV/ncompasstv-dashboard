@@ -31,7 +31,7 @@ import {
     PlaylistPrimaryControlActions,
     PLAYLIST_SETTING_ACTIONS as pSettingAction,
     PLAYLIST_SETTING_BUTTONS,
-    PlaylistFilterLabels
+    PlaylistFilterLabels,
 } from './constants';
 
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from '../../constants/file-types';
@@ -1197,10 +1197,13 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
     }
 
     protected get isAdmin() {
-        return this._auth.current_role === 'administrator';
+        return this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator;
     }
 
     protected get isDealer() {
-        return this._auth.current_role === 'dealer';
+        return (
+            this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealer ||
+            this._auth.current_role === UI_ROLE_DEFINITION_TEXT['sub-dealer']
+        );
     }
 }

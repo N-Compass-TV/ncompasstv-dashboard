@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material';
 import { debounceTime, map, startWith, takeUntil } from 'rxjs/internal/operators';
 import { forkJoin, Observable, Subject } from 'rxjs';
 
-import { DealerService } from 'src/app/global/services';
+import { AuthService, DealerService } from 'src/app/global/services';
 import { API_DEALER, PAGING } from 'src/app/global/models';
 
 @Component({
@@ -32,11 +32,14 @@ export class CreatePlaylistDialogComponent implements OnInit, OnDestroy {
     protected _unsubscribe = new Subject<void>();
 
     constructor(
+        private _auth: AuthService,
         private _dealer: DealerService,
         private _dialogRef: MatDialogRef<CreatePlaylistDialogComponent>,
     ) {}
 
     ngOnInit() {
+        this.dealerId = this._auth.current_user_value.roleInfo.dealerId;
+        this.businessName = this._auth.current_user_value.roleInfo.businessName;
         if (!this.dealerId) this.getDealers(); // if dealer user is logged in then do not load dealers
         this.initializeForm();
     }

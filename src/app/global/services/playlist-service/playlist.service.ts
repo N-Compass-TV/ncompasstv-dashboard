@@ -4,7 +4,13 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
-import { API_BLOCKLIST_CONTENT, API_SWAP_CONTENT_RESPONSE } from 'src/app/global/models';
+import {
+    API_BLOCKLIST_CONTENT,
+    API_GET_PLAYLIST,
+    API_SWAP_CONTENT_RESPONSE,
+    PAGING,
+    API_PLAYLIST_COUNT_DETAILS,
+} from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
 
@@ -59,15 +65,19 @@ export class PlaylistService extends BaseService {
         return this.getRequest(`${this.getters.api_get_playlist_total}`);
     }
 
-    get_playlists_total_by_dealer(id) {
+    get_playlists_total_by_dealer(id: string): Observable<API_PLAYLIST_COUNT_DETAILS> {
         return this.getRequest(`${this.getters.api_get_playlist_total_by_dealer}${id}`);
     }
 
-    get_playlist_by_dealer_id(id) {
+    get_playlist_by_dealer_id(id: string) {
         return this.getRequest(`${this.getters.api_get_playlist_by_dealer_id}${id}`);
     }
 
-    get_playlist_by_dealer_id_table(page, id, key) {
+    get_playlist_by_dealer_id_table(
+        page: number,
+        id: string,
+        key: string,
+    ): Observable<{ playlists: API_GET_PLAYLIST[]; paging: PAGING }> {
         const base = `${this.getters.api_get_playlist_by_dealer_id_table}`;
         const params = this.setUrlParams({ page, dealerid: id, search: key }, false, true);
         const url = `${base}${params}`;
