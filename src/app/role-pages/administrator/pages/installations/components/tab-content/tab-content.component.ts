@@ -27,6 +27,7 @@ export class TabContentComponent implements OnInit, OnDestroy {
     @Input() filteredData: any[];
     @Input() isDatePickerEnabled = true;
     @Input() isDatePickerViewEnabled = true;
+    @Input() isDateSelected: boolean;
     @Input() initialLoad: boolean;
     @Input() installation_count: any;
     @Input() installations: INSTALLATION[];
@@ -37,15 +38,24 @@ export class TabContentComponent implements OnInit, OnDestroy {
     @Input() tableColumns: any[];
     @Input() tab: string;
 
-    dateViews = this._dateViews;
     date = new FormControl(moment());
+    private selectedDay = '';
+    private selectedMonth = '';
+    private selectedYear = '';
+    dateViews = [];
 
     protected _unsubscribe = new Subject<void>();
 
     constructor() {}
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.subscribeToResetDatePicker();
+
+        this.dateViews = [
+            { index: 0, name: 'Day', value: '' },
+            { index: 1, name: 'Month', value: '' },
+            { index: 2, name: 'Year', value: '' },
+        ];
     }
 
     ngOnDestroy(): void {
@@ -56,6 +66,8 @@ export class TabContentComponent implements OnInit, OnDestroy {
     dateSelected(value: moment.Moment): void {
         this.onSelectDate.emit(value);
         this.datePicker.close();
+        this.isDateSelected = true;
+        this._dateViews();
     }
 
     searchInstallations(keyword: string): void {
@@ -66,12 +78,25 @@ export class TabContentComponent implements OnInit, OnDestroy {
         this.resetDatePicker.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.date.setValue(new Date()));
     }
 
-    protected get _dateViews() {
-        return [
-            { name: '', value: '', index: 0 },
-            { name: 'Day', value: 'day', index: 1 },
-            { name: 'Month', value: 'month', index: 2 },
-            { name: 'Year', value: 'year', index: 3 },
+    public _dateViews() {
+        this.selectedDay = moment(this.date.value).format('DD');
+        this.selectedMonth = moment(this.date.value).format('MMM');
+        this.selectedYear = moment(this.date.value).format('YYYY');
+
+        this.dateViews = [
+            { index: 1, name: 'Day', value: this.selectedDay },
+            { index: 2, name: 'Month', value: this.selectedMonth },
+            { index: 3, name: 'Year', value: this.selectedYear },
         ];
+
+        // return this.dateViews;
+    }
+
+    trackByDateValue(index: number, view): string {
+        return view.id;
+    }
+
+    clearDate() {
+        this.isDateSelected = false;
     }
 }
