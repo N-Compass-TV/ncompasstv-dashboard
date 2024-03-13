@@ -1,7 +1,5 @@
 .datepicker-container {
-    padding: 10px;
     height: 40px;
-    margin-bottom: 7rem;
 
     .datepicker {
         font-size: 12px;
@@ -29,8 +27,16 @@
     // 	}
     // }
 
-    .inbtn-txtbox-theme {
+    .button_default {
         background-color: #ebebeb;
+    }
+
+    .button_clicked {
+        background-color: #8ec641;
+    }
+
+    .inbtn-view-theme {
+        // background-color: #ebebeb;
         border: 0;
         border-radius: 2px;
         color: #000000;
@@ -40,8 +46,8 @@
         transition: 0.1s linear;
     }
 
-    .inbtn-fa-theme {
-        background-color: #ebebeb00;
+    .inbtn-filter-theme {
+        background-color: #f0f0f000;
         border: 0;
         min-width: 20px !important;
         height: 20px;
@@ -58,6 +64,12 @@
         margin-right: 10px;
         font-size: 14px;
     }
+}
+
+.isdatepicker-enabled {
+    margin-right: 0.5rem !important;
+    margin-left: 1rem !important;
+    margin-top: 0.5rem !important;
 }
 
 .datepicker-toggle {
@@ -78,10 +90,6 @@
     margin-bottom: 5.5rem;
 }
 
-.mt-cstm {
-    margin-top: -5rem;
-}
-
 .ml-cstm {
     margin-left: 0.75rem !important;
     margin-right: -0.5rem;
@@ -90,8 +98,6 @@
 .pi-control {
     width: 40px;
     height: 40px;
-    overflow: hidden;
-    transition: 0.4s ease-in-out;
     padding-left: 0.75rem;
 }
 

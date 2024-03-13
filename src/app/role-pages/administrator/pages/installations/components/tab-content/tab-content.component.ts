@@ -25,6 +25,7 @@ export class TabContentComponent implements OnInit, OnDestroy {
 
     @Input() currentFilters: API_FILTERS;
     @Input() filteredData: any[];
+    @Input() isCategory: boolean;
     @Input() isDatePickerEnabled = true;
     @Input() isDatePickerViewEnabled = true;
     @Input() isDateSelected: boolean;
@@ -43,6 +44,8 @@ export class TabContentComponent implements OnInit, OnDestroy {
     private selectedMonth = '';
     private selectedYear = '';
     dateViews = [];
+    isClicked: boolean;
+    selectedElementId: string | null = null;
 
     protected _unsubscribe = new Subject<void>();
 
@@ -52,9 +55,9 @@ export class TabContentComponent implements OnInit, OnDestroy {
         this.subscribeToResetDatePicker();
 
         this.dateViews = [
-            { index: 0, name: 'Day', value: '' },
-            { index: 1, name: 'Month', value: '' },
-            { index: 2, name: 'Year', value: '' },
+            { index: 1, name: 'Day', value: '' },
+            { index: 2, name: 'Month', value: '' },
+            { index: 3, name: 'Year', value: '' },
         ];
     }
 
@@ -67,6 +70,7 @@ export class TabContentComponent implements OnInit, OnDestroy {
         this.onSelectDate.emit(value);
         this.datePicker.close();
         this.isDateSelected = true;
+        this.isClicked = false;
         this._dateViews();
     }
 
@@ -88,8 +92,6 @@ export class TabContentComponent implements OnInit, OnDestroy {
             { index: 2, name: 'Month', value: this.selectedMonth },
             { index: 3, name: 'Year', value: this.selectedYear },
         ];
-
-        // return this.dateViews;
     }
 
     trackByDateValue(index: number, view): string {
@@ -98,5 +100,13 @@ export class TabContentComponent implements OnInit, OnDestroy {
 
     clearDate() {
         this.isDateSelected = false;
+        this.isClicked = false;
+    }
+
+    selectView(id: string): void {
+        this.isClicked = false;
+        this.selectedElementId = id;
+
+        this.isClicked = !this.isClicked;
     }
 }

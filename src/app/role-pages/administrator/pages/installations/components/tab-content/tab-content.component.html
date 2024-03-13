@@ -1,60 +1,61 @@
 <div class="col-lg-12 pl-0 pr-0 pb-4">
-    <div class="tab-actions-section d-flex align-items-center">
-        <div class="col-lg-9 pl-0">
-            <div class="datepicker-container flex">
-                <div>
-                    <!-- DATEPICKER -->
-                    <ng-container *ngIf="isDatePickerEnabled">
-                        <div class="datepicker flex mt-2" appearance="standard" appDefaultDateFormat>
-                            <button
-                                class="xsm-text ml-cstm inbtn-txtbox-theme cursor-pointer mt-btn-view"
-                                *ngFor="let view of dateViews; trackBy: trackByDateValue"
-                                (click)="onSelectDateView.emit(view.index)">
-                                <ng-container *ngIf="isDateSelected; else defaultViewButton">
-                                    {{ view.value }}
-                                </ng-container>
-                                <ng-template #defaultViewButton>
-                                    {{ view.name }}
-                                </ng-template>
-                            </button>
-                            <button
-                                class="xsm-text ml-cstm inbtn-fa-theme cursor-pointer mt-btn-view"
-                                (click)="clearDate()">
-                                <span class="fas fa-clr fa-times" data-toggle="tooltip" title="Clear Filter"> </span>
-                            </button>
-                            <input
-                                class="cdk-visually-hidden"
-                                [formControl]="date"
-                                (dateInput)="dateSelected($event.value)"
-                                matInput
-                                [matDatepicker]="datePicker"
-                                readonly />
-                            <mat-datepicker-toggle
-                                class="mat-icon-pos"
-                                matSuffix
-                                [for]="datePicker"
-                                white-bg
-                                [disabled]="searching"></mat-datepicker-toggle>
-                            <mat-datepicker #datePicker></mat-datepicker>
-                        </div>
-                    </ng-container>
-                </div>
-                <!-- EXPORT BUTTON -->
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn pi-control sm-text _primary"
-                    [ngClass]="isDatePickerViewEnabled ? 'mr-2 ml-3 mt-2' : ''"
-                    title="Export to CSV"
-                    (click)="onExport.emit()"
-                    [disabled]="isExporting">
-                    <span class="{{ !isExporting ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
-                    <span class="ml-2 button_text_animation">{{ !isExporting ? 'Export' : 'Generating CSV' }}</span>
-                </button>
+    <div class="tab-actions-section d-flex justify-content-between align-items-center mb-3">
+        <div class="datepicker-container flex">
+            <div>
+                <!-- DATEPICKER -->
+                <ng-container *ngIf="isDatePickerEnabled">
+                    <div class="datepicker flex mt-2" appearance="standard" appDefaultDateFormat>
+                        <button
+                            id="{{ view.name }}"
+                            class="xsm-text ml-cstm inbtn-view-theme cursor-pointer mt-btn-view"
+                            *ngFor="let view of dateViews; trackBy: trackByDateValue"
+                            (click)="onSelectDateView.emit(view.index); selectView(view.name)"
+                            [ngClass]="
+                                selectedElementId === view.name && isClicked ? 'button_clicked' : 'button_default'
+                            ">
+                            <ng-container *ngIf="isDateSelected; else defaultViewButton">
+                                {{ view.value }}
+                            </ng-container>
+                            <ng-template #defaultViewButton>
+                                {{ view.name }}
+                            </ng-template>
+                        </button>
+                        <button
+                            class="xsm-text ml-cstm inbtn-filter-theme cursor-pointer mt-btn-view"
+                            (click)="clearDate()">
+                            <span class="fas fa-clr fa-times" data-toggle="tooltip" title="Clear Filter"> </span>
+                        </button>
+                        <input
+                            class="cdk-visually-hidden"
+                            [formControl]="date"
+                            (dateInput)="dateSelected($event.value)"
+                            matInput
+                            [matDatepicker]="datePicker"
+                            readonly />
+                        <mat-datepicker-toggle
+                            class="mat-icon-pos"
+                            matSuffix
+                            [for]="datePicker"
+                            white-bg
+                            [disabled]="searching"></mat-datepicker-toggle>
+                        <mat-datepicker #datePicker></mat-datepicker>
+                    </div>
+                </ng-container>
             </div>
+            <!-- EXPORT BUTTON -->
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control sm-text _primary ml-2 mt-2"
+                title="Export to CSV"
+                (click)="onExport.emit()"
+                [disabled]="isExporting">
+                <span class="{{ !isExporting ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
+                <span class="ml-2 button_text_animation">{{ !isExporting ? 'Export' : 'Generating CSV' }}</span>
+            </button>
         </div>
 
-        <div class="col-md-4" [ngClass]="isDatePickerViewEnabled ? 'mb-cstm' : 'mt-1'">
+        <div class="search-field-wrapper mt-1">
             <!-- SEARCH FIELD -->
             <app-search-field
                 *ngIf="!initialLoad"
@@ -78,7 +79,7 @@
 
     <div *ngIf="!initialLoad; else loader">
         <div class="row" *ngIf="!initialLoad">
-            <div class="col-lg-12 mt-cstm">
+            <div class="col-lg-12">
                 <ng-container *ngIf="!searching; else loader">
                     <mat-card *ngIf="filteredData.length > 0; else no_data">
                         <!-- DATA TABLE -->
