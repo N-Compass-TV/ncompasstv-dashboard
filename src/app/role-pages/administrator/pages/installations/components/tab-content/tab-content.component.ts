@@ -40,14 +40,15 @@ export class TabContentComponent implements OnInit, OnDestroy {
     @Input() tab: string;
 
     date = new FormControl(moment());
-    private selectedDay = '';
-    private selectedMonth = '';
-    private selectedYear = '';
     dateViews = [];
     isClicked: boolean;
     selectedElementId: string | null = null;
 
-    protected _unsubscribe = new Subject<void>();
+    private selectedDay = '';
+    private selectedMonth = '';
+    private selectedYear = '';
+
+    protected unsubscribe = new Subject<void>();
 
     constructor() {}
 
@@ -62,27 +63,27 @@ export class TabContentComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this.unsubscribe.next();
+        this.unsubscribe.complete();
     }
 
-    dateSelected(value: moment.Moment): void {
+    public dateSelected(value: moment.Moment): void {
         this.onSelectDate.emit(value);
         this.datePicker.close();
         this.isDateSelected = true;
         this.isClicked = false;
-        this._dateViews();
+        this.parseDate();
     }
 
-    searchInstallations(keyword: string): void {
+    public searchInstallations(keyword: string): void {
         this.onSearch.emit(keyword);
     }
 
     private subscribeToResetDatePicker(): void {
-        this.resetDatePicker.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.date.setValue(new Date()));
+        this.resetDatePicker.pipe(takeUntil(this.unsubscribe)).subscribe(() => this.date.setValue(new Date()));
     }
 
-    public _dateViews() {
+    public parseDate(): void {
         this.selectedDay = moment(this.date.value).format('DD');
         this.selectedMonth = moment(this.date.value).format('MMM');
         this.selectedYear = moment(this.date.value).format('YYYY');
@@ -93,20 +94,19 @@ export class TabContentComponent implements OnInit, OnDestroy {
             { index: 3, name: 'Year', value: this.selectedYear },
         ];
     }
-
-    trackByDateValue(index: number, view): string {
+    //Datepicker Tracky: fetches new update in the array
+    public trackByDateValue(index: number, view): string {
         return view.id;
     }
 
-    clearDate() {
+    public clearDate(): void {
         this.isDateSelected = false;
         this.isClicked = false;
     }
 
-    selectView(id: string): void {
+    public selectView(id: string): void {
         this.isClicked = false;
         this.selectedElementId = id;
-
         this.isClicked = !this.isClicked;
     }
 }
