@@ -1,48 +1,32 @@
+@import 'src/assets/scss/styles/_variables.scss';
+
 .datepicker-container {
     height: 40px;
 
     .datepicker {
         font-size: 12px;
         flex: 1;
-        background-color: white;
+        background-color: $light;
         width: 296px !important;
         height: 40px !important;
+        padding: 10px;
     }
 
-    // 	.date-views-container {
-    // 		flex: 2;
-    // 		font-size: 12px;
-    // 		min-height: 46px;
-    // 		max-height: 46px;
-    // 		margin-left: 10px;
-
-    // 		mat-button-toggle {
-    // 			border-right: 1px solid gray;
-
-    // 			&.mat-button-toggle-checked {
-    // 				color: white;
-    // 				background-color: gray;
-    // 			}
-    // 		}
-    // 	}
-    // }
-
     .button_default {
-        background-color: #ebebeb;
+        background-color: $muted;
     }
 
     .button_clicked {
-        background-color: #8ec641;
+        background-color: $primary;
     }
 
     .inbtn-view-theme {
-        // background-color: #ebebeb;
         border: 0;
         border-radius: 2px;
-        color: #000000;
+        color: $black;
         min-width: 43px !important;
         height: 20px;
-        padding: 3px 4px;
+        // padding: 3px 4px;
         transition: 0.1s linear;
     }
 
@@ -77,22 +61,8 @@
     height: 15.96px;
 }
 
-.mt-btn-view,
-.mr-1 {
-    margin-top: 0.75rem !important;
-}
-
 .mt-span-ctrl {
     margin-top: -1.5rem !important;
-}
-
-.mb-cstm {
-    margin-bottom: 5.5rem;
-}
-
-.ml-cstm {
-    margin-left: 0.75rem !important;
-    margin-right: -0.5rem;
 }
 
 .pi-control {
@@ -102,5 +72,5 @@
 }
 
 .fa-clr {
-    color: #8dcb2c;
+    color: $primary;
 }

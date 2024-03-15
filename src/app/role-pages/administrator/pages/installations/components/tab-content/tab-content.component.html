@@ -4,10 +4,10 @@
             <div>
                 <!-- DATEPICKER -->
                 <ng-container *ngIf="isDatePickerEnabled">
-                    <div class="datepicker flex mt-2" appearance="standard" appDefaultDateFormat>
+                    <div class="datepicker position-relative flex mt-2" appearance="standard" appDefaultDateFormat>
                         <button
                             id="{{ view.name }}"
-                            class="xsm-text ml-cstm inbtn-view-theme cursor-pointer mt-btn-view"
+                            class="xsm-text inbtn-view-theme cursor-pointer mr-2"
                             *ngFor="let view of dateViews; trackBy: trackByDateValue"
                             (click)="onSelectDateView.emit(view.index); selectView(view.name)"
                             [ngClass]="
@@ -20,9 +20,7 @@
                                 {{ view.name }}
                             </ng-template>
                         </button>
-                        <button
-                            class="xsm-text ml-cstm inbtn-filter-theme cursor-pointer mt-btn-view"
-                            (click)="clearDate()">
+                        <button class="xsm-text ml-cstm inbtn-filter-theme cursor-pointer" (click)="clearDate()">
                             <span class="fas fa-clr fa-times" data-toggle="tooltip" title="Clear Filter"> </span>
                         </button>
                         <input
@@ -33,7 +31,7 @@
                             [matDatepicker]="datePicker"
                             readonly />
                         <mat-datepicker-toggle
-                            class="mat-icon-pos"
+                            class="mat-icon-pos position-absolute right-0 top-0"
                             matSuffix
                             [for]="datePicker"
                             white-bg
