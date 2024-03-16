@@ -68,6 +68,8 @@ export class TabContentComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.unsubscribe.next();
         this.unsubscribe.complete();
+        this.unsubscribe.next();
+        this.unsubscribe.complete();
     }
 
     public dateSelected(value: moment.Moment): void {
@@ -97,7 +99,6 @@ export class TabContentComponent implements OnInit, OnDestroy {
             { index: 3, name: 'Year', value: this.selectedYear },
         ];
     }
-
     //Datepicker Tracky: fetches new update in the array
     public trackByDateValue(index: number, view): string {
         return view.id;
