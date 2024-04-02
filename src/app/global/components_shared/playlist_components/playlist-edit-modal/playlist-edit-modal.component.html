@@ -17,7 +17,7 @@
                     maxlength="50"
                     [disabled]="isLoading" />
             </mat-form-field>
-            <mat-form-field class="full-width mb-3">
+            <mat-form-field class="full-width">
                 <mat-label>Playlist Description (Max Characters: 100)</mat-label>
                 <textarea
                     formControlName="playlistDescription"
@@ -40,7 +40,7 @@
         </form>
     </ng-container>
     <ng-template #success>
-        <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center h-100">
+        <div class="text-center license-list overflow-hidden d-flex align-items-center justify-content-center">
             <div>
                 <app-success-animation class="mb-2"></app-success-animation>
                 <h3 class="mb-4">Playlist Info Updated</h3>

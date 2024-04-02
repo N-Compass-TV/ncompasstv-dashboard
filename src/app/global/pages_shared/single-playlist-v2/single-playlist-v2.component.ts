@@ -884,9 +884,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         message: string,
         returnMsg: string,
     ) {
-        const DEFAULT_WIDTH = '500px';
-        const DEFAULT_HEIGHT = '350px';
-
         const data = {
             status: confirmationType,
             action: actionType,
@@ -896,8 +893,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         };
 
         const configs: MatDialogConfig = {
-            width: DEFAULT_WIDTH,
-            height: DEFAULT_HEIGHT,
+            width: 'fit-content',
+            height: 'fit-content',
             disableClose: true,
             data,
         };
@@ -906,7 +903,12 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
     }
 
     private showEditPlaylistDialog() {
-        const config = { disableClose: true, data: { playlist: this.playlist }, width: '600px' };
+        const config = {
+            disableClose: true,
+            data: { playlist: this.playlist },
+            width: 'fit-content',
+            height: 'fit-content',
+        };
         const dialog = this._dialog.open(PlaylistEditModalComponent, config);
 
         dialog.afterClosed().subscribe({
@@ -919,8 +921,6 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
     }
 
     private showRemoveContentDialog(content?: API_CONTENT_V2) {
-        const DEFAULT_WIDTH = '500px';
-        const DEFAULT_HEIGHT = '350px';
         const dataMsg =
             typeof content === 'undefined' ? 'Proceed removing these contents?' : `Filename: ${content.fileName}`;
         let returnMsg = 'Success!';
@@ -938,8 +938,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         };
 
         const configs: MatDialogConfig = {
-            width: DEFAULT_WIDTH,
-            height: DEFAULT_HEIGHT,
+            width: 'fit-content',
+            height: 'fit-content',
             disableClose: true,
             data,
         };
