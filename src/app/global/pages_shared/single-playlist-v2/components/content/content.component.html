@@ -59,12 +59,12 @@
 
         <section
             class="playlistv2-content__thumbnail"
-            [ngClass]="!controls && 'no-controls'"
+            [ngClass]="{ 'no-controls': !controls, controls: controls }"
             [matTooltip]="getFrequencyInfo()">
             <img
                 class="image-w-100"
                 [src]="content.thumbnail | sanitize"
-                [alt]="content.fileName | slice: 0 : 15 || content.title | slice: 0 : 15" />
+                [alt]="content.fileName || content.title | slice: 0 : 15" />
         </section>
 
         <section

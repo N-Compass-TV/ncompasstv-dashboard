@@ -1,6 +1,6 @@
 .filters-wrapper {
     position: relative;
-    height: 61px;
+    padding: 8px;
 
     .floating-title {
         background: #fff;
@@ -42,7 +42,22 @@ button {
         }
 
         small {
-            color: black !important;
+            color: white !important;
         }
     }
+}
+
+.gap-lg {
+    gap: 12px;
+    margin: 0;
+}
+
+.gap-md {
+    gap: 6px;
+    margin: 0;
+}
+
+.gap-sm {
+    gap: 4px;
+    margin: 0;
 }

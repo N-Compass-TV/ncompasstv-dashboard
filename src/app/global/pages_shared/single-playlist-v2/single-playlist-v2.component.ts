@@ -779,6 +779,9 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
                             return c;
                         });
 
+                    // Update the playlistContentsBackup array
+                    this.playlistContentsBackup = [...this.playlistContents];
+
                     // update the total number of contents on the breakdown
                     const indexForTotalCount = this.playlistContentBreakdown.findIndex(
                         (c) => c.label === 'Content Count',
@@ -908,6 +911,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
 
         dialog.afterClosed().subscribe({
             next: (response: boolean) => {
+                this.getPlaylistData(this.playlistId);
                 if (!response) return;
                 this.playlistRouteInit();
             },

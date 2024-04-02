@@ -111,8 +111,13 @@
             object-position: center;
         }
 
+        &.controls {
+            cursor: move;
+        }
+
         &.no-controls {
             height: 112px;
+            cursor: default;
         }
     }
 

@@ -7,15 +7,17 @@
                         <h1 class="page-title">{{ playlistName }}</h1>
                         <p class="sm-text mb-0">{{ playlistDescription }}</p>
                     </div>
-                    <div class="playlist-settings d-flex">
+                    <div class="playlist-settings d-flex gap-md">
                         <button
                             *ngFor="let p of playlistSettings"
                             mat-button
                             mat-raised-button
-                            class="theme-btn mr-2"
+                            class="theme-btn"
                             (click)="playlistSettingClicked(p.action)">
-                            <i class="{{ p.icon }} text-green mr-3"></i>
-                            <small class="font-weight-bold">{{ p.label }}</small>
+                            <span class="d-flex align-items-center gap-sm">
+                                <i class="{{ p.icon }} text-green"></i>
+                                <small class="font-weight-bold">{{ p.label }}</small>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -24,13 +26,12 @@
             <section class="playlist-workbench">
                 <mat-tab-group>
                     <mat-tab label="Content Management">
-                        <div class="playlist-content-management-wrapper pt-3">
-                            <section class="playlist-content-management-controls d-flex mb-3">
-                                <div class="playlist-stats d-flex">
+                        <div class="playlist-content-management-wrapper">
+                            <section class="playlist-content-management-controls d-flex justify-content-between my-3">
+                                <div class="playlist-stats d-flex gap-lg">
                                     <div
                                         class="breakdown-item"
-                                        *ngFor="let p of playlistContentBreakdown; let i = index"
-                                        [ngClass]="i < playlistContentBreakdown.length - 1 && 'mr-4'">
+                                        *ngFor="let p of playlistContentBreakdown; let i = index">
                                         <h4 class="font-weight-bold m-0 text-green">
                                             {{ p.total }}
                                         </h4>
@@ -39,17 +40,19 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="flex-even text-right">
+                                <div class="d-flex gap-md">
                                     <ng-container *ngFor="let c of playlistControls; let i = index">
                                         <button
                                             mat-button
                                             mat-raised-button
                                             class="theme-btn {{ c.className || '' }}"
-                                            [ngClass]="{ 'mr-2': i < playlistControls.length - 1 }"
+                                            [ngClass]="{ '': i < playlistControls.length - 1 }"
                                             [disabled]="c.disabled"
                                             (click)="playlistControlClicked(c)">
-                                            <i class="{{ c.icon }} mr-3"></i>
-                                            <small class="font-weight-bold">{{ c.label }}</small>
+                                            <span class="d-flex align-items-center gap-sm">
+                                                <i class="{{ c.icon }}"></i>
+                                                <small class="font-weight-bold">{{ c.label }}</small>
+                                            </span>
                                         </button>
                                     </ng-container>
                                 </div>
@@ -59,47 +62,48 @@
                                 <div class="filter-controls">
                                     <div class="d-flex">
                                         <div class="flex-even">
-                                            <div class="d-flex">
+                                            <div class="d-flex gap-md">
                                                 <!-- Filters -->
-                                                <div class="filters-and-search mr-4">
+                                                <div class="filters-and-search">
                                                     <div
-                                                        class="d-flex align-items-center filters-wrapper border rounded px-2">
+                                                        class="d-flex align-items-center filters-wrapper border rounded">
                                                         <h6 class="floating-title">FILTERS</h6>
-                                                        <div class="d-flex">
+                                                        <div class="d-flex gap-md">
                                                             <div
-                                                                class="content-filters"
-                                                                *ngFor="let p of playlistFilters; let i = index"
-                                                                [ngClass]="i == 0 && 'mr-3'">
+                                                                class="content-filters d-flex"
+                                                                *ngFor="let p of playlistFilters; let i = index">
                                                                 <button
                                                                     mat-button
                                                                     mat-raised-button
                                                                     class="theme-btn"
                                                                     [matMenuTriggerFor]="menu">
-                                                                    <i class="{{ p.icon }} mr-3 text-green"></i>
-                                                                    <small class="font-weight-bold mr-2">
-                                                                        {{ p.label }}
+                                                                    <span class="d-flex gap-md align-items-center">
+                                                                        <i class="{{ p.icon }} text-green"></i>
+                                                                        <small class="font-weight-bold">
+                                                                            {{ p.label }}
 
-                                                                        <ng-container
-                                                                            *ngIf="
-                                                                                p.label ===
-                                                                                    playlistFilterLabels.contentTypeLabel &&
-                                                                                currentFilters.type
-                                                                            ">
-                                                                            :
-                                                                            {{ currentFilters.type | titlecase }}
-                                                                        </ng-container>
+                                                                            <ng-container
+                                                                                *ngIf="
+                                                                                    p.label ===
+                                                                                        playlistFilterLabels.contentTypeLabel &&
+                                                                                    currentFilters.type
+                                                                                ">
+                                                                                :
+                                                                                {{ currentFilters.type | titlecase }}
+                                                                            </ng-container>
 
-                                                                        <ng-container
-                                                                            *ngIf="
-                                                                                p.label ===
-                                                                                    playlistFilterLabels.contentStatusLabel &&
-                                                                                currentFilters.status
-                                                                            ">
-                                                                            :
-                                                                            {{ currentFilters.status | titlecase }}
-                                                                        </ng-container>
-                                                                    </small>
-                                                                    <i class="fas fa-caret-down"></i>
+                                                                            <ng-container
+                                                                                *ngIf="
+                                                                                    p.label ===
+                                                                                        playlistFilterLabels.contentStatusLabel &&
+                                                                                    currentFilters.status
+                                                                                ">
+                                                                                :
+                                                                                {{ currentFilters.status | titlecase }}
+                                                                            </ng-container>
+                                                                        </small>
+                                                                        <i class="fas fa-caret-down"></i>
+                                                                    </span>
                                                                 </button>
                                                                 <mat-menu #menu="matMenu">
                                                                     <button
@@ -115,23 +119,24 @@
                                                 </div>
 
                                                 <!-- View Options -->
-                                                <div class="other-options mr-4">
+                                                <div class="other-options">
                                                     <div
-                                                        class="d-flex align-items-center filters-wrapper border rounded px-2">
+                                                        class="d-flex align-items-center filters-wrapper border rounded">
                                                         <h6 class="floating-title">VIEWS</h6>
-                                                        <div class="d-flex">
+                                                        <div class="d-flex gap-md">
                                                             <button
                                                                 mat-button
                                                                 mat-raised-button
                                                                 class="theme-btn"
-                                                                *ngFor="let p of playlistViews; let i = index"
+                                                                *ngFor="let p of playlistViews"
                                                                 (click)="viewButtonClicked(p.action)"
-                                                                [ngClass]="i !== playlistViews.length - 1 && 'mr-3'"
                                                                 [class.selected]="p.is_selected">
-                                                                <i class="{{ p.icon }} mr-3 text-green"></i>
-                                                                <small class="font-weight-bold mr-1">{{
-                                                                    p.label
-                                                                }}</small>
+                                                                <span class="d-flex align-items-center gap-sm">
+                                                                    <i class="{{ p.icon }} text-green"></i>
+                                                                    <small class="font-weight-bold">{{
+                                                                        p.label
+                                                                    }}</small></span
+                                                                >
                                                             </button>
                                                         </div>
                                                     </div>
@@ -141,7 +146,7 @@
 
                                         <div class="search-form-wrapper">
                                             <form class="search-form">
-                                                <mat-form-field class="full-width" appearance="fill">
+                                                <mat-form-field class="full-width">
                                                     <mat-label>Search Playlist Content</mat-label>
                                                     <input
                                                         matInput

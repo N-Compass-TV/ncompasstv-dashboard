@@ -51,7 +51,7 @@ export const PlaylistPrimaryControls = [
     {
         label: 'Save Changes',
         action: PlaylistPrimaryControlActions.savePlaylist,
-        icon: 'fas fa-save text-dark',
+        icon: 'fas fa-save',
         className: 'bg-primary',
         disabled: true,
     },
