@@ -175,6 +175,10 @@
 //     padding: 1rem;
 // }
 
+.px-15 {
+    padding-inline: 15px !important;
+}
+
 .child-container {
     padding-inline: 35px;
 }
@@ -211,6 +215,14 @@
     font-size: $xlg !important;
 }
 
+.text-14 {
+    font-size: $text-14;
+}
+
+.text-16 {
+    font-size: $text-16;
+}
+
 .line-height-lg {
     line-height: $lg;
 }
@@ -236,6 +248,9 @@
 .font-weight-bold {
     font-weight: 700;
 }
+.font-weight-semibold {
+    font-weight: 600;
+}
 
 //Ordered Unordered List
 .list-unstyled {
@@ -244,4 +259,8 @@
 
 .fs-normal {
     font-size: $normal;
+}
+
+.gap-15 {
+    gap: $gap-15;
 }

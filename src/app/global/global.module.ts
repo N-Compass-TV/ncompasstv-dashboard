@@ -26,7 +26,9 @@ import { BulkPlaywhereComponent } from './components_shared/playlist_components/
 import { CategoryModalComponent } from './components_shared/category_components/category-modal/category-modal.component';
 import { ChangeTemplateComponent } from './components_shared/screen_components/change-template/change-template.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { ClickOutsideDirective } from './directives/custom-event/clickOutside.directive';
 import { CloneFeedDialogComponent } from './components_shared/data_components/data-table/dialogs/clone-feed-dialog/clone-feed-dialog.component';
+import { CloneFillerDialogComponent } from './components_shared/data_components/data-table/dialogs/clone-filler-dialog/clone-filler-dialog.component';
 import { ClonePlaylistComponent } from './components_shared/playlist_components/clone-playlist/clone-playlist.component';
 import { CloneScreenComponent } from './components_shared/screen_components/clone-screen/clone-screen.component';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -108,6 +110,7 @@ import { FillerMainViewComponent } from './pages_shared/fillers/components/fille
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
 import { GridViewLicenseComponent } from './components_shared/license_components/grid-view-license/grid-view-license.component';
+import { HostAutocompleteComponent } from './components_shared/data_components/host-autocomplete/host-autocomplete.component';
 import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostViewComponent } from './components_shared/locator_components/host-view/host-view.component';
 import { HostsTabComponent } from './components_shared/reports_components/hosts-tab/hosts-tab.component';
@@ -274,6 +277,7 @@ const ngComponents = [
     CategoryModalComponent,
     ChangeTemplateComponent,
     CloneFeedDialogComponent,
+    CloneFillerDialogComponent,
     ClonePlaylistComponent,
     CloneScreenComponent,
     ConfirmTemplateModalComponent,
@@ -355,6 +359,7 @@ const ngComponents = [
     FooterComponent,
     GenerateFeedComponent,
     GridViewLicenseComponent,
+    HostAutocompleteComponent,
     HostCustomFieldsComponent,
     HostViewComponent,
     HostsTabComponent,
@@ -503,7 +508,7 @@ const MaterialModules = [
     MatTooltipModule,
 ];
 
-const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
+const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective, ClickOutsideDirective];
 
 @NgModule({
     declarations: [ngComponents, DIRECTIVES],
@@ -519,6 +524,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
         CategoryModalComponent,
         ChangeTemplateComponent,
         CloneFeedDialogComponent,
+        CloneFillerDialogComponent,
         ClonePlaylistComponent,
         CloneScreenComponent,
         CreateFillerFeedComponent,
