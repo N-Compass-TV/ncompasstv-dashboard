@@ -27,7 +27,7 @@
             </div>
             <div
                 class="frequency-radio-btn"
-                *ngIf="playlist_content_length > frequencyMinCount; else frequencyDisabled">
+                *ngIf="playlist_content_length >= frequencyMinCount; else frequencyDisabled">
                 <mat-radio-group formControlName="frequency" aria-label="Select an option">
                     <ng-container *ngIf="isParentFrequency">
                         <mat-radio-button class="mr-3" value="1">
