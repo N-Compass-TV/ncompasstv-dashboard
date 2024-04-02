@@ -893,7 +893,7 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         };
 
         const configs: MatDialogConfig = {
-            width: 'fit-content',
+            minWidth: '350px',
             height: 'fit-content',
             disableClose: true,
             data,
@@ -938,8 +938,8 @@ export class SinglePlaylistV2Component implements OnInit, OnDestroy {
         };
 
         const configs: MatDialogConfig = {
-            width: 'fit-content',
             height: 'fit-content',
+            minWidth: '350px',
             disableClose: true,
             data,
         };

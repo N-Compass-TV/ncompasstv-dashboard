@@ -31,11 +31,11 @@ export const PlaylistPrimaryControls = [
         icon: 'fas fa-spinner fa-spin text-green',
         disabled: true,
     },
-    {
-        label: 'New Spacer',
-        action: PlaylistPrimaryControlActions.newSpacer,
-        icon: 'fas fa-plus text-green',
-    },
+    // {
+    //     label: 'New Spacer',
+    //     action: PlaylistPrimaryControlActions.newSpacer,
+    //     icon: 'fas fa-plus text-green',
+    // },
     {
         label: 'Bulk Modify',
         action: PlaylistPrimaryControlActions.bulkModify,
