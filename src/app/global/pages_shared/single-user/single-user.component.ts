@@ -49,6 +49,9 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     selected_dealers_control = this.dealers_form.get('dealers');
     // selected_dealer: any;
     subscription = new Subscription();
+    userId: string;
+    sort_column_activity = 'DateCreated';
+    sort_order_activity = 'desc';
 
     permissions = [
         { label: 'View', value: 'V' },
@@ -334,6 +337,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response: any) => {
+                    console.log(response, 'res');
                     if ('message' in response) return;
                     if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer)
                         this.dealer_id = response.dealer.dealerId;
@@ -345,10 +349,12 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                     this.user = userData;
                     this.is_dealer_admin = userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
                     this.dealer_admin_user_id = userData.userId;
+                    this.userId = response.userId;
 
                     this.setPageData(userData);
                     this.getUserSelectedRole(userData);
                     this.initializeForms();
+                    this.getUserActivityData(1);
                 },
                 (error) => {
                     console.error(error);
@@ -538,6 +544,22 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             height: '350px',
             data: { status, message, data },
         });
+    }
+
+    public getActivityColumnsAndOrder(data: { column: string; order: string }): void {
+        this.sort_column_activity = data.column;
+        this.sort_order_activity = data.order;
+        this.getUserActivityData(1);
+    }
+
+    public getUserActivityData(page: number): void {
+        this._user
+            .getActivitiesByOwnerId(this.userId, this.sort_column_activity, this.sort_order_activity, page)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((res) => {
+                console.log(this.userId, this.user, 'ID');
+                console.log(res, 'This is activity');
+            });
     }
 
     protected get currentRole() {

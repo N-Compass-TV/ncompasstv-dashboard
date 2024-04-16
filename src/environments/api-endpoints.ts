@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
         all_release_notes: 'ReleaseNote/getall',
         api_get_activities: 'activity/getall',
         api_get_activities_by_license_id: 'activity/getactivitybylicenseid?licenseid=',
+        api_get_activities_by_owner_id: 'activity/getactivitybyownerid?ownerId=',
         api_get_advertisers: 'advertiser/getall',
         api_get_advertisers_activity: 'advertiseractivitylog/getall',
         api_get_advertisers_by_dealer_id: 'advertiser/getbydealerid',
