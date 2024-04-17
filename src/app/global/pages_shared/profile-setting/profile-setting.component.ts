@@ -63,9 +63,8 @@ export class ProfileSettingComponent implements OnInit {
     tab_selected: string = 'Dealer';
     user: API_USER_DATA;
 
-    activityTable = [
+    userActivityTable = [
         { name: '#', sortable: false },
-        { name: 'Name', column: 'initiatedBy', sortable: false },
         { name: 'Activity', column: 'activityDescription', sortable: false },
         { name: 'Date Created', column: 'dateCreated', sortable: false },
     ];
@@ -258,8 +257,8 @@ export class ProfileSettingComponent implements OnInit {
                 { value: count++, editable: false },
                 { value: a.activityCode, hidden: true },
                 { value: a.activityLogId, hidden: true },
-                { value: a.initiatedBy, hidden: false },
-                { value: a.activityDescription, hidden: false },
+                { value: a.initiatedBy, hidden: true },
+                { value: `You ${a.activityDescription}`, hidden: false },
                 { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
                 { value: a.dateUpdated, hidden: true },
                 { value: a.initiatedById, hidden: true },
