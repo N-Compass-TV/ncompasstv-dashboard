@@ -12,8 +12,10 @@ import {
     UserService,
 } from 'src/app/global/services';
 import {
+    API_ACTIVITY,
     API_DEALER,
     API_USER_DATA,
+    PAGING,
     UI_ACTIVITY_LOGS,
     UI_CURRENT_USER,
     UI_ROLE_DEFINITION,
@@ -29,6 +31,7 @@ import { DatePipe } from '@angular/common';
 export class ProfileSettingComponent implements OnInit {
     activity_created_by: any;
     activity_data: UI_ACTIVITY_LOGS[] = [];
+    activityData: API_ACTIVITY[] = [];
     advertiser_data: any;
     advertiser_details: any = {};
     content_details: any = {};
@@ -51,14 +54,21 @@ export class ProfileSettingComponent implements OnInit {
     no_activity_data = false;
     no_credit_card: boolean = false;
     no_dealer_values: boolean = false;
-    paging_data_activity: any;
+    pagingActivityData: PAGING;
     reload_data: boolean = false;
     show_cart_button: boolean = false;
-    sort_column_activity = 'DateCreated';
-    sort_order_activity = 'desc';
+    sortActivityColumn = 'DateCreated';
+    sortActivityOrder = 'desc';
     subscription: Subscription = new Subscription();
     tab_selected: string = 'Dealer';
     user: API_USER_DATA;
+
+    activityTable = [
+        { name: '#', sortable: false },
+        { name: 'Name', column: 'initiatedBy', sortable: false },
+        { name: 'Activity', column: 'activityDescription', sortable: false },
+        { name: 'Date Created', column: 'dateCreated', sortable: false },
+    ];
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -100,6 +110,7 @@ export class ProfileSettingComponent implements OnInit {
             this.getDealer();
         } else {
             this.is_dealer = false;
+            this.getUserActivityData(1);
         }
     }
 
@@ -112,16 +123,17 @@ export class ProfileSettingComponent implements OnInit {
     }
 
     getActivityColumnsAndOrder(data: { column: string; order: string }): void {
-        this.sort_column_activity = data.column;
-        this.sort_order_activity = data.order;
+        this.sortActivityColumn = data.column;
+        this.sortActivityOrder = data.order;
         this.getDealerActivity(1);
+        this.getUserActivityData(1);
     }
 
     getDealerActivity(page: number) {
         this.activity_data = [];
 
         this._dealer
-            .get_dealer_activity(this.dealer_id, this.sort_column_activity, this.sort_order_activity, page)
+            .get_dealer_activity(this.dealer_id, this.sortActivityColumn, this.sortActivityOrder, page)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (res) => {
@@ -135,7 +147,7 @@ export class ProfileSettingComponent implements OnInit {
                         this.activity_created_by = responses;
 
                         const mappedData = this.activity_mapToUI(res.paging.entities);
-                        this.paging_data_activity = res.paging;
+                        this.pagingActivityData = res.paging;
                         this.activity_data = [...mappedData];
                         this.reload_data = true;
                     });
@@ -223,6 +235,35 @@ export class ProfileSettingComponent implements OnInit {
                 { value: activityMessage, hidden: false },
                 { value: a.initiatedBy, hidden: true },
                 { value: a.dateUpdated, hidden: true },
+            );
+        });
+    }
+
+    public getUserActivityData(page: number): void {
+        this._user
+            .getActivitiesByCurrentUser(this.sortActivityColumn, this.sortActivityOrder, page, 15)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((response) => {
+                const mappedData = this.new_activity_mapToUI(response.paging.entities);
+                this.pagingActivityData = response.paging;
+                this.activityData = [...mappedData];
+            });
+    }
+
+    public new_activity_mapToUI(activity: API_ACTIVITY[]): any {
+        let count = 1;
+
+        return activity.map((a) => {
+            return new API_ACTIVITY(
+                { value: count++, editable: false },
+                { value: a.activityCode, hidden: true },
+                { value: a.activityLogId, hidden: true },
+                { value: a.initiatedBy, hidden: false },
+                { value: a.activityDescription, hidden: false },
+                { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
+                { value: a.dateUpdated, hidden: true },
+                { value: a.initiatedById, hidden: true },
+                { value: a.licenseId, hidden: true },
             );
         });
     }
@@ -337,6 +378,7 @@ export class ProfileSettingComponent implements OnInit {
 
     tabSelected(event: { index: number }) {
         this.getDealerActivity(1);
+        this.getUserActivityData(1);
 
         return event;
     }

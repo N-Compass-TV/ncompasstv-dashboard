@@ -5,9 +5,17 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject, Subscription } from 'rxjs';
 
-import { API_USER_DATA, UI_ROLE_DEFINITION, API_DEALER } from 'src/app/global/models';
+import {
+    API_USER_DATA,
+    UI_ROLE_DEFINITION,
+    API_DEALER,
+    API_ACTIVITY,
+    PAGING,
+    UI_ACTIVITY_LOGS,
+} from 'src/app/global/models';
 import { AuthService, HelperService, UserService, DealerService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'app-single-user',
@@ -50,8 +58,17 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     // selected_dealer: any;
     subscription = new Subscription();
     userId: string;
-    sort_column_activity = 'DateCreated';
-    sort_order_activity = 'desc';
+
+    activityData: API_ACTIVITY[] = [];
+    pagingActivityData: PAGING;
+    sortActivityColumn = 'DateCreated';
+    sortActivityOrder = 'desc';
+    activityTable = [
+        { name: '#', sortable: false },
+        { name: 'Name', column: 'initiatedBy', sortable: false },
+        { name: 'Activity', column: 'activityDescription', sortable: false },
+        { name: 'Date Created', column: 'dateCreated', sortable: false },
+    ];
 
     permissions = [
         { label: 'View', value: 'V' },
@@ -72,6 +89,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
         private _router: Router,
         private _snackbar: MatSnackBar,
         private _user: UserService,
+        private _date: DatePipe,
     ) {}
 
     ngOnInit() {
@@ -337,7 +355,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response: any) => {
-                    console.log(response, 'res');
                     if ('message' in response) return;
                     if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer)
                         this.dealer_id = response.dealer.dealerId;
@@ -547,19 +564,38 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     }
 
     public getActivityColumnsAndOrder(data: { column: string; order: string }): void {
-        this.sort_column_activity = data.column;
-        this.sort_order_activity = data.order;
+        this.sortActivityColumn = data.column;
+        this.sortActivityOrder = data.order;
         this.getUserActivityData(1);
     }
 
     public getUserActivityData(page: number): void {
         this._user
-            .getActivitiesByOwnerId(this.userId, this.sort_column_activity, this.sort_order_activity, page)
+            .getActivitiesByOwnerId(this.userId, this.sortActivityColumn, this.sortActivityOrder, page)
             .pipe(takeUntil(this._unsubscribe))
-            .subscribe((res) => {
-                console.log(this.userId, this.user, 'ID');
-                console.log(res, 'This is activity');
+            .subscribe((response) => {
+                const mappedData = this.activity_mapToUI(response.paging.entities);
+                this.pagingActivityData = response.paging;
+                this.activityData = [...mappedData];
             });
+    }
+
+    public activity_mapToUI(activity: API_ACTIVITY[]): any {
+        let count = 1;
+
+        return activity.map((a) => {
+            return new API_ACTIVITY(
+                { value: count++, editable: false },
+                { value: a.activityCode, hidden: true },
+                { value: a.activityLogId, hidden: true },
+                { value: a.initiatedBy, hidden: false },
+                { value: a.activityDescription, hidden: false },
+                { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
+                { value: a.dateUpdated, hidden: true },
+                { value: a.initiatedById, hidden: true },
+                { value: a.licenseId, hidden: true },
+            );
+        });
     }
 
     protected get currentRole() {

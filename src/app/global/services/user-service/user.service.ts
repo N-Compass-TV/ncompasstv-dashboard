@@ -116,6 +116,18 @@ export class UserService extends BaseService {
         return this.getRequest(url);
     }
 
+    getActivitiesByCurrentUser(
+        sortColumn: string,
+        sortOrder: string,
+        page: number,
+        pageSize: number,
+    ): Observable<{ paging: PAGING; message?: string }> {
+        const base = `${this.getters.api_get_activities_by_current_user}`;
+        const params = this.setUrlParams({ sortColumn, sortOrder, page, pageSize }, false, true);
+        const url = `${base}${params}`;
+        return this.getRequest(url);
+    }
+
     create_new_user(role: string, data: any) {
         let url: string;
 
