@@ -44,7 +44,7 @@ export class ProfileSettingComponent implements OnInit {
     dealer: API_DEALER;
     host_details: any = {};
     initial_load_activity = true;
-    is_dealer: boolean = false;
+    isDealer: boolean = false;
     is_prod: boolean = false;
     license_details: any = {};
     loading_advertiser: boolean = true;
@@ -96,7 +96,7 @@ export class ProfileSettingComponent implements OnInit {
             this.is_prod = true;
         }
         if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-            this.is_dealer = true;
+            this.isDealer = true;
             this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
             this.current_user = this._auth.current_user_value;
             this.getTotalLicenses(this._auth.current_user_value.roleInfo.dealerId);
@@ -109,7 +109,7 @@ export class ProfileSettingComponent implements OnInit {
             this.getDealerActivity(1);
             this.getDealer();
         } else {
-            this.is_dealer = false;
+            this.isDealer = false;
             this.getUserActivityData(1);
         }
     }

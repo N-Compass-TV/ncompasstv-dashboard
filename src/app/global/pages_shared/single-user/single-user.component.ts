@@ -24,6 +24,7 @@ import { DatePipe } from '@angular/common';
 })
 export class SingleUserComponent implements OnInit, OnDestroy {
     @ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
+    activityData: API_ACTIVITY[] = [];
     advertiser_id: string;
     bg_role: any;
     dealers_form = this._form.group({ dealers: [[], Validators.required] });
@@ -47,6 +48,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     is_searching_dealer = false;
     initial_assigned_dealer_ids: string[] = [];
     original_dealers: API_DEALER[] = [];
+    pagingActivityData: PAGING;
     password_form: FormGroup;
     password_form_disabled = false;
     password_is_match: string;
@@ -55,14 +57,12 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     password_validation_message: string;
     user: API_USER_DATA;
     selected_dealers_control = this.dealers_form.get('dealers');
+    sortActivityColumn = 'DateCreated';
+    sortActivityOrder = 'desc';
     // selected_dealer: any;
     subscription = new Subscription();
     userId: string;
 
-    activityData: API_ACTIVITY[] = [];
-    pagingActivityData: PAGING;
-    sortActivityColumn = 'DateCreated';
-    sortActivityOrder = 'desc';
     activityTable = [
         { name: '#', sortable: false },
         { name: 'Name', column: 'initiatedBy', sortable: false },
@@ -82,6 +82,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     constructor(
         private _auth: AuthService,
         private _dealer: DealerService,
+        private _date: DatePipe,
         private _dialog: MatDialog,
         private _form: FormBuilder,
         private _helper: HelperService,
@@ -89,7 +90,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
         private _router: Router,
         private _snackbar: MatSnackBar,
         private _user: UserService,
-        private _date: DatePipe,
     ) {}
 
     ngOnInit() {
