@@ -19,6 +19,7 @@ import {
     UI_ACTIVITY_LOGS,
     UI_CURRENT_USER,
     UI_ROLE_DEFINITION,
+    USER_ACTIVITY,
 } from 'src/app/global/models';
 import { environment } from 'src/environments/environment';
 import { DatePipe } from '@angular/common';
@@ -249,20 +250,30 @@ export class ProfileSettingComponent implements OnInit {
             });
     }
 
-    public new_activity_mapToUI(activity: API_ACTIVITY[]): any {
+    public new_activity_mapToUI(activity: USER_ACTIVITY[]): any {
         let count = 1;
 
         return activity.map((a) => {
-            return new API_ACTIVITY(
+            const playlistName = a.targetName ? a.targetName : '--';
+            const playlistLink = a.targetId ? `/administrator/playlists/${a.targetId}` : '';
+
+            return new USER_ACTIVITY(
                 { value: count++, editable: false },
                 { value: a.activityCode, hidden: true },
                 { value: a.activityLogId, hidden: true },
                 { value: a.initiatedBy, hidden: true },
-                { value: `You ${a.activityDescription}`, hidden: false },
+                { value: a.initiatedBy, hidden: true },
+                {
+                    value: `You ${a.activityDescription}(${playlistName})`,
+                    link: playlistLink,
+                    new_tab_link: true,
+                    hidden: false,
+                },
                 { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
-                { value: a.dateUpdated, hidden: true },
                 { value: a.initiatedById, hidden: true },
-                { value: a.licenseId, hidden: true },
+                { value: a.owner, hidden: true },
+                { value: a.ownerId, hidden: true },
+                { value: a.targetId, hidden: true },
             );
         });
     }

@@ -59,7 +59,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     activityTable = [
         { name: '#', sortable: false },
         { name: 'Activity', column: 'activityDescription', sortable: false },
-        { name: 'Playlist Name', column: 'targetName', sortable: false },
         { name: 'Date Created', column: 'dateCreated', sortable: false },
     ];
 
@@ -582,17 +581,23 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             const activityDoneBy =
                 this.currentUser.user_id === a.initiatedById ? `${a.initiatedBy} (You)` : ` ${a.initiatedBy}`;
 
+            console.log(this.currentUser, 'sr');
+
             return new USER_ACTIVITY(
                 { value: count++, editable: false },
                 { value: a.activityCode, hidden: true },
                 { value: a.activityLogId, hidden: true },
                 { value: a.initiatedBy, hidden: true },
-                { value: `${activityDoneBy} ${a.activityDescription} for ${a.owner}`, hidden: false },
                 {
-                    value: playlistName,
+                    value: `${activityDoneBy} ${a.activityDescription}(${playlistName}) for ${a.owner}`,
                     link: playlistLink,
                     new_tab_link: true,
                     hidden: false,
+                },
+                {
+                    value: playlistName,
+
+                    hidden: true,
                 },
                 { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
                 { value: a.initiatedById, hidden: true },
