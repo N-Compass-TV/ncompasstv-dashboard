@@ -60,7 +60,7 @@
                                         </div>
 
                                         <!-- EMAIL FIELD -->
-                                        <div class="text-field-container" *ngIf="field.type === 'email' && is_admin">
+                                        <div class="text-field-container" *ngIf="field.type === 'email' && isAdmin">
                                             <mat-form-field class="full-width">
                                                 <mat-label>Email</mat-label>
                                                 <input
@@ -116,7 +116,7 @@
                                         <h3>Change Password</h3>
                                         <p class="sm-text mb-4">Change this user's password.</p>
                                     </div>
-                                    <div class="col-lg-6 text-right" *ngIf="is_admin">
+                                    <div class="col-lg-6 text-right" *ngIf="isAdmin">
                                         <span class="bg-gray p-3 px-4 br-10 sm-text">
                                             {{ user.password }}
                                             <i
@@ -291,9 +291,10 @@
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab label="Activity">
-                    <ng-container *ngIf="activityData && activityData.length; else noActivity">
+                <mat-tab label="Activity" *ngIf="isAdmin">
+                    <ng-container *ngIf="activityData; else loader">
                         <app-single-activity-tab
+                            *ngIf="activityData && activityData.length; else noActivity"
                             [activity_data]="activityData"
                             [paging_data]="pagingActivityData"
                             [sort_column]="sortActivityColumn"

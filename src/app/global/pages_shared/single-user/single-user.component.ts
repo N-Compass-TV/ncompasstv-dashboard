@@ -5,14 +5,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject, Subscription } from 'rxjs';
 
-import {
-    API_USER_DATA,
-    UI_ROLE_DEFINITION,
-    API_DEALER,
-    API_ACTIVITY,
-    PAGING,
-    UI_ACTIVITY_LOGS,
-} from 'src/app/global/models';
+import { API_USER_DATA, UI_ROLE_DEFINITION, API_DEALER, USER_ACTIVITY, PAGING } from 'src/app/global/models';
 import { AuthService, HelperService, UserService, DealerService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { DatePipe } from '@angular/common';
@@ -24,7 +17,7 @@ import { DatePipe } from '@angular/common';
 })
 export class SingleUserComponent implements OnInit, OnDestroy {
     @ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
-    activityData: API_ACTIVITY[] = [];
+    activityData: USER_ACTIVITY[] = [];
     advertiser_id: string;
     bg_role: any;
     dealers_form = this._form.group({ dealers: [[], Validators.required] });
@@ -38,7 +31,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     info_form: FormGroup;
     info_form_disabled = false;
     info_form_fields = this._formFields;
-    is_admin = this._auth.current_role === 'administrator';
+    isAdmin = this._auth.current_role === 'administrator';
     is_dealer_admin = false;
     is_initial_load = true;
     is_loading = true;
@@ -65,8 +58,8 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
     activityTable = [
         { name: '#', sortable: false },
-        { name: 'Name', column: 'initiatedBy', sortable: false },
         { name: 'Activity', column: 'activityDescription', sortable: false },
+        { name: 'Playlist Name', column: 'targetName', sortable: false },
         { name: 'Date Created', column: 'dateCreated', sortable: false },
     ];
 
@@ -580,20 +573,32 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             });
     }
 
-    public activity_mapToUI(activity: API_ACTIVITY[]): any {
+    public activity_mapToUI(activity: USER_ACTIVITY[]): any {
         let count = 1;
 
         return activity.map((a) => {
-            return new API_ACTIVITY(
+            const playlistName = a.targetName ? a.targetName : '--';
+            const playlistLink = a.targetId ? `/administrator/playlists/${a.targetId}` : '';
+            const activityDoneBy =
+                this.currentUser.user_id === a.initiatedById ? `${a.initiatedBy} (You)` : ` ${a.initiatedBy}`;
+
+            return new USER_ACTIVITY(
                 { value: count++, editable: false },
                 { value: a.activityCode, hidden: true },
                 { value: a.activityLogId, hidden: true },
-                { value: a.initiatedBy, hidden: false },
-                { value: a.activityDescription, hidden: false },
+                { value: a.initiatedBy, hidden: true },
+                { value: `${activityDoneBy} ${a.activityDescription} for ${a.owner}`, hidden: false },
+                {
+                    value: playlistName,
+                    link: playlistLink,
+                    new_tab_link: true,
+                    hidden: false,
+                },
                 { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
-                { value: a.dateUpdated, hidden: true },
                 { value: a.initiatedById, hidden: true },
-                { value: a.licenseId, hidden: true },
+                { value: a.owner, hidden: true },
+                { value: a.ownerId, hidden: true },
+                { value: a.targetId, hidden: true },
             );
         });
     }
