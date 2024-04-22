@@ -579,9 +579,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             const playlistName = a.targetName ? a.targetName : '--';
             const playlistLink = a.targetId ? `/administrator/playlists/${a.targetId}` : '';
             const activityDoneBy =
-                this.currentUser.user_id === a.initiatedById ? `${a.initiatedBy} (You)` : ` ${a.initiatedBy}`;
-
-            console.log(this.currentUser, 'sr');
+                this.currentUser.user_id === a.initiatedById ? `${a.initiatedBy}(You)` : ` ${a.initiatedBy}`;
 
             return new USER_ACTIVITY(
                 { value: count++, editable: false },

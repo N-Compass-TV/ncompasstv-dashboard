@@ -264,7 +264,7 @@ export class ProfileSettingComponent implements OnInit {
                 { value: a.initiatedBy, hidden: true },
                 { value: a.initiatedBy, hidden: true },
                 {
-                    value: `You ${a.activityDescription}(${playlistName})`,
+                    value: `You ${a.activityDescription}(${playlistName}) for ${a.owner}`,
                     link: playlistLink,
                     new_tab_link: true,
                     hidden: false,
