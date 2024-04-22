@@ -116,6 +116,18 @@ export class UserService extends BaseService {
         return this.getRequest(url);
     }
 
+    getActivitiesByOwnerIdDealerAdmin(
+        ownerId: string,
+        sortColumn: string,
+        sortOrder: string,
+        page: number,
+    ): Observable<{ paging: PAGING; message?: string }> {
+        const base = `${this.getters.api_get_activities_by_owner_id_dealeradmin}`;
+        const params = this.setUrlParams({ ownerId, sortColumn, sortOrder, page }, false, true);
+        const url = `${base}${params}`;
+        return this.getRequest(url);
+    }
+
     getActivitiesByCurrentUser(
         sortColumn: string,
         sortOrder: string,
