@@ -218,7 +218,6 @@ export class ToolsComponent implements OnInit {
             .updateActivity(activity.activityCode, { activityDescription: activity.activityDescription })
             .subscribe(
                 () => {
-                    console.log('Activity description updated successfully');
                     this._snackBar.open('Activity description updated successfully', 'Close', {
                         duration: 8000,
                         panelClass: ['snackbar-success', 'custom-close-button'],
@@ -250,7 +249,6 @@ export class ToolsComponent implements OnInit {
         const activityCode = activity.activityCode;
         this._tool.deleteActivity(activityCode).subscribe(
             () => {
-                console.log(`${activityCode} activity deleted successfully`);
                 this.getActivityCode(); // Refresh activity list after deletion
                 this._snackBar.open(`${activityCode} activity deleted successfully`, 'Close', {
                     duration: 8000,

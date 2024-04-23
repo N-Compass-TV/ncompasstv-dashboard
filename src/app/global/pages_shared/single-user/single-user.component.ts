@@ -562,21 +562,20 @@ export class SingleUserComponent implements OnInit, OnDestroy {
     }
 
     public async getUserActivityData(page: number) {
+        let response;
         if (this.is_dealer_admin) {
-            const response = await this._user
+            response = await this._user
                 .getActivitiesByOwnerIdDealerAdmin(this.userId, this.sortActivityColumn, this.sortActivityOrder, page)
                 .toPromise();
-            const mappedData = this.activity_mapToUI(response.paging.entities);
-            this.pagingActivityData = response.paging;
-            this.activityData = [...mappedData];
         } else {
-            const response = await this._user
+            response = await this._user
                 .getActivitiesByOwnerId(this.userId, this.sortActivityColumn, this.sortActivityOrder, page)
                 .toPromise();
-            const mappedData = this.activity_mapToUI(response.paging.entities);
-            this.pagingActivityData = response.paging;
-            this.activityData = [...mappedData];
         }
+
+        const mappedData = this.activity_mapToUI(response.paging.entities);
+        this.pagingActivityData = response.paging;
+        this.activityData = [...mappedData];
     }
 
     public activity_mapToUI(activity: USER_ACTIVITY[]): any {
