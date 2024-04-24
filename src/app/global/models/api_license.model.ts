@@ -30,6 +30,7 @@ export interface API_LICENSE_PROPS {
     dateUpdated: string;
     dealerId: string;
     displayStatus?: any;
+    downloadSpeed?: string;
     emailSettings?: number;
     freeStorage: string;
     hostAddress: string;
@@ -92,6 +93,7 @@ export interface API_LICENSE_PROPS {
     tvBrand?: string;
     ui?: string;
     uiVersion: string;
+    uploadSpeed?: string;
     zone?: string;
     tvDisplaySettings?: number;
     fastEdgeMonitoringTool?: number;
@@ -125,4 +127,10 @@ export class API_DEALER_LICENSE {
         this.licenseId = licenseId;
         this.licenseKey = licenseKey;
     }
+}
+
+export interface API_PLAYER_BACKGROUND {
+    backgroundImageUrl: string;
+    licenseId: string;
+    licenseKey: string;
 }
