@@ -597,6 +597,10 @@ export class SingleUserComponent implements OnInit, OnDestroy {
             const targetLink = a.targetId ? `/administrator/${activitytUrl.activityURL}/${a.targetId}` : '';
             const activityDoneBy =
                 this.currentUser.user_id === a.initiatedById ? `${a.initiatedBy}(You)` : ` ${a.initiatedBy}`;
+            const isDealerUser =
+                a.ownerId === a.initiatedById
+                    ? `${activityDoneBy} ${a.activityDescription}`
+                    : `${activityDoneBy} ${a.activityDescription} for ${a.owner}`;
 
             return new USER_ACTIVITY(
                 { value: count++, editable: false },
@@ -610,7 +614,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                     hidden: false,
                 },
                 {
-                    value: `${activityDoneBy} ${a.activityDescription} for ${a.owner}`,
+                    value: isDealerUser,
                     hidden: false,
                 },
                 { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
