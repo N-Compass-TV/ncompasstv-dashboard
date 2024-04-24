@@ -12,6 +12,7 @@ import {
     UserService,
 } from 'src/app/global/services';
 import {
+    ACTIVITY_URLS,
     API_ACTIVITY,
     API_DEALER,
     API_USER_DATA,
@@ -66,7 +67,8 @@ export class ProfileSettingComponent implements OnInit {
 
     userActivityTable = [
         { name: '#', sortable: false },
-        { name: 'Activity', column: 'activityDescription', sortable: false },
+        { name: 'Activity Target', column: 'targetName', sortable: false },
+        { name: 'Activity Description', column: 'activityDescription', sortable: false },
         { name: 'Date Created', column: 'dateCreated', sortable: false },
     ];
 
@@ -254,19 +256,20 @@ export class ProfileSettingComponent implements OnInit {
         let count = 1;
 
         return activity.map((a) => {
-            const playlistName = a.targetName ? a.targetName : '--';
-            const playlistLink = a.targetId ? `/administrator/playlists/${a.targetId}` : '';
+            const activityCodePrefix = a.activityCode.split('_')[0];
+            const activitytUrl = ACTIVITY_URLS.find((ac) => ac.activityCodePrefix === activityCodePrefix);
+
+            const targetName = a.targetName ? a.targetName : '--';
+            const targetLink = a.targetId ? `/administrator/${activitytUrl.activityURL}/${a.targetId}` : '';
 
             return new USER_ACTIVITY(
                 { value: count++, editable: false },
                 { value: a.activityCode, hidden: true },
                 { value: a.activityLogId, hidden: true },
                 { value: a.initiatedBy, hidden: true },
-                { value: a.initiatedBy, hidden: true },
+                { value: targetName, link: targetLink, new_tab_link: true, hidden: false },
                 {
-                    value: `You ${a.activityDescription}(${playlistName}) for ${a.owner}`,
-                    link: playlistLink,
-                    new_tab_link: true,
+                    value: `You ${a.activityDescription} for ${a.owner}`,
                     hidden: false,
                 },
                 { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },

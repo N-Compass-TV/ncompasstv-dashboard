@@ -5,7 +5,14 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject, Subscription } from 'rxjs';
 
-import { API_USER_DATA, UI_ROLE_DEFINITION, API_DEALER, USER_ACTIVITY, PAGING } from 'src/app/global/models';
+import {
+    API_USER_DATA,
+    UI_ROLE_DEFINITION,
+    API_DEALER,
+    USER_ACTIVITY,
+    PAGING,
+    ACTIVITY_URLS,
+} from 'src/app/global/models';
 import { AuthService, HelperService, UserService, DealerService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { DatePipe } from '@angular/common';
@@ -58,7 +65,8 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
     activityTable = [
         { name: '#', sortable: false },
-        { name: 'Activity', column: 'activityDescription', sortable: false },
+        { name: 'Activity Target', column: 'targetName', sortable: false },
+        { name: 'Activity Description', column: 'activityDescription', sortable: false },
         { name: 'Date Created', column: 'dateCreated', sortable: false },
     ];
 
@@ -582,8 +590,11 @@ export class SingleUserComponent implements OnInit, OnDestroy {
         let count = 1;
 
         return activity.map((a) => {
-            const playlistName = a.targetName ? a.targetName : '--';
-            const playlistLink = a.targetId ? `/administrator/playlists/${a.targetId}` : '';
+            const activityCodePrefix = a.activityCode.split('_')[0];
+            const activitytUrl = ACTIVITY_URLS.find((ac) => ac.activityCodePrefix === activityCodePrefix);
+
+            const targetName = a.targetName ? a.targetName : '--';
+            const targetLink = a.targetId ? `/administrator/${activitytUrl.activityURL}/${a.targetId}` : '';
             const activityDoneBy =
                 this.currentUser.user_id === a.initiatedById ? `${a.initiatedBy}(You)` : ` ${a.initiatedBy}`;
 
@@ -593,15 +604,14 @@ export class SingleUserComponent implements OnInit, OnDestroy {
                 { value: a.activityLogId, hidden: true },
                 { value: a.initiatedBy, hidden: true },
                 {
-                    value: `${activityDoneBy} ${a.activityDescription}(${playlistName}) for ${a.owner}`,
-                    link: playlistLink,
+                    value: targetName,
+                    link: targetLink,
                     new_tab_link: true,
                     hidden: false,
                 },
                 {
-                    value: playlistName,
-
-                    hidden: true,
+                    value: `${activityDoneBy} ${a.activityDescription} for ${a.owner}`,
+                    hidden: false,
                 },
                 { value: this._date.transform(a.dateCreated, "MMMM d, y, 'at' h:mm a"), hidden: false },
                 { value: a.initiatedById, hidden: true },
