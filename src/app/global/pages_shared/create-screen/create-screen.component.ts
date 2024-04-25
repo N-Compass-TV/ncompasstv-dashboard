@@ -691,8 +691,7 @@ export class CreateScreenComponent implements OnInit {
         
 
         dialog.afterClosed().subscribe(() => {
-            const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/screens/${this.screenId}/${this.new_screen_form_controls.screen_name.value}`], {}));
-            this._router.navigate([url])
+            this._router.navigate([`/${this.roleRoute}/screens/${this.screenId}/${this.new_screen_form_controls.screen_name.value}`])
         });
     }
 
