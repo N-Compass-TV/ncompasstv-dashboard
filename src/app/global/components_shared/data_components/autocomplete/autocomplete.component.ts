@@ -1,4 +1,15 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, OnDestroy, Output, ViewChild } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnInit,
+    OnDestroy,
+    Output,
+    ViewChild,
+    SimpleChanges,
+    OnChanges,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, first, map, startWith, takeUntil, timeout } from 'rxjs/operators';
@@ -11,7 +22,7 @@ import { AuthService } from 'src/app/global/services';
     templateUrl: './autocomplete.component.html',
     styleUrls: ['./autocomplete.component.scss'],
 })
-export class AutocompleteComponent implements OnInit, OnDestroy {
+export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
     @Input() field_data: UI_AUTOCOMPLETE = {
         label: 'Label',
         placeholder: 'Type anything',
@@ -24,7 +35,6 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
     @Input() trigger_input_update = new Observable<UI_AUTOCOMPLETE_DATA | string>();
 
     @Output() value_selected: EventEmitter<{ id: string; value: string }> = new EventEmitter();
-    @Output() input_changed = new EventEmitter<string>();
     @Output() no_data_found: EventEmitter<string> = new EventEmitter();
     @ViewChild('autoCompleteInputField', { static: true }) autoCompleteInputField: ElementRef<HTMLInputElement>;
 
@@ -50,18 +60,6 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
             map((keyword) => this._filter(keyword)),
         );
 
-        // watch for update from parent component and update the control value
-        this.trigger_input_update.pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
-            this.autoCompleteControl.setValue(response, { emitEvent: false });
-        });
-
-        // emit change on input field
-        this.autoCompleteControl.valueChanges
-            .pipe(takeUntil(this.ngUnsubscribe), debounceTime(1000))
-            .subscribe((response) => {
-                this.input_changed.emit(response);
-            });
-
         if (this.field_data.disabled && this.isDealer) this.autoCompleteControl.disable();
     }
 
@@ -72,10 +70,10 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
 
     ngAfterViewInit() {
         this.setupDefaults();
-        this.startTriggerListener();
     }
 
-    ngOnChanges() {
+    ngOnChanges(changes: SimpleChanges): void {
+        this.autoCompleteControl.setValue(this.trigger_input_update);
         this.field_data.data = this.field_data.data;
         this.setupDefaults();
     }
@@ -145,24 +143,6 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
 
         this.autoCompleteInputField.nativeElement.focus();
         this.removeSelection();
-    }
-
-    startTriggerListener() {
-        if (this.field_data.trigger) {
-            this.field_data.trigger.subscribe((triggerData: { data: any; action: string }) => {
-                switch (triggerData.action) {
-                    case AUTOCOMPLETE_ACTIONS.static:
-                        this.staticVal = true;
-
-                        setTimeout(() => {
-                            this.autoCompleteControl.setValue(triggerData.data);
-                        }, 0);
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
     }
 
     protected get isDealer() {
