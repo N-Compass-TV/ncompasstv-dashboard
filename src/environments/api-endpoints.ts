@@ -154,6 +154,7 @@ export const API_ENDPOINTS = {
         api_get_playlists_by_id: 'playlists/getplaylistsbyid?playlistid=',
         api_get_playlist_total: 'playlists/gettotal',
         api_get_playlist_total_by_dealer: 'playlists/gettotal?dealerid=',
+        api_get_playlistsv2_schedule_by_content_id: 'playlistsv2/GetPlaylistContentSchedule?playlistContentId=',
         api_get_roles: 'role/getall',
         api_get_and_set_cookies: 'user/setcookie?userid=',
         api_get_resource_logs: 'resourcelogs/getresourcelogbylicenseid?licenseid=',

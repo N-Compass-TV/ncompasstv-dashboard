@@ -121,6 +121,10 @@ export class SinglePlaylistService extends BaseService {
         return this.getRequest(`${this.getters.api_get_screens_of_playlist}${id}`);
     }
 
+    getPlaylistScehduleByContentId(playlistContentId: string) {
+        return this.getRequest(`${this.getters.api_get_playlistsv2_schedule_by_content_id}${playlistContentId}`);
+    }
+
     getWhitelistData(playlistContentId: string) {
         return this.getRequest(`playlistsv2/GetLicensePlaylistContents?playlistContentId=${playlistContentId}`);
     }

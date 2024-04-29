@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -7,7 +7,7 @@ import * as moment from 'moment';
 import { DAYS } from '../../constants';
 import { SinglePlaylistService } from '../../services/single-playlist.service';
 import { MatCheckboxChange } from '@angular/material';
-import { PlaylistContentSchedule } from 'src/app/global/models';
+import { API_CONTENT_V2, PlaylistContentSchedule } from 'src/app/global/models';
 import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -16,6 +16,8 @@ import { NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
     styleUrls: ['./content-scheduler-form.component.scss'],
 })
 export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
+    @Input() contents: API_CONTENT_V2[] = [];
+
     alternateWeek = 0;
     days = DAYS;
     hasAlternateWeekSet = false;
@@ -45,6 +47,16 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
         this.subscribeToFormChanges();
         this.setDefaultFormValues();
         this.subscribeToSetExistingFormData();
+
+        //TO FETCH DATA WHEN OPENING AND MODAL TRANSITIONING TO OTHER CONTENTS
+        if (this.contents) {
+            this._playlist.getPlaylistScehduleByContentId(this.contents[0].playlistContentId).subscribe({
+                next: (response) => {
+                    const contentSchedule = response[0];
+                    this.setExistingScheduleFormValues(contentSchedule);
+                },
+            });
+        }
     }
 
     ngOnDestroy(): void {
