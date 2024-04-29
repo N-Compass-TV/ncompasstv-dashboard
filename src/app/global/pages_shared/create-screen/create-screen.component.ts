@@ -351,7 +351,8 @@ export class CreateScreenComponent implements OnInit {
                 forkJoin([publish.screen, publish.install_dates])
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe(
-                        () => {
+                        (response) => {
+                            this.screenId = response[0].screenId
                             this.openCreateScreenDialog();
                             this.creating_screen = false;
                             
@@ -691,7 +692,8 @@ export class CreateScreenComponent implements OnInit {
         
 
         dialog.afterClosed().subscribe(() => {
-            this._router.navigate([`/${this.roleRoute}/screens/${this.screenId}/${this.new_screen_form_controls.screen_name.value}`])
+            const url = ([`/${this.roleRoute}/screens/${this.screenId}/${this.new_screen_form_controls.screen_name.value}`])
+            this._router.navigate(url)
         });
     }
 

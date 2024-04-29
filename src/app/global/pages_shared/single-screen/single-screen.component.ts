@@ -314,6 +314,10 @@ export class SingleScreenComponent implements OnInit {
         this.screen_id = routeParams.get('data');
         if (routeSnapshot.queryParams.pid) this.playlist_id = routeSnapshot.queryParams.pid;
         this.getScreen(this.screen_id);
+
+        //test
+        console.log("getScreedID", this.screen_id)
+        console.log("routeSNapshot", routeSnapshot)
     }
 
     getScreenLicenses(page: number) {
@@ -709,6 +713,7 @@ export class SingleScreenComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response: API_SINGLE_SCREEN) => {
+                    console.log("EL", response)
                     this.setPageData(response);
                     this.checkMissingZones(response.template.templateId);
                 },
