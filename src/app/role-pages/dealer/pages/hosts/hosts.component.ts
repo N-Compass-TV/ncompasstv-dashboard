@@ -239,17 +239,17 @@ export class HostsComponent implements OnInit {
 
     onTabChanged(e: { index: number }) {
         switch (e.index) {
-            case 1:
-                // this.pageRequested(1);
-                break;
             case 0:
+                this.getHosts(1);
+                break;
+            case 1:
                 // this.getLicenses(1);
                 break;
             case 2:
-                this.getDealerLicenseZone(1);
+                // this.getAdvertisers(1);
                 break;   
             case 3:
-                this.getHosts(1);
+                this.getDealerLicenseZone(1);
                 break;
             default:
         }
@@ -490,6 +490,16 @@ export class HostsComponent implements OnInit {
                     { value: i.mainTotalOtherPercentage, link: null, editable: false, hidden: false },
                 );
             });
+        }
+
+    public licenseZoneFilterData(e): void {
+            if (e) {
+                this.search_data_license_zone = e;
+                this.getDealerLicenseZone(1);
+            } else {
+                this.search_data_license_zone = '';
+                this.getDealerLicenseZone(1);
+            }
         }
 
     private calculateTime(duration: number): string {
