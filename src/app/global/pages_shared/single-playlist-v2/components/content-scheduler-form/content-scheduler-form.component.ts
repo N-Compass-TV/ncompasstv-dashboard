@@ -47,16 +47,7 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
         this.subscribeToFormChanges();
         this.setDefaultFormValues();
         this.subscribeToSetExistingFormData();
-
-        //TO FETCH DATA WHEN OPENING AND MODAL TRANSITIONING TO OTHER CONTENTS
-        if (this.contents) {
-            this._playlist.getPlaylistScehduleByContentId(this.contents[0].playlistContentId).subscribe({
-                next: (response) => {
-                    const contentSchedule = response[0];
-                    this.setExistingScheduleFormValues(contentSchedule);
-                },
-            });
-        }
+        this.getPlaylistContentSchedule();
     }
 
     ngOnDestroy(): void {
@@ -121,6 +112,22 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
         this.hasAlternateWeekSet = !this.hasAlternateWeekSet;
         this.alternateWeek = this.hasAlternateWeekSet ? 1 : 0;
         alternateWeekControl.setValue(this.alternateWeek);
+    }
+
+    //TO FETCH DATA WHEN OPENING MODAL OR TRANSITIONING TO OTHER CONTENTS
+    public getPlaylistContentSchedule() {
+        if (this.contents) {
+            this._playlist.getPlaylistScehduleByContentId(this.contents[0].playlistContentId).subscribe({
+                next: (response) => {
+                    const contentSchedule = response[0];
+                    const days = response[0].days;
+                    const daysLength = days.split(',');
+
+                    this.setExistingScheduleFormValues(contentSchedule);
+                    this.hasCheckedAllDays = daysLength.length === 7;
+                },
+            });
+        }
     }
 
     private convertDateControlToISOString(form: FormGroup, controlName: string) {
