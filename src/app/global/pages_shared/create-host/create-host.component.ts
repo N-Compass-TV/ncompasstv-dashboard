@@ -52,11 +52,10 @@ import { TimezoneService } from '../../services/timezone-service/timezone.servic
     providers: [TitleCasePipe],
 })
 export class CreateHostComponent implements OnInit {
-    // cities_state_data: CITIES_STATE;
     categories_data: API_PARENT_CATEGORY[];
     city_loaded = false;
     city_state: City[] = [];
-    canada_selected: boolean = false;
+    canadaSelected: boolean = false;
     city_selected: string;
     gen_categories_data: any[];
     category_selected: string;
@@ -89,7 +88,6 @@ export class CreateHostComponent implements OnInit {
     operation_days: UI_STORE_HOUR[];
     paging: PAGING;
     place_id: string;
-    // search_keyword: string;
     selectedCity: string;
     selected_location: any;
     state_provinces: { state: string; abbreviation: string; region: string }[] = STATES_PROVINCES;
@@ -346,7 +344,7 @@ export class CreateHostComponent implements OnInit {
         this.location_selected = false;
         let country = 'United States';
 
-        if (this.canada_selected) {
+        if (this.canadaSelected) {
             country = 'Canada';
         }
 
@@ -461,7 +459,7 @@ export class CreateHostComponent implements OnInit {
             address = sliced_address[0];
         }
 
-        this.canada_selected = country && country.includes('Canada');
+        this.canadaSelected = country && country.includes('Canada');
 
         // Set Zip validation
         this.setZipCodeValidation();
@@ -584,7 +582,7 @@ export class CreateHostComponent implements OnInit {
     }
 
     getSelectedCity(data) {
-        this.canada_selected = data.country === 'CA';
+        this.canadaSelected = data.country === 'CA';
 
         if (typeof data === 'undefined' || !data) {
             console.error('Could not set city data!');
@@ -856,7 +854,7 @@ export class CreateHostComponent implements OnInit {
     }
 
     private setCanadaZip() {
-        if (!this.canada_selected) return;
+        if (!this.canadaSelected) return;
         const control = this.newHostFormControls.zip;
         const canadaZip = (control.value as string).trim();
 
@@ -871,7 +869,7 @@ export class CreateHostComponent implements OnInit {
         const control = this.newHostFormControls.zip;
         const numbersOnly = '^[0-9]+$';
         const canadianZipCodePattern = `^[A-Za-z]\\d[A-Za-z] \\d[A-Za-z]\\d$`;
-        const country = this.canada_selected ? 'CA' : 'US';
+        const country = this.canadaSelected ? 'CA' : 'US';
 
         let validators: ValidatorFn[] = [Validators.required];
         const usZipValidators = [Validators.minLength(5), Validators.maxLength(5), Validators.pattern(numbersOnly)];
@@ -915,7 +913,7 @@ export class CreateHostComponent implements OnInit {
 
     private subscribeToZipChanges() {
         const control = this.newHostFormControls.zip;
-        const country = this.canada_selected ? 'CA' : 'US';
+        const country = this.canadaSelected ? 'CA' : 'US';
 
         const formatCanadaZip = (data: string) => {
             const zip = data.replace(/\s/g, '');
