@@ -423,7 +423,7 @@ export class HostsComponent implements OnInit {
                     { value: count++, link: null, editable: false, hidden: false },
                     {
                         value: i.licenseKey,
-                        link: '/administrator/licenses/' + i.licenseId,
+                        link: `/${this.currentRole}/licenses/` + i.licenseId,
                         new_tab_link: true,
                         editable: false,
                         hidden: false,
@@ -436,14 +436,14 @@ export class HostsComponent implements OnInit {
                     },
                     {
                         value: i.hostName ? i.hostName : '--',
-                        link: '/administrator/hosts/' + i.hostId,
+                        link: `/${this.currentRole}/licenses/` + i.hostId,
                         new_tab_link: true,
                         editable: false,
                         hidden: false,
                     },
                     {
                         value: i.licenseAlias ? i.licenseAlias : '--',
-                        link: '/administrator/licenses/' + i.licenseId,
+                        link: `/${this.currentRole}/licenses/` + i.licenseId,
                         new_tab_link: true,
                         editable: false,
                         hidden: false,
