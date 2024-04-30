@@ -44,6 +44,7 @@ import {
 import { AUTOCOMPLETE_ACTIONS } from '../../constants/autocomplete';
 import { STATES_PROVINCES } from '../../constants/states';
 import { TimezoneService } from '../../services/timezone-service/timezone.service';
+import { CityData } from '../../models/api_cities_state.model';
 
 @Component({
     selector: 'app-create-host',
@@ -581,7 +582,7 @@ export class CreateHostComponent implements OnInit {
         this.newHostFormControls.zone.setValue(name);
     }
 
-    getSelectedCity(data) {
+    getSelectedCity(data: CityData) {
         this.canadaSelected = data.country === 'CA';
 
         if (typeof data === 'undefined' || !data) {
@@ -589,7 +590,7 @@ export class CreateHostComponent implements OnInit {
             return;
         }
 
-        this.newHostFormControls.city.setValue(data.display);
+        this.newHostFormControls.city.setValue(data.city +', ' + data.state);
         this.newHostFormControls.state.setValue(data.state);
         this.newHostFormControls.region.setValue(data.region);
     }

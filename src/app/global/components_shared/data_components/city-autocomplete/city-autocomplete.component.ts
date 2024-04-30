@@ -11,7 +11,7 @@ import {
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { forkJoin, ObservableInput, Subject } from 'rxjs';
 
-import { CITIES_STATE } from 'src/app/global/models/api_cities_state.model';
+import { CITIES_STATE, CityData } from 'src/app/global/models/api_cities_state.model';
 import { LocationService } from 'src/app/global/services';
 import { CITIES_STATE_DATA, UI_CITY_AUTOCOMPLETE, UI_CITY_AUTOCOMPLETE_DATA } from 'src/app/global/models';
 
@@ -45,7 +45,7 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes.selected_city_from_google) {
+        if (changes.selected_city_from_google.currentValue) {
             this.selected_city_from_google = this.selected_city_from_google;
             this.cityFromGoogleScrape = this.finalCityList.find(
                 (cityData) => cityData.display === this.selected_city_from_google,
@@ -53,13 +53,13 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
         }
     }
 
-    private getCitiesAndStates(page?) {
+    private getCitiesAndStates(page?: number) {
         this._location
             .get_cities_data(page)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((response) => {
                 this.citiesStateData = response;
-                this.citiesStateData.data.map((cityData) => {
+                this.citiesStateData.data.map((cityData: CityData) => {
                     this.addCitiesToDropdown(cityData);
                 });
             })
@@ -70,7 +70,7 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
             });
     }
 
-    addCitiesToDropdown(data) {
+    addCitiesToDropdown(data: CityData) {
         let cityMap = {
             id: data.id,
             value: `${data.city}, ${data.state}`,
