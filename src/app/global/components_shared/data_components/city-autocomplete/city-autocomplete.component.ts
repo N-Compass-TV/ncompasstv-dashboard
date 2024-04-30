@@ -24,16 +24,14 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
     cityFromGoogleScrape: any;
     citiesStateData: CITIES_STATE;
     finalCityList: any[];
-    trigger_data: Subject<any> = new Subject<any>();
 
     // New Autocomplete Dependencies
-    city_field_data: UI_CITY_AUTOCOMPLETE = {
+    cityFieldData: UI_CITY_AUTOCOMPLETE = {
         label: 'City',
         placeholder: 'Type a city',
         data: [],
         initialValue: [],
         allowSearchTrigger: true,
-        trigger: this.trigger_data.asObservable(),
     };
     @Input() selected_city_from_google: string;
     @Output() city_selected: EventEmitter<any> = new EventEmitter();
@@ -68,7 +66,7 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
             .add(() => {
                 if (this.citiesStateData.paging.currentPage != this.citiesStateData.paging.pages)
                     this.getCitiesAndStates(this.citiesStateData.paging.currentPage + 1);
-                else this.finalCityList = this.city_field_data.data;
+                else this.finalCityList = this.cityFieldData.data;
             });
     }
 
@@ -81,16 +79,19 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
             state: data.abbreviation,
             region: data.region,
         };
-        this.city_field_data.data.push(cityMap);
+        this.cityFieldData.data.push(cityMap);
     }
 
     resetCityList(keyword: string) {
-        this.city_field_data.data = [];
+        this.cityFieldData.data = [];
 
-        this.searchCity(keyword).subscribe((err) => {
-            this.city_field_data.noData = `${keyword} not found`;
-            this.city_field_data.data = this.finalCityList;
-        });
+        this.searchCity(keyword).subscribe(
+            (response) => {},
+            (err) => {
+                this.cityFieldData.noData = `${keyword} not found`;
+                this.cityFieldData.data = this.finalCityList;
+            },
+        );
     }
 
     selectedCity(data: UI_CITY_AUTOCOMPLETE_DATA) {
