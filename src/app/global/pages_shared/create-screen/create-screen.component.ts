@@ -64,6 +64,7 @@ export class CreateScreenComponent implements OnInit {
     paging: PAGING;
     playlist: any;
     reset_screen = false;
+    screenId: string;
     screen_info_error = true;
     screen_selected: string = null;
     screen_types = [];
@@ -350,9 +351,11 @@ export class CreateScreenComponent implements OnInit {
                 forkJoin([publish.screen, publish.install_dates])
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe(
-                        () => {
+                        (response) => {
+                            this.screenId = response[0].screenId
                             this.openCreateScreenDialog();
                             this.creating_screen = false;
+                            
                         },
                         (error) => {
                             console.error(error);
@@ -366,7 +369,8 @@ export class CreateScreenComponent implements OnInit {
                 .create_screen(created_screen)
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(
-                    () => {
+                    (response) => {
+                        this.screenId = response.screenId
                         this.openCreateScreenDialog();
                         this.creating_screen = false;
                     },
@@ -386,7 +390,7 @@ export class CreateScreenComponent implements OnInit {
                         console.error(error);
                     },
                 );
-        }
+        }    
     }
 
     searchBoxTrigger(event: { is_search: boolean; page: number }): void {
@@ -685,10 +689,11 @@ export class CreateScreenComponent implements OnInit {
             width: '600px',
             data: this.new_screen_form_controls.screen_name.value,
         });
+        
 
         dialog.afterClosed().subscribe(() => {
-            const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/screens`], {}));
-            window.open(url, '_blank');
+            const url = ([`/${this.roleRoute}/screens/${this.screenId}/${this.new_screen_form_controls.screen_name.value}`])
+            this._router.navigate(url)
         });
     }
 
