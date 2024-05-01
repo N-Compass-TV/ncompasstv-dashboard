@@ -436,7 +436,7 @@ export class HostsComponent implements OnInit {
                     },
                     {
                         value: i.hostName ? i.hostName : '--',
-                        link: `/${this.currentRole}/licenses/` + i.hostId,
+                        link: `/${this.currentRole}/hosts/` + i.hostId,
                         new_tab_link: true,
                         editable: false,
                         hidden: false,
