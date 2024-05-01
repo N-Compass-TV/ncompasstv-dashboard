@@ -41,6 +41,7 @@ export class CreateScreenComponent implements OnInit {
     dealers_data: API_DEALER[] = [];
     dealers: API_DEALER[];
     disabledPublish = false;
+    gettingHostLicenses = false;
     has_no_licenses = false;
     hosts: API_HOST[] = [];
     hostId: string;
@@ -352,10 +353,9 @@ export class CreateScreenComponent implements OnInit {
                     .pipe(takeUntil(this._unsubscribe))
                     .subscribe(
                         (response) => {
-                            this.screenId = response[0].screenId
+                            this.screenId = response[0].screenId;
                             this.openCreateScreenDialog();
                             this.creating_screen = false;
-                            
                         },
                         (error) => {
                             console.error(error);
@@ -370,7 +370,7 @@ export class CreateScreenComponent implements OnInit {
                 .pipe(takeUntil(this._unsubscribe))
                 .subscribe(
                     (response) => {
-                        this.screenId = response.screenId
+                        this.screenId = response.screenId;
                         this.openCreateScreenDialog();
                         this.creating_screen = false;
                     },
@@ -390,7 +390,7 @@ export class CreateScreenComponent implements OnInit {
                         console.error(error);
                     },
                 );
-        }    
+        }
     }
 
     searchBoxTrigger(event: { is_search: boolean; page: number }): void {
@@ -437,31 +437,38 @@ export class CreateScreenComponent implements OnInit {
         this.reset_screen = false;
     }
 
-    setAssignedTo(data: { id: string; value: string }): void {
+    setAssignedTo(data: { id: string; value: string; dealerId?: string }): void {
         if (data === null) {
             this.disabledPublish = true;
             return;
         }
 
-        this.dealerId = data.id;
+        /**
+         * dealerId is given when a host has been selected,
+         * if not then it means a dealer has been selected
+         */
+        if (!data.dealerId) this.dealerId = data.id;
         this.getPlaylistsByDealerId(this.dealerId);
         this.getHostsByDealerId(1);
-        this.setToHost(data);
+        this.setToDealerOrHost(data);
     }
 
-    setToHost(data: { id: string; value: string }) {
-        if (data === null) {
+    setToDealerOrHost(data: { id: string; value: string; dealerId?: string }) {
+        if (data === null || !data.dealerId) {
             this.disabledPublish = true;
             return;
         }
 
-        this.hostsData.map((h) => {
-            if (h.hostId === data.id) {
-                this.disabledPublish = false;
-                this.hostId = data.id;
-                this.getLicenseByHostId(data.id);
-            }
-        });
+        /**
+         * The previous implementation where this.hostsData gets checked is no longer reliable,
+         * instead, we're using the response from the host autocomplete component which carries a
+         * dealerId if a host has been selected.
+         */
+        if (data.dealerId) {
+            this.disabledPublish = false;
+            this.hostId = data.id;
+            this.getLicenseByHostId(data.id);
+        }
     }
 
     private get new_screen_form_controls() {
@@ -607,6 +614,11 @@ export class CreateScreenComponent implements OnInit {
     }
 
     private getLicenseByHostId(id: string): void {
+        this.licenses = [];
+        this.gettingHostLicenses = true;
+
+        console.log({ id });
+
         this._license
             .getLicensesByHostId(id)
             .pipe(takeUntil(this._unsubscribe))
@@ -614,10 +626,13 @@ export class CreateScreenComponent implements OnInit {
                 (response) => {
                     if ('message' in response) {
                         this.has_no_licenses = true;
+                        this.gettingHostLicenses = false;
                         return;
                     }
 
                     this.licenses = response;
+                    this.has_no_licenses = false;
+                    this.gettingHostLicenses = false;
                 },
                 (error) => {
                     console.error(error);
@@ -689,11 +704,12 @@ export class CreateScreenComponent implements OnInit {
             width: '600px',
             data: this.new_screen_form_controls.screen_name.value,
         });
-        
 
         dialog.afterClosed().subscribe(() => {
-            const url = ([`/${this.roleRoute}/screens/${this.screenId}/${this.new_screen_form_controls.screen_name.value}`])
-            this._router.navigate(url)
+            const url = [
+                `/${this.roleRoute}/screens/${this.screenId}/${this.new_screen_form_controls.screen_name.value}`,
+            ];
+            this._router.navigate(url);
         });
     }
 
