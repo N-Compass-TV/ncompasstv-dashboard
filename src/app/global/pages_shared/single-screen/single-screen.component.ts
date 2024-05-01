@@ -713,7 +713,6 @@ export class SingleScreenComponent implements OnInit {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (response: API_SINGLE_SCREEN) => {
-                    console.log("EL", response)
                     this.setPageData(response);
                     this.checkMissingZones(response.template.templateId);
                 },
