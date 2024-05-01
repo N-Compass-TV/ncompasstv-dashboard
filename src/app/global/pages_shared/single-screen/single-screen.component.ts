@@ -314,10 +314,6 @@ export class SingleScreenComponent implements OnInit {
         this.screen_id = routeParams.get('data');
         if (routeSnapshot.queryParams.pid) this.playlist_id = routeSnapshot.queryParams.pid;
         this.getScreen(this.screen_id);
-
-        //test
-        console.log("getScreedID", this.screen_id)
-        console.log("routeSNapshot", routeSnapshot)
     }
 
     getScreenLicenses(page: number) {

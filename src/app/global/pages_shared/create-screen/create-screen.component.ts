@@ -356,7 +356,6 @@ export class CreateScreenComponent implements OnInit {
                             this.screenId = response[0].screenId;
                             this.openCreateScreenDialog();
                             this.creating_screen = false;
-                            
                         },
                         (error) => {
                             console.error(error);
@@ -617,9 +616,6 @@ export class CreateScreenComponent implements OnInit {
     private getLicenseByHostId(id: string): void {
         this.licenses = [];
         this.gettingHostLicenses = true;
-
-        console.log({ id });
-
         this._license
             .getLicensesByHostId(id)
             .pipe(takeUntil(this._unsubscribe))
@@ -705,7 +701,6 @@ export class CreateScreenComponent implements OnInit {
             width: '600px',
             data: this.new_screen_form_controls.screen_name.value,
         });
-
 
         dialog.afterClosed().subscribe(() => {
             const url = [
