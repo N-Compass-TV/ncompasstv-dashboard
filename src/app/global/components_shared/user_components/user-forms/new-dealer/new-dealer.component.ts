@@ -52,13 +52,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this._location.get_cities().subscribe((response: any[]) => {
-            this.city_state = response.map((city) => {
-                return new City(city.city, `${city.city}, ${city.state}`, city.state);
-            });
-
-            this.createForm();
-        });
+        this.createForm();
     }
 
     ngOnDestroy() {
@@ -243,7 +237,6 @@ export class NewDealerComponent implements OnInit, OnDestroy {
                 placeholder: 'Ex: Los Angeles',
                 width: 'col-lg-6',
                 type: 'text',
-                data: this.city_state,
                 is_autocomplete: true,
             },
             {

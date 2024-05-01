@@ -74,6 +74,7 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
         let cityMap = {
             id: data.id,
             value: `${data.city}, ${data.state}`,
+            city: data.city,
             display: data.city,
             country: data.country,
             state: data.abbreviation,
