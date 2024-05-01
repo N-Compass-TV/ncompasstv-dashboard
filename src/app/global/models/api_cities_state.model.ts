@@ -2,7 +2,6 @@ export interface Paging {
     totalCount: number;
     pageSize: number;
     currentPage: number;
-    pages: number;
 }
 
 export interface CityData {

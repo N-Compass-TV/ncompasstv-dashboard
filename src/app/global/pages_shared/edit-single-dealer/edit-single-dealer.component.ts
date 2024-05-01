@@ -370,7 +370,6 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
                 control: 'city',
                 placeholder: 'Ex. St. Peter',
                 col: 'col-lg-3 p-0',
-                is_autocomplete: true,
             },
             {
                 label: 'State',

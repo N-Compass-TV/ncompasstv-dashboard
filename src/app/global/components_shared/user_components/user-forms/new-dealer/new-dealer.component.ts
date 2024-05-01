@@ -13,7 +13,6 @@ import { ConfirmationModalComponent } from '../../../page_components/confirmatio
 import { LocationService } from '../../../../services/data-service/location.service';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../../models/ui_role-definition.model';
 import { UserService, DealerService } from 'src/app/global/services';
-import { CityData } from 'src/app/global/models/api_cities_state.model';
 
 @Component({
     selector: 'app-new-dealer',
@@ -52,7 +51,13 @@ export class NewDealerComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit() {
-        this.createForm();
+        this._location.get_cities().subscribe((response: any[]) => {
+            this.city_state = response.map((city) => {
+                return new City(city.city, `${city.city}, ${city.state}`, city.state);
+            });
+
+            this.createForm();
+        });
     }
 
     ngOnDestroy() {
@@ -106,11 +111,21 @@ export class NewDealerComponent implements OnInit, OnDestroy {
             );
     }
 
-    citySelected(data: CityData): void {
-        const { city, state, region } = data || { city: '', state: '', region: '' };
-        this.f.city.setValue(city + ', ' + state);
-        this.f.state.setValue(state);
-        this.f.region.setValue(region);
+    citySelected(value: string): void {
+        this.f.city.setValue(value.substr(0, value.indexOf(', ')));
+
+        this._location
+            .get_states_regions(value.substr(value.indexOf(',') + 2))
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (data) => {
+                    this.f.state.setValue(data[0].abbreviation);
+                    this.f.region.setValue(data[0].region);
+                },
+                (error) => {
+                    console.error(error);
+                },
+            );
     }
 
     openConfirmationModal(status: string, message: string, data: string, redirect: boolean): void {
@@ -237,6 +252,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
                 placeholder: 'Ex: Los Angeles',
                 width: 'col-lg-6',
                 type: 'text',
+                data: this.city_state,
                 is_autocomplete: true,
             },
             {
