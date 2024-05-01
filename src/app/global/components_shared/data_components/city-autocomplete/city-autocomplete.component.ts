@@ -90,6 +90,7 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
             (err) => {
                 this.cityFieldData.noData = `${keyword} not found`;
                 this.cityFieldData.data = this.finalCityList;
+                this.city_selected.emit(null);
             },
         );
     }

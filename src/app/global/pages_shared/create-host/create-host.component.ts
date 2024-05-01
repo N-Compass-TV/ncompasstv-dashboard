@@ -583,16 +583,12 @@ export class CreateHostComponent implements OnInit {
     }
 
     getSelectedCity(data: CityData) {
-        this.canadaSelected = data.country === 'CA';
+        if (data) this.canadaSelected = data.country === 'CA';
 
-        if (typeof data === 'undefined' || !data) {
-            console.error('Could not set city data!');
-            return;
-        }
-
-        this.newHostFormControls.city.setValue(data.city +', ' + data.state);
-        this.newHostFormControls.state.setValue(data.state);
-        this.newHostFormControls.region.setValue(data.region);
+        const { city, state, region } = data || { city: '', state: '', region: '' };
+        this.newHostFormControls.city.setValue(city + ', ' + state);
+        this.newHostFormControls.state.setValue(state);
+        this.newHostFormControls.region.setValue(region);
     }
 
     private formatTime(data: number): string {
