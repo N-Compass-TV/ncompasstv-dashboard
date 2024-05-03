@@ -38,7 +38,7 @@ export class LocationService extends BaseService {
     }
 
     get_cities_data(page = 1, search = ''): Observable<CITIES_STATE> {
-        const url = `${this.getters.api_get_cities_state}?pageSize=1000&search=${search}&page=${page}`;
+        const url = `${this.getters.cities_state}?pageSize=31515&search=${search}&page=${page}`;
         return this.getRequest(url, null, false, false, false, false, true);
     }
 }

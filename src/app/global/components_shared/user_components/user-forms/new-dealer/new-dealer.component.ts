@@ -108,13 +108,13 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 
     citySelected(data: CityData): void {
         const { city, state, region } = data || { city: '', state: '', region: '' };
-        this.f.city.setValue(city + ', ' + state);
-        this.f.state.setValue(state);
-        this.f.region.setValue(region);
+        this.f.city.setValue(city ? city : '');
+        this.f.state.setValue(state || '');
+        this.f.region.setValue(region || '');
     }
 
     openConfirmationModal(status: string, message: string, data: string, redirect: boolean): void {
-        const dialog = this._dialog.open(ConfirmationModalComponent, {
+        this._dialog.open(ConfirmationModalComponent, {
             width: '500px',
             height: '350px',
             data: {
@@ -124,9 +124,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
                 picture_upload: true,
                 rename: true,
             },
-        });
-
-        dialog.afterClosed().subscribe((response) => {
+        }).afterClosed().subscribe((response) => {
             if (redirect || response == 'no_upload') {
                 this.is_submitted = false;
                 this.form_invalid = false;
