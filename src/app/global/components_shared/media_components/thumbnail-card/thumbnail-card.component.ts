@@ -118,12 +118,14 @@ export class ThumbnailCardComponent implements OnInit {
         this.filler_delete.emit(true);
     }
 
-    routeToMedia(filename) {
-        let new_url = filename.replace(/ /g, '+');
+    routeToMedia(filename: string): void {
+        if (this.multiple_delete) return;
+
+        let url = filename.replace(/ /g, '+');
         if (!this.is_filler) this.router.navigate([`/${this.route}`, filename]);
 
         this._dialog.open(ImageViewerComponent, {
-            data: { url: new_url, filetype: this.filetype, filename: this.filename },
+            data: { url, filetype: this.filetype, filename: this.filename },
             width: '768px',
             panelClass: 'no-padding',
         });
