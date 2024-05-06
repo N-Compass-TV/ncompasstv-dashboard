@@ -13,6 +13,7 @@ export * from './api_create-playlist.model';
 export * from './api_create-screen-response.model';
 export * from './api_credit-card-details.model';
 export * from './api_dealer.model';
+export * from './api_dealer_license_zone.model';
 export * from './api_dealer-values.model';
 export * from './api_dma.model';
 export * from './api_edit-screen.model';
