@@ -35,6 +35,7 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
     };
     @Input() selected_city_from_google: string;
     @Output() city_selected: EventEmitter<any> = new EventEmitter();
+    @Output() city_autocomplete_ready: EventEmitter<any> = new EventEmitter();
 
     protected _unsubscribe = new Subject<void>();
 
@@ -67,6 +68,7 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
                 if (this.citiesStateData.paging.currentPage != this.citiesStateData.paging.pages)
                     this.getCitiesAndStates(this.citiesStateData.paging.currentPage + 1);
                 else this.finalCityList = this.cityFieldData.data;
+                this.city_autocomplete_ready.emit(true);
             });
     }
 

@@ -12,7 +12,7 @@ export interface CityData {
     state: string;
     region: string;
     country: string;
-    fullSearch: string;
+    fullSearch?: string;
 }
 
 export interface CITIES_STATE {

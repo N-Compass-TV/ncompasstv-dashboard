@@ -33,7 +33,6 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
         unselect: false,
     };
     @Input() trigger_input_update = new Observable<UI_AUTOCOMPLETE_DATA | string>();
-
     @Output() value_selected: EventEmitter<{ id: string; value: string }> = new EventEmitter();
     @Output() no_data_found: EventEmitter<string> = new EventEmitter();
     @ViewChild('autoCompleteInputField', { static: true }) autoCompleteInputField: ElementRef<HTMLInputElement>;
@@ -73,19 +72,18 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        if (changes.trigger_input_update) {
+            const currentValue = changes.trigger_input_update.currentValue;
+            this.field_data.initialValue = [{ id: currentValue.id, value: currentValue.city }];
+            this.ngOnInit();
+        }
         this.autoCompleteControl.setValue(this.trigger_input_update);
         this.field_data.data = this.field_data.data;
         this.setupDefaults();
     }
 
     setupDefaults() {
-        if (this.field_data.initialValue && this.field_data.initialValue.length) {
-            this.autoCompleteControl.setValue(this.field_data.initialValue[0]);
-
-            setTimeout(() => {
-                this.autoCompleteInputField.nativeElement.focus();
-            }, 0);
-        }
+        if (this.field_data.initialValue && this.field_data.initialValue.length) this.autoCompleteControl.setValue(this.field_data.initialValue[0]);
     }
 
     displayOption(option: any): string {
