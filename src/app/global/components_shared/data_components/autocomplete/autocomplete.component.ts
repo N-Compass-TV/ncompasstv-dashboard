@@ -60,8 +60,8 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
         this.autoCompleteControl.valueChanges
             .pipe(takeUntil(this.ngUnsubscribe), debounceTime(1000))
             .subscribe((response) => {
-                this.isEmpty = false
-                if(response == '') this.isEmpty = true;
+                
+                this.isEmpty = response === ''
         
                 this.input_changed.emit(response);
             });
