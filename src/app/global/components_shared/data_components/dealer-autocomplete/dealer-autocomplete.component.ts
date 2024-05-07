@@ -12,12 +12,16 @@ import { UI_AUTOCOMPLETE } from 'src/app/global/models';
 export class DealerAutocompleteComponent implements OnInit {
     dealers_data: UI_AUTOCOMPLETE;
     dealers: any = [];
+    isEmptyDealer = false;
+    key = '';
+    search_keyword: string;
 
     @Input() initial_value: any;
     @Input() active_only: boolean = false;
     @Input() isDealerAdmin = false;
     @Input() isDisabled = false;
     @Output() dealer_selected: EventEmitter<any> = new EventEmitter();
+    @Output() no_data_found: EventEmitter<string> = new EventEmitter();
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -25,13 +29,12 @@ export class DealerAutocompleteComponent implements OnInit {
 
     ngOnInit() {
         if (this.isDealerAdmin) this.getDealerAdminDealers();
-        this.getDealersMinified();
+        this.getDealersMinified(this.key);
     }
 
-    getDealersMinified() {
+    getDealersMinified(keyword: string) {
         this._dealer
-            .get_dealers_with_page_minified(1, '', 0, this.active_only)
-            .pipe(takeUntil(this._unsubscribe))
+            .get_dealers_with_page_minified(1, keyword, 0, this.active_only)
             .subscribe(
                 (response) => {
                     response.paging.entities.map((dealer) =>
@@ -52,6 +55,10 @@ export class DealerAutocompleteComponent implements OnInit {
             unselect: true,
             disabled: this.isDisabled || false,
         };
+    }
+
+    public dealerNotFound(keyword: string) {
+        this.dealers_data.noData = `${keyword} not found`;
     }
 
     setDealer(id) {

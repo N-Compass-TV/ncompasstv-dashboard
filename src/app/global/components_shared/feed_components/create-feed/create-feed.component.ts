@@ -27,6 +27,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     filtered_options: Observable<any[]>;
     hasLoadedDealers = false;
     isInvalidUrl = false;
+    dealerHasValue = false;
     isDirectTechUrl = false;
     has_selected_dealer_id = false;
     has_selected_widget_feed_type = false;
@@ -82,8 +83,13 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     }
 
     dealerSelected(data: { id: string; value: string }) {
+        this.dealerHasValue = false;
         this.selected_dealer_id = data.id;
         this.has_selected_dealer_id = true;
+        
+        if (this.selected_dealer_id != null){
+            this.dealerHasValue = true
+        }
     }
 
     searchData(keyword: string) {

@@ -2,7 +2,8 @@
     <div *ngIf="dealers_data; else loader">
         <app-autocomplete
             [field_data]="dealers_data"
-            *ngIf="dealers_data && dealers_data.data.length"
+            *ngIf="dealers_data && dealers_data.data.length; else searching"
+            (no_data_found)="dealerNotFound($event)"
             (value_selected)="setDealer($event)">
         </app-autocomplete>
     </div>
