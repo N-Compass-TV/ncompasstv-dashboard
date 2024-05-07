@@ -23,6 +23,7 @@ export class DealerAutocompleteComponent implements OnInit {
     @Output() dealer_selected: EventEmitter<any> = new EventEmitter();
     @Output() no_data_found: EventEmitter<string> = new EventEmitter();
 
+
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
     constructor(private _dealer: DealerService) {}
@@ -59,6 +60,7 @@ export class DealerAutocompleteComponent implements OnInit {
 
     public dealerNotFound(keyword: string) {
         this.dealers_data.noData = `${keyword} not found`;
+        this.dealer_selected.emit(null);
     }
 
     setDealer(id) {
