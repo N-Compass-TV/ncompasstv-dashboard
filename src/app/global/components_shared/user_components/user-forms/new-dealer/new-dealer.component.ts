@@ -114,26 +114,29 @@ export class NewDealerComponent implements OnInit, OnDestroy {
     }
 
     openConfirmationModal(status: string, message: string, data: string, redirect: boolean): void {
-        this._dialog.open(ConfirmationModalComponent, {
-            width: '500px',
-            height: '350px',
-            data: {
-                status: status,
-                message: message,
-                data: data,
-                picture_upload: true,
-                rename: true,
-            },
-        }).afterClosed().subscribe((response) => {
-            if (redirect || response == 'no_upload') {
-                this.is_submitted = false;
-                this.form_invalid = false;
-                this.new_dealer_form.reset();
-                this.ngOnInit();
-                this._router.navigate([`/${this.roleRoute}/users/`]);
-            }
-            if (response == 'upload') this.uploadDealerPhoto();
-        });
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: {
+                    status: status,
+                    message: message,
+                    data: data,
+                    picture_upload: true,
+                    rename: true,
+                },
+            })
+            .afterClosed()
+            .subscribe((response) => {
+                if (redirect || response == 'no_upload') {
+                    this.is_submitted = false;
+                    this.form_invalid = false;
+                    this.new_dealer_form.reset();
+                    this.ngOnInit();
+                    this._router.navigate([`/${this.roleRoute}/users/`]);
+                }
+                if (response == 'upload') this.uploadDealerPhoto();
+            });
     }
 
     uploadDealerPhoto() {

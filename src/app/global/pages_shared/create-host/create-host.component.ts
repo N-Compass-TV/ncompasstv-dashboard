@@ -345,9 +345,7 @@ export class CreateHostComponent implements OnInit {
         this.location_selected = false;
         let country = 'United States';
 
-        if (this.canadaSelected) {
-            country = 'Canada';
-        }
+        if (this.canadaSelected) country = 'Canada';
 
         this._fastedge
             .get_google_business_profile(this.googlePlaceFormControls.location.value + ', ' + country)
