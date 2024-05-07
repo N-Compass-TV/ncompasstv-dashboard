@@ -250,7 +250,7 @@
                                 <ng-container *ngIf="!gettingHostLicenses; else spinner">
                                     <ng-container
                                         *ngIf="licenses && licenses.length > 0 && !disabledPublish; else no_license">
-                                        <div class="text-left" *ngIf="!has_no_licenses; else no_license">
+                                        <div class="text-left" *ngIf="!hasNoLicenses; else no_license">
                                             <div class="licenses-heading">
                                                 <h4 class="font-weight-bold mb-3">Assign to Licenses</h4>
                                                 <button

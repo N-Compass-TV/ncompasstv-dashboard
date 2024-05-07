@@ -14,14 +14,14 @@ export class DealerAutocompleteComponent implements OnInit {
     dealers: any = [];
     isEmptyDealer = false;
     key = '';
-    search_keyword: string;
+    searchKeyword: string;
 
     @Input() initial_value: any;
     @Input() active_only: boolean = false;
     @Input() isDealerAdmin = false;
     @Input() isDisabled = false;
     @Output() dealer_selected: EventEmitter<any> = new EventEmitter();
-    @Output() no_data_found: EventEmitter<string> = new EventEmitter();
+    @Output() no_data_found = new EventEmitter();
 
 
     protected _unsubscribe: Subject<void> = new Subject<void>();

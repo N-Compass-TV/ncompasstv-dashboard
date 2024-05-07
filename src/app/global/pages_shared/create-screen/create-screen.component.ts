@@ -42,7 +42,7 @@ export class CreateScreenComponent implements OnInit {
     dealers: API_DEALER[];
     disabledPublish = false;
     gettingHostLicenses = false;
-    has_no_licenses = false;
+    hasNoLicenses = false;
     hosts: API_HOST[] = [];
     hostId: string;
     hostsData = [];
@@ -622,13 +622,13 @@ export class CreateScreenComponent implements OnInit {
             .subscribe(
                 (response) => {
                     if ('message' in response) {
-                        this.has_no_licenses = true;
+                        this.hasNoLicenses = true;
                         this.gettingHostLicenses = false;
                         return;
                     }
 
                     this.licenses = response;
-                    this.has_no_licenses = false;
+                    this.hasNoLicenses = false;
                     this.gettingHostLicenses = false;
                 },
                 (error) => {
@@ -725,7 +725,7 @@ export class CreateScreenComponent implements OnInit {
     }
 
     private get hasUnusedLicenseWithoutInstallDate() {
-        if (this.has_no_licenses) return false;
+        if (this.hasNoLicenses) return false;
         return (
             typeof this.licenses.find(
                 (license) => this.assigned_licenses.includes(license.licenseId) && !license.installDate,
