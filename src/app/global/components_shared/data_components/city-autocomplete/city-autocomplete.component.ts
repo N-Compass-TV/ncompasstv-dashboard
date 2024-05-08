@@ -18,6 +18,7 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
         data: [],
         initialValue: [],
         allowSearchTrigger: false,
+        unselect: true,
     };
     cityFromGoogleScrape: any;
     citiesStateData: CITIES_STATE;
@@ -96,8 +97,11 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
             if (!filteredCities.length) {
                 this.cityFieldData.data = this.mapCityData(this.cityDataPrimary);
                 this.cityFieldData.noData = `${keywordData} not found`;
+                this.cityFieldData.unselect = false;
                 this.city_selected.emit(null);
                 return;
+            } else {
+                this.cityFieldData.unselect = true;
             }
 
             /** Data found */
