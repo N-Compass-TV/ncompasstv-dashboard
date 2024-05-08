@@ -140,9 +140,7 @@
                                                 <div *ngIf="!data[d].permission; else userWithPermission">
                                                     <span *ngIf="!data[d].compressed; else shortened_tooltip">
                                                         <div class="default-value-with-url d-flex align-items-center">
-                                                            <div class="value">
-                                                                {{ data[d].value }}
-                                                            </div>
+                                                            <div class="value">{{ data[d].value }}</div>
                                                             <ng-container
                                                                 *ngIf="pagesWithStatusIndicator.includes(page)">
                                                                 <span>
