@@ -12,7 +12,6 @@ import {
     API_DEALER,
     API_UPDATE_DEALER_PROFILE_BY_ADMIN,
     API_USER_DATA,
-    UI_AUTOCOMPLETE_DATA,
     USER,
 } from 'src/app/global/models';
 import { ReassignDealerComponent } from './reassign-dealer/reassign-dealer.component';
@@ -373,26 +372,26 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
                 label: 'City',
                 control: 'city',
                 placeholder: 'Ex. St. Peter',
-                col: 'col-lg-3',
+                col: 'col-lg-6',
                 isAutocomplete: true,
             },
             {
                 label: 'State',
                 control: 'state',
                 placeholder: 'Ex. MO',
-                col: 'col-lg-2',
+                col: 'col-lg-3',
             },
             {
                 label: 'Region',
                 control: 'region',
                 placeholder: 'Ex. MW',
-                col: 'col-lg-2',
+                col: 'col-lg-3',
             },
             {
                 label: 'Player Count',
                 control: 'c_count',
                 placeholder: 'Ex. 23',
-                col: 'col-lg-2',
+                col: 'col-lg-6',
             },
         ];
     }

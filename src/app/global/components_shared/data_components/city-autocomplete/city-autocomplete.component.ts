@@ -22,7 +22,7 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
     };
     cityFromGoogleScrape: any;
     citiesStateData: CITIES_STATE;
-    finalCityList: any[];
+    finalCityList: any[] = [];
 
     @Input() selected_city_from_google: string;
     @Output() city_autocomplete_ready: EventEmitter<any> = new EventEmitter();
@@ -59,21 +59,21 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
                 this.cityFieldData.data = this.mapCityData(this.cityDataPrimary);
             })
             .add(() => {
-                if (this.citiesStateData.paging.currentPage != this.citiesStateData.paging.pages)
-                    this.getCitiesAndStates(this.citiesStateData.paging.currentPage + 1);
-                else this.finalCityList = this.cityFieldData.data;
+                this.finalCityList = this.cityFieldData.data;
                 this.city_autocomplete_ready.emit(true);
             });
     }
 
     filterCities(keywordData: string | MAPPED_CITY) {
+        console.log(typeof keywordData);
+
         /** Keyword no value */
-        if (!keywordData) return;
+        if (!keywordData) {
+            this.cityFieldData.data = this.mapCityData(this.cityDataPrimary);
+            return;
+        }
 
-        if (typeof keywordData === 'string') {
-            /** No input value */
-            if (keywordData.length === 0) return;
-
+        if (typeof keywordData === 'string' && keywordData.length) {
             const filteredCities = this.citiesStateData.data.filter((cityData: CityData) => {
                 /** Convert keywordData and city/state names to lower case for case-insensitive comparison */
                 const keywordLower = keywordData.toLowerCase();

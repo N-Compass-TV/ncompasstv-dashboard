@@ -35,6 +35,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
     @Output() value_selected: EventEmitter<{ id: string; value: string }> = new EventEmitter();
     @Output() no_data_found: EventEmitter<string> = new EventEmitter();
     @Output() input_value_changed: EventEmitter<string> = new EventEmitter();
+    @Output() autocomplete_cleared: EventEmitter<any> = new EventEmitter();
     @ViewChild('autoCompleteInputField', { static: true }) autoCompleteInputField: ElementRef<HTMLInputElement>;
 
     autoCompleteControl = new FormControl();
@@ -143,6 +144,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
     removeSelection() {
         this.autoCompleteControl.setValue('');
         this.value_selected.emit();
+        this.autocomplete_cleared.emit('');
     }
 
     autoCompleteFocusTrigger(event: MouseEvent): void {
