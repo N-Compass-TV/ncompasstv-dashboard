@@ -1,19 +1,9 @@
-import {
-    Component,
-    OnInit,
-    Input,
-    Output,
-    EventEmitter,
-    ChangeDetectionStrategy,
-    SimpleChanges,
-    OnChanges,
-} from '@angular/core';
-import { debounceTime, takeUntil } from 'rxjs/operators';
-import { forkJoin, ObservableInput, Subject } from 'rxjs';
-
+import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { CITIES_STATE, CityData } from 'src/app/global/models/api_cities_state.model';
 import { LocationService } from 'src/app/global/services';
-import { CITIES_STATE_DATA, UI_CITY_AUTOCOMPLETE, UI_CITY_AUTOCOMPLETE_DATA } from 'src/app/global/models';
+import { MAPPED_CITY, UI_CITY_AUTOCOMPLETE, UI_CITY_AUTOCOMPLETE_DATA } from 'src/app/global/models';
 
 @Component({
     selector: 'app-city-autocomplete',
@@ -21,21 +11,21 @@ import { CITIES_STATE_DATA, UI_CITY_AUTOCOMPLETE, UI_CITY_AUTOCOMPLETE_DATA } fr
     styleUrls: ['./city-autocomplete.component.scss'],
 })
 export class CityAutocompleteComponent implements OnInit, OnChanges {
+    cityDataPrimary: CityData[] = [];
+    cityFieldData: UI_CITY_AUTOCOMPLETE = {
+        label: 'City',
+        placeholder: 'Type a city or state',
+        data: [],
+        initialValue: [],
+        allowSearchTrigger: false,
+    };
     cityFromGoogleScrape: any;
     citiesStateData: CITIES_STATE;
     finalCityList: any[];
 
-    // New Autocomplete Dependencies
-    cityFieldData: UI_CITY_AUTOCOMPLETE = {
-        label: 'City',
-        placeholder: 'Type a city',
-        data: [],
-        initialValue: [],
-        allowSearchTrigger: true,
-    };
     @Input() selected_city_from_google: string;
-    @Output() city_selected: EventEmitter<any> = new EventEmitter();
     @Output() city_autocomplete_ready: EventEmitter<any> = new EventEmitter();
+    @Output() city_selected: EventEmitter<any> = new EventEmitter();
 
     protected _unsubscribe = new Subject<void>();
 
@@ -46,23 +36,26 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes.selected_city_from_google.currentValue) {
-            this.selected_city_from_google = this.selected_city_from_google;
-            this.cityFromGoogleScrape = this.finalCityList.find(
-                (cityData) => cityData.display === this.selected_city_from_google,
-            );
-        }
+        this.onCityAutocompleteChanges(changes);
     }
 
     private getCitiesAndStates(page?: number) {
         this._location
             .get_cities_data(page)
             .pipe(takeUntil(this._unsubscribe))
-            .subscribe((response) => {
+            .subscribe((response: CITIES_STATE) => {
                 this.citiesStateData = response;
-                this.citiesStateData.data.map((cityData: CityData) => {
-                    this.addCitiesToDropdown(cityData);
-                });
+
+                for (let index = 0; index < this.citiesStateData.data.length; index++) {
+                    if (index >= 60) {
+                        break;
+                    }
+
+                    const cityData = this.citiesStateData.data[index];
+                    this.cityDataPrimary.push(cityData);
+                }
+
+                this.cityFieldData.data = this.mapCityData(this.cityDataPrimary);
             })
             .add(() => {
                 if (this.citiesStateData.paging.currentPage != this.citiesStateData.paging.pages)
@@ -72,37 +65,73 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
             });
     }
 
-    addCitiesToDropdown(data: CityData) {
-        let cityMap = {
-            id: data.id,
-            value: `${data.city}, ${data.state}`,
-            city: data.city,
-            display: data.city,
-            country: data.country,
-            state: data.abbreviation,
-            region: data.region,
-        };
-        this.cityFieldData.data.push(cityMap);
+    filterCities(keywordData: string | MAPPED_CITY) {
+        /** Keyword no value */
+        if (!keywordData) return;
+
+        if (typeof keywordData === 'string') {
+            /** No input value */
+            if (keywordData.length === 0) return;
+
+            const filteredCities = this.citiesStateData.data.filter((cityData: CityData) => {
+                /** Convert keywordData and city/state names to lower case for case-insensitive comparison */
+                const keywordLower = keywordData.toLowerCase();
+                const cityLower = cityData.city.toLowerCase();
+                const stateLower = cityData.state.toLowerCase();
+
+                /**
+                 * Check if the keyword matches the first three characters of city or state
+                 * and either the keyword is exactly three characters long or what follows the
+                 * first three characters is just whitespace or there are no more characters
+                 */
+                return (
+                    (keywordLower.startsWith(cityLower.slice(0, 1)) &&
+                        (keywordLower.length === 1 || cityLower.startsWith(keywordLower))) ||
+                    (keywordLower.startsWith(stateLower.slice(0, 1)) &&
+                        (keywordLower.length === 1 || stateLower.startsWith(keywordLower)))
+                );
+            });
+
+            /** Keyword not found within the filtered data */
+            if (!filteredCities.length) {
+                this.cityFieldData.data = this.mapCityData(this.cityDataPrimary);
+                this.cityFieldData.noData = `${keywordData} not found`;
+                this.city_selected.emit(null);
+                return;
+            }
+
+            /** Data found */
+            this.cityFieldData.data = this.mapCityData(filteredCities);
+            this.cityFieldData.noData = null;
+        }
     }
 
-    resetCityList(keyword: string) {
-        this.cityFieldData.data = [];
+    mapCityData(cityData: CityData[]): MAPPED_CITY[] {
+        return cityData.map((c) => {
+            const mapped: MAPPED_CITY = {
+                id: c.id,
+                value: `${c.city}, ${c.state}`,
+                city: c.city,
+                display: c.city,
+                country: c.country,
+                state: c.abbreviation,
+                region: c.region,
+            };
 
-        this.searchCity(keyword).subscribe(
-            (response) => {},
-            (err) => {
-                this.cityFieldData.noData = `${keyword} not found`;
-                this.cityFieldData.data = this.finalCityList;
-                this.city_selected.emit(null);
-            },
-        );
+            return mapped;
+        });
+    }
+
+    onCityAutocompleteChanges(changes: SimpleChanges) {
+        if (changes.selected_city_from_google.currentValue && this.citiesStateData.data.length) {
+            this.selected_city_from_google = this.selected_city_from_google;
+            this.cityFromGoogleScrape = this.citiesStateData.data.find(
+                (cityData) => cityData.city.toLowerCase() === this.selected_city_from_google.toLowerCase(),
+            );
+        }
     }
 
     selectedCity(data: UI_CITY_AUTOCOMPLETE_DATA) {
         data ? this.city_selected.emit(data) : this.city_selected.emit(null);
-    }
-
-    private searchCity(keyword: string) {
-        return this._location.get_cities_data(1, keyword).pipe(takeUntil(this._unsubscribe));
     }
 }
