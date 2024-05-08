@@ -92,6 +92,8 @@ export class CreateHostComponent implements OnInit {
     operation_days: UI_STORE_HOUR[];
     paging: PAGING;
     place_id: string;
+    searchDisabled = false;
+    selectedDealer: UI_AUTOCOMPLETE_DATA[];
     selectedCity: string;
     selected_location: any;
     state_provinces: { state: string; abbreviation: string; region: string }[] = STATES_PROVINCES;
@@ -149,7 +151,6 @@ export class CreateHostComponent implements OnInit {
             const dealerId = this._auth.current_user_value.roleInfo.dealerId;
             const businessName = this._auth.current_user_value.roleInfo.businessName;
             const dealer = { id: dealerId, value: businessName };
-
             this.selectedDealer.push(dealer);
             this.setToDealer(dealer);
         }
@@ -585,46 +586,6 @@ export class CreateHostComponent implements OnInit {
         data.periods.splice(index, 1);
     }
 
-    resetCityList(keyword: string) {
-        this.search_keyword = keyword;
-        this.city_field_data.data = [];
-
-        this.searchCity(keyword).subscribe(
-            (response) => {
-                this.cities_state_data.data = response.data;
-                this.city_field_data.initialValue = [{ id: '', value: keyword }];
-                this.city_field_data.data = [
-                    ...this.cities_state_data.data
-                        .map((data) => {
-                            return {
-                                id: data.id,
-                                value: `${data.city}, ${data.state}`,
-                                display: data.city,
-                                country: data.country,
-                            };
-                        })
-                        .filter((data) => data),
-                ];
-            },
-            (err) => {
-                this.city_field_data.noData = `${keyword} not found`;
-                this.city_field_data.data = [
-                    ...this.cities_state_data.data
-                        .map((data) => {
-                            return {
-                                id: data.id,
-                                value: `${data.city}, ${data.state}`,
-                                display: data.city,
-                                country: data.country,
-                            };
-                        })
-                        .filter((data) => data),
-                ];
-                console.error('City not found', err);
-            },
-        );
-    }
-
     searchStateAndRegion(state: string) {
         return this.state_provinces.filter(
             (s) => state.toLowerCase() == s.state.toLowerCase() || state.toLowerCase() == s.abbreviation.toLowerCase(),
@@ -634,22 +595,6 @@ export class CreateHostComponent implements OnInit {
     searchBoxTrigger(event: { is_search: boolean; page: number }) {
         this.is_search = event.is_search;
         this.getDealers(event.page);
-    }
-
-    searchCityById(data: UI_CITY_AUTOCOMPLETE_DATA) {
-        const city = this.cities_state_data.data.find((item) => item.id === data.id);
-
-        this.canada_selected = city.country === 'CA';
-
-        if (typeof city === 'undefined' || !city) {
-            console.error('Could not set city data!');
-            return;
-        }
-
-        this.newHostFormControls.city.setValue(city.city);
-        this.newHostFormControls.state.setValue(city.abbreviation);
-        this.newHostFormControls.region.setValue(city.region);
-        this.setZipCodeValidation();
     }
 
     searchDealer(keyword: string) {
@@ -672,35 +617,6 @@ export class CreateHostComponent implements OnInit {
             .add(() => {
                 this.loading_search = false;
             });
-    }
-
-    setCity(data: string): void {
-        let cityState = data.split(',')[0].trim();
-        if (!this.canada_selected) {
-            this.newHostFormControls.city.setValue(cityState);
-            this.city_selected = cityState;
-            this._location
-                .get_cities_data(data)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        this.newHostFormControls.state.setValue(data.data[0].abbreviation);
-                        this.newHostFormControls.region.setValue(data.data[0].region);
-                    },
-                    (error) => {
-                        console.error(error);
-                    },
-                );
-        } else {
-            let sliced_address = data.split(', ');
-            let filtered_data = this.city_state.filter((city) => {
-                return city.city === sliced_address[0];
-            });
-
-            this.newHostFormControls.city.setValue(cityState);
-            this.newHostFormControls.state.setValue(filtered_data[0].state);
-            this.newHostFormControls.region.setValue(filtered_data[0].region);
-        }
     }
 
     setToCategory(event: string) {
@@ -963,10 +879,6 @@ export class CreateHostComponent implements OnInit {
             if (!hostId) return;
             this._router.navigate([`/${this.roleRoute}/hosts`, hostId]);
         });
-    }
-
-    private searchCity(keyword: string) {
-        return this._location.get_cities_data(keyword).pipe(takeUntil(this._unsubscribe));
     }
 
     private setBusinessHoursBeforeSubmitting(data: UI_STORE_HOUR[]) {

@@ -72,12 +72,11 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.trigger_input_update) {
+        if (changes.trigger_input_update && changes.trigger_input_update.currentValue) {
             const currentValue = changes.trigger_input_update.currentValue;
             this.field_data.initialValue = [{ id: currentValue.id, value: currentValue.city }];
             this.ngOnInit();
         }
-        this.autoCompleteControl.setValue(this.trigger_input_update);
         this.field_data.data = this.field_data.data;
         this.setupDefaults();
     }
