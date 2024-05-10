@@ -449,7 +449,6 @@ export class CreateScreenComponent implements OnInit {
         if (!data.dealerId) this.dealerId = data.id;
         this.getPlaylistsByDealerId(this.dealerId);
         this.getHostsByDealerId(1);
-        this.setToDealerOrHost(data);
     }
 
     setToDealerOrHost(data: { id: string; value: string; dealerId?: string }) {
