@@ -85,10 +85,11 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 
     dealerSelected(data: { id: string; value: string }) {
         this.dealerHasValue = false;
-        this.selected_dealer_id = data.id;
-        this.has_selected_dealer_id = true;
-        
-        this.dealerHasValue = this.selected_dealer_id !== null;
+        if(data !== null){
+            this.selected_dealer_id = data.id;
+            this.has_selected_dealer_id = true;
+            this.dealerHasValue = true;
+        }
     }
 
     searchData(keyword: string) {

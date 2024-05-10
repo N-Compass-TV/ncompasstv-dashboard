@@ -416,8 +416,14 @@ export class CreatePlaylistComponent implements OnInit {
     }
 
     setToDealer(dealer) {
-        this.formControl.dealer.setValue(this.isDealer ? dealer : dealer.id);
+
+        if(!dealer){
+            this.invalid_form = true;
+            return;
+        }
+        this.formControl.dealer = dealer.id;
         this.dealerid = this.isDealer ? dealer : dealer.id;
+        console.log(this.dealerid)
         this.getAllContents();
     }
 

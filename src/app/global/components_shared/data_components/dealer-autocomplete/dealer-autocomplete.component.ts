@@ -59,7 +59,7 @@ export class DealerAutocompleteComponent implements OnInit {
     }
 
     public dealerNotFound(keyword: string) {
-        this.dealers_data.noData = `${keyword} not found`;
+        this.dealers_data.noData = 'Dealer Not Found';
         this.dealer_selected.emit(null);
     }
 

@@ -60,7 +60,6 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
         this.autoCompleteControl.valueChanges
             .pipe(takeUntil(this.ngUnsubscribe), debounceTime(1000))
             .subscribe((response) => {
-                
                 this.isEmpty = response === ''
         
                 this.input_changed.emit(response);
@@ -88,9 +87,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
         if (this.field_data.initialValue && this.field_data.initialValue.length) {
             this.autoCompleteControl.setValue(this.field_data.initialValue[0]);
 
-            setTimeout(() => {
-                this.autoCompleteInputField.nativeElement.focus();
-            }, 0);
+            
         }
     }
 
