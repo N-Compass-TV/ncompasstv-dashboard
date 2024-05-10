@@ -198,7 +198,6 @@ export class CreateScreenComponent implements OnInit {
         this.zone_playlist_form = this._form.group({ screenZonePlaylist: this._form.array([]) });
         this.selected_template_zones = [];
         this.template$ = this._template.get_template_by_id(id);
-
         this.template$.pipe(takeUntil(this._unsubscribe)).subscribe(
             (data: API_TEMPLATE[]) => {
                 data.forEach((t) => {

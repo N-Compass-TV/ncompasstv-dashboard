@@ -4,7 +4,7 @@
             <div class="col-lg-9">
                 <h1 class="mb-3 text-center page-title">Create Screen</h1>
                 <p class="mb-5 text-center font-weight-md sm-text">
-                    <span *ngIf="is_dealer_present && is_host_present.name">
+                    <span *ngIf="is_dealer_present && is_host_present && is_host_present.name">
                         New Screen for <strong>{{ is_dealer_present.name }}</strong> >
                         <strong>{{ is_host_present.name }}</strong>
                     </span>
@@ -77,28 +77,30 @@
                     <!-- STEP 2 -->
                     <mat-step>
                         <ng-template matStepLabel>Choose Template</ng-template>
-                        <div
-                            class="row justify-content-center mt-5"
-                            *ngIf="!screen_info_error; else screen_info_error_msg">
-                            <ng-container *ngFor="let t of templates$ | async">
-                                <div class="col-lg-6 text-center mb-4">
-                                    <app-template-minimap
-                                        [larger]="true"
-                                        [zone_focus]="zone"
-                                        [is_text_displayed]="true"
-                                        [template_data]="t">
-                                    </app-template-minimap>
-                                    <button
-                                        mat-button
-                                        mat-raised-button
-                                        matStepperNext
-                                        class="theme-btn mt-4"
-                                        (click)="getTemplateById(t.template.templateId)">
-                                        {{ t.template.name }}
-                                    </button>
-                                </div>
-                            </ng-container>
-                        </div>
+                        <ng-container *ngIf="templates$ | async as templates; else loader">
+                            <div
+                                class="row justify-content-center mt-5"
+                                *ngIf="!screen_info_error; else screen_info_error_msg">
+                                <ng-container *ngFor="let t of templates">
+                                    <div class="col-lg-6 text-center mb-4">
+                                        <app-template-minimap
+                                            [larger]="true"
+                                            [zone_focus]="zone"
+                                            [is_text_displayed]="true"
+                                            [template_data]="t">
+                                        </app-template-minimap>
+                                        <button
+                                            mat-button
+                                            mat-raised-button
+                                            matStepperNext
+                                            class="theme-btn mt-4"
+                                            (click)="getTemplateById(t.template.templateId)">
+                                            {{ t.template.name }}
+                                        </button>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </ng-container>
 
                         <ng-template #screen_info_error_msg>
                             <div class="pt-5 text-center">
@@ -171,6 +173,15 @@
                                                 Add Playlist
                                                 <span class="fas fa-plus ml-2 sm-text"></span>
                                             </button>
+                                        </div>
+                                    </ng-template>
+
+                                    <ng-template #loadingPlaylists>
+                                        <div class="d-flex align-items-center justify-content-center w-100 h-100 py-5">
+                                            <div class="py-5">
+                                                <app-spinner></app-spinner>
+                                                <h5 class="mt-4 text-center">Loading playlists...</h5>
+                                            </div>
                                         </div>
                                     </ng-template>
 
@@ -362,23 +373,14 @@
             </div>
         </div>
     </div>
-</div>
 
-<ng-template #loading>
-    <app-spinner></app-spinner>
-</ng-template>
-
-<ng-template #loader>
-    <div class="vh-50 d-flex align-items-center justify-content-center">
+    <ng-template #loading>
         <app-spinner></app-spinner>
-    </div>
-</ng-template>
+    </ng-template>
 
-<ng-template #loadingPlaylists>
-    <div class="d-flex align-items-center justify-content-center w-100 h-100 py-5">
-        <div class="py-5">
+    <ng-template #loader>
+        <div class="vh-50 d-flex align-items-center justify-content-center">
             <app-spinner></app-spinner>
-            <h5 class="mt-4 text-center">Loading playlists...</h5>
         </div>
-    </div>
-</ng-template>
+    </ng-template>
+</div>
