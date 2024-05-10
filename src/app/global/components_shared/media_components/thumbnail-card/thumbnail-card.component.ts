@@ -1,6 +1,6 @@
 import { Router } from '@angular/router';
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as io from 'socket.io-client';
@@ -88,12 +88,12 @@ export class ThumbnailCardComponent implements OnInit {
         this._unsubscribe.complete();
     }
 
-    deleteContentArray(event: { checked: boolean }, content_id: string): void {
+    public deleteContentArray(event: { checked: boolean }, content_id: string): void {
         if (event.checked) this.is_checked = true;
         this.content_to_delete.emit({ toadd: event.checked, id: content_id });
     }
 
-    deleteMedia(e: Event): void {
+    public deleteMedia(e: Event): void {
         this.warningModal(
             'warning',
             'Delete Content',
@@ -104,21 +104,31 @@ export class ThumbnailCardComponent implements OnInit {
         e.stopPropagation();
     }
 
-    deleteFiller(): void {
+    public deleteFiller(): void {
         this.filler_delete.emit(true);
     }
 
-    routeToMedia(filename: string): void {
+    public routeToMedia(filename: string): void {
+        // Disable this function if multiple selection is enabled
         if (this.multiple_delete) return;
 
-        let url = filename.replace(/ /g, '+');
-        if (!this.is_filler) this._router.navigate([`/${this.route}`, filename]);
+        // Open the media dialog if the content is a filler
+        if (this.is_filler) {
+            const url = filename.replace(/ /g, '+');
 
-        this._dialog.open(ImageViewerComponent, {
-            data: { url, filetype: this.filetype, filename: this.filename },
-            width: '768px',
-            panelClass: 'no-padding',
-        });
+            const data: MatDialogConfig = {
+                data: { url, filetype: this.filetype, filename: this.filename },
+                width: '768px',
+                panelClass: 'no-padding',
+            };
+
+            this._dialog.open(ImageViewerComponent, data);
+
+            return;
+        }
+
+        // Otherwise redirect to the single-content page
+        this._router.navigate([`/${this.route}`, filename]);
     }
 
     private async getMp4Thumbnail(): Promise<void> {
