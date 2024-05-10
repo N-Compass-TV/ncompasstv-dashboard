@@ -1,4 +1,4 @@
-<div class="p-2">
+<div class="edit-single-dealer p-2">
     <div class="dialog-heading d-flex align-items-start">
         <div class="dealer-heading flex-even">
             <div class="dealer-name-and-status d-flex align-items-center">
@@ -18,7 +18,7 @@
     </div>
     <ng-container *ngIf="is_form_loaded; else loaderSmall">
         <form [formGroup]="edit_dealer_form" (ngSubmit)="saveDealerData()" class="text-left" id="edit-dealer-form">
-            <div class="row mb-4">
+            <div class="row">
                 <div *ngFor="let field of edit_dealer_form_fields" class="{{ field.col }} mb-3">
                     <mat-form-field
                         class="full-width"
@@ -60,7 +60,7 @@
                             (city_autocomplete_ready)="setInitialCity($event)"></app-city-autocomplete>
                     </ng-template>
                 </div>
-                <div class="col-lg-3 mt-neg5">
+                <div class="col-lg-6 mt-neg5">
                     <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                         <mat-label class="md-text">Start Date</mat-label>
                         <input

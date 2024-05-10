@@ -3,8 +3,10 @@
         #autoCompleteFieldCity
         *ngIf="cityFieldData.data.length; else searching"
         [field_data]="cityFieldData"
-        (no_data_found)="resetCityList($event)"
+        (autocomplete_cleared)="filterCities($event)"
+        (no_data_found)="filterCities($event)"
         (value_selected)="selectedCity($event)"
+        (input_value_changed)="filterCities($event)"
         [trigger_input_update]="cityFromGoogleScrape">
     </app-autocomplete>
 
