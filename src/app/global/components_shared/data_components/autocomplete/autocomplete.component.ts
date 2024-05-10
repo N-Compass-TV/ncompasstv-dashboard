@@ -83,10 +83,6 @@ export class AutocompleteComponent implements OnInit, OnDestroy {
     setupDefaults() {
         if (this.field_data.initialValue && this.field_data.initialValue.length) {
             this.autoCompleteControl.setValue(this.field_data.initialValue[0]);
-
-            setTimeout(() => {
-                this.autoCompleteInputField.nativeElement.focus();
-            }, 0);
         }
     }
 
