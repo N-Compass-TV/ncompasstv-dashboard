@@ -45,7 +45,7 @@ export class AuthService {
         const role = Object.keys(UI_ROLE_DEFINITION).find(
             (key) => UI_ROLE_DEFINITION[key] === this.current_user_value.role_id,
         );
-        
+
         return this.returnRoleTextDefinition(role);
     }
 
