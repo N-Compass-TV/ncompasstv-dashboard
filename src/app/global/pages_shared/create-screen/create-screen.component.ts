@@ -35,7 +35,7 @@ import { HOST_ACTIVITY_LOGS } from '../../models/api_host_activity_logs.model';
 })
 export class CreateScreenComponent implements OnInit {
     assigned_licenses = [];
-    creating_screen = false;
+    creatingScreen = false;
     dealer_name: string;
     dealerId: string;
     dealers_data: API_DEALER[] = [];
@@ -294,6 +294,8 @@ export class CreateScreenComponent implements OnInit {
     }
 
     publishScreen(): void {
+        this.creatingScreen = true;
+
         if (this.hasUnusedLicenseWithoutInstallDate) {
             this.openErrorDialog();
             return;
@@ -302,7 +304,7 @@ export class CreateScreenComponent implements OnInit {
         let screen_licenses = [];
         let zone_playlist_data_trim = [];
         const zone_playlist_data = this.zone_playlist_form.get('screenZonePlaylist').value;
-        this.creating_screen = true;
+        this.creatingScreen = true;
 
         zone_playlist_data.forEach((data) => {
             const zone_playlist = {
@@ -340,7 +342,7 @@ export class CreateScreenComponent implements OnInit {
             this._auth.current_user_value.user_id,
         );
 
-        if (this.creating_screen) {
+        if (this.creatingScreen) {
             // if installation dates are set
             if (this.queued_install_dates.length > 0) {
                 const publish = {
@@ -354,7 +356,7 @@ export class CreateScreenComponent implements OnInit {
                         (response) => {
                             this.screenId = response[0].screenId;
                             this.openCreateScreenDialog();
-                            this.creating_screen = false;
+                            this.creatingScreen = false;
                         },
                         (error) => {
                             console.error(error);
@@ -371,7 +373,6 @@ export class CreateScreenComponent implements OnInit {
                     (response) => {
                         this.screenId = response.screenId;
                         this.openCreateScreenDialog();
-                        this.creating_screen = false;
                     },
                     (error) => {
                         console.error(error);
@@ -719,7 +720,12 @@ export class CreateScreenComponent implements OnInit {
             data: { status, message, data },
         };
 
-        this._dialog.open(ConfirmationModalComponent, config);
+        this._dialog
+            .open(ConfirmationModalComponent, config)
+            .afterClosed()
+            .subscribe({
+                next: () => (this.creatingScreen = false),
+            });
     }
 
     private get hasUnusedLicenseWithoutInstallDate() {
