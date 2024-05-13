@@ -65,11 +65,11 @@ export class CityAutocompleteComponent implements OnInit, OnChanges {
     }
 
     filterCities(keywordData: string | MAPPED_CITY) {
-        console.log(typeof keywordData);
-
         /** Keyword no value */
         if (!keywordData) {
             this.cityFieldData.data = this.mapCityData(this.cityDataPrimary);
+            this.cityFieldData.unselect = true;
+            this.cityFieldData.noData = null;
             return;
         }
 
