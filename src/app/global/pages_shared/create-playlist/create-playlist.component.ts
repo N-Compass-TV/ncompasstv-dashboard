@@ -33,6 +33,7 @@ export class CreatePlaylistComponent implements OnInit {
     dealerid = '';
     dealer_name: string;
     disable_user_filter = true;
+    dealerHasValue: boolean;
     floating_content = false;
     isDealer = false;
     is_admin: boolean;
@@ -416,14 +417,15 @@ export class CreatePlaylistComponent implements OnInit {
     }
 
     setToDealer(dealer) {
-        if(!dealer){
-            this.invalid_form = true;
+        this.dealerHasValue = true;
+
+        if(dealer == null){
+            this.dealerHasValue = false;
             return;
         }
-        this.invalid_form = false;
-        this.formControl.dealer = dealer.id;
+        
+        this.formControl.dealer.setValue(this.isDealer ? dealer : dealer.id);
         this.dealerid = this.isDealer ? dealer : dealer.id;
-        console.log(this.dealerid)
         this.getAllContents();
     }
 
