@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, startWith, takeUntil } from 'rxjs/operators';
 import { UI_AUTOCOMPLETE, UI_AUTOCOMPLETE_DATA } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services';
 
@@ -80,9 +80,11 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
         );
 
         // watch for update from parent component and update the control value
-        this.trigger_input_update.pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
-            this.autoCompleteControl.setValue(response, { emitEvent: false });
-        });
+        if (this.trigger_input_update) {
+            this.trigger_input_update.pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+                this.autoCompleteControl.setValue(response, { emitEvent: false });
+            });
+        }
 
         // emit change on input field
         this.autoCompleteControl.valueChanges
@@ -94,23 +96,9 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
         if (this.field_data.disabled && this.isDealer) this.autoCompleteControl.disable();
     }
 
-    ngOnDestroy(): void {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
-    }
-
-    ngAfterViewInit() {
-        this.setupDefaults();
-        this.startTriggerListener();
-    }
-
-    ngOnChanges() {
-        this.field_data.data = this.field_data.data;
-        this.setupDefaults();
-    }
-
     setupDefaults() {
-        if (this.field_data.initialValue && this.field_data.initialValue.length) this.autoCompleteControl.setValue(this.field_data.initialValue[0]);
+        if (this.field_data.initialValue && this.field_data.initialValue.length)
+            this.autoCompleteControl.setValue(this.field_data.initialValue[0]);
     }
 
     displayOption(option: any): string {
@@ -183,24 +171,6 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
 
         this.autoCompleteInputField.nativeElement.focus();
         this.removeSelection();
-    }
-
-    startTriggerListener() {
-        if (this.field_data.trigger) {
-            this.field_data.trigger.subscribe((triggerData: { data: any; action: string }) => {
-                switch (triggerData.action) {
-                    case AUTOCOMPLETE_ACTIONS.static:
-                        this.staticVal = true;
-
-                        setTimeout(() => {
-                            this.autoCompleteControl.setValue(triggerData.data);
-                        }, 0);
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
     }
 
     protected get isDealer() {
