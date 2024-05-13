@@ -40,6 +40,7 @@ export class CreateScreenComponent implements OnInit {
     dealerId: string;
     dealers_data: API_DEALER[] = [];
     dealers: API_DEALER[];
+    dealerHasValue: boolean;
     disabledPublish = false;
     gettingHostLicenses = false;
     has_no_licenses = false;
@@ -173,6 +174,7 @@ export class CreateScreenComponent implements OnInit {
             this.dealerId != undefined &&
             this.new_screen_form.valid &&
             this.screen_selected != undefined &&
+            this.dealerHasValue == true &&
             this.new_screen_form.valid
         ) {
             this.screen_info_error = false;
@@ -438,8 +440,10 @@ export class CreateScreenComponent implements OnInit {
     }
 
     setAssignedTo(data: { id: string; value: string; dealerId?: string }): void {
+        this.dealerHasValue = true;
         if (data === null) {
             this.disabledPublish = true;
+            this.dealerHasValue = false;
             return;
         }
 

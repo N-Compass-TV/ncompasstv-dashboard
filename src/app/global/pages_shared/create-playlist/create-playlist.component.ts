@@ -416,11 +416,11 @@ export class CreatePlaylistComponent implements OnInit {
     }
 
     setToDealer(dealer) {
-
         if(!dealer){
             this.invalid_form = true;
             return;
         }
+        this.invalid_form = false;
         this.formControl.dealer = dealer.id;
         this.dealerid = this.isDealer ? dealer : dealer.id;
         console.log(this.dealerid)
