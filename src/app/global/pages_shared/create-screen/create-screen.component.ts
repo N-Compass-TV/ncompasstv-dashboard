@@ -13,6 +13,7 @@ import {
     API_ZONE,
     PAGING,
     UI_AUTOCOMPLETE,
+    UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
 import {
     AuthService,
@@ -702,9 +703,11 @@ export class CreateScreenComponent implements OnInit {
         });
 
         dialog.afterClosed().subscribe(() => {
-            const url = [
-                `/${this.roleRoute}/screens/${this.screenId}/${this.new_screen_form_controls.screen_name.value}`,
-            ];
+            const customRoute =
+                this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin
+                    ? UI_ROLE_DEFINITION_TEXT.administrator
+                    : this.roleRoute;
+            const url = [`/${customRoute}/screens/${this.screenId}/${this.new_screen_form_controls.screen_name.value}`];
             this._router.navigate(url);
         });
     }
