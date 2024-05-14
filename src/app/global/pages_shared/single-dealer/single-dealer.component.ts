@@ -1385,8 +1385,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     async dealerSelected(data: { id: string; value: string }): Promise<void> {
+        const customRoute = this.roleRoute == UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.roleRoute;
         if (data) {
-            await this._router.navigate([`/${this.roleRoute}/dealers/${data.id}`]);
+            await this._router.navigate([`/${customRoute}/dealers/${data.id}`]);
             this.getLicenseStatisticsByDealer(data.id, true);
         }
     }
