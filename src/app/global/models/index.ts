@@ -29,6 +29,7 @@ export * from './api_license.model';
 export * from './api_license-total-statistics.model';
 export * from './api_license-monthly-stat.model';
 export * from './api_new-screen.model';
+export * from './api_version-table.model';
 export * from './api_notification.model';
 export * from './api_order.model';
 export * from './api_parent-category.model';
