@@ -18,6 +18,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     @Output() reload_page = new EventEmitter();
     create_feed_fields = this._formFields;
     dealer_id: string;
+    dealer_name: string;
     dealers: API_DEALER[];
     dealers_data: Array<any> = [];
     selectedDealer: any = [];
@@ -26,6 +27,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     filtered_options: Observable<any[]>;
     hasLoadedDealers = false;
     isInvalidUrl = false;
+    dealerHasValue = false;
     isDirectTechUrl = false;
     has_selected_dealer_id = false;
     has_selected_widget_feed_type = false;
@@ -61,10 +63,11 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
         if (this.isCurrentUserDealer) {
             this.isCurrentUserDealer = true;
             this.hasLoadedDealers = true;
+            this.dealerHasValue = true
             this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
             this.selectedDealerId = this.dealer_id;
             this.dealerName = this._auth.current_user_value.roleInfo.businessName;
-
+    
             this.selectedDealer.push({
                 id: this.dealer_id,
                 value: this.dealerName,
@@ -84,6 +87,14 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
     dealerSelected(data: { id: string; value: string }) {
         this.selectedDealerId = data.id;
         this.has_selected_dealer_id = true;
+
+        this.dealerHasValue = false;
+        if(data !== null){
+            this.selected_dealer_id = data.id;
+            this.has_selected_dealer_id = true;
+            this.dealerHasValue = true;
+        }
+
     }
 
     searchData(keyword: string) {
