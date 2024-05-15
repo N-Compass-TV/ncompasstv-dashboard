@@ -63,11 +63,11 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
         if (this.isCurrentUserDealer) {
             this.isCurrentUserDealer = true;
             this.hasLoadedDealers = true;
-            this.dealerHasValue = true
+            this.dealerHasValue = true;
             this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
             this.selectedDealerId = this.dealer_id;
             this.dealerName = this._auth.current_user_value.roleInfo.businessName;
-    
+
             this.selectedDealer.push({
                 id: this.dealer_id,
                 value: this.dealerName,
@@ -89,12 +89,11 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
         this.has_selected_dealer_id = true;
 
         this.dealerHasValue = false;
-        if(data !== null){
-            this.selected_dealer_id = data.id;
+        if (data !== null) {
+            this.selectedDealerId = data.id;
             this.has_selected_dealer_id = true;
             this.dealerHasValue = true;
         }
-
     }
 
     searchData(keyword: string) {

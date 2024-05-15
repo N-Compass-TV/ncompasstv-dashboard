@@ -91,27 +91,12 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
         this.autoCompleteControl.valueChanges
             .pipe(takeUntil(this.ngUnsubscribe), debounceTime(1000))
             .subscribe((response) => {
-                this.isEmpty = response === ''
-        
+                this.isEmpty = response === '';
+
                 this.input_changed.emit(response);
             });
 
         if (this.field_data.disabled && this.isDealer) this.autoCompleteControl.disable();
-    }
-
-    ngOnDestroy(): void {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
-    }
-
-    ngAfterViewInit() {
-        this.setupDefaults();
-        this.startTriggerListener();
-    }
-
-    ngOnChanges() {
-        this.field_data.data = this.field_data.data;
-        this.setupDefaults();
     }
 
     setupDefaults() {
@@ -189,24 +174,6 @@ export class AutocompleteComponent implements OnInit, OnDestroy, OnChanges {
 
         this.autoCompleteInputField.nativeElement.focus();
         this.removeSelection();
-    }
-
-    startTriggerListener() {
-        if (this.field_data.trigger) {
-            this.field_data.trigger.subscribe((triggerData: { data: any; action: string }) => {
-                switch (triggerData.action) {
-                    case AUTOCOMPLETE_ACTIONS.static:
-                        this.staticVal = true;
-
-                        setTimeout(() => {
-                            this.autoCompleteControl.setValue(triggerData.data);
-                        }, 0);
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
     }
 
     protected get isDealer() {
