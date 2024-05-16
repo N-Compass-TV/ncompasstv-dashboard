@@ -27,6 +27,22 @@ export const ACTIVITY_URLS = [
         activityURL: 'dealers',
     },
     {
+        activityCodePrefix: 'host',
+        activityURL: 'hosts',
+    },
+    {
+        activityCodePrefix: 'filler',
+        activityURL: 'fillers/view-fillers-group',
+    },
+    {
+        activityCodePrefix: 'media',
+        activityURL: 'media-library',
+    },
+    {
+        activityCodePrefix: 'feed',
+        activityURL: 'media-library',
+    },
+    {
         activityCodePrefix: 'user',
         activityURL: 'users',
     },
