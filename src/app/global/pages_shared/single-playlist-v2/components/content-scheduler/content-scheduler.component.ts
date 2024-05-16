@@ -42,6 +42,7 @@ export class ContentSchedulerComponent implements OnInit, OnDestroy, AfterViewIn
 
     onSelectContentScheduleType(data: ButtonGroup) {
         this.selectedContentSchedule = data;
+
         this._playlist.scheduleTypeSelected.emit({
             type: data.value as 1 | 2 | 3,
             hasExistingSchedule: this.hasExistingSchedule,
@@ -52,8 +53,6 @@ export class ContentSchedulerComponent implements OnInit, OnDestroy, AfterViewIn
             this._playlist.requestSchedulerFormData.emit();
             return;
         }
-
-        // this._playlist.schedulerFormUpdated.emit({ type: data.value });
     }
 
     private initializeData() {
@@ -79,8 +78,11 @@ export class ContentSchedulerComponent implements OnInit, OnDestroy, AfterViewIn
             return;
         }
 
-        // this.selectedContentSchedule.value = this.scheduleType;
-        this._playlist.schedulerFormUpdated.emit({ type: this.scheduleType });
+        // Setting "Default Play" as initial button schedule active
+        this._playlist.scheduleTypeSelected.emit({
+            type: 1,
+            hasExistingSchedule: this.hasExistingSchedule,
+        });
     }
 
     private subscribeToSchedulerFormData() {

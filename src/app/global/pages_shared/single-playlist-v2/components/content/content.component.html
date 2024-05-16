@@ -38,7 +38,7 @@
                         [ngClass]="content.frequency > 10 ? 'fas fa-chess-queen' : 'fas fa-chess-pawn'"></i>
 
                     <input
-                        class="push-right"
+                        class="content-checkbox push-right"
                         type="checkbox"
                         *ngIf="selectable && !isChildFrequency"
                         [ngClass]="{ 'frequency-z-index': isParentFrequency || isChildFrequency }"

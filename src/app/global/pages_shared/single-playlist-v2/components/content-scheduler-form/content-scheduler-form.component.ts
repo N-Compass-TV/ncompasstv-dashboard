@@ -23,6 +23,7 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
     hasAlternateWeekSet = false;
     hasCheckedAllDays = true;
     isCheckedToPlayAllDay = true;
+    selectedScheduleType: { type: number; hasExistingSchedule: boolean } | null;
 
     schedulerForm: FormGroup = this._form_builder.group({
         alternateWeek: [0],
@@ -114,7 +115,6 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
         alternateWeekControl.setValue(this.alternateWeek);
     }
 
-    //TO FETCH DATA WHEN OPENING MODAL OR TRANSITIONING TO OTHER CONTENTS
     public getPlaylistContentSchedule() {
         if (this.contents) {
             this._playlist.getPlaylistScehduleByContentId(this.contents[0].playlistContentId).subscribe({
@@ -188,7 +188,8 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
                 this.convertDateControlToISOString(form, 'startDate');
                 this.convertDateControlToISOString(form, 'endDate');
 
-                this._playlist.schedulerFormUpdated.emit(form.value);
+                if (!this.selectedScheduleType || this.selectedScheduleType.type == 3)
+                    this._playlist.schedulerFormUpdated.emit(form.value);
 
                 const playStart = form.value.playTimeStartData as NgbTimeStruct;
                 const playEnd = form.value.playTimeEndData as NgbTimeStruct;
@@ -213,7 +214,8 @@ export class ContentSchedulerFormComponent implements OnInit, OnDestroy {
 
     private subscribeToScheduleTypeSelection() {
         this._playlist.scheduleTypeSelected.pipe(takeUntil(this._unsubscribe)).subscribe({
-            next: (response) => {
+            next: (response: { type: number; hasExistingSchedule: boolean }) => {
+                this.selectedScheduleType = response;
                 this._playlist.schedulerFormUpdated.emit(response);
                 if (!response.hasExistingSchedule && response.type === 3) this.setDefaultFormValues();
             },
