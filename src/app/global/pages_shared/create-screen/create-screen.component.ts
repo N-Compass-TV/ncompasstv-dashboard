@@ -41,12 +41,12 @@ export class CreateScreenComponent implements OnInit {
     dealerId: string;
     dealers_data: API_DEALER[] = [];
     dealers: API_DEALER[];
-    dealerHasValue: boolean;
+    dealerHasValue = false;
     disabledPublish = false;
     gettingHostLicenses = false;
     has_no_licenses = false;
     hosts: API_HOST[] = [];
-    hostId: string;
+    hostId: string = '';
     hostsData = [];
     hostDataByDealerId = [];
     initial_load = false;
@@ -116,6 +116,7 @@ export class CreateScreenComponent implements OnInit {
             if (data.get('dealer_id') && data.get('host_id')) {
                 this.dealerId = data.get('dealer_id');
                 this.hostId = data.get('host_id');
+                this.dealerHasValue = true;
                 this.getDealerById(this.dealerId);
                 this.getPlaylistsByDealerId(this.dealerId);
                 this.getHostsByDealerId(1);
@@ -125,12 +126,7 @@ export class CreateScreenComponent implements OnInit {
         });
 
         this.new_screen_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe((f) => {
-            if (
-                this.dealerId != undefined &&
-                this.new_screen_form.valid &&
-                this.screen_selected != undefined &&
-                this.new_screen_form.valid
-            ) {
+            if (this.dealerId != undefined && this.new_screen_form.valid && this.screen_selected != undefined) {
                 this.screen_info_error = false;
             }
         });
@@ -175,8 +171,7 @@ export class CreateScreenComponent implements OnInit {
             this.dealerId != undefined &&
             this.new_screen_form.valid &&
             this.screen_selected != undefined &&
-            this.dealerHasValue == true &&
-            this.new_screen_form.valid
+            this.dealerHasValue
         ) {
             this.screen_info_error = false;
         } else {
