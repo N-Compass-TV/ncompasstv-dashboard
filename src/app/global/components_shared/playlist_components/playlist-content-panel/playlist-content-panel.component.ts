@@ -12,6 +12,7 @@ import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-sc
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
 import { AuthService, ConfirmationDialogService, ContentService, PlaylistService } from 'src/app/global/services';
+import { DATE_FORMATS } from 'src/app/global/constants/common';
 
 import {
     API_BLOCKLIST_CONTENT,
@@ -26,9 +27,11 @@ import {
     API_CONTENT_HISTORY,
     API_CONTENT_HISTORY_LIST,
     API_CONTENT_DATA,
+    UI_ROLE_DEFINITION_TEXT,
 } from 'src/app/global/models';
 
 import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from 'src/app/global/constants/file-types';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-playlist-content-panel',
@@ -64,9 +67,17 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
     currentStatusFilter: { key: string; label: string };
     currentFileTypeFilter = 'all';
     has_selected_content_with_schedule = false;
+    authorizedRoles = new Set([
+        UI_ROLE_DEFINITION_TEXT.administrator,
+        UI_ROLE_DEFINITION_TEXT.dealeradmin,
+        UI_ROLE_DEFINITION_TEXT.dealer,
+        UI_ROLE_DEFINITION_TEXT['sub-dealer'],
+    ]);
+    isAuthorized = this.authorizedRoles.has(this._auth.current_role as UI_ROLE_DEFINITION_TEXT);
     is_loading = false;
     is_bulk_selecting = false;
     list_view_mode = false;
+    migrationLoading = false;
     updated_playlist_content: API_UPDATED_PLAYLIST_CONTENT[];
     playlist_order: string[] = [];
     playlist_changes_data: any;
@@ -103,6 +114,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         private _content: ContentService,
         private _dialog: MatDialog,
         private _playlist: PlaylistService,
+        private _router: Router,
     ) {}
 
     ngOnInit() {
@@ -435,12 +447,43 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         this.showContentScheduleDialog();
     }
 
+    onSwitchPlaylist(): void {
+        this.openConfirmationModal(
+            'warning',
+            'Switching to Playlist V2',
+            'You are about to switch to playlist V2, this action is irreversible.',
+        );
+    }
+
     onViewContentList(): void {
         this.list_view_mode = !this.list_view_mode;
     }
 
     onViewSchedule(): void {
         this.showViewSchedulesDialog();
+    }
+
+    openConfirmationModal(status, message, data): void {
+        this._dialog
+            .open(ConfirmationModalComponent, {
+                width: '500px',
+                height: '350px',
+                data: {
+                    status: status,
+                    message: message,
+                    data: data,
+                },
+            })
+            .afterClosed()
+            .subscribe((response) => {
+                if (status === 'success') {
+                    this._router.navigate([`/${this.currentRole}/playlists/v2/${this.playlist_id}`], {});
+                }
+
+                if (status === 'warning' && response) {
+                    this.switchToV2();
+                }
+            });
     }
 
     optionsSaved(data: PLAYLIST_CHANGES): void {
@@ -778,6 +821,31 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
         this.savePlaylistChanges(this.structureUpdatedPlaylist(), null, null, null, true);
     }
 
+    switchToV2() {
+        this.migrationLoading = true;
+
+        this._playlist
+            .create_playlist_whitelist_migration(this.playlist_id)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe({
+                next: ({ message }) => {
+                    this.migrationLoading = false;
+
+                    if (message === 'Successfully Migrated.') {
+                        this.openConfirmationModal('success', 'Success!', 'Playlist Successfully Migrated');
+                        return;
+                    }
+
+                    this.openConfirmationModal('error', 'Please contact tech support', 'Migration Failed');
+                },
+                error: (e) => {
+                    console.error('Error migrating playlist to version 2', e);
+                    this.migrationLoading = false;
+                    this.openConfirmationModal('error', 'Please contact tech support', 'Migration Failed');
+                },
+            });
+    }
+
     searchPlaylistContent(id: string): any {
         return this.playlist_contents.filter((content) => {
             return id == content.playlistContentId;
@@ -962,9 +1030,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
                     break;
 
                 case 3:
-                    const currentDate = moment(new Date(), 'YYYY-MM-DD hh:mm A');
-                    const startDate = moment(`${schedule.from} ${schedule.playTimeStart}`, 'YYYY-MM-DD hh:mm A');
-                    const endDate = moment(`${schedule.to} ${schedule.playTimeEnd}`, 'YYYY-MM-DD hh:mm A');
+                    const currentDate = moment(new Date(), DATE_FORMATS.DATE_TIME_12);
+                    const startDate = moment(`${schedule.from} ${schedule.playTimeStart}`, DATE_FORMATS.DATE_TIME_12);
+                    const endDate = moment(`${schedule.to} ${schedule.playTimeEnd}`, DATE_FORMATS.DATE_TIME_12);
 
                     if (currentDate.isBefore(startDate)) status = 'future';
                     if (currentDate.isBetween(startDate, endDate, undefined)) status = 'active';
@@ -1168,5 +1236,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
     protected get currentUser() {
         return this._auth.current_user_value;
+    }
+
+    protected get currentRole() {
+        return this._auth.current_role;
     }
 }

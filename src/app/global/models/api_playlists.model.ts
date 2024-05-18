@@ -1,15 +1,18 @@
 export class API_PLAYLIST {
-    playlists: Array<any>;
-    playlist: Array<any>;
-    playlistId: string;
-    dealerId: string;
-    playlistName?: string;
-    name?: string;
-    playlistDescription: string;
-    playlistType: string;
+    businessName: string;
     dateCreated: string;
     dateUpdated: string;
-    businessName: string;
+    dealerId: string;
+    isMigrated: number;
+    playlist: Array<any>;
+    playlistDescription: string;
+    playlistId: string;
+    playlistType: string;
+    playlists: Array<any>;
+    totalScreens: number;
+    playlistName?: string;
+    name?: string;
+    totalContents: number;
 }
 
 export interface API_PLAYLIST_MINIFIED {
