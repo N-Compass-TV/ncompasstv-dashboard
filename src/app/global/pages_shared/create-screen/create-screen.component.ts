@@ -116,6 +116,7 @@ export class CreateScreenComponent implements OnInit {
             if (data.get('dealer_id') && data.get('host_id')) {
                 this.dealerId = data.get('dealer_id');
                 this.hostId = data.get('host_id');
+                this.dealerHasValue = true;
                 this.getDealerById(this.dealerId);
                 this.getPlaylistsByDealerId(this.dealerId);
                 this.getHostsByDealerId(1);
