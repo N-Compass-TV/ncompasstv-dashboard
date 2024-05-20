@@ -81,13 +81,14 @@ export class UpdateComponent implements OnInit, OnDestroy {
             .get_apps()
             .pipe(takeUntil(this.unSubscribe))
             .subscribe(
-                async (data: App[]) => {
-                    if (data.length > 0) {
-                        this.apps = data;
-
-                        this.mapTableData(data);
+                (data: App[]) => {
+                    if ('message' in data) {
                         this.loading = false;
+                        return;
                     }
+
+                    this.mapTableData(data);
+                    this.loading = false;
                 },
                 (error) => {
                     console.error(error);
@@ -97,8 +98,12 @@ export class UpdateComponent implements OnInit, OnDestroy {
     }
 
     public mapTableData(tableData: App[]) {
+        const sortedTableData = tableData.sort(
+            (a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
+        );
+
         return this.tableDataVersion.data.push(
-            ...tableData.map((i) => [
+            ...sortedTableData.map((i) => [
                 {
                     value: i.appName,
                     isHidden: false,
