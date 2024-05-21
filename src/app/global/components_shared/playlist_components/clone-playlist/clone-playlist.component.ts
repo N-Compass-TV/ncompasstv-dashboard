@@ -100,6 +100,9 @@ export class ClonePlaylistComponent implements OnInit {
     }
 
     protected get roleRoute() {
-        return this._auth.roleRoute;
+        let role = this._auth.roleRoute;
+        // Manual override role definition if user is dealeradmin
+        if (role === 'dealeradmin') role = 'administrator';
+        return role;
     }
 }
