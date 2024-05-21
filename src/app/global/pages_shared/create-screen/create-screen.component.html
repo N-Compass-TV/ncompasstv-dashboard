@@ -40,9 +40,9 @@
                                             <div class="col-lg-12 mb-4">
                                                 <ng-container *ngIf="dealerId && is_dealer_present; else no_dealer">
                                                     <mat-form-field class="full-width mt-3">
-                                                        <mat-label class="text-dark"
-                                                            >You are creating a screen for:</mat-label
-                                                        >
+                                                        <mat-label class="text-dark">
+                                                            You are creating a screen for:
+                                                        </mat-label>
                                                         <input
                                                             matInput
                                                             disabled
@@ -55,7 +55,9 @@
                                                         (dealer_selected)="setAssignedTo($event)"
                                                         [initial_value]="selectedDealer"
                                                         [isDisabled]="searchDisabled"
-                                                        [active_only]="true"></app-dealer-autocomplete>
+                                                        [active_only]="true"
+                                                        [fieldLabel]="'Select Dealer Business Name *'">
+                                                    </app-dealer-autocomplete>
                                                 </ng-template>
                                             </div>
                                             <div class="col-lg-12">
@@ -114,7 +116,9 @@
                         <!-- STEP 3 -->
                         <mat-step>
                             <ng-template matStepLabel>Assign Playlist</ng-template>
-                            <div class="row justify-content-center" *ngIf="!no_chosen_template; else no_template">
+                            <div
+                                class="row justify-content-center"
+                                *ngIf="!no_chosen_template && !screen_info_error; else no_template">
                                 <div class="col-lg-7">
                                     <div class="mb-4 mt-5">
                                         <div *ngIf="template$ | async as template; else loading">

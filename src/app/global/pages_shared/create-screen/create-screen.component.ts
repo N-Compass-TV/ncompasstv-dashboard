@@ -437,6 +437,11 @@ export class CreateScreenComponent implements OnInit {
     }
 
     setScreenType(type: { id: string; value: string }): void {
+        if (!type) {
+            this.screen_selected = null;
+            return;
+        }
+
         this.screen_selected = type.id;
         this.reset_screen = false;
     }
@@ -754,7 +759,7 @@ export class CreateScreenComponent implements OnInit {
                 placeholder: 'Ex: This Screen Name',
             },
             {
-                label: 'Description',
+                label: 'Description (Optional)',
                 control: 'description',
                 width: 'col-lg-12',
                 placeholder: 'Ex: Describe this Screen',
@@ -773,7 +778,7 @@ export class CreateScreenComponent implements OnInit {
 
     public setAutocomplete() {
         this.screenTypeData = {
-            label: 'Click to Select a Screen Type',
+            label: 'Click to Select a Screen Type *',
             placeholder: '',
             data: this.screenType,
             unselect: true,
