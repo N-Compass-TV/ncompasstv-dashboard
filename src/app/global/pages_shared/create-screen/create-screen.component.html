@@ -11,10 +11,12 @@
                         </span>
                     </p>
 
-                    <mat-horizontal-stepper #stepper class="p-5">
+                    <mat-horizontal-stepper #stepper class="p-5" (selectionChange)="checkIfStep1Complete()">
                         <!-- STEP 1 -->
                         <mat-step>
-                            <ng-template matStepLabel>Screen Information</ng-template>
+                            <ng-template matStepLabel>
+                                <p class="m-0">Screen Information</p>
+                            </ng-template>
                             <div class="row justify-content-center">
                                 <div class="col-lg-8 py-4" *ngIf="!loading_data; else loader">
                                     <div class="create-screen-height">
@@ -79,7 +81,9 @@
 
                         <!-- STEP 2 -->
                         <mat-step>
-                            <ng-template matStepLabel>Choose Template</ng-template>
+                            <ng-template matStepLabel>
+                                <p class="m-0">Choose Template</p>
+                            </ng-template>
                             <ng-container *ngIf="templates$ | async as templates; else loader">
                                 <div
                                     class="row justify-content-center mt-5"
@@ -115,7 +119,9 @@
 
                         <!-- STEP 3 -->
                         <mat-step>
-                            <ng-template matStepLabel>Assign Playlist</ng-template>
+                            <ng-template matStepLabel>
+                                <p class="m-0">Assign Playlist</p>
+                            </ng-template>
                             <div
                                 class="row justify-content-center"
                                 *ngIf="!no_chosen_template && !screen_info_error; else no_template">
@@ -214,7 +220,9 @@
 
                         <!-- STEP 4 -->
                         <mat-step>
-                            <ng-template matStepLabel>Assign to Host</ng-template>
+                            <ng-template matStepLabel>
+                                <p class="m-0">Assign to Host</p>
+                            </ng-template>
                             <div
                                 class="row justify-content-center mt-5"
                                 *ngIf="!screen_info_error && !no_chosen_template; else assign_to_host_error">
