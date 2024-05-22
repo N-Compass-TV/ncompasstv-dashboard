@@ -617,7 +617,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.additional_license_settings_form.get(controlName).setValue(null);
     }
 
-    async onRemoveTag(index: number, data: TAG) {
+    public async onRemoveTag(index: number, data: TAG, ownerName: string): Promise<void> {
         const confirmAction = await this._confirmDialog
             .warning({ message: 'Remove Tag?', data: 'This will remove the tag from this license' })
             .toPromise();
@@ -625,7 +625,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         if (!confirmAction) return;
 
         this._tag
-            .deleteTagByIdAndOwner(data.tagId, this.license_data.licenseId)
+            .deleteTagByIdAndOwner(data.tagId, data.name, this.license_data.licenseId, ownerName)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 () => {
@@ -711,7 +711,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
         const modal: MatDialogRef<AddTagModalComponent> = this._dialog.open(AddTagModalComponent, config);
         modal.componentInstance.ownerId = this.license_data.licenseId;
-        modal.componentInstance.currentTags = this.license_data.tags as {
+        modal.componentInstance.owner_name = this.license_data.alias;
+        modal.componentInstance.currentTags = this.tags as {
             name: string;
             tagColor: string;
         }[];
