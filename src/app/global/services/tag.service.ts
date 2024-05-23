@@ -3,7 +3,15 @@ import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from './base.service';
-import { CREATE_AND_ASSIGN_TAG, API_FILTERS, OWNER, PAGING, TAG, TAG_OWNER } from 'src/app/global/models';
+import {
+    CREATE_AND_ASSIGN_TAG,
+    API_FILTERS,
+    ADD_OWNER_RESPONSE,
+    REMOVE_TAG_BY_ID_AND_OWNER_RESPONSE,
+    PAGING,
+    TAG,
+    TAG_OWNER,
+} from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Injectable({
@@ -20,7 +28,10 @@ export class TagService extends BaseService {
         super(_auth, _http);
     }
 
-    assignTags(owners: { ownerId: string; tagTypeId: string }[], tagIds: string[], isDealer) {
+    assignTags(
+        owners: { ownerId: string; tagTypeId: string; displayName: string }[],
+        tagIds: { tagId: string; name: string }[],
+    ): Observable<ADD_OWNER_RESPONSE> {
         const body = { owners, tagIds };
         return this.postRequest(this.creators.tag_owners, body);
     }
@@ -66,9 +77,9 @@ export class TagService extends BaseService {
         return this.postRequest(this.creators.tag_type, body);
     }
 
-    deleteAllTagsFromOwner(id: string) {
-        const body = {};
-        return this.postRequest(`${this.deleters.tag_by_owner_id}${id}`, body);
+    deleteAllTagsFromOwner(id: string, displayName: string) {
+        const body = { id, displayName };
+        return this.postRequest(this.deleters.tag_by_owner_id, body);
     }
 
     deleteTag(ids: string[]) {
@@ -76,9 +87,14 @@ export class TagService extends BaseService {
         return this.postRequest(this.deleters.tag, body);
     }
 
-    deleteTagByIdAndOwner(tagId: string, ownerId: string) {
-        const url = `${this.deleters.tag_by_id_and_owner}?tagId=${tagId}&ownerId=${ownerId}`;
-        return this.postRequest(url, {});
+    deleteTagByIdAndOwner(
+        tagId: string,
+        tagName: string,
+        ownerId: string,
+        ownerName: string,
+    ): Observable<REMOVE_TAG_BY_ID_AND_OWNER_RESPONSE> {
+        const body = { tagId, tagName, ownerId, ownerName };
+        return this.postRequest(this.deleters.tag_by_id_and_owner, body);
     }
 
     getAllTags(filters: API_FILTERS, isDealer) {
