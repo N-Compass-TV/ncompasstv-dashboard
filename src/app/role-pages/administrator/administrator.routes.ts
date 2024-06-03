@@ -180,7 +180,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                     {
                         path: 'view-fillers-group/:data/:breadcrumb',
                         component: ViewFillersGroupComponent,
-                    }
+                    },
                 ],
             },
             {
@@ -364,6 +364,12 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                 data: {
                     breadcrumb: 'Tags',
                 },
+                children: [
+                    {
+                        path: ':breadcrumb',
+                        component: TagsComponent,
+                    },
+                ],
             },
             {
                 path: 'templates',

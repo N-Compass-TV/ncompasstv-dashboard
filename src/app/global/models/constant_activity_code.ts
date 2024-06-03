@@ -51,15 +51,19 @@ export const ACTIVITY_URLS = [
         activityURL: 'advertisers',
     },
     {
-        activityCodePrefix: 'tag',
-        activityURL: 'tags',
-    },
-    {
         activityCodePrefix: 'license',
         activityURL: 'dealers',
     },
     {
         activityCodePrefix: 'feedfiller',
         activityURL: 'feeds',
+    },
+    {
+        activityCodePrefix: 'feed',
+        activityURL: 'feeds',
+    },
+    {
+        activityCodePrefix: 'tag',
+        activityURL: 'tags',
     },
 ];
